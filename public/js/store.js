@@ -1,4 +1,5 @@
 (() => {
+  const supportedLanguages = ["en", "fr", "es", "zh", "ar"];
   const imageDirectory = new URL(
     "../images/",
     document.currentScript?.src || document.baseURI,
@@ -52,49 +53,44 @@
     return [...next];
   };
   const setWishlist = (ids) => write(keys.wishlist, [...new Set(ids)]);
-  const getLanguage = () =>
-    read(keys.language, localStorage.getItem(keys.language)) === "ar"
-      ? "ar"
-      : "en";
-  const setLanguage = (language) =>
-    {
-      write(keys.language, language === "ar" ? "ar" : "en");
-      syncTheme();
-    };
+  const getLanguage = () => {
+    const language = read(keys.language, localStorage.getItem(keys.language));
+    return supportedLanguages.includes(language) ? language : "en";
+  };
+  const setLanguage = (language) => {
+    write(
+      keys.language,
+      supportedLanguages.includes(language) ? language : "en",
+    );
+    syncTheme();
+  };
   const getTheme = () =>
     read(keys.theme, localStorage.getItem(keys.theme)) === "dark"
       ? "dark"
       : "light";
   const syncTheme = () => {
     const theme = getTheme();
+    const language = getLanguage();
     const logoFile = theme === "dark" ? "dark.png" : "ruqo-logo.png";
     document.documentElement.dataset.theme = theme;
+    document.documentElement.lang = language === "zh" ? "zh-CN" : language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     document.querySelectorAll("img.brand-logo").forEach((image) => {
       const logoUrl = new URL(logoFile, imageDirectory).href;
       if (image.src !== logoUrl) image.src = logoUrl;
     });
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       const isDark = theme === "dark";
-      const language = getLanguage();
+      const labels = {
+        en: ["Switch to light mode", "Switch to dark mode", "Light mode", "Dark mode"],
+        fr: ["Passer en mode clair", "Passer en mode sombre", "Mode clair", "Mode sombre"],
+        es: ["Cambiar al modo claro", "Cambiar al modo oscuro", "Modo claro", "Modo oscuro"],
+        zh: ["切换到浅色模式", "切换到深色模式", "浅色模式", "深色模式"],
+        ar: ["تفعيل الوضع الفاتح", "تفعيل الوضع الداكن", "الوضع الفاتح", "الوضع الداكن"],
+      }[language];
       button.setAttribute("aria-pressed", String(isDark));
-      button.setAttribute(
-        "aria-label",
-        language === "ar"
-          ? isDark
-            ? "تفعيل الوضع الفاتح"
-            : "تفعيل الوضع الداكن"
-          : isDark
-            ? "Switch to light mode"
-            : "Switch to dark mode",
-      );
-      button.title =
-        language === "ar"
-          ? isDark
-            ? "الوضع الفاتح"
-            : "الوضع الداكن"
-          : isDark
-            ? "Light mode"
-            : "Dark mode";
+      button.setAttribute("aria-label", labels[isDark ? 0 : 1]);
+      button.title = labels[isDark ? 2 : 3];
       button.innerHTML = `<i data-lucide="${isDark ? "sun" : "moon"}" aria-hidden="true"></i>`;
     });
     window.lucide?.createIcons();
@@ -129,6 +125,7 @@
   };
   window.NoursStore = {
     keys,
+    supportedLanguages,
     read,
     write,
     cart,

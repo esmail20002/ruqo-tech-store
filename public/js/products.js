@@ -121,7 +121,194 @@ const copy = {
     greatValue: "قيمة ممتازة",
     rights: "© 2026 RUQO TECH. جميع الحقوق محفوظة.",
   },
+  fr: {
+    shipping: "Livraison offerte dès 299 SAR",
+    warranty: "Garantie de 2 ans + retours sous 7 jours",
+    payment: "Paiements sécurisés",
+    new: "Nouveautés",
+    categories: "Catégories",
+    deals: "Offres",
+    reviews: "Avis",
+    support: "Assistance",
+    account: "Compte",
+    cart: "Panier",
+    cartLabel: "Panier, 2 articles",
+    home: "Accueil",
+    allProducts: "Tous les produits",
+    eyebrow: "La collection RUQO TECH",
+    title: "Trouvez votre prochain coup de cœur.",
+    intro: "Des technologies choisies avec soin pour votre quotidien et votre travail.",
+    delivery: "Livraison rapide",
+    warrantyShort: "Garantie de 2 ans",
+    returns: "Retours faciles",
+    filters: "Filtres",
+    sortBy: "Trier par",
+    sortFeatured: "À la une",
+    sortNewest: "Nouveautés",
+    sortPriceAsc: "Prix croissant",
+    sortPriceDesc: "Prix décroissant",
+    sortRating: "Mieux notés",
+    refine: "Affiner votre recherche",
+    category: "Catégorie",
+    phones: "Téléphones",
+    laptops: "Ordinateurs portables",
+    audio: "Audio",
+    wearables: "Objets connectés",
+    priceRange: "Fourchette de prix",
+    min: "Min.",
+    max: "Max.",
+    rating: "Note client",
+    anyRating: "Toutes les notes",
+    andUp: "et plus",
+    inStock: "Disponibles uniquement",
+    clearFilters: "Effacer les filtres",
+    productsFound: "produits",
+    curated: "Sélectionnés pour vous",
+    noResults: "Aucun produit trouvé",
+    tryAgain: "Modifiez votre recherche ou vos filtres.",
+    add: "Ajouter au panier",
+    unavailable: "Épuisé",
+    added: "Ajouté au panier",
+    saved: "Ajouté aux favoris",
+    removed: "Retiré des favoris",
+    searchPlaceholder: "Rechercher un produit ou une marque",
+    filterLabel: "Filtres",
+    sortLabel: "Trier les produits",
+    gridLabel: "Vue en grille",
+    listLabel: "Vue en liste",
+    badgeNew: "Nouveauté",
+    badgeSale: "Prix spécial",
+    badgePopular: "Populaire",
+    greatValue: "Bon rapport qualité-prix",
+    rights: "© 2026 RUQO TECH. Tous droits réservés.",
+  },
+  es: {
+    shipping: "Envío gratis a partir de 299 SAR",
+    warranty: "Garantía de 2 años + devoluciones en 7 días",
+    payment: "Pagos seguros",
+    new: "Novedades",
+    categories: "Categorías",
+    deals: "Ofertas",
+    reviews: "Reseñas",
+    support: "Ayuda",
+    account: "Cuenta",
+    cart: "Carrito",
+    cartLabel: "Carrito, 2 artículos",
+    home: "Inicio",
+    allProducts: "Todos los productos",
+    eyebrow: "La colección RUQO TECH",
+    title: "Encuentra tu próximo favorito.",
+    intro: "Tecnología seleccionada para tu vida y tu trabajo.",
+    delivery: "Entrega rápida",
+    warrantyShort: "Garantía de 2 años",
+    returns: "Devoluciones fáciles",
+    filters: "Filtros",
+    sortBy: "Ordenar por",
+    sortFeatured: "Destacados",
+    sortNewest: "Más recientes",
+    sortPriceAsc: "Precio: menor a mayor",
+    sortPriceDesc: "Precio: mayor a menor",
+    sortRating: "Mejor valorados",
+    refine: "Afina tu búsqueda",
+    category: "Categoría",
+    phones: "Móviles",
+    laptops: "Portátiles",
+    audio: "Audio",
+    wearables: "Dispositivos vestibles",
+    priceRange: "Rango de precios",
+    min: "Mín.",
+    max: "Máx.",
+    rating: "Valoración de clientes",
+    anyRating: "Cualquier valoración",
+    andUp: "o más",
+    inStock: "Solo disponibles",
+    clearFilters: "Borrar filtros",
+    productsFound: "productos",
+    curated: "Elegidos para ti",
+    noResults: "No se encontraron productos",
+    tryAgain: "Prueba a cambiar la búsqueda o los filtros.",
+    add: "Añadir al carrito",
+    unavailable: "Agotado",
+    added: "Añadido a tu bolsa",
+    saved: "Guardado en favoritos",
+    removed: "Eliminado de favoritos",
+    searchPlaceholder: "Buscar productos o marcas",
+    filterLabel: "Filtros",
+    sortLabel: "Ordenar productos",
+    gridLabel: "Vista de cuadrícula",
+    listLabel: "Vista de lista",
+    badgeNew: "Recién llegado",
+    badgeSale: "Precio especial",
+    badgePopular: "Opción popular",
+    greatValue: "Gran valor",
+    rights: "© 2026 RUQO TECH. Todos los derechos reservados.",
+  },
+  zh: {
+    shipping: "订单满 299 SAR 免运费",
+    warranty: "两年保修 · 七天退货",
+    payment: "安全支付",
+    new: "新品",
+    categories: "分类",
+    deals: "优惠",
+    reviews: "评价",
+    support: "支持",
+    account: "账户",
+    cart: "购物袋",
+    cartLabel: "购物袋，2 件商品",
+    home: "首页",
+    allProducts: "全部商品",
+    eyebrow: "RUQO TECH 精选系列",
+    title: "找到下一款心仪设备。",
+    intro: "为你的生活与工作精心挑选科技产品。",
+    delivery: "快速配送",
+    warrantyShort: "两年保修",
+    returns: "轻松退货",
+    filters: "筛选",
+    sortBy: "排序方式",
+    sortFeatured: "精选",
+    sortNewest: "最新",
+    sortPriceAsc: "价格从低到高",
+    sortPriceDesc: "价格从高到低",
+    sortRating: "评分最高",
+    refine: "筛选商品",
+    category: "分类",
+    phones: "手机",
+    laptops: "笔记本电脑",
+    audio: "音频",
+    wearables: "可穿戴设备",
+    priceRange: "价格范围",
+    min: "最低",
+    max: "最高",
+    rating: "客户评分",
+    anyRating: "全部评分",
+    andUp: "及以上",
+    inStock: "仅显示有货商品",
+    clearFilters: "清除筛选",
+    productsFound: "件商品",
+    curated: "为你精选",
+    noResults: "未找到商品",
+    tryAgain: "请尝试更改搜索内容或筛选条件。",
+    add: "加入购物袋",
+    unavailable: "暂时缺货",
+    added: "已加入购物袋",
+    saved: "已加入心愿单",
+    removed: "已从心愿单移除",
+    searchPlaceholder: "搜索商品或品牌",
+    filterLabel: "筛选商品",
+    sortLabel: "商品排序",
+    gridLabel: "网格视图",
+    listLabel: "列表视图",
+    badgeNew: "新品上市",
+    badgeSale: "特惠价",
+    badgePopular: "热门选择",
+    greatValue: "超值之选",
+    rights: "© 2026 RUQO TECH。保留所有权利。",
+  },
 };
+
+for (const languageCode of window.NoursStore?.supportedLanguages || ["en", "ar"]) {
+  copy[languageCode] ||= copy.en;
+}
 
 const legacyProducts = [
   {
@@ -395,6 +582,21 @@ const ui = {
 };
 let language = window.NoursStore?.getLanguage() || "en";
 let cartCount = window.NoursStore?.cartCount() || 0;
+const localeByLanguage = {
+  en: "en-US",
+  fr: "fr-FR",
+  es: "es-ES",
+  zh: "zh-CN",
+  ar: "ar-SA",
+};
+const localizeProduct = (product) =>
+  window.NoursData?.localizeProduct(product, language) || {
+    ...product,
+    description: {
+      ...product.description,
+      [language]: product.description[language] || product.description.en,
+    },
+  };
 const dealsOnly =
   new URLSearchParams(location.search).get("filter") === "deals";
 let toastTimer;
@@ -411,14 +613,12 @@ try {
 } catch {}
 
 function fmt(value) {
-  return new Intl.NumberFormat(language === "ar" ? "ar-SA" : "en-US").format(
-    value,
-  );
+  return new Intl.NumberFormat(localeByLanguage[language] || localeByLanguage.en).format(value);
 }
 function formatPrice(value) {
   const currency = window.NoursStore?.getCurrency() || "SAR";
   const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
-  return new Intl.NumberFormat(language === "ar" ? "ar-SA" : "en-US", {
+  return new Intl.NumberFormat(localeByLanguage[language] || localeByLanguage.en, {
     style: "currency",
     currency,
     maximumFractionDigits: currency === "SAR" ? 0 : 2,
@@ -433,8 +633,15 @@ function icon(name) {
 
 function setLanguage(next) {
   language = next;
-  document.documentElement.lang = language;
+  document.documentElement.lang = language === "zh" ? "zh-CN" : language;
   document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+  document.title = {
+    en: "Shop All Products | RUQO TECH",
+    fr: "Tous les produits | RUQO TECH",
+    es: "Todos los productos | RUQO TECH",
+    zh: "全部商品 | RUQO TECH",
+    ar: "كل المنتجات | RUQO TECH",
+  }[language];
   document.body.classList.toggle("is-english", language === "en");
   $$("[data-copy]").forEach((node) => {
     const text = copy[language][node.dataset.copy];
@@ -446,21 +653,25 @@ function setLanguage(next) {
   ui.filterButton.setAttribute("aria-label", copy[language].filterLabel);
   $(".cart-button").setAttribute(
     "aria-label",
-    language === "ar"
-      ? `السلة، ${fmt(cartCount)} منتجات`
-      : `Cart, ${fmt(cartCount)} items`,
+    {
+      en: `Cart, ${fmt(cartCount)} items`,
+      fr: `Panier, ${fmt(cartCount)} articles`,
+      es: `Carrito, ${fmt(cartCount)} artículos`,
+      zh: `购物袋，${fmt(cartCount)} 件商品`,
+      ar: `السلة، ${fmt(cartCount)} منتجات`,
+    }[language],
   );
   $('[data-view="grid"]').setAttribute("aria-label", copy[language].gridLabel);
   $('[data-view="list"]').setAttribute("aria-label", copy[language].listLabel);
-  $("[data-language-toggle]").textContent =
-    language === "ar" ? "English" : "العربية";
-  $("[data-language-toggle]").setAttribute(
+  const languageSelect = $("[data-language-select]");
+  languageSelect.value = language;
+  languageSelect.setAttribute(
     "aria-label",
-    language === "ar" ? "Switch to English" : "التبديل إلى العربية",
+    { en: "Language", fr: "Langue", es: "Idioma", zh: "语言", ar: "اللغة" }[language] || "Language",
   );
   $(".main-nav").setAttribute(
     "aria-label",
-    language === "ar" ? "التنقل الرئيسي" : "Main navigation",
+    { en: "Main navigation", fr: "Navigation principale", es: "Navegación principal", zh: "主导航", ar: "التنقل الرئيسي" }[language],
   );
   try {
     if (window.NoursStore) window.NoursStore.setLanguage(language);
@@ -476,8 +687,9 @@ function filteredProducts() {
   const max = Number(ui.max.value) || 10000;
   const rating = Number($("[data-rating-filter]:checked").value);
   const results = products.filter((product) => {
+    const localized = localizeProduct(product);
     const searchText =
-      `${product.name} ${product.brand} ${product.description.en} ${product.description.ar}`.toLocaleLowerCase();
+      `${localized.name} ${product.brand} ${localized.description[language]} ${product.description.en} ${product.description.ar}`.toLocaleLowerCase();
     return (
       (!query || searchText.includes(query)) &&
       (!cats.length || cats.includes(product.category)) &&
@@ -501,6 +713,7 @@ function filteredProducts() {
 }
 
 function productCard(product) {
+  const localized = localizeProduct(product);
   const card = document.createElement("article");
   card.className = `catalog-product${product.stock ? "" : " is-unavailable"}`;
   const art = document.createElement("div");
@@ -508,10 +721,10 @@ function productCard(product) {
   const imageLink = document.createElement("a");
   imageLink.className = "catalog-image-link";
   imageLink.href = `/product.html?id=${encodeURIComponent(product.id)}`;
-  imageLink.setAttribute("aria-label", product.name);
+  imageLink.setAttribute("aria-label", localized.name);
   const image = document.createElement("img");
   image.src = product.image;
-  image.alt = `${product.brand} ${product.name}`;
+  image.alt = `${product.brand} ${localized.name}`;
   image.loading = "lazy";
   image.decoding = "async";
   imageLink.append(image);
@@ -561,11 +774,11 @@ function productCard(product) {
   const name = document.createElement("h3");
   const detailLink = document.createElement("a");
   detailLink.href = `/product.html?id=${encodeURIComponent(product.id)}`;
-  detailLink.textContent = product.name;
+  detailLink.textContent = localized.name;
   name.append(detailLink);
   const description = document.createElement("p");
   description.className = "catalog-description";
-  description.textContent = product.description[language];
+  description.textContent = localized.description[language];
   const rating = document.createElement("div");
   rating.className = "catalog-rating";
   rating.append(icon("star"));
@@ -593,7 +806,7 @@ function productCard(product) {
   add.setAttribute(
     "aria-label",
     product.stock
-      ? `${copy[language].add}: ${product.name}`
+      ? `${copy[language].add}: ${localized.name}`
       : copy[language].unavailable,
   );
   add.append(icon(product.stock ? "shopping-bag" : "minus"));
@@ -608,7 +821,7 @@ function productCard(product) {
     try {
       localStorage.setItem("nours-cart-count", String(cartCount));
     } catch {}
-    toast(`${product.name} · ${copy[language].added}`);
+    toast(`${localizeProduct(product).name} · ${copy[language].added}`);
   });
   const discountPercent = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)
@@ -653,7 +866,7 @@ function activeFilters() {
     max = Number(ui.max.value) || 10000;
   if (min > 0 || max < 10000)
     chips.push({
-      text: `${fmt(min)} – ${fmt(max)} ${language === "ar" ? "ر.س" : "SAR"}`,
+      text: `${formatPrice(min)} – ${formatPrice(max)}`,
       clear: () => {
         ui.min.value = 0;
         ui.max.value = 10000;
@@ -793,8 +1006,8 @@ $("[data-search-focus]").addEventListener("click", () => {
   ui.search.focus();
   $("#catalog").scrollIntoView({ behavior: "smooth" });
 });
-$("[data-language-toggle]").addEventListener("click", () =>
-  setLanguage(language === "en" ? "ar" : "en"),
+$("[data-language-select]").addEventListener("change", (event) =>
+  setLanguage(event.currentTarget.value),
 );
 $(".menu-toggle").addEventListener("click", (event) => {
   const button = event.currentTarget;

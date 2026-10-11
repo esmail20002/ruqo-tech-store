@@ -430,5 +430,73 @@
       },
     },
   ];
-  window.NoursData = { products };
+  const localizedProductCopy = {
+    fr: {
+      "macbook-pro": { description: "Écran Liquid Retina XDR · mémoire unifiée 16 Go", features: ["Écran Liquid Retina XDR de 14 pouces", "Puce Apple M4", "Mémoire unifiée de 16 Go", "Autonomie pour toute la journée"] },
+      "galaxy-s25": { description: "Appareil photo 200 MP · stockage 512 Go", features: ["Appareil photo professionnel de 200 MP", "Stockage de 512 Go", "Fonctions Galaxy AI", "Écran Dynamic AMOLED"] },
+      "airpods-pro": { description: "Réduction active du bruit · USB-C", features: ["Réduction active du bruit", "Audio adaptatif et mode Transparence", "Boîtier de charge MagSafe USB-C", "Audio spatial personnalisé"] },
+      "galaxy-watch": { description: "Suivi avancé de la santé · GPS", features: ["Coaching avancé du sommeil", "Suivi du rythme cardiaque et du bien-être", "GPS intégré", "Conception résistante à l’eau"] },
+      "asus-zenbook": { description: "Écran OLED 3K · Intel Core Ultra 7", features: ["Écran tactile OLED 3K de 14 pouces", "Processeur Intel Core Ultra 7", "Châssis léger en aluminium", "Connectivité USB-C rapide"] },
+      "iphone-16": { description: "Puce A18 Pro · stockage 256 Go", features: ["Puce A18 Pro", "Système photo professionnel", "Stockage de 256 Go", "Conception en titane"] },
+      "sony-headphones": { description: "Réduction du bruit studio · autonomie de 30 h", features: ["Réduction du bruit parmi les meilleures du marché", "Jusqu’à 30 heures d’autonomie", "Appels mains libres d’une grande clarté", "Confort léger"] },
+      "apple-watch": { description: "Écran Retina toujours activé · capteurs de santé", features: ["Conception plus fine et plus légère", "Capteurs de santé avancés", "Écran Retina toujours activé", "Recharge rapide"] },
+      "ipad-air": { description: "Puce M3 · écran Liquid Retina de 11 pouces", features: ["Puce Apple M3", "Écran Liquid Retina de 11 pouces", "Compatible avec Apple Pencil", "Autonomie pour toute la journée"] },
+      "bose-quietcomfort": { description: "Audio spatial · confort premium", features: ["Audio spatial immersif", "Réduction du bruit de classe mondiale", "Matériaux souples haut de gamme", "Modes d’écoute personnalisés"] },
+      "dell-xps": { description: "Écran InfinityEdge · Intel Core Ultra 5", features: ["Écran InfinityEdge de 13,4 pouces", "Intel Core Ultra 5", "Boîtier premium en aluminium usiné", "Compatible ExpressCharge"] },
+      "pixel-9": { description: "Google AI · système photo professionnel", features: ["Google AI intégré", "Système photo professionnel à trois capteurs", "Écran Super Actua lumineux", "Sept ans de mises à jour"] },
+      "fitbit-sense": { description: "Gestion du stress · autonomie de 6 jours", features: ["Outils de gestion du stress", "ECG et santé cardiaque", "Jusqu’à 6 jours d’autonomie", "GPS intégré"] },
+    },
+    es: {
+      "macbook-pro": { description: "Pantalla Liquid Retina XDR · memoria unificada de 16 GB", features: ["Pantalla Liquid Retina XDR de 14 pulgadas", "Chip Apple M4", "Memoria unificada de 16 GB", "Batería para todo el día"] },
+      "galaxy-s25": { description: "Cámara de 200 MP · almacenamiento de 512 GB", features: ["Cámara profesional de 200 MP", "Almacenamiento de 512 GB", "Funciones Galaxy AI", "Pantalla Dynamic AMOLED"] },
+      "airpods-pro": { description: "Cancelación activa de ruido · USB-C", features: ["Cancelación activa de ruido", "Audio adaptativo y modo de transparencia", "Estuche de carga MagSafe USB-C", "Audio espacial personalizado"] },
+      "galaxy-watch": { description: "Seguimiento avanzado de salud · GPS", features: ["Control avanzado del sueño", "Seguimiento del ritmo cardíaco y bienestar", "GPS integrado", "Diseño resistente al agua"] },
+      "asus-zenbook": { description: "Pantalla OLED 3K · Intel Core Ultra 7", features: ["Pantalla táctil OLED 3K de 14 pulgadas", "Procesador Intel Core Ultra 7", "Chasis ligero de aluminio", "Conexión USB-C de alta velocidad"] },
+      "iphone-16": { description: "Chip A18 Pro · almacenamiento de 256 GB", features: ["Chip A18 Pro", "Sistema de cámaras Pro", "Almacenamiento de 256 GB", "Diseño de titanio"] },
+      "sony-headphones": { description: "Cancelación de ruido de estudio · batería de 30 h", features: ["Cancelación de ruido líder en su categoría", "Hasta 30 horas de batería", "Llamadas manos libres nítidas", "Comodidad y ligereza"] },
+      "apple-watch": { description: "Pantalla Retina siempre activa · sensores de salud", features: ["Diseño más fino y ligero", "Sensores de salud avanzados", "Pantalla Retina siempre activa", "Carga rápida"] },
+      "ipad-air": { description: "Chip M3 · Liquid Retina de 11 pulgadas", features: ["Chip Apple M3", "Pantalla Liquid Retina de 11 pulgadas", "Compatible con Apple Pencil", "Batería para todo el día"] },
+      "bose-quietcomfort": { description: "Audio espacial · comodidad premium", features: ["Audio espacial inmersivo", "Cancelación de ruido de primera", "Materiales suaves de alta calidad", "Modos de escucha personalizados"] },
+      "dell-xps": { description: "Pantalla InfinityEdge · Intel Core Ultra 5", features: ["Pantalla InfinityEdge de 13,4 pulgadas", "Intel Core Ultra 5", "Cuerpo premium de aluminio mecanizado", "Compatible con ExpressCharge"] },
+      "pixel-9": { description: "Google AI · sistema de cámaras profesional", features: ["Google AI integrado", "Sistema profesional de triple cámara", "Pantalla Super Actua brillante", "Siete años de actualizaciones"] },
+      "fitbit-sense": { description: "Gestión del estrés · batería de 6 días", features: ["Herramientas para gestionar el estrés", "ECG y salud cardíaca", "Hasta 6 días de batería", "GPS integrado"] },
+    },
+    zh: {
+      "macbook-pro": { description: "Liquid Retina XDR 显示屏 · 16GB 统一内存", features: ["14 英寸 Liquid Retina XDR 显示屏", "Apple M4 芯片", "16GB 统一内存", "全天续航"] },
+      "galaxy-s25": { description: "2 亿像素相机 · 512GB 存储", features: ["2 亿像素专业级相机", "512GB 存储空间", "Galaxy AI 功能", "Dynamic AMOLED 显示屏"] },
+      "airpods-pro": { description: "主动降噪 · USB-C", features: ["主动降噪", "自适应音频与通透模式", "USB-C MagSafe 充电盒", "个性化空间音频"] },
+      "galaxy-watch": { description: "先进健康追踪 · GPS", features: ["先进睡眠指导", "心率与健康追踪", "内置 GPS", "防水设计"] },
+      "asus-zenbook": { description: "3K OLED 显示屏 · Intel Core Ultra 7", features: ["14 英寸 3K OLED 触控屏", "Intel Core Ultra 7 处理器", "轻薄铝合金机身", "高速 USB-C 连接"] },
+      "iphone-16": { description: "A18 Pro 芯片 · 256GB 存储", features: ["A18 Pro 芯片", "Pro 专业相机系统", "256GB 存储空间", "钛金属设计"] },
+      "sony-headphones": { description: "录音室级降噪 · 30 小时续航", features: ["行业领先的降噪功能", "最长 30 小时续航", "清晰免提通话", "轻盈舒适佩戴"] },
+      "apple-watch": { description: "全天候 Retina 显示屏 · 健康传感器", features: ["更薄更轻的设计", "先进健康传感器", "全天候 Retina 显示屏", "快速充电"] },
+      "ipad-air": { description: "M3 芯片 · 11 英寸 Liquid Retina 显示屏", features: ["Apple M3 芯片", "11 英寸 Liquid Retina 显示屏", "支持 Apple Pencil", "全天续航"] },
+      "bose-quietcomfort": { description: "空间音频 · 高端舒适体验", features: ["沉浸式空间音频", "一流降噪体验", "优质柔软材质", "个性化聆听模式"] },
+      "dell-xps": { description: "InfinityEdge 显示屏 · Intel Core Ultra 5", features: ["13.4 英寸 InfinityEdge 显示屏", "Intel Core Ultra 5", "高端 CNC 铝合金机身", "支持 ExpressCharge 快充"] },
+      "pixel-9": { description: "Google AI · 专业级相机系统", features: ["内置 Google AI", "专业级三摄系统", "明亮的 Super Actua 屏幕", "七年系统更新"] },
+      "fitbit-sense": { description: "压力管理 · 六天续航", features: ["压力管理工具", "心电图与心脏健康监测", "最长六天续航", "内置 GPS"] },
+    },
+  };
+  const localizeProduct = (product, language) => {
+    const translation = localizedProductCopy[language]?.[product.id] || {};
+    return {
+      ...product,
+      name: translation.name || product.name,
+      description: {
+        ...product.description,
+        [language]:
+          translation.description ||
+          product.description[language] ||
+          product.description.en,
+      },
+      features: {
+        ...product.features,
+        [language]:
+          translation.features ||
+          product.features[language] ||
+          product.features.en,
+      },
+    };
+  };
+  window.NoursData = { products, localizeProduct };
 })();

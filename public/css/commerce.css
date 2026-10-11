@@ -42,8 +42,7 @@
 .commerce-menu {
   display: none;
 }
-.commerce-icon-button,
-.commerce-lang {
+.commerce-icon-button {
   display: inline-grid;
   width: 42px;
   height: 42px;
@@ -55,10 +54,19 @@
   cursor: pointer;
 }
 .commerce-lang {
-  width: auto;
-  padding: 0 13px;
-  border-radius: 999px;
+  display: inline-flex;
+  min-width: 112px;
+  height: 42px;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.77rem;
   font-weight: 800;
+  cursor: pointer;
 }
 .commerce-icon-button svg {
   width: 18px;
@@ -727,7 +735,9 @@
     gap: 4px;
   }
   .commerce-lang {
-    padding-inline: 8px;
+    width: 84px;
+    min-width: 84px;
+    padding-inline: 7px;
     font-size: 0.76rem;
   }
   .commerce-links {
@@ -867,7 +877,9 @@
     height: 36px;
   }
   .commerce-lang {
-    padding-inline: 7px;
+    width: 84px;
+    min-width: 84px;
+    padding-inline: 6px;
     font-size: 0.72rem;
   }
   .commerce-product-grid {

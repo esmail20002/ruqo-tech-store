@@ -224,10 +224,323 @@ const translations = {
     "footer.policy2": "Policy",
     "footer.policy3": "Privacy",
   },
+  fr: {
+    "topbar.shipping": "Livraison offerte dès 299 SAR",
+    "topbar.warranty": "Garantie de 2 ans + retours sous 7 jours",
+    "topbar.payment": "Paiements sécurisés",
+    "nav.new": "Nouveautés",
+    "nav.categories": "Catégories",
+    "nav.deals": "Offres",
+    "nav.reviews": "Avis",
+    "nav.support": "Assistance",
+    "nav.account": "Compte",
+    "nav.cart": "Panier",
+    "mobileAd.label": "Offre limitée",
+    "mobileAd.copy": "Jusqu’à 35 % de remise sur une sélection d’appareils",
+    "mobileAd.action": "Acheter →",
+    "hero.eyebrow": "La technologie de demain",
+    "hero.title": "Les derniers appareils. Une expérience d’achat raffinée.",
+    "hero.text": "Découvrez des appareils intelligents performants, une sécurité avancée et un design haut de gamme pensé pour la vie moderne. Des téléphones aux ordinateurs portables, chaque produit est choisi avec soin.",
+    "hero.ctaPrimary": "Acheter maintenant",
+    "hero.ctaSecondary": "Voir les offres",
+    "hero.meta1": "Clients satisfaits",
+    "hero.meta2": "Assistance technique",
+    "hero.meta3": "jours de livraison rapide",
+    "hero.badge": "Meilleure vente",
+    "currency.sar": "SAR",
+    "hero.card1.label": "Performances premium",
+    "hero.card1.name": "Mobile X15",
+    "hero.card1.price": "dès 2 799 SAR",
+    "hero.card2.label": "Nouveauté",
+    "hero.card2.offer": "-25 %",
+    "sections.browse": "Explorer",
+    "sections.categoriesTitle": "Catégories de produits",
+    "sections.viewAll": "Tout voir",
+    "sections.featured": "À la une",
+    "sections.newThisWeek": "Nouveautés de la semaine",
+    "sections.allDeals": "Toutes les offres",
+    "sections.whyUs": "Pourquoi nous choisir",
+    "sections.serviceTitle": "Un service pensé pour vous",
+    "sections.reviewsLabel": "Avis clients",
+    "sections.reviewTitle": "Ce que disent nos clients",
+    "cats.phones": "Téléphones",
+    "cats.phonesText": "Les derniers smartphones et innovations photo.",
+    "cats.phonesCount": "120 produits",
+    "cats.laptops": "Ordinateurs portables",
+    "cats.laptopsText": "Puissance, élégance et productivité exceptionnelle.",
+    "cats.laptopsCount": "94 produits",
+    "cats.watches": "Montres",
+    "cats.watchesText": "Suivez votre santé et vos activités intelligemment.",
+    "cats.watchesCount": "58 produits",
+    "cats.audio": "Audio",
+    "cats.audioText": "Un son pur et une écoute immersive en toute sérénité.",
+    "cats.audioCount": "76 produits",
+    "tags.new": "Nouveau",
+    "tags.sale": "Promo",
+    "tags.featured": "À la une",
+    "tags.offer": "Offre",
+    "products.macbook": "14 pouces · puce M4",
+    "products.s25": "Écran de 6,9 pouces",
+    "products.airpods": "Réduction de bruit professionnelle",
+    "products.watch": "Suivi avancé de la santé",
+    "promo.eyebrow": "Offres exclusives",
+    "promo.title": "Jusqu’à 35 % de remise sur le gaming",
+    "promo.text": "Profitez d’écrans à haute fréquence et de puissants équipements de jeu.",
+    "promo.button": "Profiter de l’offre",
+    "features.fastDelivery": "Livraison rapide",
+    "features.fastDeliveryText": "Livraison dans toutes les villes sous 48 heures, avec suivi en direct.",
+    "features.warranty": "Garantie fiable",
+    "features.warrantyText": "Garantie constructeur de deux ans et service après-vente spécialisé.",
+    "features.payment": "Paiement sécurisé",
+    "features.paymentText": "Des transactions simples et sûres grâce à des moyens de paiement fiables.",
+    "features.consulting": "Conseils d’experts",
+    "features.consultingText": "Nos experts vous aident à choisir selon vos besoins.",
+    "stats.experience": "années d’expérience",
+    "stats.sold": "produits vendus",
+    "stats.satisfaction": "satisfaction client",
+    "stats.support": "service client",
+    "reviews.one": "« Service excellent et livraison rapide. L’appareil est arrivé en parfait état avant la date prévue. »",
+    "reviews.oneRole": "Graphiste",
+    "reviews.two": "« Une expérience professionnelle, de la première visite à la livraison. Je recommande vivement. »",
+    "reviews.twoRole": "Cheffe de projet",
+    "reviews.three": "« Le choix est très varié et répond parfaitement à nos besoins professionnels et quotidiens. »",
+    "reviews.threeRole": "Responsable marketing digital",
+    "newsletter.label": "Les tendances du marché",
+    "newsletter.title": "Recevez nos offres exclusives",
+    "newsletter.placeholder": "Votre adresse e-mail",
+    "newsletter.button": "S’inscrire",
+    "footer.copy": "Une boutique high-tech premium qui allie performance, design et confiance.",
+    "footer.linksTitle": "Liens rapides",
+    "footer.link1": "Nouveautés",
+    "footer.link2": "Catégories",
+    "footer.link3": "Offres",
+    "footer.about": "À propos",
+    "footer.supportTitle": "Assistance",
+    "footer.support1": "Paiement sécurisé",
+    "footer.support2": "Livraison rapide",
+    "footer.support3": "Nous contacter",
+    "footer.contactTitle": "Contact",
+    "footer.location": "Riyad, Arabie saoudite",
+    "footer.rights": "© 2026 RUQO TECH. Tous droits réservés.",
+    "footer.policy1": "Conditions",
+    "footer.policy2": "Retours",
+    "footer.policy3": "Confidentialité",
+  },
+  es: {
+    "topbar.shipping": "Envío gratis a partir de 299 SAR",
+    "topbar.warranty": "Garantía de 2 años + devoluciones en 7 días",
+    "topbar.payment": "Pagos seguros",
+    "nav.new": "Novedades",
+    "nav.categories": "Categorías",
+    "nav.deals": "Ofertas",
+    "nav.reviews": "Reseñas",
+    "nav.support": "Ayuda",
+    "nav.account": "Cuenta",
+    "nav.cart": "Carrito",
+    "mobileAd.label": "Oferta limitada",
+    "mobileAd.copy": "Hasta un 35 % de descuento en productos seleccionados",
+    "mobileAd.action": "Comprar →",
+    "hero.eyebrow": "Tecnología del futuro",
+    "hero.title": "Los últimos dispositivos. Una experiencia de compra refinada.",
+    "hero.text": "Descubre dispositivos inteligentes de alto rendimiento, seguridad avanzada y diseño premium para la vida moderna. Desde móviles hasta portátiles, cada producto está cuidadosamente seleccionado.",
+    "hero.ctaPrimary": "Comprar ahora",
+    "hero.ctaSecondary": "Ver ofertas",
+    "hero.meta1": "Clientes satisfechos",
+    "hero.meta2": "Soporte técnico",
+    "hero.meta3": "días de entrega rápida",
+    "hero.badge": "Más vendido",
+    "currency.sar": "SAR",
+    "hero.card1.label": "Rendimiento premium",
+    "hero.card1.name": "Móvil X15",
+    "hero.card1.price": "desde 2.799 SAR",
+    "hero.card2.label": "Lo último",
+    "hero.card2.offer": "25 % de descuento",
+    "sections.browse": "Explorar",
+    "sections.categoriesTitle": "Categorías de productos",
+    "sections.viewAll": "Ver todo",
+    "sections.featured": "Destacados",
+    "sections.newThisWeek": "Novedades de esta semana",
+    "sections.allDeals": "Todas las ofertas",
+    "sections.whyUs": "Por qué elegirnos",
+    "sections.serviceTitle": "Un servicio pensado para ti",
+    "sections.reviewsLabel": "Opiniones de clientes",
+    "sections.reviewTitle": "Lo que dicen nuestros clientes",
+    "cats.phones": "Móviles",
+    "cats.phonesText": "Los últimos móviles y las innovaciones en cámaras.",
+    "cats.phonesCount": "120 productos",
+    "cats.laptops": "Portátiles",
+    "cats.laptopsText": "Potencia, diseño elegante y productividad excepcional.",
+    "cats.laptopsCount": "94 productos",
+    "cats.watches": "Relojes",
+    "cats.watchesText": "Controla tu salud y actividad de forma inteligente.",
+    "cats.watchesCount": "58 productos",
+    "cats.audio": "Audio",
+    "cats.audioText": "Sonido nítido y una experiencia inmersiva.",
+    "cats.audioCount": "76 productos",
+    "tags.new": "Nuevo",
+    "tags.sale": "Rebaja",
+    "tags.featured": "Destacado",
+    "tags.offer": "Oferta",
+    "products.macbook": "14 pulgadas · chip M4",
+    "products.s25": "Pantalla de 6,9 pulgadas",
+    "products.airpods": "Cancelación de ruido profesional",
+    "products.watch": "Seguimiento avanzado de salud",
+    "promo.eyebrow": "Ofertas exclusivas",
+    "promo.title": "Hasta un 35 % de descuento en gaming",
+    "promo.text": "Disfruta de pantallas de alta frecuencia y potentes equipos para jugar.",
+    "promo.button": "Aprovechar oferta",
+    "features.fastDelivery": "Entrega rápida",
+    "features.fastDeliveryText": "Envíos a todas las ciudades en 48 horas con seguimiento en tiempo real.",
+    "features.warranty": "Garantía fiable",
+    "features.warrantyText": "Dos años de garantía original y asistencia posventa especializada.",
+    "features.payment": "Pago seguro",
+    "features.paymentText": "Transacciones cómodas y seguras con opciones de pago fiables.",
+    "features.consulting": "Asesoramiento experto",
+    "features.consultingText": "Nuestros expertos te ayudan a elegir según tus necesidades.",
+    "stats.experience": "años de experiencia",
+    "stats.sold": "productos vendidos",
+    "stats.satisfaction": "satisfacción del cliente",
+    "stats.support": "atención al cliente",
+    "reviews.one": "«Servicio excelente y entrega rápida. El dispositivo llegó en perfecto estado antes de la fecha prevista.»",
+    "reviews.oneRole": "Diseñador gráfico",
+    "reviews.two": "«Una experiencia profesional desde la primera visita hasta la entrega. Lo recomiendo totalmente.»",
+    "reviews.twoRole": "Jefa de proyectos",
+    "reviews.three": "«La variedad es increíble y la selección se adapta perfectamente a nuestras necesidades.»",
+    "reviews.threeRole": "Especialista en marketing digital",
+    "newsletter.label": "Actualidad del mercado",
+    "newsletter.title": "Suscríbete para recibir ofertas exclusivas",
+    "newsletter.placeholder": "Tu correo electrónico",
+    "newsletter.button": "Suscribirme",
+    "footer.copy": "Una tienda premium de electrónica que combina rendimiento, diseño y confianza.",
+    "footer.linksTitle": "Enlaces rápidos",
+    "footer.link1": "Novedades",
+    "footer.link2": "Categorías",
+    "footer.link3": "Ofertas",
+    "footer.about": "Sobre nosotros",
+    "footer.supportTitle": "Ayuda",
+    "footer.support1": "Pago seguro",
+    "footer.support2": "Envío rápido",
+    "footer.support3": "Contáctanos",
+    "footer.contactTitle": "Contacto",
+    "footer.location": "Riad, Arabia Saudí",
+    "footer.rights": "© 2026 RUQO TECH. Todos los derechos reservados.",
+    "footer.policy1": "Condiciones",
+    "footer.policy2": "Devoluciones",
+    "footer.policy3": "Privacidad",
+  },
+  zh: {
+    "topbar.shipping": "订单满 299 SAR 免运费",
+    "topbar.warranty": "两年保修 · 七天退货",
+    "topbar.payment": "安全支付",
+    "nav.new": "新品",
+    "nav.categories": "分类",
+    "nav.deals": "优惠",
+    "nav.reviews": "评价",
+    "nav.support": "支持",
+    "nav.account": "账户",
+    "nav.cart": "购物袋",
+    "mobileAd.label": "限时优惠",
+    "mobileAd.copy": "精选设备最高优惠 35%",
+    "mobileAd.action": "立即选购 →",
+    "hero.eyebrow": "未来科技",
+    "hero.title": "前沿设备，精致购物体验。",
+    "hero.text": "探索高性能智能设备、先进安全保护与为现代生活打造的高端设计。从手机到笔记本，每件产品都经过精心挑选。",
+    "hero.ctaPrimary": "立即选购",
+    "hero.ctaSecondary": "查看优惠",
+    "hero.meta1": "满意客户",
+    "hero.meta2": "技术支持",
+    "hero.meta3": "快速送达天数",
+    "hero.badge": "热销商品",
+    "currency.sar": "SAR",
+    "hero.card1.label": "旗舰性能",
+    "hero.card1.name": "X15 手机",
+    "hero.card1.price": "售价 2,799 SAR 起",
+    "hero.card2.label": "最新款",
+    "hero.card2.offer": "优惠 25%",
+    "sections.browse": "浏览",
+    "sections.categoriesTitle": "商品分类",
+    "sections.viewAll": "查看全部",
+    "sections.featured": "精选商品",
+    "sections.newThisWeek": "本周新品",
+    "sections.allDeals": "全部优惠",
+    "sections.whyUs": "选择我们的理由",
+    "sections.serviceTitle": "为你打造的服务",
+    "sections.reviewsLabel": "客户评价",
+    "sections.reviewTitle": "客户怎么说",
+    "cats.phones": "手机",
+    "cats.phonesText": "最新智能手机与相机创新。",
+    "cats.phonesCount": "120 件商品",
+    "cats.laptops": "笔记本电脑",
+    "cats.laptopsText": "强劲性能、优雅设计与卓越生产力。",
+    "cats.laptopsCount": "94 件商品",
+    "cats.watches": "手表",
+    "cats.watchesText": "智能追踪健康与日常活动。",
+    "cats.watchesCount": "58 件商品",
+    "cats.audio": "音频",
+    "cats.audioText": "纯净音质与沉浸式聆听体验。",
+    "cats.audioCount": "76 件商品",
+    "tags.new": "新品",
+    "tags.sale": "优惠",
+    "tags.featured": "精选",
+    "tags.offer": "特惠",
+    "products.macbook": "14 英寸 · M4 芯片",
+    "products.s25": "6.9 英寸屏幕",
+    "products.airpods": "专业级降噪",
+    "products.watch": "先进健康监测",
+    "promo.eyebrow": "独家优惠",
+    "promo.title": "游戏设备最高优惠 35%",
+    "promo.text": "高刷新率显示屏与强劲游戏设备，带来出色体验。",
+    "promo.button": "立即领取优惠",
+    "features.fastDelivery": "快速配送",
+    "features.fastDeliveryText": "覆盖各城市，48 小时内送达并提供实时更新。",
+    "features.warranty": "可靠保修",
+    "features.warrantyText": "两年原厂保修与专业售后服务。",
+    "features.payment": "安全支付",
+    "features.paymentText": "通过可靠的支付方式轻松、安全地完成交易。",
+    "features.consulting": "专家建议",
+    "features.consultingText": "专家根据你的需求为你推荐合适的产品。",
+    "stats.experience": "年经验",
+    "stats.sold": "件商品已售",
+    "stats.satisfaction": "客户满意度",
+    "stats.support": "客户服务",
+    "reviews.one": "“服务出色，配送迅速。设备提前送达，状态完好。”",
+    "reviews.oneRole": "平面设计师",
+    "reviews.two": "“从首次浏览到收货，整个体验都很专业，强烈推荐。”",
+    "reviews.twoRole": "项目经理",
+    "reviews.three": "“商品种类丰富，选择非常符合我们的工作与日常需求。”",
+    "reviews.threeRole": "数字营销专员",
+    "newsletter.label": "市场动态",
+    "newsletter.title": "订阅获取独家优惠",
+    "newsletter.placeholder": "你的电子邮箱",
+    "newsletter.button": "立即订阅",
+    "footer.copy": "汇集性能、设计与信赖的高端电子产品商店。",
+    "footer.linksTitle": "快速链接",
+    "footer.link1": "新品上市",
+    "footer.link2": "商品分类",
+    "footer.link3": "优惠活动",
+    "footer.about": "关于我们",
+    "footer.supportTitle": "支持",
+    "footer.support1": "安全支付",
+    "footer.support2": "快速配送",
+    "footer.support3": "联系我们",
+    "footer.contactTitle": "联系方式",
+    "footer.location": "沙特阿拉伯利雅得",
+    "footer.rights": "© 2026 RUQO TECH。保留所有权利。",
+    "footer.policy1": "条款",
+    "footer.policy2": "退货政策",
+    "footer.policy3": "隐私",
+  },
 };
 
-const languageToggle = document.querySelector("[data-lang-switch]");
+const languageSelect = document.querySelector("[data-language-select]");
 let currentLang = window.NoursStore?.getLanguage() || "en";
+const localeByLanguage = {
+  en: "en-US",
+  fr: "fr-FR",
+  es: "es-ES",
+  zh: "zh-CN",
+  ar: "ar-SA",
+};
 const mobileAdSlides = [
   {
     image:
@@ -243,6 +556,9 @@ const mobileAdSlides = [
       copy: "Up to 35% off selected devices",
       action: "Shop now →",
     },
+    fr: { label: "Offre limitée", copy: "Jusqu’à 35 % de remise sur une sélection", action: "Acheter →" },
+    es: { label: "Oferta limitada", copy: "Hasta un 35 % de descuento en productos seleccionados", action: "Comprar →" },
+    zh: { label: "限时优惠", copy: "精选设备最高优惠 35%", action: "立即选购 →" },
   },
   {
     image:
@@ -258,6 +574,9 @@ const mobileAdSlides = [
       copy: "Laptops that elevate your day",
       action: "Explore →",
     },
+    fr: { label: "Sélection pro", copy: "Des ordinateurs qui font la différence", action: "Explorer →" },
+    es: { label: "Selección Pro", copy: "Portátiles que mejoran tu día", action: "Explorar →" },
+    zh: { label: "专业之选", copy: "让每一天更高效的笔记本电脑", action: "探索 →" },
   },
   {
     image:
@@ -273,6 +592,9 @@ const mobileAdSlides = [
       copy: "Discover the latest smartphones",
       action: "Shop phones →",
     },
+    fr: { label: "Nouveautés", copy: "Découvrez les derniers smartphones", action: "Voir les téléphones →" },
+    es: { label: "Recién llegados", copy: "Descubre los últimos smartphones", action: "Ver móviles →" },
+    zh: { label: "新品上市", copy: "探索最新智能手机", action: "选购手机 →" },
   },
 ];
 let mobileAdIndex = 0;
@@ -298,6 +620,9 @@ const featuredProducts = [
       model: "Ultra 2",
       alt: "Smartwatch",
     },
+    fr: { badge: "Meilleure vente", brand: "Apple Watch", model: "Ultra 2", alt: "Montre connectée" },
+    es: { badge: "Más vendido", brand: "Apple Watch", model: "Ultra 2", alt: "Reloj inteligente" },
+    zh: { badge: "热销商品", brand: "Apple Watch", model: "Ultra 2", alt: "智能手表" },
   },
   {
     image:
@@ -315,6 +640,9 @@ const featuredProducts = [
       model: "Pro M4",
       alt: "Professional laptop",
     },
+    fr: { badge: "Choix des pros", brand: "Apple MacBook", model: "Pro M4", alt: "Ordinateur portable professionnel" },
+    es: { badge: "Selección Pro", brand: "Apple MacBook", model: "Pro M4", alt: "Portátil profesional" },
+    zh: { badge: "专业之选", brand: "Apple MacBook", model: "Pro M4", alt: "专业笔记本电脑" },
   },
   {
     image:
@@ -332,6 +660,9 @@ const featuredProducts = [
       model: "S25 Ultra",
       alt: "Smartphone",
     },
+    fr: { badge: "Nouveauté", brand: "Samsung Galaxy", model: "S25 Ultra", alt: "Smartphone" },
+    es: { badge: "Recién llegado", brand: "Samsung Galaxy", model: "S25 Ultra", alt: "Teléfono inteligente" },
+    zh: { badge: "新品上市", brand: "Samsung Galaxy", model: "S25 Ultra", alt: "智能手机" },
   },
 ];
 let featuredProductIndex = 0;
@@ -342,7 +673,7 @@ function renderFeaturedProduct() {
   if (!card) return;
 
   const product = featuredProducts[featuredProductIndex];
-  const content = product[currentLang] || product.ar;
+  const content = product[currentLang] || product.en;
   const image = card.querySelector(".featured-product-image");
 
   card.classList.add("is-changing");
@@ -362,7 +693,7 @@ function renderFeaturedProduct() {
 function formatHomepagePrices() {
   const currency = window.NoursStore?.getCurrency() || "SAR";
   const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
-  const locale = currentLang === "ar" ? "ar-SA" : "en-US";
+  const locale = localeByLanguage[currentLang] || localeByLanguage.en;
   document.querySelectorAll("[data-price-sar]").forEach((node) => {
     const amount = Number(node.dataset.priceSar) * rates[currency];
     if (node.closest(".price-block")) {
@@ -403,7 +734,7 @@ function renderMobileAd() {
   if (!banner) return;
 
   const slide = mobileAdSlides[mobileAdIndex];
-  const copy = slide[currentLang] || slide.ar;
+  const copy = slide[currentLang] || slide.en;
   const image = banner.querySelector(".mobile-ad-image");
 
   banner.classList.add("is-changing");
@@ -455,7 +786,7 @@ function applyTranslations(lang) {
       rating.setAttribute("role", "img");
       rating.setAttribute(
         "aria-label",
-        lang === "ar" ? `التقييم ${score} من 5` : `${score} out of 5 stars`,
+        { ar: `التقييم ${score} من 5`, fr: `Note : ${score} sur 5`, es: `Valoración: ${score} de 5`, zh: `评分：${score} 分（满分 5 分）` }[lang] || `${score} out of 5 stars`,
       );
     });
 
@@ -470,7 +801,7 @@ function applyTranslations(lang) {
       stars.setAttribute("role", "img");
       stars.setAttribute(
         "aria-label",
-        lang === "ar" ? "5 من 5 نجوم" : "5 out of 5 stars",
+        { ar: "5 من 5 نجوم", fr: "5 étoiles sur 5", es: "5 de 5 estrellas", zh: "满分 5 星" }[lang] || "5 out of 5 stars",
       );
     });
 
@@ -478,9 +809,16 @@ function applyTranslations(lang) {
   };
 
   renderRatingIcons();
-  const dictionary = translations[lang] || translations.ar;
-  document.documentElement.lang = lang;
+  const dictionary = translations[lang] || translations.en;
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : lang;
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.title = {
+    en: "RUQO TECH | Premium Electronics Store",
+    fr: "RUQO TECH | Boutique high-tech premium",
+    es: "RUQO TECH | Tienda premium de electrónica",
+    zh: "RUQO TECH | 高端电子产品商店",
+    ar: "RUQO TECH | متجر إلكترونيات فاخر",
+  }[lang];
   window.NoursStore?.setLanguage(lang);
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -498,14 +836,17 @@ function applyTranslations(lang) {
   });
 
   const iconLabels = {
-    search: { ar: "بحث", en: "Search" },
-    wishlist: { ar: "المفضلة", en: "Wishlist" },
+    search: { ar: "بحث", en: "Search", fr: "Rechercher", es: "Buscar", zh: "搜索" },
+    wishlist: { ar: "المفضلة", en: "Wishlist", fr: "Favoris", es: "Favoritos", zh: "心愿单" },
     cart: {
       ar: `السلة، ${new Intl.NumberFormat("ar-SA").format(window.NoursStore?.cartCount() || 0)} منتجات`,
       en: `Cart, ${window.NoursStore?.cartCount() || 0} items`,
+      fr: `Panier, ${window.NoursStore?.cartCount() || 0} articles`,
+      es: `Carrito, ${window.NoursStore?.cartCount() || 0} artículos`,
+      zh: `购物袋，${window.NoursStore?.cartCount() || 0} 件商品`,
     },
-    menu: { ar: "فتح القائمة", en: "Open menu" },
-    menuClose: { ar: "إغلاق القائمة", en: "Close menu" },
+    menu: { ar: "فتح القائمة", en: "Open menu", fr: "Ouvrir le menu", es: "Abrir menú", zh: "打开菜单" },
+    menuClose: { ar: "إغلاق القائمة", en: "Close menu", fr: "Fermer le menu", es: "Cerrar menú", zh: "关闭菜单" },
   };
 
   document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
@@ -514,7 +855,7 @@ function applyTranslations(lang) {
       key === "menu" && el.getAttribute("aria-expanded") === "true";
     const label = menuIsOpen
       ? iconLabels.menuClose[lang]
-      : dictionary[key] || iconLabels[key]?.[lang];
+      : dictionary[key] || iconLabels[key]?.[lang] || iconLabels[key]?.en;
     if (label) {
       el.setAttribute("aria-label", label);
     }
@@ -522,16 +863,15 @@ function applyTranslations(lang) {
   const cartCount = document.querySelector("[data-cart-count]");
   if (cartCount) {
     cartCount.textContent = new Intl.NumberFormat(
-      lang === "ar" ? "ar-SA" : "en-US",
+      localeByLanguage[lang] || localeByLanguage.en,
     ).format(window.NoursStore?.cartCount() || 0);
   }
 
-  const langButton = document.querySelector("[data-lang-switch]");
-  if (langButton) {
-    langButton.textContent = lang === "ar" ? "English" : "العربية";
-    langButton.setAttribute(
+  if (languageSelect) {
+    languageSelect.value = lang;
+    languageSelect.setAttribute(
       "aria-label",
-      lang === "ar" ? "Switch to English" : "التبديل إلى العربية",
+      { en: "Language", fr: "Langue", es: "Idioma", zh: "语言", ar: "اللغة" }[lang] || "Language",
     );
   }
 
@@ -542,9 +882,9 @@ function applyTranslations(lang) {
   renderFeaturedProduct();
 }
 
-if (languageToggle) {
-  languageToggle.addEventListener("click", () => {
-    currentLang = currentLang === "ar" ? "en" : "ar";
+if (languageSelect) {
+  languageSelect.addEventListener("change", (event) => {
+    currentLang = event.currentTarget.value;
     applyTranslations(currentLang);
   });
 }
@@ -559,13 +899,12 @@ if (menuToggle && mainNav) {
     menuToggle.setAttribute("aria-expanded", String(isOpen));
     menuToggle.setAttribute(
       "aria-label",
-      currentLang === "ar"
-        ? isOpen
-          ? "إغلاق القائمة"
-          : "فتح القائمة"
-        : isOpen
-          ? "Close menu"
-          : "Open menu",
+      ({
+        ar: isOpen ? "إغلاق القائمة" : "فتح القائمة",
+        fr: isOpen ? "Fermer le menu" : "Ouvrir le menu",
+        es: isOpen ? "Cerrar menú" : "Abrir menú",
+        zh: isOpen ? "关闭菜单" : "打开菜单",
+      }[currentLang] || (isOpen ? "Close menu" : "Open menu")),
     );
   };
 
@@ -601,7 +940,12 @@ if (newsletterForm) {
     const input = newsletterForm.querySelector("input");
     if (button && input) {
       const originalText = button.textContent;
-      button.textContent = currentLang === "ar" ? "تم التسجيل" : "Subscribed";
+      button.textContent = {
+        ar: "تم التسجيل",
+        fr: "Inscription confirmée",
+        es: "Suscripción confirmada",
+        zh: "订阅成功",
+      }[currentLang] || "Subscribed";
       button.disabled = true;
       input.value = "";
       setTimeout(() => {
