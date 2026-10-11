@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Explore and filter premium phones, laptops, audio, and wearables at RUQO TECH."
+    />
+    <title>Shop All Products | RUQO TECH</title>
+    <link rel="icon" type="image/png" href="/images/ruqo-logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="container topbar-inner">
+          <div class="topbar-texts">
+            <span data-copy="shipping">Free delivery over 299 SAR</span>
+            <span data-copy="warranty">2-year warranty + 7-day returns</span>
+            <span data-copy="payment">Secure payments</span>
+          </div>
+          <button
+            type="button"
+            class="lang-switch"
+            data-language-toggle
+            aria-label="Switch to Arabic"
+          >
+            العربية
+          </button>
+        </div>
+      </header>
+      <header class="site-header">
+        <div class="container nav-wrap">
+          <a href="/" class="brand" aria-label="RUQO TECH home"
+            ><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a
+          >
+          <nav class="main-nav" aria-label="Main navigation">
+            <a href="/#new" data-copy="new">New</a>
+            <a href="/products.html" aria-current="page" data-copy="categories"
+              >Categories</a
+            >
+            <a href="/#deals" data-copy="deals">Deals</a>
+            <a href="/#reviews" data-copy="reviews">Reviews</a>
+            <a href="/#support" data-copy="support">Support</a>
+            <a href="/account.html" data-copy="account">Account</a>
+          </nav>
+          <div class="nav-actions">
+            <button
+              class="icon-button"
+              type="button"
+              data-search-focus
+              aria-label="Search products"
+              title="Search products"
+            >
+              <i data-lucide="search" aria-hidden="true"></i>
+            </button>
+            <a
+              class="icon-button"
+              href="/wishlist.html"
+              aria-label="Wishlist"
+              title="Wishlist"
+              ><i data-lucide="heart" aria-hidden="true"></i
+            ></a>
+            <a class="cart-button" href="/cart.html" aria-label="Cart, 2 items"
+              ><i data-lucide="shopping-bag" aria-hidden="true"></i
+              ><span data-copy="cart">Cart</span
+              ><strong data-cart-count>2</strong></a
+            >
+            <button
+              class="menu-toggle"
+              type="button"
+              aria-label="Open menu"
+              aria-expanded="false"
+            >
+              <i class="menu-icon" data-lucide="menu" aria-hidden="true"></i
+              ><i
+                class="menu-close-icon"
+                data-lucide="x"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="catalog-page">
+        <section class="catalog-intro container">
+          <div class="catalog-breadcrumb">
+            <a href="/" data-copy="home">Home</a
+            ><i data-lucide="chevron-right" aria-hidden="true"></i
+            ><span data-copy="allProducts">All products</span>
+          </div>
+          <div class="catalog-intro-copy">
+            <span class="eyebrow" data-copy="eyebrow"
+              >The RUQO TECH collection</span
+            >
+            <h1 data-copy="title">Find your next favorite.</h1>
+            <p data-copy="intro">
+              Considered technology, chosen for the way you live and work.
+            </p>
+          </div>
+          <div class="catalog-assurances">
+            <span
+              ><i data-lucide="truck" aria-hidden="true"></i
+              ><span data-copy="delivery">Fast delivery</span></span
+            >
+            <span
+              ><i data-lucide="shield-check" aria-hidden="true"></i
+              ><span data-copy="warrantyShort">2-year warranty</span></span
+            >
+            <span
+              ><i data-lucide="rotate-ccw" aria-hidden="true"></i
+              ><span data-copy="returns">Easy returns</span></span
+            >
+          </div>
+        </section>
+
+        <section class="catalog container" id="catalog">
+          <div class="catalog-toolbar">
+            <label class="catalog-search"
+              ><i data-lucide="search" aria-hidden="true"></i
+              ><input
+                type="search"
+                data-catalog-search
+                placeholder="Search products or brands"
+                autocomplete="off"
+              /><kbd>Ctrl K</kbd></label
+            >
+            <div class="catalog-toolbar-actions">
+              <button
+                class="filter-open"
+                type="button"
+                data-filter-open
+                aria-expanded="false"
+              >
+                <i data-lucide="sliders-horizontal" aria-hidden="true"></i
+                ><span data-copy="filters">Filters</span
+                ><span class="filter-count" data-filter-count hidden>0</span>
+              </button>
+              <label class="sort-control"
+                ><span data-copy="sortBy">Sort by</span
+                ><select data-sort-select aria-label="Sort products">
+                  <option value="featured" data-copy="sortFeatured">
+                    Featured
+                  </option>
+                  <option value="newest" data-copy="sortNewest">Newest</option>
+                  <option value="price-asc" data-copy="sortPriceAsc">
+                    Price: low to high
+                  </option>
+                  <option value="price-desc" data-copy="sortPriceDesc">
+                    Price: high to low
+                  </option>
+                  <option value="rating" data-copy="sortRating">
+                    Top rated
+                  </option></select
+                ><i data-lucide="chevron-down" aria-hidden="true"></i
+              ></label>
+              <div class="view-switch" role="group" aria-label="Product layout">
+                <button
+                  type="button"
+                  class="view-button is-active"
+                  data-view="grid"
+                  aria-label="Grid view"
+                  aria-pressed="true"
+                >
+                  <i data-lucide="layout-grid" aria-hidden="true"></i></button
+                ><button
+                  type="button"
+                  class="view-button"
+                  data-view="list"
+                  aria-label="List view"
+                  aria-pressed="false"
+                >
+                  <i data-lucide="list" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="catalog-active-filters"
+            data-active-filters
+            aria-live="polite"
+          ></div>
+          <div class="catalog-body">
+            <button
+              class="filter-backdrop"
+              type="button"
+              data-filter-close
+              aria-label="Close filters"
+            ></button>
+            <aside class="filter-panel" aria-label="Product filters">
+              <div class="filter-panel-head">
+                <div>
+                  <span class="filter-kicker" data-copy="refine"
+                    >Refine your search</span
+                  >
+                  <h2 data-copy="filters">Filters</h2>
+                </div>
+                <button
+                  type="button"
+                  class="filter-close"
+                  data-filter-close
+                  aria-label="Close filters"
+                >
+                  <i data-lucide="x" aria-hidden="true"></i>
+                </button>
+              </div>
+              <fieldset class="filter-group filter-categories">
+                <legend data-copy="category">Category</legend>
+                <label
+                  ><input
+                    type="checkbox"
+                    value="phones"
+                    data-category-filter
+                  /><span data-copy="phones">Phones</span
+                  ><small>4</small></label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    value="laptops"
+                    data-category-filter
+                  /><span data-copy="laptops">Laptops</span
+                  ><small>3</small></label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    value="audio"
+                    data-category-filter
+                  /><span data-copy="audio">Audio</span><small>3</small></label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    value="wearables"
+                    data-category-filter
+                  /><span data-copy="wearables">Wearables</span
+                  ><small>3</small></label
+                >
+              </fieldset>
+              <fieldset class="filter-group">
+                <legend data-copy="priceRange">Price range</legend>
+                <div class="price-inputs">
+                  <label
+                    ><span data-copy="min">Min</span
+                    ><span class="price-field"
+                      ><input
+                        type="number"
+                        inputmode="numeric"
+                        min="0"
+                        max="10000"
+                        value="0"
+                        data-price-min
+                        aria-label="Minimum price"
+                      /><b>SAR</b></span
+                    ></label
+                  ><span class="price-dash" aria-hidden="true"></span
+                  ><label
+                    ><span data-copy="max">Max</span
+                    ><span class="price-field"
+                      ><input
+                        type="number"
+                        inputmode="numeric"
+                        min="0"
+                        max="10000"
+                        value="10000"
+                        data-price-max
+                        aria-label="Maximum price"
+                      /><b>SAR</b></span
+                    ></label
+                  >
+                </div>
+                <input
+                  class="price-range"
+                  type="range"
+                  min="0"
+                  max="10000"
+                  step="100"
+                  value="10000"
+                  data-price-range
+                  aria-label="Maximum price slider"
+                />
+                <div class="range-labels">
+                  <span>0 SAR</span><span>10,000 SAR</span>
+                </div>
+              </fieldset>
+              <fieldset class="filter-group">
+                <legend data-copy="rating">Customer rating</legend>
+                <label class="rating-option"
+                  ><input
+                    type="radio"
+                    name="rating"
+                    value="0"
+                    checked
+                    data-rating-filter
+                  /><span data-copy="anyRating">Any rating</span></label
+                >
+                <label class="rating-option"
+                  ><input
+                    type="radio"
+                    name="rating"
+                    value="4.5"
+                    data-rating-filter
+                  /><span class="rating-stars">★★★★<span>★</span></span
+                  ><span data-copy="andUp">& up</span></label
+                >
+                <label class="rating-option"
+                  ><input
+                    type="radio"
+                    name="rating"
+                    value="4.8"
+                    data-rating-filter
+                  /><span class="rating-stars">★★★★★</span
+                  ><span data-copy="andUp">& up</span></label
+                >
+              </fieldset>
+              <label class="stock-filter"
+                ><input type="checkbox" data-stock-filter /><span
+                  class="stock-toggle"
+                  aria-hidden="true"
+                ></span
+                ><span data-copy="inStock">In stock only</span></label
+              >
+              <button class="filter-reset" type="button" data-reset-filters>
+                <i data-lucide="rotate-ccw" aria-hidden="true"></i
+                ><span data-copy="clearFilters">Clear all filters</span>
+              </button>
+            </aside>
+            <div class="catalog-results">
+              <div class="results-heading">
+                <p>
+                  <strong data-result-count>13</strong>
+                  <span data-copy="productsFound">products</span>
+                </p>
+                <span class="results-note" data-copy="curated"
+                  >Curated for you</span
+                >
+              </div>
+              <div
+                class="catalog-grid"
+                data-product-grid
+                aria-live="polite"
+              ></div>
+              <div class="empty-results" data-empty-results hidden>
+                <span class="empty-icon"
+                  ><i data-lucide="search-x" aria-hidden="true"></i
+                ></span>
+                <h2 data-copy="noResults">No products found</h2>
+                <p data-copy="tryAgain">Try changing your search or filters.</p>
+                <button
+                  class="secondary-btn"
+                  type="button"
+                  data-reset-filters
+                  data-copy="clearFilters"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="site-footer catalog-footer">
+        <div class="container footer-bottom-inner">
+          <a href="/" class="brand footer-brand"
+            ><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a
+          ><span data-copy="rights">© 2026 RUQO TECH. All rights reserved.</span>
+        </div>
+      </footer>
+    </div>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/store.js"></script>
+    <script src="/js/catalog-data.js"></script>
+    <script src="/js/products.js"></script>
+  </body>
+</html>

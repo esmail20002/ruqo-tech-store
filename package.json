@@ -1,0 +1,21 @@
+{
+  "name": "glass-electronics-store",
+  "version": "1.0.0",
+  "description": "Premium Arabic electronics e-commerce storefront",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build:pages": "node scripts/build-pages.js"
+  },
+  "keywords": [
+    "express",
+    "ecommerce",
+    "electronics",
+    "arabic"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
