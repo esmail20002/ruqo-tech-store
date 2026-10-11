@@ -200,7 +200,7 @@ input {
   height: 84px;
   margin-left: 0;
   padding: 0;
-  transform: none;
+  transform: translateX(6px);
   border-radius: 0;
   background: transparent;
   object-fit: contain;
