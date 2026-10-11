@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Premium electronics store featuring the latest mobile devices, laptops, smartwatches, and immersive audio experiences."
+    />
+    <title>RUQO TECH | Premium Electronics Store</title>
+    <link rel="icon" type="image/png" href="/images/ruqo-logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="container topbar-inner">
+          <div class="topbar-texts">
+            <span data-i18n="topbar.shipping">توصيل مجاني فوق 299 ر.س</span>
+            <span data-i18n="topbar.warranty"
+              >ضمان سنتين + استرجاع خلال 7 أيام</span
+            >
+            <span data-i18n="topbar.payment">مدفوعات آمنة</span>
+          </div>
+          <button
+            type="button"
+            class="lang-switch"
+            data-lang-switch
+            aria-label="التبديل إلى العربية"
+          >
+            العربية
+          </button>
+        </div>
+      </header>
+
+      <header class="site-header">
+        <div class="container nav-wrap">
+          <a href="/" class="brand" aria-label="RUQO TECH">
+            <img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" />
+          </a>
+
+          <nav class="main-nav" aria-label="التنقل الرئيسي">
+            <a href="#new" data-i18n="nav.new">جديد</a>
+            <a href="/products.html" data-i18n="nav.categories">التصنيفات</a>
+            <a href="#deals" data-i18n="nav.deals">العروض</a>
+            <a href="#reviews" data-i18n="nav.reviews">التقييمات</a>
+            <a href="#support" data-i18n="nav.support">الدعم</a>
+            <a href="/account.html" data-i18n="nav.account">حسابي</a>
+          </nav>
+
+          <div class="nav-actions">
+            <a
+              class="icon-button"
+              href="/products.html#catalog"
+              aria-label="Search"
+              data-i18n-aria="search"
+            >
+              <i data-lucide="search" aria-hidden="true"></i>
+            </a>
+            <a
+              class="icon-button"
+              href="/wishlist.html"
+              aria-label="Wishlist"
+              data-i18n-aria="wishlist"
+            >
+              <i data-lucide="heart" aria-hidden="true"></i>
+            </a>
+            <a class="cart-button" href="/cart.html" data-i18n-aria="cart">
+              <i data-lucide="shopping-bag" aria-hidden="true"></i>
+              <span data-i18n="nav.cart">السلة</span>
+              <strong data-cart-count>0</strong>
+            </a>
+            <button
+              class="menu-toggle"
+              aria-label="Open menu"
+              data-i18n-aria="menu"
+              aria-expanded="false"
+            >
+              <i class="menu-icon" data-lucide="menu" aria-hidden="true"></i>
+              <i class="menu-close-icon" data-lucide="x" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <a class="mobile-ad-banner" href="#deals">
+        <img
+          class="mobile-ad-image"
+          src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=500&q=80"
+          alt=""
+          loading="eager"
+        />
+        <span class="mobile-ad-content">
+          <span class="mobile-ad-label">عرض محدود</span>
+          <span class="mobile-ad-copy"
+            >خصومات تصل إلى 35% على أجهزة مختارة</span
+          >
+          <span class="mobile-ad-action">
+            <span class="mobile-ad-action-label">تسوق الآن</span>
+            <i
+              class="mobile-ad-arrow"
+              data-lucide="arrow-right"
+              aria-hidden="true"
+            ></i>
+          </span>
+        </span>
+      </a>
+
+      <main>
+        <section class="hero container reveal">
+          <div class="hero-copy">
+            <span class="eyebrow" data-i18n="hero.eyebrow"
+              >تكنولوجيا مستقبلية</span
+            >
+            <h1 data-i18n="hero.title">أحدث الأجهزة. تجربة شراء أنيقة.</h1>
+            <p data-i18n="hero.text">
+              اكتشف أجهزة ذكية عالية الأداء، أمان متقدم، وتصميم فاخر مصمم للعالم
+              العصري. من الهواتف واللابتوبات إلى الأجهزة المنزلية، كل منتج
+              اخترناه بعناية لتليق بطموحاتك.
+            </p>
+
+            <div class="cta-group">
+              <a
+                href="/products.html"
+                class="primary-btn"
+                data-i18n="hero.ctaPrimary"
+                >تسوق الآن</a
+              >
+              <a
+                href="/products.html?filter=deals"
+                class="secondary-btn"
+                data-i18n="hero.ctaSecondary"
+                >استعرض العروض</a
+              >
+            </div>
+
+            <ul class="hero-meta" aria-label="مميزات المتجر">
+              <li>
+                <strong>+50,000</strong
+                ><span data-i18n="hero.meta1">عميل راضي</span>
+              </li>
+              <li>
+                <strong>24/7</strong><span data-i18n="hero.meta2">دعم فني</span>
+              </li>
+              <li>
+                <strong>2</strong
+                ><span data-i18n="hero.meta3">يوم توصيل سريع</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="hero-visual" aria-label="عرض المنتجات المميزة">
+            <div class="glass-panel highlight-card">
+              <span class="product-badge">أفضل مبيعات</span>
+              <div class="product-art">
+                <img
+                  class="featured-product-image"
+                  src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80"
+                  alt="ساعة ذكية"
+                  loading="eager"
+                />
+              </div>
+              <div class="product-summary">
+                <div>
+                  <p>Apple Watch</p>
+                  <h3>Ultra 2</h3>
+                </div>
+                <div class="price-block">
+                  <span data-price-sar="3299">3,299</span>
+                  <small data-i18n="currency.sar">ر.س</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="mini-card floating-card card-one">
+              <span data-i18n="hero.card1.label">أداء متقدم</span>
+              <strong data-i18n="hero.card1.name">موبايل X15</strong>
+              <small data-i18n="hero.card1.price">من 2,799 ر.س</small>
+            </div>
+            <div class="mini-card floating-card card-two">
+              <span data-i18n="hero.card2.label">أحدث</span>
+              <strong>AirPods Max</strong>
+              <small data-i18n="hero.card2.offer">خصم 25%</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="partners container reveal">
+          <div class="partner-row" aria-label="شراكات العلامات التجارية">
+            <div class="partner-track">
+              <div class="partner-group">
+                <span>APPLE</span>
+                <span>SAMSUNG</span>
+                <span>XIAOMI</span>
+                <span>SONY</span>
+                <span>ASUS</span>
+                <span>HP</span>
+              </div>
+              <div class="partner-group" aria-hidden="true">
+                <span>APPLE</span>
+                <span>SAMSUNG</span>
+                <span>XIAOMI</span>
+                <span>SONY</span>
+                <span>ASUS</span>
+                <span>HP</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="categories" class="categories container reveal">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow" data-i18n="sections.browse">تصفح</span>
+              <h2 data-i18n="sections.categoriesTitle">فئات المنتجات</h2>
+            </div>
+            <a
+              href="/products.html"
+              class="section-link"
+              data-i18n="sections.viewAll"
+              >عرض الكل</a
+            >
+          </div>
+
+          <div class="category-grid">
+            <a
+              href="/products.html?category=phones"
+              class="category-card feature-card"
+            >
+              <img
+                class="category-image"
+                src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"
+                alt=""
+                loading="lazy"
+              />
+              <div class="category-content">
+                <h3 data-i18n="cats.phones">الهواتف</h3>
+                <p data-i18n="cats.phonesText">
+                  أحدث هواتف الذكاء وابتكارات الكاميرا.
+                </p>
+                <span data-i18n="cats.phonesCount">120 منتج</span>
+              </div>
+            </a>
+            <a
+              href="/products.html?category=laptops"
+              class="category-card feature-card"
+            >
+              <img
+                class="category-image"
+                src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80"
+                alt=""
+                loading="lazy"
+              />
+              <div class="category-content">
+                <h3 data-i18n="cats.laptops">اللابتوبات</h3>
+                <p data-i18n="cats.laptopsText">
+                  أداء قوي، تصميم أنيق، وتجربة إنتاجية استثنائية.
+                </p>
+                <span data-i18n="cats.laptopsCount">94 منتج</span>
+              </div>
+            </a>
+            <a
+              href="/products.html?category=wearables"
+              class="category-card feature-card"
+            >
+              <img
+                class="category-image"
+                src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80"
+                alt=""
+                loading="lazy"
+              />
+              <div class="category-content">
+                <h3 data-i18n="cats.watches">الساعات</h3>
+                <p data-i18n="cats.watchesText">
+                  راقب صحتك وتابع أنشطتك بشكل ذكي.
+                </p>
+                <span data-i18n="cats.watchesCount">58 منتج</span>
+              </div>
+            </a>
+            <a
+              href="/products.html?category=audio"
+              class="category-card feature-card"
+            >
+              <img
+                class="category-image"
+                src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=80"
+                alt=""
+                loading="lazy"
+              />
+              <div class="category-content">
+                <h3 data-i18n="cats.audio">الصوت</h3>
+                <p data-i18n="cats.audioText">
+                  صوت نقي وتجربة استماع غامرة هادئة.
+                </p>
+                <span data-i18n="cats.audioCount">76 منتج</span>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <section id="new" class="featured container reveal">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow" data-i18n="sections.featured"
+                >منتجات مميزة</span
+              >
+              <h2 data-i18n="sections.newThisWeek">جديد هذا الأسبوع</h2>
+            </div>
+            <a
+              href="/products.html"
+              class="section-link"
+              data-i18n="sections.allDeals"
+              >كل العروض</a
+            >
+          </div>
+
+          <div class="product-grid">
+            <article class="product-card">
+              <div class="product-image img-one">
+                <span class="tag" data-i18n="tags.new">جديد</span>
+              </div>
+              <div class="product-body">
+                <div class="product-info">
+                  <h3>
+                    <a href="/product.html?id=macbook-pro">MacBook Pro M4</a>
+                  </h3>
+                  <p data-i18n="products.macbook">14 بوصة - شريحة M4</p>
+                </div>
+                <div class="product-meta">
+                  <span class="rating">★★★★★ 4.9</span>
+                  <strong data-price-sar="8499">8,499 ر.س</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-image img-two">
+                <span class="tag tag-sale" data-i18n="tags.sale">خصم</span>
+              </div>
+              <div class="product-body">
+                <div class="product-info">
+                  <h3>
+                    <a href="/product.html?id=galaxy-s25">Samsung S25 Ultra</a>
+                  </h3>
+                  <p data-i18n="products.s25">بشاشة 6.9 إنش</p>
+                </div>
+                <div class="product-meta">
+                  <span class="rating">★★★★★ 4.8</span>
+                  <strong data-price-sar="5499">5,499 ر.س</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-image img-three">
+                <span class="tag" data-i18n="tags.featured">مميز</span>
+              </div>
+              <div class="product-body">
+                <div class="product-info">
+                  <h3>
+                    <a href="/product.html?id=airpods-pro">AirPods Pro</a>
+                  </h3>
+                  <p data-i18n="products.airpods">إلغاء ضجيج احترافي</p>
+                </div>
+                <div class="product-meta">
+                  <span class="rating">★★★★★ 4.9</span>
+                  <strong data-price-sar="1399">1,399 ر.س</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-image img-four">
+                <span class="tag tag-sale" data-i18n="tags.offer">عرض</span>
+              </div>
+              <div class="product-body">
+                <div class="product-info">
+                  <h3>
+                    <a href="/product.html?id=galaxy-watch">Galaxy Watch 7</a>
+                  </h3>
+                  <p data-i18n="products.watch">مراقبة صحية متقدمة</p>
+                </div>
+                <div class="product-meta">
+                  <span class="rating">★★★★★ 4.7</span>
+                  <strong data-price-sar="1199">1,199 ر.س</strong>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="deals" class="promo-banner container reveal">
+          <div class="promo-copy">
+            <span class="eyebrow light" data-i18n="promo.eyebrow"
+              >تخفيضات حصرية</span
+            >
+            <h2 data-i18n="promo.title">خصم يصل إلى 35% على أجهزة الألعاب</h2>
+            <p data-i18n="promo.text">
+              استمتع بأداء استثنائي مع شاشات عالية التردد وأجهزة قوية للعبة
+              المميزة.
+            </p>
+            <a
+              href="/products.html?filter=deals"
+              class="primary-btn light-btn"
+              data-i18n="promo.button"
+              >احصل على العرض</a
+            >
+          </div>
+          <div class="promo-visual">
+            <div class="console-visual"></div>
+          </div>
+        </section>
+
+        <section class="features container reveal">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow" data-i18n="sections.whyUs">لماذا نحن</span>
+              <h2 data-i18n="sections.serviceTitle">خدمة تلبي احتياجاتك</h2>
+            </div>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-box">
+              <div class="feature-top">
+                <span class="feature-index">01</span>
+              </div>
+              <h3 data-i18n="features.fastDelivery">توصيل سريع</h3>
+              <p data-i18n="features.fastDeliveryText">
+                توصيل إلى جميع المدن خلال 48 ساعة مع تحديثات فورية.
+              </p>
+            </article>
+            <article class="feature-box">
+              <div class="feature-top">
+                <span class="feature-index">02</span>
+              </div>
+              <h3 data-i18n="features.warranty">ضمان موثوق</h3>
+              <p data-i18n="features.warrantyText">
+                ضمان أصلي لمدة عامين مع خدمات ما بعد البيع المتخصصة.
+              </p>
+            </article>
+            <article class="feature-box">
+              <div class="feature-top">
+                <span class="feature-index">03</span>
+              </div>
+              <h3 data-i18n="features.payment">دفع آمن</h3>
+              <p data-i18n="features.paymentText">
+                دفع مريح وآمن مع خيارات متعددة وموثوقة.
+              </p>
+            </article>
+            <article class="feature-box">
+              <div class="feature-top">
+                <span class="feature-index">04</span>
+              </div>
+              <h3 data-i18n="features.consulting">استشارات الخبراء</h3>
+              <p data-i18n="features.consultingText">
+                اختيار مثالي من خبرائنا حسب احتياجك ومميزتك.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="stats container reveal">
+          <div class="stat-item">
+            <strong>12+</strong>
+            <span data-i18n="stats.experience">سنوات خبرة</span>
+          </div>
+          <div class="stat-item">
+            <strong>320K</strong>
+            <span data-i18n="stats.sold">منتج تم بيعه</span>
+          </div>
+          <div class="stat-item">
+            <strong>97%</strong>
+            <span data-i18n="stats.satisfaction">رضا العملاء</span>
+          </div>
+          <div class="stat-item">
+            <strong>24/7</strong>
+            <span data-i18n="stats.support">خدمة عملاء</span>
+          </div>
+        </section>
+
+        <section id="reviews" class="testimonials container reveal">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow" data-i18n="sections.reviewsLabel"
+                >آراء العملاء</span
+              >
+              <h2 data-i18n="sections.reviewTitle">ماذا يقول عملاؤنا</h2>
+            </div>
+          </div>
+
+          <div class="testimonial-grid">
+            <article class="testimonial-card">
+              <div class="stars">★★★★★</div>
+              <p data-i18n="reviews.one">
+                “خدمة مميزة وسريعة، والتوصيل كان قبل الموعد المحدد، كما أن
+                الجهاز وصل بحالة ممتازة.”
+              </p>
+              <div class="author">
+                <div class="avatar avatar-one"></div>
+                <div>
+                  <strong>علي النجار</strong>
+                  <span data-i18n="reviews.oneRole">مصمم جرافيك</span>
+                </div>
+              </div>
+            </article>
+            <article class="testimonial-card">
+              <div class="stars">★★★★★</div>
+              <p data-i18n="reviews.two">
+                “التجربة كانت احترافية من أول زيارة إلى موقع المتجر حتى استلام
+                الطلب. أنصح به بشدة.”
+              </p>
+              <div class="author">
+                <div class="avatar avatar-two"></div>
+                <div>
+                  <strong>سارة الحربي</strong>
+                  <span data-i18n="reviews.twoRole">مديرة مشاريع</span>
+                </div>
+              </div>
+            </article>
+            <article class="testimonial-card">
+              <div class="stars">★★★★★</div>
+              <p data-i18n="reviews.three">
+                “الأدوات المتاحة متنوعة جدًا، والاختيارات كانت دقيقة جدًا مع
+                احتياجاتنا في العمل والراحة.”
+              </p>
+              <div class="author">
+                <div class="avatar avatar-three"></div>
+                <div>
+                  <strong>محمد الزهراني</strong>
+                  <span data-i18n="reviews.threeRole">مسوق رقمي</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="newsletter container reveal">
+          <div class="newsletter-box">
+            <div>
+              <span class="eyebrow" data-i18n="newsletter.label"
+                >نبض السوق</span
+              >
+              <h2 data-i18n="newsletter.title">
+                اشترك للحصول على العروض الحصرية
+              </h2>
+            </div>
+            <form class="newsletter-form">
+              <input
+                type="email"
+                data-i18n-placeholder="newsletter.placeholder"
+                placeholder="بريدك الإلكتروني"
+                aria-label="البريد الإلكتروني"
+              />
+              <button
+                type="submit"
+                class="primary-btn"
+                data-i18n="newsletter.button"
+              >
+                اشترك الآن
+              </button>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <footer id="support" class="site-footer">
+        <div class="container footer-grid">
+          <div>
+            <a href="/" class="brand footer-brand">
+              <img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" />
+            </a>
+            <p class="footer-copy" data-i18n="footer.copy">
+              متجر إلكترونيات فاخر يجمع بين الأداء، التصميم، والثقة في كل طلب.
+            </p>
+          </div>
+
+          <div>
+            <h4 data-i18n="footer.linksTitle">روابط سريعة</h4>
+            <ul>
+              <li><a href="#new" data-i18n="footer.link1">منتجات جديدة</a></li>
+              <li>
+                <a href="#categories" data-i18n="footer.link2">التصنيفات</a>
+              </li>
+              <li><a href="#deals" data-i18n="footer.link3">العروض</a></li>
+              <li><a href="/about.html" data-i18n="footer.about">من نحن</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 data-i18n="footer.supportTitle">الدعم</h4>
+            <ul>
+              <li>
+                <a href="/support.html#payment" data-i18n="footer.support1"
+                  >الدفع الآمن</a
+                >
+              </li>
+              <li>
+                <a href="/support.html#delivery" data-i18n="footer.support2"
+                  >شحن سريع</a
+                >
+              </li>
+              <li>
+                <a href="/support.html#contact" data-i18n="footer.support3"
+                  >تواصل معنا</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 data-i18n="footer.contactTitle">التواصل</h4>
+            <ul>
+              <li><a href="tel:+966500000000">+966 50 000 0000</a></li>
+              <li>
+                <a href="mailto:hello@noursstore.com">hello@noursstore.com</a>
+              </li>
+              <li data-i18n="footer.location">
+                الرياض - المملكة العربية السعودية
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div class="container footer-bottom-inner">
+            <span data-i18n="footer.rights"
+              >© 2026 RUQO TECH. جميع الحقوق محفوظة.</span
+            >
+            <div class="footer-policies">
+              <a href="/support.html#terms" data-i18n="footer.policy1"
+                >الشروط</a
+              >
+              <a href="/support.html#returns" data-i18n="footer.policy2"
+                >الاسترجاع</a
+              >
+              <a href="/support.html#privacy" data-i18n="footer.policy3"
+                >الخصوصية</a
+              >
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/store.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+      if (window.lucide) lucide.createIcons();
+    </script>
+  </body>
+</html>
