@@ -196,8 +196,8 @@ input {
   letter-spacing: 0.31em;
 }
 .footer-brand .brand-logo {
-  width: 220px;
-  height: 110px;
+  width: 168px;
+  height: 84px;
   margin-left: 0;
   padding: 0;
   transform: none;
@@ -1554,8 +1554,8 @@ section {
     margin-left: -16px;
   }
   .footer-brand .brand-logo {
-    width: 176px;
-    height: 88px;
+    width: 148px;
+    height: 74px;
   }
 
   .nav-actions {

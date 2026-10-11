@@ -115,8 +115,8 @@
 }
 .commerce-footer .brand-logo {
   display: block;
-  width: 190px;
-  height: 95px;
+  width: 168px;
+  height: 84px;
   margin-left: 0;
   padding: 0;
   transform: none;
@@ -712,6 +712,10 @@
 @media (max-width: 650px) {
   .commerce-nav {
     min-height: 66px;
+  }
+  .commerce-footer .brand-logo {
+    width: 148px;
+    height: 74px;
   }
   .commerce-nav .brand-logo {
     width: 142px;
