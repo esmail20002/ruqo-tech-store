@@ -712,15 +712,23 @@
 @media (max-width: 650px) {
   .commerce-nav {
     min-height: 66px;
+    gap: 10px;
   }
   .commerce-footer .brand-logo {
     width: 148px;
     height: 74px;
   }
   .commerce-nav .brand-logo {
-    width: 142px;
-    height: 42px;
+    width: 126px;
+    height: 38px;
     margin-left: -16px;
+  }
+  .commerce-actions {
+    gap: 4px;
+  }
+  .commerce-lang {
+    padding-inline: 8px;
+    font-size: 0.76rem;
   }
   .commerce-links {
     display: none;
@@ -845,6 +853,23 @@
   }
 }
 @media (max-width: 370px) {
+  .commerce-nav {
+    gap: 4px;
+  }
+  .commerce-nav .brand-logo {
+    width: clamp(88px, 34vw, 116px);
+  }
+  .commerce-actions {
+    gap: 3px;
+  }
+  .commerce-actions .commerce-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+  .commerce-lang {
+    padding-inline: 7px;
+    font-size: 0.72rem;
+  }
   .commerce-product-grid {
     grid-template-columns: 1fr;
   }
