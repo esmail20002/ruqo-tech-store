@@ -7,6 +7,7 @@
     orders: "nours-orders",
     settings: "nours-settings",
     currency: "nours-currency",
+    theme: "nours-theme",
     variants: "nours-product-variants",
   };
   const read = (key, fallback) => {
@@ -52,7 +53,47 @@
       ? "ar"
       : "en";
   const setLanguage = (language) =>
-    write(keys.language, language === "ar" ? "ar" : "en");
+    {
+      write(keys.language, language === "ar" ? "ar" : "en");
+      syncTheme();
+    };
+  const getTheme = () =>
+    read(keys.theme, localStorage.getItem(keys.theme)) === "dark"
+      ? "dark"
+      : "light";
+  const syncTheme = () => {
+    const theme = getTheme();
+    document.documentElement.dataset.theme = theme;
+    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+      const isDark = theme === "dark";
+      const language = getLanguage();
+      button.setAttribute("aria-pressed", String(isDark));
+      button.setAttribute(
+        "aria-label",
+        language === "ar"
+          ? isDark
+            ? "تفعيل الوضع الفاتح"
+            : "تفعيل الوضع الداكن"
+          : isDark
+            ? "Switch to light mode"
+            : "Switch to dark mode",
+      );
+      button.title =
+        language === "ar"
+          ? isDark
+            ? "الوضع الفاتح"
+            : "الوضع الداكن"
+          : isDark
+            ? "Light mode"
+            : "Dark mode";
+      button.innerHTML = `<i data-lucide="${isDark ? "sun" : "moon"}" aria-hidden="true"></i>`;
+    });
+    window.lucide?.createIcons();
+  };
+  const setTheme = (theme) => {
+    write(keys.theme, theme === "dark" ? "dark" : "light");
+    syncTheme();
+  };
   const getProfile = () =>
     read(keys.profile, { name: "", email: "", phone: "", city: "Riyadh" });
   const setProfile = (profile) => write(keys.profile, profile);
@@ -91,6 +132,9 @@
     setWishlist,
     getLanguage,
     setLanguage,
+    getTheme,
+    setTheme,
+    syncTheme,
     getProfile,
     setProfile,
     getOrders,
@@ -103,4 +147,10 @@
     getProductVariant,
     setProductVariant,
   };
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-theme-toggle]")) {
+      setTheme(getTheme() === "dark" ? "light" : "dark");
+    }
+  });
+  syncTheme();
 })();
