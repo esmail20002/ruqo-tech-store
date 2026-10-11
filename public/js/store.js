@@ -1,4 +1,8 @@
 (() => {
+  const imageDirectory = new URL(
+    "../images/",
+    document.currentScript?.src || document.baseURI,
+  );
   const keys = {
     cart: "nours-cart",
     wishlist: "nours-wishlist",
@@ -63,7 +67,12 @@
       : "light";
   const syncTheme = () => {
     const theme = getTheme();
+    const logoFile = theme === "dark" ? "dark.png" : "ruqo-logo.png";
     document.documentElement.dataset.theme = theme;
+    document.querySelectorAll("img.brand-logo").forEach((image) => {
+      const logoUrl = new URL(logoFile, imageDirectory).href;
+      if (image.src !== logoUrl) image.src = logoUrl;
+    });
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       const isDark = theme === "dark";
       const language = getLanguage();
