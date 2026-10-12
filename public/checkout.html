@@ -2,6 +2,19 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("nours-theme");
+          if (!saved) {
+            var m = document.cookie.match(/(?:^|; )nours-theme=([^;]*)/);
+            if (m) saved = decodeURIComponent(m[1]);
+          }
+          var theme = saved === "dark" || saved === '"dark"' ? "dark" : "light";
+          document.documentElement.dataset.theme = theme;
+        } catch (_) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Complete your RUQO TECH order." />
     <title>Checkout | RUQO TECH</title>

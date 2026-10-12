@@ -48,6 +48,7 @@
     document.documentElement.dataset.theme = nextTheme;
     try {
       localStorage.setItem("nours-theme", JSON.stringify(nextTheme));
+      document.cookie = `nours-theme=${nextTheme}; path=/; max-age=31536000; SameSite=Lax`;
     } catch {}
     const button = $("#admin-theme-toggle");
     if (button) {
@@ -1062,11 +1063,36 @@
 
   function readSavedTheme() {
     try {
-      return JSON.parse(localStorage.getItem("nours-theme")) === "dark" ? "dark" : "light";
+      const raw = localStorage.getItem("nours-theme");
+      if (raw === "dark" || raw === '"dark"') return "dark";
+      if (raw === "light" || raw === '"light"') return "light";
+      const match = document.cookie.match(/(?:^|; )nours-theme=([^;]*)/);
+      if (match) {
+        const val = decodeURIComponent(match[1]);
+        if (val === "dark" || val === '"dark"') return "dark";
+        if (val === "light" || val === '"light"') return "light";
+      }
+      return "light";
     } catch {
       return "light";
     }
   }
+
+  window.addEventListener("pageshow", () => {
+    setTheme(readSavedTheme());
+  });
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === "nours-theme" || !event.key) {
+      setTheme(readSavedTheme());
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      setTheme(readSavedTheme());
+    }
+  });
 
   setTheme(readSavedTheme());
   window.lucide?.createIcons();

@@ -204,10 +204,25 @@
     window.dispatchEvent(new CustomEvent("ruqo:language-updated", { detail: { language: next } }));
     return next;
   };
-  const getTheme = () =>
-    read(keys.theme, localStorage.getItem(keys.theme)) === "dark"
-      ? "dark"
-      : "light";
+  const readRawTheme = () => {
+    try {
+      const raw = localStorage.getItem(keys.theme);
+      if (raw === "dark" || raw === '"dark"') return "dark";
+      if (raw === "light" || raw === '"light"') return "light";
+      const match = document.cookie.match(/(?:^|; )nours-theme=([^;]*)/);
+      if (match) {
+        const val = decodeURIComponent(match[1]);
+        if (val === "dark" || val === '"dark"') return "dark";
+        if (val === "light" || val === '"light"') return "light";
+      }
+      return "light";
+    } catch {
+      return "light";
+    }
+  };
+
+  const getTheme = () => readRawTheme();
+
   const syncTheme = () => {
     const theme = getTheme();
     const language = getLanguage();
@@ -236,8 +251,14 @@
     window.lucide?.createIcons();
   };
   const setTheme = (theme) => {
-    write(keys.theme, theme === "dark" ? "dark" : "light");
+    const next = theme === "dark" ? "dark" : "light";
+    write(keys.theme, next);
+    try {
+      document.cookie = `nours-theme=${next}; path=/; max-age=31536000; SameSite=Lax`;
+    } catch (_) {}
     syncTheme();
+    window.dispatchEvent(new CustomEvent("ruqo:theme-updated", { detail: { theme: next } }));
+    return next;
   };
   const getProfile = () =>
     read(keys.profile, { name: "", email: "", phone: "", city: "Riyadh" });
@@ -512,6 +533,31 @@
   });
   window.addEventListener("ruqo:currency-updated", syncDropdowns);
   window.addEventListener("ruqo:language-updated", syncDropdowns);
+
+  window.addEventListener("pageshow", () => {
+    syncTheme();
+    syncDropdowns();
+  });
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === keys.theme || !event.key) {
+      syncTheme();
+    }
+    if (event.key === keys.currency || !event.key) {
+      syncDropdowns();
+    }
+    if (event.key === keys.language || !event.key) {
+      syncDropdowns();
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      syncTheme();
+      syncDropdowns();
+    }
+  });
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", syncDropdowns);
   } else {
