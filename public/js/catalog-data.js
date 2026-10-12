@@ -581,24 +581,30 @@
       };
     });
 
+    const serializedNew = JSON.stringify(syncedProducts);
+    const serializedOld = localStorage.getItem("ruqo-catalog-cache-v1");
     products.splice(0, products.length, ...syncedProducts);
     if (window.NoursData) window.NoursData.loaded = true;
     try {
-      localStorage.setItem("ruqo-catalog-cache-v1", JSON.stringify(syncedProducts));
+      localStorage.setItem("ruqo-catalog-cache-v1", serializedNew);
     } catch (_) {}
-    window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
+    if (serializedNew !== serializedOld) {
+      window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
+    }
     return true;
   }
 
+  let isLoadedFromCache = false;
   try {
     const cached = localStorage.getItem("ruqo-catalog-cache-v1");
     if (cached) {
       const parsed = JSON.parse(cached);
       if (Array.isArray(parsed) && parsed.length) {
         products.splice(0, products.length, ...parsed);
+        isLoadedFromCache = true;
       }
     }
   } catch (_) {}
 
-  window.NoursData = { products, localizeProduct, loadFromSupabase, loaded: false };
+  window.NoursData = { products, localizeProduct, loadFromSupabase, loaded: isLoadedFromCache };
 })();

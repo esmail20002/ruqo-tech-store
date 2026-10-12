@@ -564,5 +564,46 @@
     syncDropdowns();
   }
   syncTheme();
+
+  // -------------------------------------------------------------
+  // Ultra-Smooth Instant Navigation Preloader
+  // Prefetches HTML documents on hover / touchstart for 0ms transitions
+  // -------------------------------------------------------------
+  const prefetchedUrls = new Set();
+  const prefetchPage = (url) => {
+    if (!url || prefetchedUrls.has(url)) return;
+    try {
+      const target = new URL(url, location.href);
+      if (target.origin !== location.origin) return;
+      if (target.pathname === location.pathname && target.search === location.search) return;
+      if (target.pathname.startsWith("/admin")) return;
+      prefetchedUrls.add(url);
+
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = target.href;
+      link.as = "document";
+      document.head.append(link);
+    } catch (_) {}
+  };
+
+  const handleLinkHover = (event) => {
+    const anchor = event.target.closest("a[href]");
+    if (!anchor) return;
+    const rawHref = anchor.getAttribute("href");
+    if (
+      !rawHref ||
+      rawHref.startsWith("#") ||
+      rawHref.startsWith("mailto:") ||
+      rawHref.startsWith("tel:") ||
+      rawHref.startsWith("javascript:")
+    ) {
+      return;
+    }
+    prefetchPage(anchor.href);
+  };
+
+  document.addEventListener("pointerover", handleLinkHover, { passive: true });
+  document.addEventListener("touchstart", handleLinkHover, { passive: true });
 })();
 
