@@ -770,9 +770,10 @@
     top: calc(100% + 8px);
     inset-inline: 16px;
     z-index: 60;
+    counter-reset: commerce-navigation;
     display: grid;
     gap: 0;
-    padding: 8px;
+    padding: 14px 10px 10px;
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: 14px;
@@ -792,6 +793,15 @@
       transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
       visibility 0.2s step-end;
   }
+  .commerce-links::before {
+    position: absolute;
+    top: 0;
+    inset-inline: 14px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #67c8b8, #77aee7 52%, #e28cae);
+    content: "";
+  }
   .commerce-menu {
     display: inline-grid;
   }
@@ -806,17 +816,44 @@
       visibility 0s;
   }
   .commerce-links a {
-    padding: 12px 13px;
+    display: flex;
+    min-height: 52px;
+    align-items: center;
+    gap: 11px;
+    padding: 0 12px;
     border-bottom: 1px solid var(--line);
     border-radius: 9px;
+    counter-increment: commerce-navigation;
     opacity: 0;
     transform: translateY(-5px);
     transition:
       opacity 0.18s ease,
       transform 0.2s ease,
       color 0.18s ease,
-      background 0.18s ease;
+      background 0.18s ease,
+      border-color 0.18s ease;
     transition-delay: 0s;
+  }
+  .commerce-links a::before {
+    display: inline-grid;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid rgba(120, 56, 211, 0.14);
+    border-radius: 8px;
+    background: rgba(120, 56, 211, 0.055);
+    color: var(--primary-deep);
+    content: counter(commerce-navigation, decimal-leading-zero);
+    font: 700 0.62rem "Manrope", sans-serif;
+  }
+  .commerce-links a::after {
+    margin-inline-start: auto;
+    color: var(--primary-deep);
+    content: "↗";
+    font-size: 0.76rem;
+    opacity: 0.72;
+    transition: transform 0.18s ease;
   }
   .commerce-links.is-open a {
     opacity: 1;
@@ -828,6 +865,13 @@
   .commerce-links.is-open a:hover {
     background: rgba(120, 56, 211, 0.07);
     color: var(--primary-deep);
+    transform: translateX(-2px);
+  }
+  html[dir="rtl"] .commerce-links.is-open a:hover {
+    transform: translateX(2px);
+  }
+  html[dir="rtl"] .commerce-links a::after {
+    content: "↖";
   }
   .commerce-menu:focus-visible,
   .commerce-links a:focus-visible {

@@ -332,6 +332,28 @@ html[data-theme="dark"] .commerce-links.is-open a:hover {
   color: #a0e3d7;
 }
 
+html[data-theme="dark"] .main-nav.open a + a {
+  border-color: rgba(177, 197, 218, 0.12);
+}
+
+html[data-theme="dark"] .main-nav.open a:hover {
+  background: linear-gradient(100deg, rgba(103, 200, 184, 0.12), rgba(109, 168, 232, 0.08));
+  color: #a0e3d7;
+}
+
+html[data-theme="dark"] .main-nav.open a::before,
+html[data-theme="dark"] .commerce-links a::before {
+  border-color: rgba(103, 200, 184, 0.24);
+  background: rgba(103, 200, 184, 0.09);
+  color: #a0e3d7;
+}
+
+html[data-theme="dark"] .main-nav.open a::after,
+html[data-theme="dark"] .commerce-links a::after {
+  background-color: transparent;
+  color: #91d8cd;
+}
+
 html[data-theme="dark"] .main-nav.open {
   border-color: var(--line);
   background: linear-gradient(145deg, #1b2a3b, #121d2b 72%, #202536);
