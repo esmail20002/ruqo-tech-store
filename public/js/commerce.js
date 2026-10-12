@@ -475,6 +475,7 @@
       store.setLanguage(event.currentTarget.value);
       location.reload();
     });
+    store.syncDropdowns();
     const menuButton = document.createElement("button");
     menuButton.className = "commerce-icon-button commerce-menu";
     menuButton.type = "button";

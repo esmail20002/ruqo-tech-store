@@ -927,6 +927,7 @@ function applyTranslations(lang) {
   renderMobileAd();
   renderFeaturedProduct();
   syncHomepageCatalog();
+  window.NoursStore?.syncDropdowns();
 }
 
 if (languageSelect) {

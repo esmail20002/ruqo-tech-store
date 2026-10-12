@@ -197,11 +197,12 @@
     return supportedLanguages.includes(language) ? language : "en";
   };
   const setLanguage = (language) => {
-    write(
-      keys.language,
-      supportedLanguages.includes(language) ? language : "en",
-    );
+    const next = supportedLanguages.includes(language) ? language : "en";
+    write(keys.language, next);
     syncTheme();
+    syncDropdowns();
+    window.dispatchEvent(new CustomEvent("ruqo:language-updated", { detail: { language: next } }));
+    return next;
   };
   const getTheme = () =>
     read(keys.theme, localStorage.getItem(keys.theme)) === "dark"
@@ -263,6 +264,214 @@
     next[id] = variant;
     write(keys.variants, next);
   };
+
+  const currencyMeta = {
+    USD: { symbol: "$", label: "USD dollar", subtitle: "الدولار الأمريكي" },
+    SAR: { symbol: "ر.س", label: "SAR", subtitle: "الريال السعودي" },
+    EUR: { symbol: "€", label: "EUR", subtitle: "اليورو الأوروبي" },
+  };
+
+  const languageMeta = {
+    en: { code: "EN", flag: "🇺🇸", label: "English", subtitle: "United States" },
+    ar: { code: "عربي", flag: "🇸🇦", label: "العربية", subtitle: "المملكة العربية السعودية" },
+    fr: { code: "FR", flag: "🇫🇷", label: "Français", subtitle: "France" },
+    es: { code: "ES", flag: "🇪🇸", label: "Español", subtitle: "España" },
+    zh: { code: "ZH", flag: "🇨🇳", label: "中文", subtitle: "简体中文" },
+  };
+
+  const closeAllMenus = () => {
+    document.querySelectorAll(".ruqo-dropdown-menu.is-open").forEach((m) => m.classList.remove("is-open"));
+    document.querySelectorAll(".ruqo-dropdown-trigger.is-active").forEach((t) => {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  const syncDropdowns = () => {
+    const currentCurrency = getCurrency();
+    const currentLanguage = getLanguage();
+
+    // 1. Currency selects
+    document.querySelectorAll("select[data-currency-select]").forEach((select) => {
+      let wrapper = select.parentElement?.classList.contains("ruqo-currency-dropdown")
+        ? select.parentElement
+        : null;
+
+      if (!wrapper) {
+        wrapper = document.createElement("div");
+        wrapper.className = "ruqo-dropdown-container ruqo-currency-dropdown";
+        select.before(wrapper);
+        select.style.display = "none";
+        wrapper.append(select);
+
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "ruqo-dropdown-trigger currency-trigger";
+        trigger.setAttribute("aria-haspopup", "true");
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.setAttribute("title", "Change currency / تغيير العملة");
+
+        const symbolSpan = document.createElement("span");
+        symbolSpan.className = "ruqo-symbol-badge";
+        trigger.append(symbolSpan);
+
+        const menu = document.createElement("div");
+        menu.className = "ruqo-dropdown-menu currency-menu";
+        menu.setAttribute("role", "menu");
+
+        const menuHeader = document.createElement("div");
+        menuHeader.className = "ruqo-menu-header";
+        menuHeader.innerHTML = `<span>العملة · CURRENCY</span>`;
+        menu.append(menuHeader);
+
+        const optionsList = document.createElement("div");
+        optionsList.className = "ruqo-menu-options";
+
+        Object.entries(currencyMeta).forEach(([code, meta]) => {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "ruqo-menu-item";
+          item.dataset.value = code;
+          item.setAttribute("role", "menuitem");
+          item.innerHTML = `
+            <span class="ruqo-item-badge currency-badge">${meta.symbol}</span>
+            <div class="ruqo-item-text">
+              <strong class="ruqo-item-name">${meta.label}</strong>
+              <small class="ruqo-item-sub">${meta.subtitle}</small>
+            </div>
+            <span class="ruqo-item-check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          `;
+          item.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setCurrency(code);
+            select.value = code;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            closeAllMenus();
+          });
+          optionsList.append(item);
+        });
+        menu.append(optionsList);
+
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = menu.classList.contains("is-open");
+          closeAllMenus();
+          if (!isOpen) {
+            menu.classList.add("is-open");
+            trigger.classList.add("is-active");
+            trigger.setAttribute("aria-expanded", "true");
+          }
+        });
+
+        wrapper.append(trigger, menu);
+      }
+
+      const symbolSpan = wrapper.querySelector(".ruqo-symbol-badge");
+      if (symbolSpan) {
+        symbolSpan.textContent = currencyMeta[currentCurrency]?.symbol || currentCurrency;
+      }
+      wrapper.querySelectorAll(".ruqo-menu-item").forEach((item) => {
+        item.classList.toggle("is-active", item.dataset.value === currentCurrency);
+      });
+    });
+
+    // 2. Language selects
+    document.querySelectorAll("select[data-language-select]").forEach((select) => {
+      let wrapper = select.parentElement?.classList.contains("ruqo-lang-dropdown")
+        ? select.parentElement
+        : null;
+
+      if (!wrapper) {
+        wrapper = document.createElement("div");
+        wrapper.className = "ruqo-dropdown-container ruqo-lang-dropdown";
+        select.before(wrapper);
+        select.style.display = "none";
+        wrapper.append(select);
+
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "ruqo-dropdown-trigger language-trigger";
+        trigger.setAttribute("aria-haspopup", "true");
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.setAttribute("title", "Language / اللغة");
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "ruqo-lang-badge";
+        trigger.append(labelSpan);
+
+        const menu = document.createElement("div");
+        menu.className = "ruqo-dropdown-menu language-menu";
+        menu.setAttribute("role", "menu");
+
+        const menuHeader = document.createElement("div");
+        menuHeader.className = "ruqo-menu-header";
+        menuHeader.innerHTML = `<span>اللغة · LANGUAGE</span>`;
+        menu.append(menuHeader);
+
+        const optionsList = document.createElement("div");
+        optionsList.className = "ruqo-menu-options";
+
+        Object.entries(languageMeta).forEach(([code, meta]) => {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "ruqo-menu-item";
+          item.dataset.value = code;
+          item.setAttribute("role", "menuitem");
+          item.innerHTML = `
+            <span class="ruqo-item-badge lang-flag">${meta.flag}</span>
+            <div class="ruqo-item-text">
+              <strong class="ruqo-item-name">${meta.label}</strong>
+              <small class="ruqo-item-sub">${meta.subtitle}</small>
+            </div>
+            <span class="ruqo-item-check"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          `;
+          item.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setLanguage(code);
+            select.value = code;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            closeAllMenus();
+          });
+          optionsList.append(item);
+        });
+        menu.append(optionsList);
+
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = menu.classList.contains("is-open");
+          closeAllMenus();
+          if (!isOpen) {
+            menu.classList.add("is-open");
+            trigger.classList.add("is-active");
+            trigger.setAttribute("aria-expanded", "true");
+          }
+        });
+
+        wrapper.append(trigger, menu);
+      }
+
+      const labelSpan = wrapper.querySelector(".ruqo-lang-badge");
+      if (labelSpan) {
+        labelSpan.textContent = languageMeta[currentLanguage]?.code || currentLanguage.toUpperCase();
+      }
+      wrapper.querySelectorAll(".ruqo-menu-item").forEach((item) => {
+        item.classList.toggle("is-active", item.dataset.value === currentLanguage);
+      });
+    });
+  };
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".ruqo-dropdown-container")) {
+      closeAllMenus();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeAllMenus();
+    }
+  });
+
   window.NoursStore = {
     keys,
     supportedLanguages,
@@ -294,11 +503,20 @@
     productVariants,
     getProductVariant,
     setProductVariant,
+    syncDropdowns,
   };
   document.addEventListener("click", (event) => {
     if (event.target.closest("[data-theme-toggle]")) {
       setTheme(getTheme() === "dark" ? "light" : "dark");
     }
   });
+  window.addEventListener("ruqo:currency-updated", syncDropdowns);
+  window.addEventListener("ruqo:language-updated", syncDropdowns);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncDropdowns);
+  } else {
+    syncDropdowns();
+  }
   syncTheme();
 })();
+

@@ -429,6 +429,251 @@ html[dir="rtl"] .topbar-marquee-track {
   padding: 8px;
 }
 
+/* ========================================================
+   RUQO LUXURY DROPDOWNS (CURRENCY & LANGUAGE)
+   ======================================================== */
+.ruqo-dropdown-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.ruqo-dropdown-trigger {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  transition:
+    transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.22s ease,
+    background 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.24s ease;
+}
+
+.ruqo-dropdown-trigger.currency-trigger {
+  background: linear-gradient(135deg, rgba(37, 142, 134, 0.1), rgba(103, 200, 184, 0.2));
+  border-color: rgba(37, 142, 134, 0.32);
+  color: var(--primary-deep, #1f776f);
+}
+
+.ruqo-dropdown-trigger.currency-trigger:hover,
+.ruqo-dropdown-trigger.currency-trigger.is-active {
+  transform: translateY(-2px) scale(1.08) rotate(6deg);
+  border-color: var(--primary, #258e86);
+  background: linear-gradient(135deg, rgba(37, 142, 134, 0.22), rgba(103, 200, 184, 0.32));
+  box-shadow: 0 6px 18px rgba(37, 142, 134, 0.28), 0 0 0 3px rgba(37, 142, 134, 0.15);
+}
+
+.ruqo-dropdown-trigger.language-trigger {
+  background: linear-gradient(135deg, rgba(120, 56, 211, 0.08), rgba(186, 143, 235, 0.18));
+  border-color: rgba(120, 56, 211, 0.28);
+  color: #633ea5;
+}
+
+.ruqo-dropdown-trigger.language-trigger:hover,
+.ruqo-dropdown-trigger.language-trigger.is-active {
+  transform: translateY(-2px) scale(1.08) rotate(-6deg);
+  border-color: #8c4de8;
+  background: linear-gradient(135deg, rgba(120, 56, 211, 0.18), rgba(186, 143, 235, 0.28));
+  box-shadow: 0 6px 18px rgba(120, 56, 211, 0.25), 0 0 0 3px rgba(120, 56, 211, 0.15);
+}
+
+.ruqo-symbol-badge,
+.ruqo-lang-badge {
+  display: block;
+  line-height: 1;
+}
+
+.ruqo-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  inset-inline-end: 0;
+  min-width: 236px;
+  max-width: 90vw;
+  padding: 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 24px 50px -10px rgba(17, 24, 39, 0.22),
+    0 8px 20px -4px rgba(17, 24, 39, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  z-index: 1200;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.95);
+  pointer-events: none;
+  transition:
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.2s ease;
+}
+
+.ruqo-dropdown-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.ruqo-menu-header {
+  padding: 6px 10px 8px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ruqo-menu-header span {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ruqo-menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ruqo-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  text-align: start;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.ruqo-menu-item:hover {
+  background: var(--surface-strong);
+  border-color: var(--line);
+  transform: translateX(2px);
+}
+
+[dir="rtl"] .ruqo-menu-item:hover {
+  transform: translateX(-2px);
+}
+
+.currency-menu .ruqo-menu-item:hover {
+  background: rgba(37, 142, 134, 0.08);
+  border-color: rgba(37, 142, 134, 0.2);
+}
+
+.currency-menu .ruqo-menu-item.is-active {
+  background: linear-gradient(135deg, rgba(37, 142, 134, 0.16), rgba(103, 200, 184, 0.1));
+  border-color: rgba(37, 142, 134, 0.32);
+}
+
+.language-menu .ruqo-menu-item:hover {
+  background: rgba(120, 56, 211, 0.08);
+  border-color: rgba(120, 56, 211, 0.2);
+}
+
+.language-menu .ruqo-menu-item.is-active {
+  background: linear-gradient(135deg, rgba(120, 56, 211, 0.16), rgba(186, 143, 235, 0.1));
+  border-color: rgba(120, 56, 211, 0.32);
+}
+
+.ruqo-item-badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.82rem;
+  font-weight: 850;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.ruqo-item-badge.currency-badge {
+  background: rgba(37, 142, 134, 0.14);
+  color: var(--primary-deep, #1f776f);
+  border: 1px solid rgba(37, 142, 134, 0.25);
+}
+
+.ruqo-item-badge.lang-flag {
+  background: rgba(120, 56, 211, 0.08);
+  border: 1px solid rgba(120, 56, 211, 0.2);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.ruqo-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ruqo-item-name {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.ruqo-item-sub {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.25;
+  margin-top: 1px;
+}
+
+.ruqo-item-check {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.currency-menu .ruqo-item-check {
+  color: #258e86;
+}
+
+.language-menu .ruqo-item-check {
+  color: #8c4de8;
+}
+
+.ruqo-menu-item.is-active .ruqo-item-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .lang-switch:hover {
   transform: translateY(-1px);
   background: rgba(255, 255, 255, 0.14);
@@ -1989,12 +2234,13 @@ section {
   }
 
   .nav-actions .language-select,
-  .nav-actions .currency-select {
+  .nav-actions .currency-select,
+  .nav-actions .ruqo-dropdown-trigger {
     width: 38px;
     min-width: 38px;
     min-height: 38px;
     height: 38px;
-    font-size: 0.65rem;
+    font-size: 0.68rem;
   }
 
   .nav-actions .theme-toggle {
