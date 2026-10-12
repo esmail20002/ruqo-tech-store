@@ -443,7 +443,7 @@
   const footer = document.querySelector("[data-site-footer]");
 
   function renderShell() {
-    header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="RUQO TECH"><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-lang language-select" data-language-select aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="zh">中文</option><option value="ar">العربية</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
+    header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="RUQO TECH"><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-currency currency-select" data-currency-select aria-label="${t.currencyLabel || "Currency"}"><option value="USD">USD ($)</option><option value="SAR">SAR (ر.س)</option><option value="EUR">EUR (€)</option></select><select class="commerce-lang language-select" data-language-select aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="zh">中文</option><option value="ar">العربية</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
     footer.innerHTML = `<footer class="commerce-footer"><div class="container commerce-footer-inner"><a class="brand footer-brand" href="/" aria-label="RUQO TECH"><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a><span>${t.rights}</span><nav class="commerce-footer-links"><a href="/about.html">${t.about}</a><a href="/support.html#delivery">${t.shippingInfo}</a><a href="/support.html#terms">${t.terms}</a><a href="/support.html#privacy">${t.privacy}</a><a href="/support.html">${t.support}</a></nav></div></footer>`;
     const nav = header.querySelector(".commerce-links");
     nav.id = "commerce-navigation";
@@ -457,6 +457,14 @@
     cartLink.append(cartBadge);
     store.syncTheme();
     store.syncCartCount();
+    const currencySelect = header.querySelector("[data-currency-select]");
+    if (currencySelect) {
+      currencySelect.value = store.getCurrency();
+      currencySelect.addEventListener("change", (event) => {
+        store.setCurrency(event.currentTarget.value);
+        render();
+      });
+    }
     const languageSelect = header.querySelector("[data-language-select]");
     languageSelect.value = language;
     languageSelect.setAttribute(
@@ -737,7 +745,7 @@
     currencySelect.setAttribute("aria-label", t.currencyLabel);
     currencySelect.hidden = true;
     currencySelect.innerHTML =
-      '<option value="SAR">SAR</option><option value="USD">USD</option><option value="EUR">EUR</option>';
+      '<option value="USD">USD ($)</option><option value="SAR">SAR (ر.س)</option><option value="EUR">EUR (€)</option>';
     currencySelect.value = store.getCurrency();
     root
       .querySelector(".product-detail-price")
@@ -1267,6 +1275,7 @@
   });
 
   render();
+  window.addEventListener("ruqo:currency-updated", render);
   window.addEventListener("ruqo:catalog-updated", render);
   window.RUQO_SUPABASE_READY?.then((loaded) => {
     if (loaded) render();

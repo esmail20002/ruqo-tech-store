@@ -77,9 +77,10 @@
   color: var(--text);
   cursor: pointer;
 }
-.commerce-lang {
+.commerce-lang,
+.commerce-currency {
   display: inline-flex;
-  min-width: 112px;
+  min-width: 90px;
   height: 42px;
   align-items: center;
   padding: 0 10px;
@@ -782,11 +783,12 @@
   .commerce-actions {
     gap: 4px;
   }
-  .commerce-lang {
-    width: 84px;
-    min-width: 84px;
-    padding-inline: 7px;
-    font-size: 0.76rem;
+  .commerce-lang,
+  .commerce-currency {
+    width: 80px;
+    min-width: 80px;
+    padding-inline: 6px;
+    font-size: 0.74rem;
   }
   .commerce-links {
     position: absolute;
@@ -1017,11 +1019,12 @@
     width: 36px;
     height: 36px;
   }
-  .commerce-lang {
-    width: 84px;
-    min-width: 84px;
-    padding-inline: 6px;
-    font-size: 0.72rem;
+  .commerce-lang,
+  .commerce-currency {
+    width: 74px;
+    min-width: 74px;
+    padding-inline: 4px;
+    font-size: 0.70rem;
   }
   .commerce-product-grid {
     grid-template-columns: 1fr;

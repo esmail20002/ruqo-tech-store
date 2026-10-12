@@ -729,7 +729,7 @@ function syncHomepageCatalog() {
 }
 
 function formatHomepagePrices() {
-  const currency = window.NoursStore?.getCurrency() || "SAR";
+  const currency = window.NoursStore?.getCurrency() || "USD";
   const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
   const locale = localeByLanguage[currentLang] || localeByLanguage.en;
   document.querySelectorAll("[data-price-sar]").forEach((node) => {
@@ -749,6 +749,10 @@ function formatHomepagePrices() {
   document.querySelectorAll(".price-block small").forEach((node) => {
     node.textContent = currency;
   });
+  const select = document.querySelector("[data-currency-select]");
+  if (select && select.value !== currency) {
+    select.value = currency;
+  }
 }
 
 function advanceFeaturedProduct() {
@@ -931,6 +935,21 @@ if (languageSelect) {
     applyTranslations(currentLang);
   });
 }
+
+const mainCurrencySelect = document.querySelector("[data-currency-select]");
+if (mainCurrencySelect) {
+  mainCurrencySelect.value = window.NoursStore?.getCurrency() || "USD";
+  mainCurrencySelect.addEventListener("change", (event) => {
+    window.NoursStore?.setCurrency(event.currentTarget.value);
+    formatHomepagePrices();
+  });
+}
+window.addEventListener("ruqo:currency-updated", (event) => {
+  if (mainCurrencySelect) {
+    mainCurrencySelect.value = event.detail?.currency || window.NoursStore?.getCurrency() || "USD";
+  }
+  formatHomepagePrices();
+});
 
 const menuToggle = document.querySelector(".menu-toggle");
 const mainNav = document.querySelector(".main-nav");

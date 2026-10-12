@@ -247,14 +247,15 @@
     read(keys.settings, { orderUpdates: true, offers: false });
   const setSettings = (settings) => write(keys.settings, settings);
   const getCurrency = () => {
-    const currency = read(keys.currency, "SAR");
-    return ["SAR", "USD", "EUR"].includes(currency) ? currency : "SAR";
+    const currency = read(keys.currency, "USD");
+    return ["USD", "SAR", "EUR"].includes(currency) ? currency : "USD";
   };
-  const setCurrency = (currency) =>
-    write(
-      keys.currency,
-      ["SAR", "USD", "EUR"].includes(currency) ? currency : "SAR",
-    );
+  const setCurrency = (currency) => {
+    const next = ["USD", "SAR", "EUR"].includes(currency) ? currency : "USD";
+    write(keys.currency, next);
+    window.dispatchEvent(new CustomEvent("ruqo:currency-updated", { detail: { currency: next } }));
+    return next;
+  };
   const productVariants = () => read(keys.variants, {});
   const getProductVariant = (id) => productVariants()[id] || "";
   const setProductVariant = (id, variant) => {

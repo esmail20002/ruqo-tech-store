@@ -113,7 +113,9 @@ html[data-theme="dark"] .theme-toggle svg {
 }
 
 html[data-theme="dark"] .language-select,
-html[data-theme="dark"] .commerce-lang {
+html[data-theme="dark"] .currency-select,
+html[data-theme="dark"] .commerce-lang,
+html[data-theme="dark"] .commerce-currency {
   border-color: var(--line);
   background: #1a2838;
   color: var(--text);

@@ -13,7 +13,7 @@ on conflict (slug) do update set
 insert into public.store_settings (setting_key, setting_value, description, is_public)
 values (
   'storefront',
-  '{"default_language":"en","supported_languages":["en","fr","es","zh","ar"],"default_currency":"SAR","supported_currencies":["SAR","USD","EUR"],"free_shipping_threshold":299,"standard_shipping_fee":25,"return_window_days":7,"default_payment_method":"cash_on_delivery"}'::jsonb,
+  '{"default_language":"en","supported_languages":["en","fr","es","zh","ar"],"default_currency":"USD","supported_currencies":["USD","SAR","EUR"],"free_shipping_threshold":299,"standard_shipping_fee":25,"return_window_days":7,"default_payment_method":"cash_on_delivery"}'::jsonb,
   'Public storefront defaults and supported options',
   true
 )

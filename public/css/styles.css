@@ -363,10 +363,11 @@ html[dir="rtl"] .topbar-marquee-track {
     background 0.2s ease;
 }
 
-.language-select {
-  min-width: 112px;
+.language-select,
+.currency-select {
+  min-width: 90px;
   min-height: 40px;
-  padding: 0 11px;
+  padding: 0 8px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.78);
@@ -376,7 +377,8 @@ html[dir="rtl"] .topbar-marquee-track {
   cursor: pointer;
 }
 
-.language-select option {
+.language-select option,
+.currency-select option {
   background: #fff;
   color: #1b2430;
 }
@@ -1940,11 +1942,12 @@ section {
     gap: 4px;
   }
 
-  .nav-actions .language-select {
-    width: 76px;
-    min-width: 76px;
+  .nav-actions .language-select,
+  .nav-actions .currency-select {
+    width: 72px;
+    min-width: 72px;
     min-height: 34px;
-    padding-inline: 5px;
+    padding-inline: 4px;
     font-size: 0.66rem;
   }
 

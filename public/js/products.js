@@ -616,7 +616,7 @@ function fmt(value) {
   return new Intl.NumberFormat(localeByLanguage[language] || localeByLanguage.en).format(value);
 }
 function formatPrice(value) {
-  const currency = window.NoursStore?.getCurrency() || "SAR";
+  const currency = window.NoursStore?.getCurrency() || "USD";
   const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
   return new Intl.NumberFormat(localeByLanguage[language] || localeByLanguage.en, {
     style: "currency",
@@ -1068,6 +1068,20 @@ if (
   ui.sort.value = pageParams.get("sort");
 }
 setLanguage(language);
+const productsCurrencySelect = document.querySelector("[data-currency-select]");
+if (productsCurrencySelect) {
+  productsCurrencySelect.value = window.NoursStore?.getCurrency() || "USD";
+  productsCurrencySelect.addEventListener("change", (event) => {
+    window.NoursStore?.setCurrency(event.currentTarget.value);
+    render();
+  });
+}
+window.addEventListener("ruqo:currency-updated", (event) => {
+  if (productsCurrencySelect) {
+    productsCurrencySelect.value = event.detail?.currency || window.NoursStore?.getCurrency() || "USD";
+  }
+  render();
+});
 window.addEventListener("ruqo:catalog-updated", render);
 window.RUQO_SUPABASE_READY?.then((loaded) => {
   if (loaded) render();
