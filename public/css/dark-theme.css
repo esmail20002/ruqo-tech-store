@@ -588,10 +588,6 @@ html[data-theme="dark"] .commerce-panel {
 }
 
 @media (max-width: 640px) {
-  html[data-theme="dark"] .topbar-controls {
-    gap: 7px;
-  }
-
   html[data-theme="dark"] .theme-toggle {
     width: 38px;
     height: 38px;

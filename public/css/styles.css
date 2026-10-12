@@ -105,12 +105,6 @@ input {
   flex-wrap: wrap;
 }
 
-.topbar-controls {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
 .topbar-texts {
   display: flex;
   align-items: center;
@@ -136,10 +130,10 @@ input {
   min-width: 112px;
   min-height: 40px;
   padding: 0 11px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.09);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -1585,7 +1579,24 @@ section {
   }
 
   .nav-actions {
-    gap: 6px;
+    gap: 4px;
+  }
+
+  .nav-actions .language-select {
+    width: 76px;
+    min-width: 76px;
+    min-height: 34px;
+    padding-inline: 5px;
+    font-size: 0.66rem;
+  }
+
+  .nav-actions .theme-toggle {
+    width: 34px;
+    height: 34px;
+  }
+
+  .nav-actions > .icon-button:first-child {
+    display: none;
   }
 
   .icon-button,
@@ -2063,6 +2074,11 @@ section {
 
   .nav-wrap {
     min-height: 58px;
+  }
+
+  .nav-wrap > .brand .brand-logo {
+    width: clamp(80px, 25vw, 104px);
+    height: 38px;
   }
 
   .nav-actions {
