@@ -727,6 +727,42 @@ html[data-theme="light"] .highlight-card:focus-within {
     0 0 26px rgba(229, 138, 177, 0.12);
 }
 
+html[data-theme="light"] .features .feature-box::before {
+  background: linear-gradient(90deg, #74dcca 0%, #78aef0 48%, #e997bb 100%);
+  background-size: 200% 100%;
+  box-shadow:
+    0 0 8px rgba(103, 200, 184, 0.3),
+    0 0 13px rgba(109, 168, 232, 0.18),
+    0 0 12px rgba(229, 138, 177, 0.14);
+  animation: service-line-neon 5s ease-in-out infinite alternate;
+}
+
+@keyframes service-line-neon {
+  from {
+    background-position: 0% 50%;
+    box-shadow:
+      0 0 7px rgba(103, 200, 184, 0.25),
+      0 0 10px rgba(109, 168, 232, 0.14),
+      0 0 9px rgba(229, 138, 177, 0.1);
+  }
+  to {
+    background-position: 100% 50%;
+    box-shadow:
+      0 0 11px rgba(103, 200, 184, 0.4),
+      0 0 17px rgba(109, 168, 232, 0.24),
+      0 0 16px rgba(229, 138, 177, 0.2);
+  }
+}
+
+html[data-theme="light"] .features .feature-box:hover::before {
+  animation: none;
+  background-position: 100% 50%;
+  box-shadow:
+    0 0 12px rgba(103, 200, 184, 0.52),
+    0 0 20px rgba(109, 168, 232, 0.34),
+    0 0 18px rgba(229, 138, 177, 0.26);
+}
+
 @media (hover: hover) {
   html[data-theme="light"] .feature-box:hover,
   html[data-theme="light"] .product-card:hover,
@@ -825,7 +861,8 @@ html[data-theme="dark"] .commerce-panel {
 
   html[data-theme="light"] .promo-banner,
   html[data-theme="light"] .newsletter-box,
-  html[data-theme="light"] .highlight-card {
+  html[data-theme="light"] .highlight-card,
+  html[data-theme="light"] .features .feature-box::before {
     animation: none;
     transition: none;
   }
