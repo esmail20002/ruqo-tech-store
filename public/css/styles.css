@@ -1572,7 +1572,7 @@ section {
     width: 144px;
     height: 42px;
     margin-left: -16px;
-    transform: translateX(8px);
+    transform: translateX(12px);
   }
   .footer-brand .brand-logo {
     width: 148px;
@@ -2080,7 +2080,7 @@ section {
   .nav-wrap > .brand .brand-logo {
     width: clamp(80px, 25vw, 104px);
     height: 38px;
-    transform: translateX(8px);
+    transform: translateX(12px);
   }
 
   .nav-actions {
