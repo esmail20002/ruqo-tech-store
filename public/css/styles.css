@@ -365,22 +365,68 @@ html[dir="rtl"] .topbar-marquee-track {
 
 .language-select,
 .currency-select {
-  min-width: 90px;
-  min-height: 40px;
-  padding: 0 8px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.78);
   color: var(--text);
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-align-last: center;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition:
+    transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.22s ease,
+    background 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.24s ease;
+}
+
+.currency-select {
+  background: linear-gradient(135deg, rgba(37, 142, 134, 0.1), rgba(103, 200, 184, 0.18));
+  border-color: rgba(37, 142, 134, 0.3);
+  color: var(--primary-deep, #1f776f);
+}
+
+.currency-select:hover {
+  transform: translateY(-2px) scale(1.08) rotate(6deg);
+  border-color: var(--primary, #258e86);
+  background: linear-gradient(135deg, rgba(37, 142, 134, 0.2), rgba(103, 200, 184, 0.3));
+  box-shadow: 0 6px 16px rgba(37, 142, 134, 0.25), 0 0 0 3px rgba(37, 142, 134, 0.12);
+}
+
+.language-select {
+  background: linear-gradient(135deg, rgba(120, 56, 211, 0.08), rgba(186, 143, 235, 0.16));
+  border-color: rgba(120, 56, 211, 0.26);
+  color: #633ea5;
+}
+
+.language-select:hover {
+  transform: translateY(-2px) scale(1.08) rotate(-6deg);
+  border-color: #8c4de8;
+  background: linear-gradient(135deg, rgba(120, 56, 211, 0.16), rgba(186, 143, 235, 0.26));
+  box-shadow: 0 6px 16px rgba(120, 56, 211, 0.22), 0 0 0 3px rgba(120, 56, 211, 0.12);
 }
 
 .language-select option,
 .currency-select option {
   background: #fff;
   color: #1b2430;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px;
 }
 
 .lang-switch:hover {
@@ -1939,16 +1985,16 @@ section {
   }
 
   .nav-actions {
-    gap: 4px;
+    gap: 6px;
   }
 
   .nav-actions .language-select,
   .nav-actions .currency-select {
-    width: 72px;
-    min-width: 72px;
-    min-height: 34px;
-    padding-inline: 4px;
-    font-size: 0.66rem;
+    width: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    height: 38px;
+    font-size: 0.65rem;
   }
 
   .nav-actions .theme-toggle {
