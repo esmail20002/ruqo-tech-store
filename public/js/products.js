@@ -821,7 +821,10 @@ function productCard(product) {
     try {
       localStorage.setItem("nours-cart-count", String(cartCount));
     } catch {}
-    toast(`${localizeProduct(product).name} · ${copy[language].added}`);
+    window.NoursStore?.showAddedToBag(localized, {
+      quantity: 1,
+      price: formatPrice(product.price),
+    });
   });
   const discountPercent = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)

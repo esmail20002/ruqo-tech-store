@@ -612,6 +612,50 @@ html[data-theme="dark"] .commerce-danger {
   color: #ffb2bc;
 }
 
+html[data-theme="dark"] .bag-confirmation {
+  border-color: transparent;
+  background:
+    linear-gradient(145deg, #1b2a3b, #131f2e 72%, #252238) padding-box,
+    linear-gradient(115deg, rgba(103, 216, 196, 0.78), rgba(109, 168, 232, 0.55) 52%, rgba(229, 138, 177, 0.7)) border-box;
+  color: var(--text);
+  box-shadow:
+    0 24px 58px rgba(2, 8, 18, 0.48),
+    0 0 24px rgba(103, 216, 196, 0.12),
+    0 0 24px rgba(229, 138, 177, 0.08);
+}
+
+html[data-theme="dark"] .bag-confirmation-check {
+  border-color: rgba(103, 216, 196, 0.32);
+  background: rgba(103, 216, 196, 0.13);
+  color: #91d8cd;
+}
+
+html[data-theme="dark"] .bag-confirmation-product {
+  border-color: var(--line);
+  background: rgba(10, 19, 30, 0.52);
+}
+
+html[data-theme="dark"] .bag-confirmation-product > img {
+  background: #263649;
+}
+
+html[data-theme="dark"] .bag-confirmation-price {
+  color: #91d8cd;
+}
+
+html[data-theme="dark"] .bag-confirmation-close,
+html[data-theme="dark"] .bag-confirmation-continue {
+  border-color: var(--line);
+  background: rgba(33, 49, 68, 0.76);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .bag-confirmation-view {
+  border-color: rgba(103, 216, 196, 0.34);
+  background: linear-gradient(110deg, #216d70, #287ca0 55%, #9b587f);
+  box-shadow: 0 6px 18px rgba(103, 216, 196, 0.14);
+}
+
 html[data-theme="dark"] .product-lightbox {
   border: 1px solid rgba(180, 204, 225, 0.22);
   background: linear-gradient(145deg, #1b2a3b, #101a27);
@@ -856,6 +900,10 @@ html[data-theme="dark"] .commerce-panel {
   html[data-theme="dark"] .cart-line,
   html[data-theme="dark"] .summary-panel,
   html[data-theme="dark"] .commerce-panel {
+    transition: none;
+  }
+
+  html[data-theme="dark"] .bag-confirmation {
     transition: none;
   }
 

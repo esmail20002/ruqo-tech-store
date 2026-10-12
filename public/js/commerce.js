@@ -444,7 +444,15 @@
     const nav = header.querySelector(".commerce-links");
     nav.id = "commerce-navigation";
     nav.setAttribute("aria-label", t.navLabel);
+    const cartLink = header.querySelector('a[href="/cart.html"]');
+    cartLink.classList.add("commerce-cart-link");
+    const cartBadge = document.createElement("span");
+    cartBadge.className = "commerce-cart-count";
+    cartBadge.dataset.cartCount = "";
+    cartBadge.textContent = store.cartCount();
+    cartLink.append(cartBadge);
     store.syncTheme();
+    store.syncCartCount();
     const languageSelect = header.querySelector("[data-language-select]");
     languageSelect.value = language;
     languageSelect.setAttribute(
@@ -1064,8 +1072,11 @@
     if (addButton) {
       const product = productById(addButton.dataset.add);
       if (product?.stock) {
-        store.addToCart(product.id, page === "product" ? productQuantity : 1);
-        toast(`${product.name} · ${t.added}`);
+        const quantity = page === "product" ? productQuantity : 1;
+        const option = selectedOption(product);
+        const unitPrice = product.price + (page === "product" ? option.adjustment : 0);
+        store.addToCart(product.id, quantity);
+        store.showAddedToBag(product, { quantity, price: money(unitPrice) });
         if (page === "cart" || page === "wishlist") render();
       }
     }
