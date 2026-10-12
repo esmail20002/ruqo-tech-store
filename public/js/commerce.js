@@ -75,7 +75,15 @@
       bag: "Shopping bag",
       bagIntro: "Review your items before checkout.",
       checkoutTitle: "Checkout",
-      checkoutIntro: "A few details, then your order is on its way.",
+      checkoutIntro: "Complete your details below for expedited fulfillment and insured courier delivery.",
+      checkoutStep1: "Shipping destination",
+      checkoutStep2: "Payment & verification",
+      checkoutTrust1: "256-Bit Encrypted Checkout",
+      checkoutTrust2: "Official 2-Year Warranty",
+      checkoutTrust3: "7-Day Hassle-Free Returns",
+      checkoutReviewTitle: "Bag overview",
+      codBadge: "Cash or Card on Delivery",
+      codNotice: "Payment is collected safely at your doorstep via contactless POS terminal or cash.",
       contact: "Contact details",
       fullName: "Full name",
       email: "Email address",
@@ -232,7 +240,15 @@
       bag: "سلة التسوق",
       bagIntro: "راجع المنتجات قبل إتمام الطلب.",
       checkoutTitle: "إتمام الطلب",
-      checkoutIntro: "أدخل بعض التفاصيل، ثم يصبح طلبك جاهزًا.",
+      checkoutIntro: "أدخل بيانات الاستلام أدناه لتجهيز شحنتك فوراً وتوصيلها مع التأمين الشامل.",
+      checkoutStep1: "وجهة التوصيل والاستلام",
+      checkoutStep2: "طريقة الدفع والتأكيد",
+      checkoutTrust1: "طلب آمن ومشفر 256-Bit",
+      checkoutTrust2: "ضمان رسمي شامل سنتين",
+      checkoutTrust3: "استرجاع مجاني خلال 7 أيام",
+      checkoutReviewTitle: "نظرة على السلة",
+      codBadge: "الدفع عند الاستلام (كاش أو مدى/بطاقة)",
+      codNotice: "يتم تحصيل المبلغ عند باب منزلك بكل أمان عبر جهاز مدى للبطاقات أو نقداً.",
       contact: "بيانات التواصل",
       fullName: "الاسم الكامل",
       email: "البريد الإلكتروني",
@@ -988,7 +1004,205 @@
       return;
     }
     const profile = store.getProfile();
-    root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.checkoutTitle}</h1><p>${t.checkoutIntro}</p></div></div><form class="checkout-layout" data-checkout-form><div class="checkout-sections"><section class="commerce-panel"><h2>${t.contact}</h2><div class="commerce-form-grid"><label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" required value="${escapeHtml(profile.name)}" /></label><label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" required value="${escapeHtml(profile.email)}" /></label><label class="commerce-field">${t.phone}<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required value="${escapeHtml(profile.phone)}" /></label><label class="commerce-field">${t.city}<input name="city" autocomplete="address-level2" required value="${escapeHtml(profile.city || t.cityDefault)}" /></label><label class="commerce-field is-wide">${t.address}<input name="address" autocomplete="street-address" required /></label><label class="commerce-field">${t.postal}<input name="postal" autocomplete="postal-code" inputmode="numeric" required /></label><label class="commerce-field is-wide">${t.notes}<textarea name="notes" rows="3"></textarea></label></div></section><section class="commerce-panel"><h2>${t.payment}</h2><div class="payment-options"><label class="payment-option"><input type="radio" name="payment" value="cod" checked /><span>${t.cod}<small>${t.codNote}</small></span></label></div><p class="summary-note">${t.noPayment}</p></section><div class="form-feedback" data-checkout-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${t.confirmOrder}</button></div>${summaryMarkup(lines, false)}</form>`;
+    const orderTotal = totals(lines);
+
+    const miniLinesMarkup = lines
+      .map(
+        ({ product, quantity, option, unitPrice }) =>
+          `<div class="checkout-mini-line">
+            <div class="mini-line-thumb"><img src="${product.image}" alt="${escapeHtml(product.name)}" loading="lazy" /></div>
+            <div class="mini-line-details">
+              <strong>${escapeHtml(product.name)}</strong>
+              <small>${escapeHtml(option.label)} · ×${quantity}</small>
+            </div>
+            <span class="mini-line-price">${money(unitPrice * quantity)}</span>
+          </div>`
+      )
+      .join("");
+
+    root.innerHTML = `
+      <div class="checkout-luxury-header">
+        <div class="checkout-header-copy">
+          <span class="commerce-eyebrow">${t.eyebrow}</span>
+          <h1>${t.checkoutTitle}</h1>
+          <p>${t.checkoutIntro}</p>
+        </div>
+        <div class="checkout-assurance-badges">
+          <div class="assurance-pill"><i data-lucide="shield-check" aria-hidden="true"></i><span>${t.checkoutTrust1 || "256-Bit Encrypted Checkout"}</span></div>
+          <div class="assurance-pill"><i data-lucide="award" aria-hidden="true"></i><span>${t.checkoutTrust2 || "Official 2-Year Warranty"}</span></div>
+          <div class="assurance-pill"><i data-lucide="rotate-ccw" aria-hidden="true"></i><span>${t.checkoutTrust3 || "7-Day Hassle-Free Returns"}</span></div>
+        </div>
+      </div>
+
+      <form class="checkout-layout luxury-checkout-grid" data-checkout-form>
+        <div class="checkout-sections">
+          <!-- Step 1: Destination -->
+          <section class="commerce-panel checkout-step-panel">
+            <div class="panel-step-header">
+              <span class="step-number">01</span>
+              <div>
+                <h2>${t.checkoutStep1 || t.contact}</h2>
+                <small class="step-sub">${language === "ar" ? "بيانات المستلم وعنوان التوصيل المباشر" : "Recipient information and direct delivery address"}</small>
+              </div>
+            </div>
+
+            <div class="commerce-form-grid">
+              <label class="commerce-field">
+                <span class="field-label-wrap">
+                  <i data-lucide="user" aria-hidden="true"></i>
+                  <span>${t.fullName}</span>
+                </span>
+                <input name="name" autocomplete="name" required placeholder="${language === "ar" ? "مثال: عبد العزيز الأحمد" : "e.g. John Doe"}" value="${escapeHtml(profile.name)}" />
+              </label>
+
+              <label class="commerce-field">
+                <span class="field-label-wrap">
+                  <i data-lucide="mail" aria-hidden="true"></i>
+                  <span>${t.email}</span>
+                </span>
+                <input name="email" type="email" autocomplete="email" required placeholder="name@example.com" value="${escapeHtml(profile.email)}" />
+              </label>
+
+              <label class="commerce-field">
+                <span class="field-label-wrap">
+                  <i data-lucide="phone" aria-hidden="true"></i>
+                  <span>${t.phone}</span>
+                </span>
+                <input name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="05xxxxxxxx" value="${escapeHtml(profile.phone)}" />
+              </label>
+
+              <label class="commerce-field">
+                <span class="field-label-wrap">
+                  <i data-lucide="map-pin" aria-hidden="true"></i>
+                  <span>${t.city}</span>
+                </span>
+                <input name="city" autocomplete="address-level2" required value="${escapeHtml(profile.city || t.cityDefault)}" />
+              </label>
+
+              <label class="commerce-field is-wide">
+                <span class="field-label-wrap">
+                  <i data-lucide="home" aria-hidden="true"></i>
+                  <span>${t.address}</span>
+                </span>
+                <input name="address" autocomplete="street-address" required placeholder="${language === "ar" ? "اسم الحي، الشارع، رقم المبنى" : "Street, building number, district"}" />
+              </label>
+
+              <label class="commerce-field">
+                <span class="field-label-wrap">
+                  <i data-lucide="hash" aria-hidden="true"></i>
+                  <span>${t.postal}</span>
+                </span>
+                <input name="postal" autocomplete="postal-code" inputmode="numeric" required placeholder="12345" />
+              </label>
+
+              <label class="commerce-field is-wide">
+                <span class="field-label-wrap">
+                  <i data-lucide="message-square" aria-hidden="true"></i>
+                  <span>${t.notes}</span>
+                </span>
+                <textarea name="notes" rows="2" placeholder="${language === "ar" ? "أي تعليمات خاصة بالسائق أو موعد التوصيل المفضل..." : "Delivery notes, gate code, or specific timing instructions..."}"></textarea>
+              </label>
+            </div>
+          </section>
+
+          <!-- Step 2: Payment & Security -->
+          <section class="commerce-panel checkout-step-panel">
+            <div class="panel-step-header">
+              <span class="step-number">02</span>
+              <div>
+                <h2>${t.checkoutStep2 || t.payment}</h2>
+                <small class="step-sub">${language === "ar" ? "طريقة دفع معتمدة ومريحة عند وصول طلبك" : "Guaranteed safe payment upon delivery"}</small>
+              </div>
+            </div>
+
+            <div class="payment-options">
+              <label class="payment-option is-active-option">
+                <input type="radio" name="payment" value="cod" checked />
+                <div class="payment-option-card">
+                  <div class="payment-header-row">
+                    <span class="payment-icon-badge"><i data-lucide="banknote" aria-hidden="true"></i></span>
+                    <div class="payment-title-wrap">
+                      <strong>${t.codBadge || t.cod}</strong>
+                      <small>${t.codNote}</small>
+                    </div>
+                    <span class="payment-check-circle"><i data-lucide="check" aria-hidden="true"></i></span>
+                  </div>
+                  <div class="payment-perks">
+                    <span><i data-lucide="credit-card" aria-hidden="true"></i> مدى / فيزا / ماستركارد</span>
+                    <span><i data-lucide="coins" aria-hidden="true"></i> نقدًا (Cash)</span>
+                    <span><i data-lucide="shield" aria-hidden="true"></i> بدون أي رسوم إضافية</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="checkout-security-notice">
+              <i data-lucide="lock" aria-hidden="true"></i>
+              <p>${t.codNotice || t.noPayment}</p>
+            </div>
+          </section>
+
+          <div class="form-feedback" data-checkout-feedback aria-live="polite"></div>
+
+          <button class="commerce-button checkout-submit-btn" type="submit">
+            <span>${t.confirmOrder}</span>
+            <i data-lucide="arrow-right" class="submit-arrow-icon" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Sticky Luxury Summary Card -->
+        <aside class="summary-panel luxury-summary-panel">
+          <div class="summary-header">
+            <h2>${t.orderSummary}</h2>
+            <span class="summary-badge">${lines.length} ${lines.length === 1 ? t.item : t.items}</span>
+          </div>
+
+          <div class="checkout-items-preview">
+            <span class="preview-title">${t.checkoutReviewTitle || "Bag overview"}</span>
+            <div class="mini-lines-container">
+              ${miniLinesMarkup}
+            </div>
+          </div>
+
+          <div class="summary-breakdown">
+            <div class="summary-row">
+              <span>${t.subtotal}</span>
+              <strong>${money(orderTotal.subtotal)}</strong>
+            </div>
+            <div class="summary-row">
+              <span>${t.shippingCost}</span>
+              <strong class="${orderTotal.shipping ? "" : "text-free"}">${orderTotal.shipping ? money(orderTotal.shipping) : t.free}</strong>
+            </div>
+            <div class="summary-row total luxury-total">
+              <div>
+                <span>${t.total}</span>
+                <small class="tax-included-tag">${language === "ar" ? "شامل ضريبة القيمة المضافة" : "VAT included"}</small>
+              </div>
+              <strong class="total-amount">${money(orderTotal.total)}</strong>
+            </div>
+          </div>
+
+          <div class="checkout-security-guarantee">
+            <div class="guarantee-item">
+              <i data-lucide="truck" aria-hidden="true"></i>
+              <div>
+                <strong>${language === "ar" ? "شحن سريع وآمن" : "Insured Express Delivery"}</strong>
+                <small>${language === "ar" ? "خلال 1–2 يوم عمل" : "1–2 business days"}</small>
+              </div>
+            </div>
+            <div class="guarantee-item">
+              <i data-lucide="check-check" aria-hidden="true"></i>
+              <div>
+                <strong>${language === "ar" ? "أجهزة أصلية 100%" : "100% Authentic Guarantee"}</strong>
+                <small>${language === "ar" ? "معتمدة من الوكلاء الرسميين" : "From authorized regional distributors"}</small>
+              </div>
+            </div>
+          </div>
+          <p class="summary-note">${t.shippingNote}</p>
+        </aside>
+      </form>
+    `;
+    window.lucide?.createIcons();
   }
 
   function renderAccount() {
