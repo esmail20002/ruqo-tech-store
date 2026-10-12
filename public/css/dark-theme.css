@@ -317,12 +317,31 @@ html[data-theme="dark"] .quantity-control button {
 
 html[data-theme="dark"] .commerce-links.is-open {
   border-color: var(--line);
-  background: #152232;
-  box-shadow: 0 18px 36px rgba(2, 8, 18, 0.42);
+  background: linear-gradient(145deg, #1b2a3b, #121d2b 72%, #202536);
+  box-shadow:
+    0 24px 56px rgba(2, 8, 18, 0.48),
+    inset 0 1px rgba(220, 235, 248, 0.06);
 }
 
 html[data-theme="dark"] .commerce-links.is-open a {
   border-color: var(--line);
+}
+
+html[data-theme="dark"] .commerce-links.is-open a:hover {
+  background: rgba(103, 200, 184, 0.1);
+  color: #a0e3d7;
+}
+
+html[data-theme="dark"] .main-nav.open {
+  border-color: var(--line);
+  background: linear-gradient(145deg, #1b2a3b, #121d2b 72%, #202536);
+  box-shadow:
+    0 24px 56px rgba(2, 8, 18, 0.48),
+    inset 0 1px rgba(220, 235, 248, 0.06);
+}
+
+html[data-theme="dark"] .main-nav a + a {
+  border-color: rgba(177, 197, 218, 0.12);
 }
 
 html[data-theme="dark"] .about-contact,

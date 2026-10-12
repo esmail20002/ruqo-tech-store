@@ -441,8 +441,9 @@
   function renderShell() {
     header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="RUQO TECH"><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-lang language-select" data-language-select aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="zh">中文</option><option value="ar">العربية</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
     footer.innerHTML = `<footer class="commerce-footer"><div class="container commerce-footer-inner"><a class="brand footer-brand" href="/" aria-label="RUQO TECH"><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a><span>${t.rights}</span><nav class="commerce-footer-links"><a href="/about.html">${t.about}</a><a href="/support.html#delivery">${t.shippingInfo}</a><a href="/support.html#terms">${t.terms}</a><a href="/support.html#privacy">${t.privacy}</a><a href="/support.html">${t.support}</a></nav></div></footer>`;
-    header.querySelector(".commerce-links").setAttribute("aria-label", t.navLabel);
-    header.querySelector(".commerce-links").setAttribute("aria-label", t.navLabel);
+    const nav = header.querySelector(".commerce-links");
+    nav.id = "commerce-navigation";
+    nav.setAttribute("aria-label", t.navLabel);
     store.syncTheme();
     const languageSelect = header.querySelector("[data-language-select]");
     languageSelect.value = language;
@@ -458,25 +459,45 @@
     menuButton.className = "commerce-icon-button commerce-menu";
     menuButton.type = "button";
     menuButton.setAttribute("aria-label", t.openMenu);
+    menuButton.setAttribute("aria-controls", nav.id);
     menuButton.setAttribute("aria-expanded", "false");
-    menuButton.innerHTML = icon("menu");
+    menuButton.innerHTML = `${icon("menu")}${icon("x")}`;
     header.querySelector(".commerce-actions").prepend(menuButton);
-    menuButton.addEventListener("click", () => {
-      const nav = header.querySelector(".commerce-links");
-      const isOpen = menuButton.getAttribute("aria-expanded") !== "true";
+    const setMenuOpen = (isOpen) => {
       nav.classList.toggle("is-open", isOpen);
       menuButton.setAttribute("aria-expanded", String(isOpen));
-      menuButton.setAttribute(
-        "aria-label",
-        isOpen ? t.closeMenu : t.openMenu,
-      );
-    });
-    header.querySelectorAll(".commerce-links a").forEach((link) =>
-      link.addEventListener("click", () => {
-        header.querySelector(".commerce-links").classList.remove("is-open");
-        menuButton.setAttribute("aria-expanded", "false");
-      }),
+      menuButton.setAttribute("aria-label", isOpen ? t.closeMenu : t.openMenu);
+    };
+    menuButton.addEventListener("click", () =>
+      setMenuOpen(menuButton.getAttribute("aria-expanded") !== "true"),
     );
+    nav.querySelectorAll("a").forEach((link) =>
+      link.addEventListener("click", () => setMenuOpen(false)),
+    );
+    if (header.dataset.menuDismissBound !== "true") {
+      header.dataset.menuDismissBound = "true";
+      document.addEventListener("click", (event) => {
+        const currentButton = header.querySelector(".commerce-menu");
+        const currentNav = header.querySelector(".commerce-links");
+        if (
+          currentButton?.getAttribute("aria-expanded") === "true" &&
+          !currentButton.contains(event.target) &&
+          !currentNav?.contains(event.target)
+        ) {
+          currentButton.click();
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        const currentButton = header.querySelector(".commerce-menu");
+        if (
+          event.key === "Escape" &&
+          currentButton?.getAttribute("aria-expanded") === "true"
+        ) {
+          currentButton.click();
+          currentButton.focus();
+        }
+      });
+    }
   }
 
   function toast(message) {

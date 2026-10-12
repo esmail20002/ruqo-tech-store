@@ -1009,19 +1009,40 @@ $("[data-search-focus]").addEventListener("click", () => {
 $("[data-language-select]").addEventListener("change", (event) =>
   setLanguage(event.currentTarget.value),
 );
-$(".menu-toggle").addEventListener("click", (event) => {
-  const button = event.currentTarget;
-  const open = button.getAttribute("aria-expanded") !== "true";
-  button.setAttribute("aria-expanded", String(open));
-  button.classList.toggle("is-open", open);
-  $(".main-nav").classList.toggle("open", open);
+const catalogMenuButton = $(".menu-toggle");
+const catalogMenu = $(".main-nav");
+const setCatalogMenuOpen = (open) => {
+  catalogMenuButton.setAttribute("aria-expanded", String(open));
+  catalogMenuButton.classList.toggle("is-open", open);
+  catalogMenu.classList.toggle("open", open);
+  catalogMenuButton.setAttribute(
+    "aria-label",
+    open
+      ? { en: "Close menu", fr: "Fermer le menu", es: "Cerrar menú", zh: "关闭菜单", ar: "إغلاق القائمة" }[language]
+      : { en: "Open menu", fr: "Ouvrir le menu", es: "Abrir menú", zh: "打开菜单", ar: "فتح القائمة" }[language],
+  );
+};
+catalogMenuButton.addEventListener("click", () =>
+  setCatalogMenuOpen(catalogMenuButton.getAttribute("aria-expanded") !== "true"),
+);
+document.addEventListener("click", (event) => {
+  if (
+    catalogMenu.classList.contains("open") &&
+    !catalogMenu.contains(event.target) &&
+    !catalogMenuButton.contains(event.target)
+  ) {
+    setCatalogMenuOpen(false);
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && catalogMenu.classList.contains("open")) {
+    setCatalogMenuOpen(false);
+    catalogMenuButton.focus();
+  }
 });
 $$(".main-nav a").forEach((link) =>
   link.addEventListener("click", () => {
-    $(".main-nav").classList.remove("open");
-    const button = $(".menu-toggle");
-    button.classList.remove("is-open");
-    button.setAttribute("aria-expanded", "false");
+    setCatalogMenuOpen(false);
   }),
 );
 ui.cart.textContent = fmt(cartCount);

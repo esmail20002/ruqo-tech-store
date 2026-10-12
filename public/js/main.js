@@ -915,6 +915,23 @@ if (menuToggle && mainNav) {
   mainNav.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => setMenuOpen(false));
   });
+
+  document.addEventListener("click", (event) => {
+    if (
+      mainNav.classList.contains("open") &&
+      !mainNav.contains(event.target) &&
+      !menuToggle.contains(event.target)
+    ) {
+      setMenuOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && mainNav.classList.contains("open")) {
+      setMenuOpen(false);
+      menuToggle.focus();
+    }
+  });
 }
 
 const revealItems = document.querySelectorAll(".reveal");
