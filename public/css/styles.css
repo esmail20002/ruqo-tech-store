@@ -1577,6 +1577,11 @@ section {
     width: min(var(--container), calc(100% - 24px));
   }
 
+  .topbar .topbar-inner {
+    width: 100%;
+    max-width: none;
+  }
+
   .topbar-inner {
     gap: 6px;
     padding: 6px 0;
@@ -2112,10 +2117,6 @@ section {
 }
 
 @media (max-width: 640px) {
-  .topbar-texts span:not(:first-child) {
-    display: none;
-  }
-
   .topbar-inner {
     min-height: 34px;
   }
