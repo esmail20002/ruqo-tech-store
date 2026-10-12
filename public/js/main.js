@@ -690,6 +690,36 @@ function renderFeaturedProduct() {
   }, 180);
 }
 
+function syncHomepageCatalog() {
+  const catalog = window.NoursData;
+  if (!catalog?.products?.length) return;
+  const dictionary = translations[currentLang] || translations.en;
+  document.querySelectorAll(".product-grid .product-card").forEach((card) => {
+    const link = card.querySelector(".product-info h3 a");
+    if (!link) return;
+    const slug = new URL(link.href).searchParams.get("id");
+    const product = catalog.products.find((item) => item.id === slug);
+    if (!product) return;
+    const localized = catalog.localizeProduct(product, currentLang);
+    link.textContent = localized.name;
+    card.querySelector(".product-info p").textContent =
+      localized.description[currentLang] || localized.description.en;
+    card.querySelector(".product-meta .rating").textContent =
+      `★★★★★ ${Number(product.rating).toFixed(1)}`;
+    const price = card.querySelector("[data-price-sar]");
+    price.dataset.priceSar = product.price;
+    const tag = card.querySelector(".tag");
+    if (tag) {
+      const tagName = product.badge === "sale" ? "sale" : product.badge === "new" ? "new" : "featured";
+      tag.className = `tag${product.badge === "sale" ? " tag-sale" : ""}`;
+      tag.textContent = dictionary[`tags.${tagName}`] || product.badge || "";
+    }
+    const image = card.querySelector(".product-image");
+    if (image && product.image) image.style.backgroundImage = `url("${product.image}")`;
+  });
+  formatHomepagePrices();
+}
+
 function formatHomepagePrices() {
   const currency = window.NoursStore?.getCurrency() || "SAR";
   const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
@@ -728,6 +758,10 @@ function updateFeaturedProductTimer() {
 reducedMotionQuery.addEventListener("change", updateFeaturedProductTimer);
 document.addEventListener("visibilitychange", updateFeaturedProductTimer);
 updateFeaturedProductTimer();
+window.addEventListener("ruqo:catalog-updated", syncHomepageCatalog);
+window.RUQO_SUPABASE_READY?.then((loaded) => {
+  if (loaded) syncHomepageCatalog();
+});
 
 function renderMobileAd() {
   const banner = document.querySelector(".mobile-ad-banner");
@@ -880,6 +914,7 @@ function applyTranslations(lang) {
   formatHomepagePrices();
   renderMobileAd();
   renderFeaturedProduct();
+  syncHomepageCatalog();
 }
 
 if (languageSelect) {

@@ -91,6 +91,8 @@
       confirmOrder: "Place order",
       noPayment:
         "This storefront demo does not collect or process online payments.",
+      checkoutUnavailable: "Checkout is temporarily unavailable. Please try again later.",
+      checkoutFailed: "We couldn't place your order. Your bag is unchanged; please try again.",
       orderPlaced: "Order confirmed",
       thankYou: "Thank you. Your order has been saved.",
       orderNumber: "Order number",
@@ -246,6 +248,8 @@
       confirmOrder: "تأكيد الطلب",
       noPayment:
         "هذه النسخة التجريبية لا تجمع المدفوعات الإلكترونية ولا تعالجها.",
+      checkoutUnavailable: "إتمام الطلب غير متاح مؤقتًا. حاول مرة أخرى لاحقًا.",
+      checkoutFailed: "تعذر تسجيل طلبك. لم تتغير السلة؛ يرجى المحاولة مجددًا.",
       orderPlaced: "تم تأكيد الطلب",
       thankYou: "شكرًا لك. تم حفظ طلبك.",
       orderNumber: "رقم الطلب",
@@ -1106,7 +1110,7 @@
     }
   });
 
-  root.addEventListener("submit", (event) => {
+  root.addEventListener("submit", async (event) => {
     if (event.target.matches("[data-product-review]")) {
       event.preventDefault();
       const form = event.target;
@@ -1133,36 +1137,96 @@
       const form = event.target;
       if (!form.reportValidity()) return;
       const values = Object.fromEntries(new FormData(form));
-      store.setProfile({
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        city: values.city,
-      });
+      const feedback = root.querySelector("[data-checkout-feedback]");
+      const submitButton = form.querySelector('[type="submit"]');
+      const config = window.RUQO_SUPABASE_CONFIG;
+      if (!config?.publishableKey || !window.RUQO_SUPABASE) {
+        feedback.textContent = t.checkoutUnavailable;
+        return;
+      }
+      if (values.payment !== "cod") {
+        feedback.textContent = t.checkoutFailed;
+        return;
+      }
+
       const lines = lineItems();
-      const orderTotals = totals(lines);
-      const order = {
-        id: `NRS-${Date.now().toString().slice(-8)}`,
-        date: new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, {
-          dateStyle: "medium",
-        }).format(new Date()),
-        items: lines.map(({ product, quantity, option, unitPrice }) => ({
-          id: product.id,
-          name: product.name,
-          quantity,
-          variant: option.label,
-          price: unitPrice,
-        })),
-        total: orderTotals.total,
-        status: "confirmed",
-        payment: values.payment,
-        address: values.address,
-        city: values.city,
-      };
-      store.setOrders([order, ...store.getOrders()]);
-      Object.keys(store.cart()).forEach((id) => store.removeFromCart(id));
-      root.innerHTML = `<section class="commerce-empty">${icon("badge-check")}<span class="commerce-eyebrow">${t.orderPlaced}</span><h1>${t.thankYou}</h1><p>${t.orderNumber}: <strong>${order.id}</strong></p><a class="commerce-button" href="/account.html#orders">${t.viewAccount}</a><a class="commerce-button-secondary" href="/products.html">${t.continue}</a></section>`;
-      window.lucide?.createIcons();
+      if (!lines.length) {
+        renderCheckout();
+        return;
+      }
+      const items = lines.map(({ product, quantity, option }) => ({
+        product_slug: product.slug || product.id,
+        variant_key:
+          product.variants?.find((variant) => variant.option_value === option.canonicalLabel)?.variant_key || null,
+        quantity,
+      }));
+      submitButton.disabled = true;
+      feedback.textContent = "";
+      try {
+        const { data, error } = await window.RUQO_SUPABASE.functions.invoke(
+          "create-guest-order",
+          {
+            body: {
+              customer: {
+                name: values.name,
+                email: values.email,
+                phone: values.phone,
+                city: values.city,
+                address: values.address,
+                postal: values.postal,
+                notes: values.notes,
+                language,
+              },
+              items,
+            },
+          },
+        );
+        if (error) {
+          let serverMessage = "";
+          try {
+            serverMessage = (await error.context.json()).error || "";
+          } catch {
+            serverMessage = "";
+          }
+          throw new Error(serverMessage || t.checkoutFailed);
+        }
+        if (!data?.order?.order_number) throw new Error(t.checkoutFailed);
+
+        const order = data.order;
+        store.setProfile({
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          city: values.city,
+        });
+        store.setOrders([
+          {
+            id: order.order_number,
+            date: new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, {
+              dateStyle: "medium",
+            }).format(new Date()),
+            items: lines.map(({ product, quantity, option, unitPrice }) => ({
+              id: product.id,
+              name: product.name,
+              quantity,
+              variant: option.label,
+              price: unitPrice,
+            })),
+            total: Number(order.total),
+            status: order.status,
+            payment: "cod",
+            address: values.address,
+            city: values.city,
+          },
+          ...store.getOrders(),
+        ]);
+        Object.keys(store.cart()).forEach((id) => store.removeFromCart(id));
+        root.innerHTML = `<section class="commerce-empty">${icon("badge-check")}<span class="commerce-eyebrow">${t.orderPlaced}</span><h1>${t.thankYou}</h1><p>${t.orderNumber}: <strong>${escapeHtml(order.order_number)}</strong></p><p>${t.total}: <strong>${money(Number(order.total))}</strong></p><a class="commerce-button" href="/account.html#orders">${t.viewAccount}</a><a class="commerce-button-secondary" href="/products.html">${t.continue}</a></section>`;
+        window.lucide?.createIcons();
+      } catch (error) {
+        feedback.textContent = error.message || t.checkoutFailed;
+        submitButton.disabled = false;
+      }
     }
     if (event.target.matches("[data-profile-form]")) {
       event.preventDefault();

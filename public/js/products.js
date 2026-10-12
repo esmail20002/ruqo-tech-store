@@ -1068,3 +1068,7 @@ if (
   ui.sort.value = pageParams.get("sort");
 }
 setLanguage(language);
+window.addEventListener("ruqo:catalog-updated", render);
+window.RUQO_SUPABASE_READY?.then((loaded) => {
+  if (loaded) render();
+});

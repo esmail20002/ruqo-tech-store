@@ -481,10 +481,11 @@
     const translation = localizedProductCopy[language]?.[product.id] || {};
     return {
       ...product,
-      name: translation.name || product.name,
+      name: product.name_translations?.[language] || translation.name || product.name,
       description: {
         ...product.description,
         [language]:
+          product.description_translations?.[language] ||
           translation.description ||
           product.description[language] ||
           product.description.en,
@@ -492,11 +493,98 @@
       features: {
         ...product.features,
         [language]:
+          product.localized_features?.[language] ||
           translation.features ||
           product.features[language] ||
           product.features.en,
       },
     };
   };
-  window.NoursData = { products, localizeProduct };
+
+  async function loadFromSupabase(client) {
+    if (!client) return false;
+    const { data: productRows, error: productsError } = await client
+      .from("products")
+      .select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: false });
+    if (productsError) throw productsError;
+    if (!productRows?.length) return false;
+
+    const slugs = productRows.map((product) => product.slug);
+    const [featureResult, variantResult, imageResult] = await Promise.all([
+      client.from("product_features").select("product_slug, language_code, position, content").in("product_slug", slugs).order("position"),
+      client.from("product_variants").select("id, variant_key, product_slug, option_group, option_value, option_label_translations, price_adjustment, stock_quantity, sort_order").eq("is_active", true).in("product_slug", slugs).order("sort_order"),
+      client.from("product_images").select("product_slug, image_url, storage_path, alt_translations, is_primary, sort_order").in("product_slug", slugs).order("sort_order"),
+    ]);
+    for (const result of [featureResult, variantResult, imageResult]) {
+      if (result.error) throw result.error;
+    }
+
+    const featureMap = new Map();
+    for (const feature of featureResult.data || []) {
+      if (!featureMap.has(feature.product_slug)) featureMap.set(feature.product_slug, {});
+      const byLanguage = featureMap.get(feature.product_slug);
+      (byLanguage[feature.language_code] ||= []).push(feature);
+    }
+    const variantsMap = new Map();
+    for (const variant of variantResult.data || []) {
+      if (!variantsMap.has(variant.product_slug)) variantsMap.set(variant.product_slug, []);
+      variantsMap.get(variant.product_slug).push({
+        ...variant,
+        price_adjustment: Number(variant.price_adjustment) || 0,
+      });
+    }
+    const imagesMap = new Map();
+    for (const image of imageResult.data || []) {
+      if (!imagesMap.has(image.product_slug)) imagesMap.set(image.product_slug, []);
+      imagesMap.get(image.product_slug).push(image);
+    }
+
+    const syncedProducts = productRows.map((row) => {
+      const imageRows = (imagesMap.get(row.slug) || []).sort(
+        (left, right) => Number(right.is_primary) - Number(left.is_primary) || left.sort_order - right.sort_order,
+      );
+      const firstImage = imageRows[0];
+      const image = firstImage?.storage_path
+        ? client.storage.from("product-images").getPublicUrl(firstImage.storage_path).data.publicUrl
+        : firstImage?.image_url || row.external_image_url || "";
+      const localizedFeatures = Object.fromEntries(
+        Object.entries(featureMap.get(row.slug) || {}).map(([language, entries]) => [
+          language,
+          entries.sort((left, right) => left.position - right.position).map((entry) => entry.content),
+        ]),
+      );
+      return {
+        id: row.slug,
+        slug: row.slug,
+        category: row.category_slug,
+        brand: row.brand,
+        name: row.name_translations?.en || row.slug,
+        name_translations: row.name_translations || {},
+        description: row.description_translations || {},
+        description_translations: row.description_translations || {},
+        features: localizedFeatures,
+        localized_features: localizedFeatures,
+        variants: variantsMap.get(row.slug) || [],
+        price: Number(row.price),
+        oldPrice: row.compare_at_price === null ? null : Number(row.compare_at_price),
+        currency: row.currency || "SAR",
+        rating: Number(row.rating) || 0,
+        reviews: Number(row.review_count) || 0,
+        image,
+        badge: row.badge,
+        stock: row.in_stock,
+        newest: row.sort_order,
+        is_active: row.is_active,
+        is_featured: row.is_featured,
+      };
+    });
+
+    products.splice(0, products.length, ...syncedProducts);
+    window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
+    return true;
+  }
+
+  window.NoursData = { products, localizeProduct, loadFromSupabase };
 })();
