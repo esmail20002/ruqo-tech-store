@@ -730,7 +730,7 @@
     width: 126px;
     height: 38px;
     margin-left: -16px;
-    transform: translateX(4px);
+    transform: translateX(8px);
   }
   .commerce-actions {
     gap: 4px;
@@ -869,7 +869,7 @@
   }
   .commerce-nav .brand-logo {
     width: clamp(88px, 34vw, 116px);
-    transform: translateX(4px);
+    transform: translateX(8px);
   }
   .commerce-actions {
     gap: 3px;
