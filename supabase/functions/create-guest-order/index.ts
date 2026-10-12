@@ -1,6 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const defaultAllowedOrigins = [
+  "https://ruqo.pro",
+  "https://www.ruqo.pro",
   "https://ruqo-tech-store-ruqo.vercel.app",
   "https://esmail20002.github.io",
   "http://localhost:3000",
