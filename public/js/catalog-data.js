@@ -9,7 +9,7 @@
         en: "Liquid Retina XDR · 16GB unified memory",
         ar: "شاشة Liquid Retina XDR · ذاكرة 16GB",
       },
-      price: 8499,
+      price: 5000,
       oldPrice: 9299,
       rating: 4.9,
       reviews: 248,
@@ -582,9 +582,23 @@
     });
 
     products.splice(0, products.length, ...syncedProducts);
+    if (window.NoursData) window.NoursData.loaded = true;
+    try {
+      localStorage.setItem("ruqo-catalog-cache-v1", JSON.stringify(syncedProducts));
+    } catch (_) {}
     window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
     return true;
   }
 
-  window.NoursData = { products, localizeProduct, loadFromSupabase };
+  try {
+    const cached = localStorage.getItem("ruqo-catalog-cache-v1");
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length) {
+        products.splice(0, products.length, ...parsed);
+      }
+    }
+  } catch (_) {}
+
+  window.NoursData = { products, localizeProduct, loadFromSupabase, loaded: false };
 })();

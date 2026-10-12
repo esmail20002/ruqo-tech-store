@@ -320,7 +320,7 @@ const legacyProducts = [
       en: "Liquid Retina XDR · 16GB unified memory",
       ar: "شاشة Liquid Retina XDR · ذاكرة 16GB",
     },
-    price: 8499,
+    price: 5000,
     oldPrice: 9299,
     rating: 4.9,
     reviews: 248,

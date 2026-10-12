@@ -627,7 +627,7 @@ const featuredProducts = [
   {
     image:
       "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80",
-    price: "8,499",
+    price: "5,000",
     ar: {
       badge: "اختيار المحترفين",
       brand: "Apple MacBook",
@@ -717,6 +717,14 @@ function syncHomepageCatalog() {
     const image = card.querySelector(".product-image");
     if (image && product.image) image.style.backgroundImage = `url("${product.image}")`;
   });
+  const mbp = catalog.products.find((item) => item.id === "macbook-pro");
+  if (mbp && featuredProducts[1]) {
+    featuredProducts[1].price = new Intl.NumberFormat("en-US").format(mbp.price);
+    const heroPrice = document.querySelector(".highlight-card [data-price-sar]");
+    if (heroPrice && featuredProductIndex === 1) {
+      heroPrice.dataset.priceSar = mbp.price;
+    }
+  }
   formatHomepagePrices();
 }
 

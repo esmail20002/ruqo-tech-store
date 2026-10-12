@@ -1074,14 +1074,26 @@
         productQuantity;
     }
     if (addButton) {
-      const product = productById(addButton.dataset.add);
-      if (product?.stock) {
-        const quantity = page === "product" ? productQuantity : 1;
-        const option = selectedOption(product);
-        const unitPrice = product.price + (page === "product" ? option.adjustment : 0);
-        store.addToCart(product.id, quantity);
-        store.showAddedToBag(product, { quantity, price: money(unitPrice) });
-        if (page === "cart" || page === "wishlist") render();
+      const doAddToCart = () => {
+        const product = productById(addButton.dataset.add);
+        if (product?.stock) {
+          const quantity = page === "product" ? productQuantity : 1;
+          const option = selectedOption(product);
+          const unitPrice = product.price + (page === "product" ? option.adjustment : 0);
+          store.addToCart(product.id, quantity);
+          store.showAddedToBag(product, { quantity, price: money(unitPrice) });
+          if (page === "cart" || page === "wishlist") render();
+        }
+      };
+
+      if (window.RUQO_SUPABASE_READY && !window.NoursData?.loaded) {
+        addButton.disabled = true;
+        window.RUQO_SUPABASE_READY.finally(() => {
+          addButton.disabled = false;
+          doAddToCart();
+        });
+      } else {
+        doAddToCart();
       }
     }
     if (toggleWish) {
@@ -1255,4 +1267,8 @@
   });
 
   render();
+  window.addEventListener("ruqo:catalog-updated", render);
+  window.RUQO_SUPABASE_READY?.then((loaded) => {
+    if (loaded) render();
+  });
 })();
