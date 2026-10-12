@@ -932,3 +932,417 @@ html[dir="rtl"] .catalog-breadcrumb svg {
     transition: none;
   }
 }
+
+/* ========================================================
+   DESKTOP-ONLY PROMOTIONAL BANNER & AD CARDS
+   (Specifically for computers / desktop screens >= 992px)
+   ======================================================== */
+
+.catalog-desktop-banner,
+.catalog-desktop-ad-card {
+  display: none !important;
+}
+
+@media (min-width: 992px) {
+  /* Top Billboard Banner */
+  .catalog-desktop-banner {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.95fr);
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 24px;
+    padding: 28px 34px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #181126 0%, #1e1a38 50%, #102428 100%);
+    border: 1px solid rgba(168, 115, 247, 0.22);
+    box-shadow:
+      0 20px 45px -15px rgba(24, 17, 38, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .catalog-desktop-banner::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    inset-inline-start: -60px;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 56, 211, 0.35) 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  .banner-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .banner-badge-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .banner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: rgba(168, 115, 247, 0.18);
+    border: 1px solid rgba(168, 115, 247, 0.4);
+    color: #d8b4fe;
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.05em;
+  }
+
+  .banner-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #a855f7;
+    box-shadow: 0 0 10px #c084fc;
+    animation: bannerPulse 2s infinite ease-in-out;
+  }
+
+  @keyframes bannerPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.6; }
+  }
+
+  .banner-offer-tag {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(37, 142, 134, 0.3), rgba(103, 200, 184, 0.2));
+    border: 1px solid rgba(103, 200, 184, 0.45);
+    color: #67e8f9;
+    font-size: 0.70rem;
+    font-weight: 800;
+  }
+
+  .banner-title {
+    margin: 0;
+    font-size: 1.55rem;
+    font-weight: 850;
+    line-height: 1.25;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+  }
+
+  .banner-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.82);
+    max-width: 540px;
+  }
+
+  .banner-tags {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  .banner-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .banner-chip svg {
+    width: 13px;
+    height: 13px;
+    color: #67e8f9;
+  }
+
+  .banner-actions {
+    margin-top: 8px;
+  }
+
+  .banner-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 0;
+    background: linear-gradient(135deg, #7838d3, #9047f5);
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(120, 56, 211, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, background 0.22s ease;
+  }
+
+  .banner-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    background: linear-gradient(135deg, #8c47e8, #a855f7);
+    box-shadow: 0 12px 28px rgba(120, 56, 211, 0.55);
+  }
+
+  .banner-btn-icon {
+    width: 15px;
+    height: 15px;
+    transition: transform 0.2s ease;
+  }
+
+  .banner-btn:hover .banner-btn-icon {
+    transform: translateX(3px);
+  }
+
+  [dir="rtl"] .banner-btn-icon {
+    transform: rotate(180deg);
+  }
+
+  [dir="rtl"] .banner-btn:hover .banner-btn-icon {
+    transform: rotate(180deg) translateX(3px);
+  }
+
+  .banner-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .visual-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37, 142, 134, 0.4) 0%, rgba(120, 56, 211, 0.25) 50%, transparent 70%);
+    filter: blur(35px);
+    pointer-events: none;
+  }
+
+  .banner-img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.35s ease;
+  }
+
+  .banner-visual:hover .banner-img {
+    transform: scale(1.03) rotate(-1deg);
+  }
+
+  .floating-spec-pill {
+    position: absolute;
+    bottom: -10px;
+    inset-inline-end: 10px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 12px;
+    border-radius: 12px;
+    background: rgba(18, 25, 38, 0.88);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .pill-icon {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(37, 142, 134, 0.25);
+    color: #67e8f9;
+  }
+
+  .pill-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .pill-text strong {
+    display: block;
+    font-size: 0.72rem;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  .pill-text small {
+    display: block;
+    font-size: 0.62rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.2;
+  }
+
+  /* In-Grid Editorial Desktop Ad Card */
+  .catalog-desktop-ad-card {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    padding: 24px 22px;
+    border-radius: 20px;
+    background: linear-gradient(155deg, rgba(120, 56, 211, 0.08) 0%, rgba(37, 142, 134, 0.12) 100%);
+    border: 1.5px dashed rgba(120, 56, 211, 0.32);
+    box-shadow: 0 12px 32px rgba(52, 34, 76, 0.07);
+    transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.24s ease, border-color 0.24s ease;
+  }
+
+  .catalog-desktop-ad-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(120, 56, 211, 0.6);
+    border-style: solid;
+    box-shadow: 0 20px 40px rgba(120, 56, 211, 0.15);
+  }
+
+  .ad-card-glow {
+    position: absolute;
+    top: -40px;
+    inset-inline-end: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 56, 211, 0.25) 0%, transparent 70%);
+    filter: blur(25px);
+    pointer-events: none;
+  }
+
+  .ad-card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(120, 56, 211, 0.15), rgba(186, 143, 235, 0.18));
+    border: 1px solid rgba(120, 56, 211, 0.3);
+    color: #7838d3;
+    font-size: 0.65rem;
+    font-weight: 850;
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+  }
+
+  .ad-card-badge svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .ad-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ad-card-kicker {
+    font-size: 0.66rem;
+    font-weight: 850;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ad-card-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 850;
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  .ad-card-text {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .ad-card-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--line);
+  }
+
+  .ad-perk {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .ad-perk svg {
+    width: 13px;
+    height: 13px;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .ad-card-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(120, 56, 211, 0.28);
+    background: var(--surface-strong);
+    color: var(--primary-deep);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .ad-card-btn:hover {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 6px 16px rgba(120, 56, 211, 0.3);
+  }
+
+  .catalog-grid.is-list .catalog-desktop-ad-card {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .catalog-grid.is-list .catalog-desktop-ad-card .ad-card-btn {
+    width: auto;
+    white-space: nowrap;
+  }
+}

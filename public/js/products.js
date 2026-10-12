@@ -58,6 +58,19 @@ const copy = {
     badgeSale: "Special price",
     badgePopular: "Popular choice",
     greatValue: "Great value",
+    bannerBadge: "PRO PERFORMANCE · COMPUTING SPOTLIGHT",
+    bannerOffer: "Save up to $350",
+    bannerTitle: "Next-Gen Laptops & Workstations",
+    bannerSubtitle: "Featuring M4 and Intel Core Ultra processors, brilliant OLED displays, and all-day battery life.",
+    bannerTag1: "Apple M4 & Intel Ultra",
+    bannerTag2: "3K OLED & Liquid Retina",
+    bannerBtn: "Shop Computers",
+    adCardBadge: "DESKTOP SPOTLIGHT",
+    adCardTitle: "Upgrade Your Work & Gaming Station",
+    adCardText: "Engineered for creators and heavy multitasking with high-speed unified memory.",
+    adCardPerk1: "Ultra-fast SSD & Unified RAM",
+    adCardPerk2: "2-Year Official Warranty",
+    adCardCta: "Explore Laptops →",
     rights: "© 2026 RUQO TECH. All rights reserved.",
   },
   ar: {
@@ -119,6 +132,19 @@ const copy = {
     badgeSale: "سعر خاص",
     badgePopular: "اختيار شائع",
     greatValue: "قيمة ممتازة",
+    bannerBadge: "أداء فائق · عروض أجهزة الكمبيوتر",
+    bannerOffer: "خصومات تصل إلى $350",
+    bannerTitle: "أجهزة كمبيوتر ولابتوبات بقوة استثنائية",
+    bannerSubtitle: "مزودة بمعالجات M4 و Intel Core Ultra، مع شاشات OLED مذهلة وبطاريات تدوم طوال اليوم.",
+    bannerTag1: "Apple M4 و Intel Ultra",
+    bannerTag2: "شاشات 3K OLED و Retina",
+    bannerBtn: "تصفح أجهزة الكمبيوتر",
+    adCardBadge: "إعلان مميز · للكمبيوتر",
+    adCardTitle: "طوّر مكتبك لأقصى إنتاجية ولعب",
+    adCardText: "مصممة خصيصاً للمحترفين وصناع المحتوى مع ذاكرة موحدة فائقة السرعة.",
+    adCardPerk1: "معالجات فائقة للألعاب والتصميم",
+    adCardPerk2: "ضمان رسمي سنتين وشحن سريع",
+    adCardCta: "استكشف اللابتوبات ←",
     rights: "© 2026 RUQO TECH. جميع الحقوق محفوظة.",
   },
   fr: {
@@ -180,6 +206,19 @@ const copy = {
     badgeSale: "Prix spécial",
     badgePopular: "Populaire",
     greatValue: "Bon rapport qualité-prix",
+    bannerBadge: "PERFORMANCE PRO · INFORMATIQUE",
+    bannerOffer: "Jusqu'à 350 $ d'économie",
+    bannerTitle: "Ordinateurs portables et stations de travail",
+    bannerSubtitle: "Équipés des puces M4 et Intel Core Ultra, avec écrans OLED éclatants et autonomie toute la journée.",
+    bannerTag1: "Apple M4 & Intel Ultra",
+    bannerTag2: "3K OLED & Liquid Retina",
+    bannerBtn: "Découvrir les ordinateurs",
+    adCardBadge: "SÉLECTION PRO",
+    adCardTitle: "Boostez votre espace de travail et gaming",
+    adCardText: "Conçu pour les créateurs et le multitâche intensif avec mémoire unifiée ultra-rapide.",
+    adCardPerk1: "SSD ultra-rapide et RAM unifiée",
+    adCardPerk2: "Garantie officielle de 2 ans",
+    adCardCta: "Explorer les portables →",
     rights: "© 2026 RUQO TECH. Tous droits réservés.",
   },
   es: {
@@ -241,6 +280,19 @@ const copy = {
     badgeSale: "Precio especial",
     badgePopular: "Opción popular",
     greatValue: "Gran valor",
+    bannerBadge: "RENDIMIENTO PRO · COMPUTACIÓN",
+    bannerOffer: "Ahorra hasta $350",
+    bannerTitle: "Portátiles y estaciones de trabajo avanzadas",
+    bannerSubtitle: "Con chips M4 e Intel Core Ultra, impresionantes pantallas OLED y batería para todo el día.",
+    bannerTag1: "Apple M4 e Intel Ultra",
+    bannerTag2: "3K OLED y Liquid Retina",
+    bannerBtn: "Ver ordenadores",
+    adCardBadge: "DESTACADO COMPUTACIÓN",
+    adCardTitle: "Potencia tu estación de trabajo y gaming",
+    adCardText: "Diseñado para creadores y multitarea exigente con memoria unificada de alta velocidad.",
+    adCardPerk1: "SSD ultra rápido y RAM unificada",
+    adCardPerk2: "Garantía oficial de 2 años",
+    adCardCta: "Explorar portátiles →",
     rights: "© 2026 RUQO TECH. Todos los derechos reservados.",
   },
   zh: {
@@ -302,6 +354,19 @@ const copy = {
     badgeSale: "特惠价",
     badgePopular: "热门选择",
     greatValue: "超值之选",
+    bannerBadge: "专业性能 · 电脑专区",
+    bannerOffer: "最高立省 350 美元",
+    bannerTitle: "新一代笔记本电脑与工作站",
+    bannerSubtitle: "搭载 M4 与 Intel Core Ultra 处理器，配备绚丽 OLED 屏幕与全天续航。",
+    bannerTag1: "Apple M4 与 Intel Ultra",
+    bannerTag2: "3K OLED 与 Liquid Retina",
+    bannerBtn: "选购电脑",
+    adCardBadge: "电脑精选推荐",
+    adCardTitle: "升级你的工作与游戏桌面",
+    adCardText: "专为创作者与高负荷多任务打造的高速统一内存配置。",
+    adCardPerk1: "超高速固态硬盘与统一内存",
+    adCardPerk2: "两年官方保修与急速配送",
+    adCardCta: "探索笔记本电脑 →",
     rights: "© 2026 RUQO TECH。保留所有权利。",
   },
 };
@@ -655,9 +720,53 @@ function activeFilters() {
   ui.filterCount.textContent = String(chips.length);
 }
 
+function filterByLaptops() {
+  $$("[data-category-filter]").forEach((input) => {
+    input.checked = input.value === "laptops";
+  });
+  render();
+  const catalogEl = document.getElementById("catalog");
+  if (catalogEl) {
+    catalogEl.scrollIntoView({ behavior: "smooth" });
+  }
+}
+
+function createDesktopAdCard() {
+  const card = document.createElement("article");
+  card.className = "catalog-desktop-ad-card";
+  card.setAttribute("aria-label", copy[language].adCardTitle);
+  card.innerHTML = `
+    <div class="ad-card-glow" aria-hidden="true"></div>
+    <div class="ad-card-badge">
+      <i data-lucide="sparkles" aria-hidden="true"></i>
+      <span>${copy[language].adCardBadge}</span>
+    </div>
+    <div class="ad-card-body">
+      <span class="ad-card-kicker">RUQO TECH · COMPUTING</span>
+      <h3 class="ad-card-title">${copy[language].adCardTitle}</h3>
+      <p class="ad-card-text">${copy[language].adCardText}</p>
+      <div class="ad-card-perks">
+        <span class="ad-perk"><i data-lucide="zap" aria-hidden="true"></i><span>${copy[language].adCardPerk1}</span></span>
+        <span class="ad-perk"><i data-lucide="shield-check" aria-hidden="true"></i><span>${copy[language].adCardPerk2}</span></span>
+      </div>
+      <button class="ad-card-btn" type="button" data-filter-laptop>
+        <span>${copy[language].adCardCta}</span>
+      </button>
+    </div>
+  `;
+  card.querySelector("[data-filter-laptop]").addEventListener("click", filterByLaptops);
+  return card;
+}
+
 function render() {
   const results = filteredProducts();
-  ui.grid.replaceChildren(...results.map(productCard));
+  const cards = results.map(productCard);
+  if (results.length >= 3) {
+    cards.splice(2, 0, createDesktopAdCard());
+  } else if (results.length > 0) {
+    cards.push(createDesktopAdCard());
+  }
+  ui.grid.replaceChildren(...cards);
   ui.count.textContent = fmt(results.length);
   ui.empty.hidden = results.length > 0;
   ui.grid.hidden = results.length === 0;
@@ -818,6 +927,9 @@ if (
 ) {
   ui.sort.value = pageParams.get("sort");
 }
+document.querySelectorAll("[data-filter-laptop]").forEach((button) => {
+  button.addEventListener("click", filterByLaptops);
+});
 setLanguage(language);
 const productsCurrencySelect = document.querySelector("[data-currency-select]");
 if (productsCurrencySelect) {
