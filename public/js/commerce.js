@@ -84,6 +84,37 @@
       checkoutReviewTitle: "Bag overview",
       codBadge: "Cash or Card on Delivery",
       codNotice: "Payment is collected safely at your doorstep via contactless POS terminal or cash.",
+      orderConfirmedBadge: "ORDER SECURED & CONFIRMED",
+      orderCelebration: "Your order has been placed successfully!",
+      orderSubtitle: "Thank you for shopping with RUQO TECH. Your order has been received and is now being prepared for expedited dispatch.",
+      orderNumberLabel: "Official Order Number",
+      orderCopyBtn: "Copy",
+      orderCopiedBtn: "Copied!",
+      orderStatusTitle: "Fulfillment & Delivery Progress",
+      stepConfirmed: "Order Confirmed",
+      stepConfirmedDesc: "Payment set to COD",
+      stepProcessing: "Quality Check & Packing",
+      stepProcessingDesc: "At RUQO central hub",
+      stepShipping: "Out for Delivery",
+      stepShippingDesc: "Direct express courier",
+      stepDelivered: "Doorstep Handover",
+      stepDeliveredDesc: "Inspect & pay upon arrival",
+      orderItemsTitle: "Purchased Items",
+      deliveryDetailsTitle: "Delivery Destination",
+      recipientLabel: "Recipient",
+      contactLabel: "Contact Phone",
+      addressLabel: "Shipping Address",
+      notesLabel: "Courier Instructions",
+      receiptTitle: "VIP Order Receipt",
+      paymentMethodLabel: "Payment Method",
+      orderDateLabel: "Order Date",
+      estDeliveryLabel: "Estimated Delivery",
+      estDeliveryVal: "1–2 Business Days",
+      printReceipt: "Print Official Receipt",
+      viewMyOrders: "View in Account",
+      continueShopping: "Continue Shopping",
+      warrantyNote: "Full 2-Year Regional Warranty Included",
+      conciergeNote: "Questions about your shipment? Our support concierge is here to assist 24/7.",
       contact: "Contact details",
       fullName: "Full name",
       email: "Email address",
@@ -249,6 +280,37 @@
       checkoutReviewTitle: "نظرة على السلة",
       codBadge: "الدفع عند الاستلام (كاش أو مدى/بطاقة)",
       codNotice: "يتم تحصيل المبلغ عند باب منزلك بكل أمان عبر جهاز مدى للبطاقات أو نقداً.",
+      orderConfirmedBadge: "تم تأكيد وتسجيل الطلب رسميًا",
+      orderCelebration: "تهانينا! تم تأكيد طلبك بنجاح",
+      orderSubtitle: "شكرًا لثقتك في RUQO TECH. تم إدراج طلبك في نظام التجهيز الفوري وجارٍ تحضيره للشحن السريع والمؤمّن.",
+      orderNumberLabel: "رقم الطلب الرسمي",
+      orderCopyBtn: "نسخ",
+      orderCopiedBtn: "تم النسخ!",
+      orderStatusTitle: "مراحل الشحن والتوصيل",
+      stepConfirmed: "تأكيد الطلب",
+      stepConfirmedDesc: "الدفع عند الاستلام",
+      stepProcessing: "التجهيز والفحص",
+      stepProcessingDesc: "في مستودعات RUQO",
+      stepShipping: "جاري التوصيل",
+      stepShippingDesc: "مع مندوب الشحن السريع",
+      stepDelivered: "الاستلام والتسليم",
+      stepDeliveredDesc: "المعاينة والدفع عند الباب",
+      orderItemsTitle: "المنتجات المطلوبة",
+      deliveryDetailsTitle: "عنوان وبيانات التوصيل",
+      recipientLabel: "اسم المستلم",
+      contactLabel: "رقم التواصل",
+      addressLabel: "عنوان التوصيل",
+      notesLabel: "ملاحظات التوصيل",
+      receiptTitle: "الفاتورة الرقمية المعتمدة",
+      paymentMethodLabel: "طريقة الدفع",
+      orderDateLabel: "تاريخ الطلب",
+      estDeliveryLabel: "موعد التوصيل المتوقع",
+      estDeliveryVal: "خلال 1–2 يوم عمل",
+      printReceipt: "طباعة الفاتورة",
+      viewMyOrders: "عرض الطلب في حسابي",
+      continueShopping: "متابعة التسوق",
+      warrantyNote: "مشمول بالضمان الذهبي لمدة سنتين",
+      conciergeNote: "هل لديك أي استفسار حول شحنتك؟ فريق خدمة العملاء متاح لمساعدتك على مدار الساعة.",
       contact: "بيانات التواصل",
       fullName: "الاسم الكامل",
       email: "البريد الإلكتروني",
@@ -1205,6 +1267,268 @@
     window.lucide?.createIcons();
   }
 
+  function renderOrderSuccess({ order, lines, values, formattedDate }) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const orderTotal = totals(lines);
+
+    const itemsRows = lines
+      .map(
+        ({ product, quantity, option, unitPrice }) => `
+        <article class="success-item-row">
+          <div class="success-item-thumb">
+            <img src="${product.image}" alt="${escapeHtml(product.name)}" loading="lazy" />
+          </div>
+          <div class="success-item-info">
+            <span class="success-item-brand">${escapeHtml(product.brand)}</span>
+            <h4 class="success-item-name">${escapeHtml(product.name)}</h4>
+            <div class="success-item-tags">
+              <span class="item-tag">${escapeHtml(option.label)}</span>
+              <span class="item-tag-qty">×${quantity}</span>
+            </div>
+          </div>
+          <div class="success-item-pricing">
+            <strong class="success-item-total">${money(unitPrice * quantity)}</strong>
+            <small class="success-item-unit">${money(unitPrice)} ${language === "ar" ? "للقطعة" : "each"}</small>
+          </div>
+        </article>
+      `,
+      )
+      .join("");
+
+    root.innerHTML = `
+      <div class="order-success-page">
+        <!-- Hero Header with Ambient Rings -->
+        <header class="success-hero-panel">
+          <div class="success-ambient-glow" aria-hidden="true"></div>
+          
+          <div class="success-badge-row">
+            <div class="success-check-badge">
+              <svg viewBox="0 0 52 52" class="checkmark-svg" aria-hidden="true">
+                <circle class="checkmark-circle" cx="26" cy="26" r="23" fill="none" />
+                <path class="checkmark-check" fill="none" d="M15 27l7 7 15-15" />
+              </svg>
+            </div>
+            <div class="success-status-pill">
+              <span class="pulse-emerald"></span>
+              <span>${t.orderConfirmedBadge || "ORDER SECURED & CONFIRMED"}</span>
+            </div>
+          </div>
+
+          <h1 class="success-hero-title">${t.orderCelebration || "Your order has been placed successfully!"}</h1>
+          <p class="success-hero-desc">
+            ${t.orderSubtitle || `Thank you, ${escapeHtml(values.name)}. Your order has been received and is now being prepared for expedited dispatch.`}
+          </p>
+
+          <!-- Order Code Ribbon with 1-Click Copy -->
+          <div class="success-code-ribbon">
+            <div class="code-info">
+              <span class="code-kicker">${t.orderNumberLabel || "Official Order Number"}</span>
+              <strong class="code-digits">${escapeHtml(order.order_number)}</strong>
+            </div>
+            <button class="success-copy-btn" type="button" data-copy-order="${escapeHtml(order.order_number)}">
+              <i data-lucide="copy" class="copy-icon" aria-hidden="true"></i>
+              <span class="copy-label">${t.orderCopyBtn || "Copy"}</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Stepper: Real-Time Fulfillment Journey -->
+        <section class="success-stepper-card" aria-label="${t.orderStatusTitle || "Fulfillment & Delivery Progress"}">
+          <div class="stepper-card-head">
+            <i data-lucide="compass" class="stepper-head-icon" aria-hidden="true"></i>
+            <div>
+              <h3>${t.orderStatusTitle || "Fulfillment & Delivery Progress"}</h3>
+              <small>${language === "ar" ? "تتبع فوري لمراحل التجهيز والشحن المباشر حتى باب منزلك" : "Real-time updates on your packaging, dispatch, and doorstep handover"}</small>
+            </div>
+          </div>
+
+          <div class="stepper-timeline">
+            <div class="stepper-node is-completed">
+              <div class="node-circle"><i data-lucide="check" aria-hidden="true"></i></div>
+              <div class="node-content">
+                <strong>${t.stepConfirmed || "Order Confirmed"}</strong>
+                <small>${t.stepConfirmedDesc || "Payment set to COD"}</small>
+              </div>
+            </div>
+            <div class="stepper-bar is-active"></div>
+            <div class="stepper-node is-active">
+              <div class="node-circle"><span class="ring-pulse"></span><i data-lucide="package" aria-hidden="true"></i></div>
+              <div class="node-content">
+                <strong>${t.stepProcessing || "Quality Check & Packing"}</strong>
+                <small>${t.stepProcessingDesc || "At RUQO central hub"}</small>
+              </div>
+            </div>
+            <div class="stepper-bar"></div>
+            <div class="stepper-node">
+              <div class="node-circle"><i data-lucide="truck" aria-hidden="true"></i></div>
+              <div class="node-content">
+                <strong>${t.stepShipping || "Out for Delivery"}</strong>
+                <small>${t.stepShippingDesc || "Direct express courier"}</small>
+              </div>
+            </div>
+            <div class="stepper-bar"></div>
+            <div class="stepper-node">
+              <div class="node-circle"><i data-lucide="home" aria-hidden="true"></i></div>
+              <div class="node-content">
+                <strong>${t.stepDelivered || "Doorstep Handover"}</strong>
+                <small>${t.stepDeliveredDesc || "Inspect & pay upon arrival"}</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Main Details Grid (Receipt + Summary) -->
+        <div class="success-details-grid">
+          <!-- Left Column -->
+          <div class="success-left-col">
+            <!-- Items Card -->
+            <section class="success-card">
+              <div class="card-title-row">
+                <div class="title-with-icon">
+                  <i data-lucide="shopping-bag" aria-hidden="true"></i>
+                  <h3>${t.orderItemsTitle || "Purchased Items"}</h3>
+                </div>
+                <span class="items-count-badge">${lines.length} ${lines.length === 1 ? t.item : t.items}</span>
+              </div>
+              <div class="success-items-list">
+                ${itemsRows}
+              </div>
+            </section>
+
+            <!-- Delivery Details Card -->
+            <section class="success-card">
+              <div class="card-title-row">
+                <div class="title-with-icon">
+                  <i data-lucide="map-pin" aria-hidden="true"></i>
+                  <h3>${t.deliveryDetailsTitle || "Delivery Destination"}</h3>
+                </div>
+              </div>
+
+              <div class="success-address-grid">
+                <div class="address-tile">
+                  <span class="tile-label"><i data-lucide="user" aria-hidden="true"></i> ${t.recipientLabel || "Recipient"}</span>
+                  <strong class="tile-val">${escapeHtml(values.name)}</strong>
+                </div>
+                <div class="address-tile">
+                  <span class="tile-label"><i data-lucide="phone" aria-hidden="true"></i> ${t.contactLabel || "Contact Phone"}</span>
+                  <strong class="tile-val" dir="ltr">${escapeHtml(values.phone)}</strong>
+                </div>
+                <div class="address-tile is-wide">
+                  <span class="tile-label"><i data-lucide="map" aria-hidden="true"></i> ${t.addressLabel || "Shipping Address"}</span>
+                  <strong class="tile-val">${escapeHtml(values.address)}, ${escapeHtml(values.city)}${values.postal ? ` (${escapeHtml(values.postal)})` : ""}</strong>
+                </div>
+                ${values.notes ? `
+                  <div class="address-tile is-wide">
+                    <span class="tile-label"><i data-lucide="message-square" aria-hidden="true"></i> ${t.notesLabel || "Courier Instructions"}</span>
+                    <p class="notes-quote">“${escapeHtml(values.notes)}”</p>
+                  </div>
+                ` : ""}
+              </div>
+            </section>
+          </div>
+
+          <!-- Right Column: Official VIP Receipt Aside -->
+          <aside class="success-receipt-aside">
+            <div class="success-receipt-card">
+              <div class="receipt-header-banner">
+                <span class="receipt-title">${t.receiptTitle || "VIP Order Receipt"}</span>
+                <span class="receipt-verified-badge"><i data-lucide="shield-check" aria-hidden="true"></i> OFFICIAL</span>
+              </div>
+
+              <div class="receipt-info-rows">
+                <div class="r-row">
+                  <span>${t.orderDateLabel || "Order Date"}</span>
+                  <strong>${formattedDate}</strong>
+                </div>
+                <div class="r-row">
+                  <span>${t.paymentMethodLabel || "Payment Method"}</span>
+                  <strong class="r-val-payment"><i data-lucide="banknote" aria-hidden="true"></i> ${t.cod || "Cash on Delivery"}</strong>
+                </div>
+                <div class="r-row">
+                  <span>${t.estDeliveryLabel || "Estimated Delivery"}</span>
+                  <strong class="r-val-delivery"><i data-lucide="clock" aria-hidden="true"></i> ${t.estDeliveryVal || "1–2 Business Days"}</strong>
+                </div>
+              </div>
+
+              <div class="receipt-breakdown">
+                <div class="r-calc-row">
+                  <span>${t.subtotal}</span>
+                  <strong>${money(order.subtotal || orderTotal.subtotal)}</strong>
+                </div>
+                <div class="r-calc-row">
+                  <span>${t.shippingCost}</span>
+                  <strong class="${(order.shipping_total || orderTotal.shipping) ? "" : "text-free"}">
+                    ${(order.shipping_total || orderTotal.shipping) ? money(order.shipping_total || orderTotal.shipping) : t.free}
+                  </strong>
+                </div>
+                <div class="r-calc-row total-receipt-row">
+                  <div>
+                    <span class="total-caption">${t.total}</span>
+                    <small class="total-vat-note">${language === "ar" ? "شامل ضريبة القيمة المضافة" : "VAT included"}</small>
+                  </div>
+                  <strong class="total-receipt-amount">${money(Number(order.total))}</strong>
+                </div>
+              </div>
+
+              <!-- Guarantee Assurance -->
+              <div class="receipt-assurances">
+                <div class="assurance-bullet">
+                  <i data-lucide="award" aria-hidden="true"></i>
+                  <span>${t.warrantyNote || "Full 2-Year Regional Warranty Included"}</span>
+                </div>
+                <div class="assurance-bullet">
+                  <i data-lucide="headphones" aria-hidden="true"></i>
+                  <span>${t.conciergeNote || "Questions about your shipment? Our support concierge is here to assist 24/7."}</span>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="receipt-buttons">
+                <a class="commerce-button receipt-account-btn" href="/account.html#orders">
+                  <span>${t.viewMyOrders || t.viewAccount || "View in Account"}</span>
+                  <i data-lucide="arrow-up-left" class="btn-arrow" aria-hidden="true"></i>
+                </a>
+                <button class="receipt-print-btn" type="button" data-print-receipt>
+                  <i data-lucide="printer" aria-hidden="true"></i>
+                  <span>${t.printReceipt || "Print Official Receipt"}</span>
+                </button>
+                <a class="receipt-continue-btn" href="/products.html">
+                  <span>${t.continueShopping || t.continue || "Continue Shopping"}</span>
+                </a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    `;
+
+    root.querySelector("[data-print-receipt]")?.addEventListener("click", () => {
+      window.print();
+    });
+
+    const copyBtn = root.querySelector("[data-copy-order]");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async () => {
+        const textToCopy = copyBtn.dataset.copyOrder;
+        try {
+          await navigator.clipboard.writeText(textToCopy);
+          const label = copyBtn.querySelector(".copy-label");
+          const iconEl = copyBtn.querySelector(".copy-icon");
+          if (label) label.textContent = t.orderCopiedBtn || "Copied!";
+          if (iconEl) iconEl.setAttribute("data-lucide", "check");
+          window.lucide?.createIcons();
+          setTimeout(() => {
+            if (label) label.textContent = t.orderCopyBtn || "Copy";
+            if (iconEl) iconEl.setAttribute("data-lucide", "copy");
+            window.lucide?.createIcons();
+          }, 2500);
+        } catch (_) {}
+      });
+    }
+
+    window.lucide?.createIcons();
+  }
+
   function renderAccount() {
     const profile = store.getProfile();
     const settings = store.getSettings();
@@ -1434,12 +1758,14 @@
           phone: values.phone,
           city: values.city,
         });
+        const formattedDate = new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, {
+          dateStyle: "medium",
+        }).format(new Date());
+
         store.setOrders([
           {
             id: order.order_number,
-            date: new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, {
-              dateStyle: "medium",
-            }).format(new Date()),
+            date: formattedDate,
             items: lines.map(({ product, quantity, option, unitPrice }) => ({
               id: product.id,
               name: product.name,
@@ -1456,8 +1782,7 @@
           ...store.getOrders(),
         ]);
         Object.keys(store.cart()).forEach((id) => store.removeFromCart(id));
-        root.innerHTML = `<section class="commerce-empty">${icon("badge-check")}<span class="commerce-eyebrow">${t.orderPlaced}</span><h1>${t.thankYou}</h1><p>${t.orderNumber}: <strong>${escapeHtml(order.order_number)}</strong></p><p>${t.total}: <strong>${money(Number(order.total))}</strong></p><a class="commerce-button" href="/account.html#orders">${t.viewAccount}</a><a class="commerce-button-secondary" href="/products.html">${t.continue}</a></section>`;
-        window.lucide?.createIcons();
+        renderOrderSuccess({ order, lines, values, formattedDate });
       } catch (error) {
         feedback.textContent = error.message || t.checkoutFailed;
         submitButton.disabled = false;
