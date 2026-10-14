@@ -722,6 +722,18 @@ html[data-theme="dark"] .catalog-desktop-ad-card {
   border-color: rgba(168, 115, 247, 0.35);
 }
 
+html[data-theme="dark"] .product-signal-pill {
+  border-color: rgba(103, 200, 184, 0.32);
+  background: rgba(37, 142, 134, 0.2);
+  color: #8be1d4;
+}
+
+html[data-theme="dark"] .product-signal-pill.is-sale {
+  border-color: rgba(247, 199, 105, 0.35);
+  background: rgba(77, 60, 34, 0.55);
+  color: #f5d78f;
+}
+
 html[data-theme="dark"] .catalog-desktop-ad-card:hover {
   border-color: rgba(168, 115, 247, 0.65);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
@@ -760,6 +772,40 @@ html[data-theme="dark"] .contact-details,
 html[data-theme="dark"] .settings-row small,
 html[data-theme="dark"] .commerce-heading p {
   color: #b7c4d2;
+}
+
+html[data-theme="dark"] .product-detail-gallery .product-detail-image {
+  border-color: rgba(177, 197, 218, 0.14);
+  background:
+    linear-gradient(rgba(177, 197, 218, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(177, 197, 218, 0.035) 1px, transparent 1px),
+    linear-gradient(145deg, #172435, #111b29 58%, #1a2838);
+  box-shadow: 0 26px 68px rgba(0, 0, 0, 0.32);
+}
+
+html[data-theme="dark"] .product-feature-list li {
+  border-color: rgba(177, 197, 218, 0.14);
+  background: rgba(22, 33, 49, 0.85);
+  color: #d4dee8;
+}
+
+html[data-theme="dark"] .detail-price-block {
+  border-color: rgba(177, 197, 218, 0.14);
+  background: linear-gradient(120deg, rgba(37, 142, 134, 0.12), rgba(120, 56, 211, 0.1));
+}
+
+html[data-theme="dark"] .detail-discount {
+  background: rgba(37, 142, 134, 0.2);
+  color: #72dbcf;
+}
+
+html[data-theme="dark"] .product-detail-stock {
+  background: rgba(37, 142, 134, 0.17);
+  color: #72dbcf;
+}
+
+html[data-theme="dark"] .detail-delivery > span {
+  background: rgba(26, 40, 56, 0.7);
 }
 
 html[data-theme="dark"] .detail-discount,

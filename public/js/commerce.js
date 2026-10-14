@@ -734,13 +734,9 @@
     }[language] || {
       gallery: "Product gallery", galleryNote: "Explore this item alongside other picks from its collection.", previousImage: "Previous image", nextImage: "Next image", view: "View", zoom: "View larger image", specs: "Specifications", detailedSpecs: "View detailed specifications", detailsTitle: "Detailed specifications", labels: { phones: ["Camera / platform", "Storage / display", "Core technology", "Design / experience"], laptops: ["Display", "Processor", "Memory / design", "Power / connectivity"], audio: ["Sound", "Noise control", "Connectivity", "Comfort"], wearables: ["Health", "Tracking", "Connectivity", "Design"] }, arrival: "Estimated delivery", arrivalValue: "1–2 business days", secure: "Secure checkout", returnsInfo: "7-day return window", reviewTitle: "Ratings & reviews", basedOn: "Based on customer ratings", reviewForm: "Share your experience", reviewName: "Your name", reviewText: "Your review", reviewSubmit: "Submit review", reviewThanks: "Thanks. Your review is saved on this device.", recentReviews: "Recent reviews", verified: "Customer review", related: "You may also like", keepBrowsing: "View all products", quantity: "Quantity", close: "Close image", noReviews: "Written review excerpts are not available yet. Share your experience below.",
     };
-    const categoryImages = products
-      .filter((item) => item.category === product.category)
-      .map(localizeProduct);
-    const gallery = [
-      product,
-      ...categoryImages.filter((item) => item.id !== product.id),
-    ].slice(0, 4);
+    const gallery = product.images?.length
+      ? product.images.filter(Boolean).map((image) => ({ ...product, image }))
+      : [{ ...product, image: product.image }];
     const galleryMarkup = gallery
       .map(
         (item, index) =>
@@ -815,6 +811,19 @@
 
     const currencyEdit = document.createElement("button");
     currencyEdit.className = "currency-edit";
+    const productSignals = {
+      en: { sale: "Special price", new: "New arrival", popular: "Popular choice" },
+      ar: { sale: "سعر خاص", new: "وصل حديثًا", popular: "اختيار شائع" },
+      fr: { sale: "Prix spécial", new: "Nouveauté", popular: "Populaire" },
+      es: { sale: "Precio especial", new: "Recién llegado", popular: "Muy popular" },
+      zh: { sale: "特惠价", new: "新品上市", popular: "热门选择" },
+    }[language] || { sale: "Special price", new: "New arrival", popular: "Popular choice" };
+    if (product.badge && productSignals[product.badge]) {
+      const signal = document.createElement("span");
+      signal.className = `product-signal-pill${product.badge === "sale" ? " is-sale" : ""}`;
+      signal.textContent = productSignals[product.badge];
+      root.querySelector(".detail-reveal-1").prepend(signal);
+    }
     currencyEdit.type = "button";
     currencyEdit.title = t.currencyLabel;
     currencyEdit.setAttribute("aria-label", t.currencyLabel);
@@ -830,7 +839,7 @@
       .querySelector(".product-detail-price")
       .append(currencyEdit, currencySelect);
     const detailPriceBlock = root.querySelector(".detail-price-block");
-    root.querySelector(".gallery-caption").before(detailPriceBlock);
+    root.querySelector(".detail-rating-link").after(detailPriceBlock);
     const currentPrice = product.price + currentOption.adjustment;
     root.querySelector(".product-detail-price > strong").textContent =
       money(currentPrice);
@@ -874,9 +883,10 @@
             `<li>${icon("circle-check")}<span>${escapeHtml(feature)}</span></li>`,
         )
         .join("");
-      root
-        .querySelector(".detail-rating-link")
-        .before(featureHeading, featureList);
+      const productDescription = root.querySelector(".detail-description");
+      const productRating = root.querySelector(".detail-rating-link");
+      productDescription.after(productRating);
+      productRating.after(featureHeading, featureList);
     }
 
     const detailsDisclosure = document.createElement("details");
@@ -924,18 +934,23 @@
         showGalleryImage(galleryIndex + step),
       );
     };
-    addGalleryArrow(
-      root.querySelector(".product-detail-image"),
-      -1,
-      "gallery-arrow is-previous",
-    );
-    addGalleryArrow(
-      root.querySelector(".product-detail-image"),
-      1,
-      "gallery-arrow is-next",
-    );
-    addGalleryArrow(lightbox, -1, "lightbox-arrow is-previous");
-    addGalleryArrow(lightbox, 1, "lightbox-arrow is-next");
+    if (gallery.length > 1) {
+      addGalleryArrow(
+        root.querySelector(".product-detail-image"),
+        -1,
+        "gallery-arrow is-previous",
+      );
+      addGalleryArrow(
+        root.querySelector(".product-detail-image"),
+        1,
+        "gallery-arrow is-next",
+      );
+      addGalleryArrow(lightbox, -1, "lightbox-arrow is-previous");
+      addGalleryArrow(lightbox, 1, "lightbox-arrow is-next");
+    } else {
+      root.querySelector(".product-gallery-thumbs").hidden = true;
+      root.querySelector(".gallery-caption").textContent = detail.zoom;
+    }
     galleryButtons.forEach((button, index) =>
       button.addEventListener("click", () => showGalleryImage(index)),
     );
