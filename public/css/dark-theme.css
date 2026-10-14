@@ -1000,6 +1000,16 @@ html[data-theme="dark"] .product-review-form {
   color: var(--text);
 }
 
+html[data-theme="dark"] .review-photo-picker {
+  border-color: rgba(177, 197, 218, 0.2);
+  background: rgba(22, 33, 49, 0.86);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .product-low-stock-note {
+  color: #f0bb76;
+}
+
 html[data-theme="dark"] .product-review > p {
   color: #cfdae5;
 }

@@ -2708,6 +2708,19 @@
 .product-detail-image:hover img {
   transform: scale(1.045);
 }
+@media (hover: hover) and (pointer: fine) {
+  .product-detail-image.is-hover-zoom img {
+    animation: none;
+    transform: scale(1.75);
+    transform-origin: var(--hover-x, 50%) var(--hover-y, 50%);
+    transition: transform 0.16s ease-out;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-detail-image.is-hover-zoom img {
+    transition: none;
+  }
+}
 .product-detail-image img.is-changing {
   opacity: 0.25;
   transform: scale(0.985);
@@ -3430,6 +3443,82 @@
   min-height: 42px;
   padding-inline: 17px;
   border-radius: 10px;
+}
+.review-photo-field {
+  gap: 8px;
+}
+.review-photo-picker {
+  position: relative;
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  align-self: start;
+  padding: 0 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.review-photo-picker svg {
+  width: 17px;
+  color: var(--primary);
+}
+.review-photo-picker input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.review-photo-picker:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.review-photo-preview img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 112px;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.review-photo-link {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.review-photo-thumb {
+  display: block;
+  width: min(100%, 220px);
+  max-height: 180px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+.review-photo-link:hover .review-photo-thumb {
+  transform: scale(1.035);
+}
+.product-low-stock-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: -2px 0 0;
+  color: #a35c1c;
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+.product-low-stock-note svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
 }
 .related-products-section .product-section-heading {
   display: flex;

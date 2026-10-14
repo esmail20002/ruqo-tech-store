@@ -415,6 +415,13 @@
     ar: { navLabel: "التنقل الرئيسي", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", decreaseQuantity: "تقليل الكمية", increaseQuantity: "زيادة الكمية", ratingLabel: "التقييم", productReference: "رقم المنتج", aboutStoryTitle: "اختيارات أوضح، وتجربة يمكن الوثوق بها.", aboutValuesTitle: "ما نؤمن به", aboutContactEyebrow: "نحن هنا لمساعدتك", productDetailStory: "صُمم ليقدم أداءً موثوقًا وتجربة يومية متوازنة، مع جودة تصنيع وعناية بالتفاصيل." },
   };
   const t = { ...(text[language] || text.en), ...supplementalText[language] };
+  const reviewPhotoMessages = {
+    en: { photoTooLarge: "Choose an image smaller than 8 MB.", photoType: "Please choose an image file." },
+    ar: { photoTooLarge: "اختر صورة أقل من 8 ميغابايت.", photoType: "اختر ملف صورة." },
+    fr: { photoTooLarge: "Choisissez une image de moins de 8 Mo.", photoType: "Choisissez un fichier image." },
+    es: { photoTooLarge: "Elige una imagen de menos de 8 MB.", photoType: "Elige un archivo de imagen." },
+    zh: { photoTooLarge: "请选择小于 8 MB 的图片。", photoType: "请选择图片文件。" },
+  }[language] || { photoTooLarge: "Choose an image smaller than 8 MB.", photoType: "Please choose an image file." };
   const currencyRates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
   const localeByLanguage = {
     en: "en-SA",
@@ -735,12 +742,12 @@
       gallery: "Product gallery", galleryNote: "Select a thumbnail to explore a closer crop of the product image.", previousImage: "Previous image", nextImage: "Next image", view: "View", zoom: "View larger image", specs: "Specifications", detailedSpecs: "View detailed specifications", detailsTitle: "Detailed specifications", labels: { phones: ["Camera / platform", "Storage / display", "Core technology", "Design / experience"], laptops: ["Display", "Processor", "Memory / design", "Power / connectivity"], audio: ["Sound", "Noise control", "Connectivity", "Comfort"], wearables: ["Health", "Tracking", "Connectivity", "Design"] }, arrival: "Estimated delivery", arrivalValue: "1–2 business days", secure: "Secure checkout", returnsInfo: "7-day return window", reviewTitle: "Ratings & reviews", basedOn: "Based on customer ratings", reviewForm: "Share your experience", reviewName: "Your name", reviewText: "Your review", reviewSubmit: "Submit review", reviewThanks: "Thanks. Your review is saved on this device.", recentReviews: "Recent reviews", verified: "Customer review", related: "You may also like", keepBrowsing: "View all products", quantity: "Quantity", close: "Close image", noReviews: "Written review excerpts are not available yet. Share your experience below.",
     };
     const reviewUi = {
-      en: { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match this rating.", empty: "No written reviews yet. Be the first to share your experience." },
-      ar: { written: "المراجعات المكتوبة", localNote: "المراجعات المرسلة من هذا المتصفح", all: "كل التقييمات", newest: "الأحدث", highest: "الأعلى تقييماً", lowest: "الأقل تقييماً", filter: "تصفية", sort: "ترتيب", rating: "تقييمك", ratingHint: "اختر عدد النجوم", chars: "حرفاً", emptyFiltered: "لا توجد مراجعات بهذا التقييم.", empty: "لا توجد مراجعات مكتوبة بعد. كن أول من يشارك تجربته." },
-      fr: { written: "Avis écrits", localNote: "Avis envoyés depuis ce navigateur", all: "Toutes les notes", newest: "Plus récents", highest: "Mieux notés", lowest: "Moins bien notés", filter: "Filtrer", sort: "Trier", rating: "Votre note", ratingHint: "Choisissez une note", chars: "caractères", emptyFiltered: "Aucun avis ne correspond à cette note.", empty: "Aucun avis écrit pour le moment. Soyez le premier à partager votre expérience." },
-      es: { written: "Reseñas escritas", localNote: "Reseñas enviadas desde este navegador", all: "Todas las valoraciones", newest: "Más recientes", highest: "Mejor valoradas", lowest: "Peor valoradas", filter: "Filtrar", sort: "Ordenar", rating: "Tu valoración", ratingHint: "Elige una valoración", chars: "caracteres", emptyFiltered: "No hay reseñas con esta valoración.", empty: "Todavía no hay reseñas escritas. Sé la primera persona en compartir su experiencia." },
-      zh: { written: "文字评价", localNote: "从此浏览器提交的评价", all: "全部评分", newest: "最新", highest: "评分最高", lowest: "评分最低", filter: "筛选", sort: "排序", rating: "你的评分", ratingHint: "请选择星级", chars: "字", emptyFiltered: "没有符合此评分的评价。", empty: "暂无文字评价，欢迎分享你的使用体验。" },
-    }[language] || { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match this rating.", empty: "No written reviews yet. Be the first to share your experience." };
+      en: { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match these filters.", empty: "No written reviews yet. Be the first to share your experience.", photoFilter: "Photos", withPhoto: "With photos", withoutPhoto: "Without photos", attachPhoto: "Add a product photo (optional)", photoTooLarge: "Choose an image under 8 MB.", photoType: "Choose an image file.", lowStock: "Only {count} left · order soon", availableNow: "In stock · ready to ship" },
+      ar: { written: "المراجعات المكتوبة", localNote: "المراجعات المرسلة من هذا المتصفح", all: "كل التقييمات", newest: "الأحدث", highest: "الأعلى تقييماً", lowest: "الأقل تقييماً", filter: "تصفية", sort: "ترتيب", rating: "تقييمك", ratingHint: "اختر عدد النجوم", chars: "حرفاً", emptyFiltered: "لا توجد مراجعات تطابق هذه الفلاتر.", empty: "لا توجد مراجعات مكتوبة بعد. كن أول من يشارك تجربته.", photoFilter: "الصور", withPhoto: "مع صور", withoutPhoto: "بدون صور", attachPhoto: "أضف صورة للمنتج (اختياري)", photoTooLarge: "اختر صورة أقل من 8 ميغابايت.", photoType: "اختر ملف صورة.", lowStock: "متبقي {count} فقط · اطلبه الآن", availableNow: "متوفر · جاهز للشحن" },
+      fr: { written: "Avis écrits", localNote: "Avis envoyés depuis ce navigateur", all: "Toutes les notes", newest: "Plus récents", highest: "Mieux notés", lowest: "Moins bien notés", filter: "Filtrer", sort: "Trier", rating: "Votre note", ratingHint: "Choisissez une note", chars: "caractères", emptyFiltered: "Aucun avis ne correspond à ces filtres.", empty: "Aucun avis écrit pour le moment. Soyez le premier à partager votre expérience.", photoFilter: "Photos", withPhoto: "Avec photos", withoutPhoto: "Sans photos", attachPhoto: "Ajouter une photo du produit (facultatif)", photoTooLarge: "Choisissez une image de moins de 8 Mo.", photoType: "Choisissez un fichier image.", lowStock: "Plus que {count} · commandez vite", availableNow: "En stock · prêt à expédier" },
+      es: { written: "Reseñas escritas", localNote: "Reseñas enviadas desde este navegador", all: "Todas las valoraciones", newest: "Más recientes", highest: "Mejor valoradas", lowest: "Peor valoradas", filter: "Filtrar", sort: "Ordenar", rating: "Tu valoración", ratingHint: "Elige una valoración", chars: "caracteres", emptyFiltered: "No hay reseñas que coincidan con estos filtros.", empty: "Todavía no hay reseñas escritas. Sé la primera persona en compartir su experiencia.", photoFilter: "Fotos", withPhoto: "Con fotos", withoutPhoto: "Sin fotos", attachPhoto: "Añadir foto del producto (opcional)", photoTooLarge: "Elige una imagen de menos de 8 MB.", photoType: "Elige un archivo de imagen.", lowStock: "Solo quedan {count} · pide pronto", availableNow: "Disponible · listo para enviar" },
+      zh: { written: "文字评价", localNote: "从此浏览器提交的评价", all: "全部评分", newest: "最新", highest: "评分最高", lowest: "评分最低", filter: "筛选", sort: "排序", rating: "你的评分", ratingHint: "请选择星级", chars: "字", emptyFiltered: "没有符合这些筛选条件的评价。", empty: "暂无文字评价，欢迎分享你的使用体验。", photoFilter: "图片", withPhoto: "有图片", withoutPhoto: "无图片", attachPhoto: "添加商品图片（可选）", photoTooLarge: "请选择小于 8 MB 的图片。", photoType: "请选择图片文件。", lowStock: "仅剩 {count} 件 · 尽快下单", availableNow: "有货 · 可立即发货" },
+    }[language] || { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match these filters.", empty: "No written reviews yet. Be the first to share your experience.", photoFilter: "Photos", withPhoto: "With photos", withoutPhoto: "Without photos", attachPhoto: "Add a product photo (optional)", photoTooLarge: "Choose an image under 8 MB.", photoType: "Choose an image file.", lowStock: "Only {count} left · order soon", availableNow: "In stock · ready to ship" };
 
     const productImages = product.images?.filter(Boolean) || [product.image];
     const gallery = productImages.length > 1
@@ -812,15 +819,17 @@
     reviewHeader.innerHTML = `<div><h3>${reviewUi.written}</h3><p>${reviewUi.localNote}</p></div><span class="review-written-count">${reviews.length}</span>`;
     const reviewTools = document.createElement("div");
     reviewTools.className = "review-toolbar";
-    reviewTools.innerHTML = `<label class="review-tool"><span>${reviewUi.filter}</span><select data-review-filter aria-label="${reviewUi.filter}"><option value="all">${reviewUi.all}</option>${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${value} ★</option>`).join("")}</select></label><label class="review-tool"><span>${reviewUi.sort}</span><select data-review-sort aria-label="${reviewUi.sort}"><option value="newest">${reviewUi.newest}</option><option value="highest">${reviewUi.highest}</option><option value="lowest">${reviewUi.lowest}</option></select></label>`;
+    reviewTools.innerHTML = `<label class="review-tool"><span>${reviewUi.filter}</span><select data-review-filter aria-label="${reviewUi.filter}"><option value="all">${reviewUi.all}</option>${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${value} ★</option>`).join("")}</select></label><label class="review-tool"><span>${reviewUi.sort}</span><select data-review-sort aria-label="${reviewUi.sort}"><option value="newest">${reviewUi.newest}</option><option value="highest">${reviewUi.highest}</option><option value="lowest">${reviewUi.lowest}</option></select></label><label class="review-tool"><span>${reviewUi.photoFilter}</span><select data-review-photo-filter aria-label="${reviewUi.photoFilter}"><option value="all">${reviewUi.all}</option><option value="with-photo">${reviewUi.withPhoto}</option><option value="without-photo">${reviewUi.withoutPhoto}</option></select></label>`;
     const reviewEntries = document.createElement("div");
     reviewEntries.className = "review-entries";
     reviewList.replaceChildren(reviewHeader, reviewTools, reviewEntries);
     const renderLocalReviews = () => {
       const selectedRating = reviewTools.querySelector("[data-review-filter]").value;
       const sortOrder = reviewTools.querySelector("[data-review-sort]").value;
+      const photoFilter = reviewTools.querySelector("[data-review-photo-filter]").value;
       const visibleReviews = reviews
         .filter((review) => selectedRating === "all" || Number(review.rating) === Number(selectedRating))
+        .filter((review) => photoFilter === "all" || (photoFilter === "with-photo" ? Boolean(review.photo) : !review.photo))
         .slice()
         .sort((left, right) => {
           if (sortOrder === "highest") return Number(right.rating) - Number(left.rating);
@@ -864,6 +873,21 @@
         const body = document.createElement("p");
         body.textContent = review.text;
         card.append(head, body);
+        if (review.photo) {
+          const photoLink = document.createElement("a");
+          photoLink.className = "review-photo-link";
+          photoLink.href = review.photo;
+          photoLink.target = "_blank";
+          photoLink.rel = "noreferrer";
+          photoLink.setAttribute("aria-label", language === "ar" ? "عرض صورة المراجعة" : "View review photo");
+          const photo = document.createElement("img");
+          photo.className = "review-photo-thumb";
+          photo.src = review.photo;
+          photo.alt = language === "ar" ? "صورة مرفقة بالمراجعة" : "Photo attached to review";
+          photo.loading = "lazy";
+          photoLink.append(photo);
+          card.append(photoLink);
+        }
         reviewEntries.append(card);
       }
     };
@@ -912,12 +936,58 @@
     reviewTextarea.addEventListener("input", updateCharacterCount);
     updateCharacterCount();
 
+    const photoField = document.createElement("label");
+    photoField.className = "commerce-field review-photo-field";
+    photoField.innerHTML = `<span>${reviewUi.attachPhoto}</span><span class="review-photo-picker"><i data-lucide="image-plus" aria-hidden="true"></i><span>${reviewUi.attachPhoto}</span><input type="file" name="photo" accept="image/*" data-review-photo /></span><span class="review-photo-preview" data-review-photo-preview hidden></span>`;
+    reviewTextarea.closest(".commerce-field").after(photoField);
+    const photoInput = photoField.querySelector("[data-review-photo]");
+    const photoPreview = photoField.querySelector("[data-review-photo-preview]");
+    photoInput.addEventListener("change", () => {
+      photoPreview.replaceChildren();
+      const file = photoInput.files?.[0];
+      if (!file) {
+        photoPreview.hidden = true;
+        return;
+      }
+      if (!file.type.startsWith("image/")) {
+        photoInput.value = "";
+        root.querySelector("[data-review-feedback]").textContent = reviewUi.photoType;
+        photoPreview.hidden = true;
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        photoInput.value = "";
+        root.querySelector("[data-review-feedback]").textContent = reviewUi.photoTooLarge;
+        photoPreview.hidden = true;
+        return;
+      }
+      const preview = document.createElement("img");
+      preview.alt = "";
+      preview.src = URL.createObjectURL(file);
+      photoPreview.append(preview);
+      photoPreview.hidden = false;
+    });
+    window.lucide?.createIcons();
+
     root.querySelector(".product-long-description").textContent =
       `${product.description[language]} ${t.productDetailStory}`;
     root.querySelector(
       ".product-review-form .commerce-field:nth-of-type(2)",
     ).childNodes[0].textContent = `${t.ratingLabel} `;
     const currentOption = selectedOption(product);
+    const selectedVariant = product.variants?.find(
+      (variant) => variant.option_value === currentOption.canonicalLabel,
+    );
+    const variantStock = selectedVariant?.stock_quantity;
+    const hasInventoryCount = variantStock !== null && variantStock !== undefined && Number.isFinite(Number(variantStock));
+    const inventoryCount = hasInventoryCount ? Number(variantStock) : null;
+    const addToBagButton = root.querySelector(".product-purchase-row [data-add]");
+    const stockStatus = root.querySelector(".product-detail-stock");
+    if (product.stock && inventoryCount === 0) {
+      stockStatus.classList.add("is-out");
+      stockStatus.lastChild.textContent = t.outStock;
+      if (addToBagButton) addToBagButton.disabled = true;
+    }
     const optionConfig = optionSet(product);
     const optionPicker = document.createElement("fieldset");
     optionPicker.className = "product-variant-picker";
@@ -934,8 +1004,14 @@
     quantityBlock.querySelector(":scope > span").textContent = purchaseControlCopy.quantity;
     optionPicker.querySelector("legend").textContent = purchaseControlCopy.option;
     optionPicker.setAttribute("aria-label", purchaseControlCopy.option);
-    if (product.stock) {
-      root.querySelector(".product-detail-stock").lastChild.textContent = purchaseControlCopy.inStock;
+    if (product.stock && inventoryCount !== 0) {
+      stockStatus.lastChild.textContent = purchaseControlCopy.inStock;
+    }
+    if (product.stock && inventoryCount !== null && inventoryCount > 0 && inventoryCount <= 3) {
+      const notice = document.createElement("p");
+      notice.className = "product-low-stock-note";
+      notice.innerHTML = `${icon("flame")}<span>${reviewUi.lowStock.replace("{count}", String(inventoryCount))}</span>`;
+      stockStatus.after(notice);
     }
     const optionColumn = document.createElement("div");
     optionColumn.className = "product-buy-config";
@@ -1102,6 +1178,20 @@
       }
       lightbox.showModal();
     });
+    const imageStage = root.querySelector(".product-detail-image");
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      imageStage.addEventListener("pointermove", (event) => {
+        const bounds = imageStage.getBoundingClientRect();
+        const x = Math.max(0, Math.min(100, ((event.clientX - bounds.left) / bounds.width) * 100));
+        const y = Math.max(0, Math.min(100, ((event.clientY - bounds.top) / bounds.height) * 100));
+        mainImage.style.setProperty("--hover-x", `${x}%`);
+        mainImage.style.setProperty("--hover-y", `${y}%`);
+        imageStage.classList.add("is-hover-zoom");
+      });
+      imageStage.addEventListener("pointerleave", () => {
+        imageStage.classList.remove("is-hover-zoom");
+      });
+    }
     const enableSwipe = (element) => {
       let startX = null;
       element.addEventListener("pointerdown", (event) => {
@@ -1825,6 +1915,32 @@
     }
   });
 
+  async function compressReviewImage(file, messages) {
+    if (!file.type.startsWith("image/")) throw new Error(messages.photoType);
+    if (file.size > 8 * 1024 * 1024) throw new Error(messages.photoTooLarge);
+
+    const bitmap = await createImageBitmap(file);
+    const maxSide = 800;
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.68));
+    if (!blob || blob.size > 320 * 1024) throw new Error(messages.photoTooLarge);
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Could not read this image."));
+      reader.readAsDataURL(blob);
+    });
+  }
+
   root.addEventListener("submit", async (event) => {
     if (event.target.matches("[data-product-review]")) {
       event.preventDefault();
@@ -1832,12 +1948,22 @@
       if (!form.reportValidity()) return;
       const review = Object.fromEntries(new FormData(form));
       const key = `nours-reviews-${new URLSearchParams(location.search).get("id")}`;
+      let photo = null;
+      if (review.photo instanceof File && review.photo.size > 0) {
+        try {
+          photo = await compressReviewImage(review.photo, reviewPhotoMessages);
+        } catch (error) {
+          root.querySelector("[data-review-feedback]").textContent = error.message || reviewPhotoMessages.photoTooLarge;
+          return;
+        }
+      }
       store.write(key, [
         ...store.read(key, []),
         {
           name: review.name.trim(),
           text: review.text.trim(),
           rating: Number(review.rating),
+          photo,
           date: new Date().toISOString(),
         },
       ]);
