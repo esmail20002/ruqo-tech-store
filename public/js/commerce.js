@@ -5,6 +5,10 @@
   const root = document.querySelector("[data-page-root]");
   let productQuantity = 1;
   let language = store.getLanguage();
+  let checkoutPromotion = null;
+  let checkoutCouponCode = "";
+  let checkoutCouponMessage = "";
+  let checkoutCouponMessageIsError = false;
   const text = {
     en: {
       home: "Home",
@@ -437,6 +441,7 @@
     ar: { Black: "أسود", Silver: "فضي", White: "أبيض", Small: "صغير", Large: "كبير" },
   };
   const displayVariant = (label) => variantTranslations[language]?.[label] || label;
+  const optionGroupLabel = (group) => ({ storage: t.storage, size: t.size, color: t.color })[group] || t.chooseVariant;
   const money = (amount) => {
     const currency = store.getCurrency();
     const locale = localeByLanguage[language] || localeByLanguage.en;
@@ -447,6 +452,18 @@
     }).format(amount * currencyRates[currency]);
   };
   const optionSet = (product) => {
+    if (product.variants?.length) {
+      const group = product.variants[0].option_group;
+      return {
+        label: optionGroupLabel(group),
+        options: product.variants.map((variant) => ({
+          label: variant.option_value,
+          canonicalLabel: variant.option_value,
+          displayLabel: variant.option_label_translations?.[language] || variant.option_label_translations?.en || variant.option_value,
+          adjustment: Number(variant.price_adjustment) || 0,
+        })),
+      };
+    }
     if (product.category === "phones") {
       const options =
         product.id === "ipad-air"
@@ -499,10 +516,14 @@
     const saved = store.getProductVariant(product.id);
     const fallbackIndex = product.id === "galaxy-s25" ? 1 : 0;
     const selected =
-      config.options.find((option) => option.label === saved) ||
+      config.options.find((option) => (option.canonicalLabel || option.label) === saved) ||
       config.options[fallbackIndex] ||
       config.options[0]
-    return { ...selected, canonicalLabel: selected.label, label: displayVariant(selected.label) };
+    return {
+      ...selected,
+      canonicalLabel: selected.canonicalLabel || selected.label,
+      label: selected.displayLabel || displayVariant(selected.label),
+    };
   };
   const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
   const escapeHtml = (value) =>
@@ -528,8 +549,9 @@
   const footer = document.querySelector("[data-site-footer]");
 
   function renderShell() {
-    header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="RUQO TECH"><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-currency currency-select" data-currency-select aria-label="${t.currencyLabel || "Currency"}" title="${t.currencyLabel || "Currency"}"><option value="USD">USD dollar</option><option value="SAR">SAR</option><option value="EUR">EUR</option></select><select class="commerce-lang language-select" data-language-select aria-label="Language" title="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="zh">ZH</option><option value="ar">عربي</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
-    footer.innerHTML = `<footer class="commerce-footer"><div class="container commerce-footer-inner"><a class="brand footer-brand" href="/" aria-label="RUQO TECH"><img class="brand-logo" src="/images/ruqo-logo.png" alt="RUQO TECH" /></a><span>${t.rights}</span><nav class="commerce-footer-links"><a href="/about.html">${t.about}</a><a href="/support.html#delivery">${t.shippingInfo}</a><a href="/support.html#terms">${t.terms}</a><a href="/support.html#privacy">${t.privacy}</a><a href="/support.html">${t.support}</a></nav></div></footer>`;
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="${escapeHtml(storeName)}"><img class="brand-logo" src="/images/ruqo-logo.png" alt="${escapeHtml(storeName)}" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-currency currency-select" data-currency-select aria-label="${t.currencyLabel || "Currency"}" title="${t.currencyLabel || "Currency"}"><option value="USD">USD dollar</option><option value="SAR">SAR</option><option value="EUR">EUR</option></select><select class="commerce-lang language-select" data-language-select aria-label="Language" title="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="zh">ZH</option><option value="ar">عربي</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
+    footer.innerHTML = `<footer class="commerce-footer"><div class="container commerce-footer-inner"><a class="brand footer-brand" href="/" aria-label="${escapeHtml(storeName)}"><img class="brand-logo" src="/images/ruqo-logo.png" alt="${escapeHtml(storeName)}" /></a><span>${t.rights.replace("RUQO TECH", escapeHtml(storeName))}</span><nav class="commerce-footer-links"><a href="/about.html">${t.about}</a><a href="/support.html#delivery">${t.shippingInfo}</a><a href="/support.html#terms">${t.terms}</a><a href="/support.html#privacy">${t.privacy}</a><a href="/support.html">${t.support}</a></nav></div></footer>`;
     const nav = header.querySelector(".commerce-links");
     nav.id = "commerce-navigation";
     nav.setAttribute("aria-label", t.navLabel);
@@ -632,7 +654,7 @@
       root.innerHTML = `<section class="commerce-empty">${icon("package-x")}<h1>${t.notFound}</h1><a class="commerce-button" href="/products.html">${t.backShop}</a></section>`;
       return;
     }
-    document.title = `${product.name} | RUQO TECH`;
+    document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH"}`;
     const isSaved = store.wishlist().includes(product.id);
     const detail = {
       en: {
@@ -992,7 +1014,12 @@
     const optionPicker = document.createElement("fieldset");
     optionPicker.className = "product-variant-picker";
     optionPicker.classList.toggle("is-color", optionConfig.label === t.color);
-    optionPicker.innerHTML = `<legend>${optionConfig.label}</legend><div class="product-variant-options" role="radiogroup" aria-label="${optionConfig.label}">${optionConfig.options.map((option) => `<button type="button" class="product-variant-option${displayVariant(option.label) === currentOption.label ? " is-selected" : ""}" role="radio" aria-checked="${displayVariant(option.label) === currentOption.label}" data-product-option="${escapeHtml(option.label)}"><span class="variant-swatch"></span><span>${escapeHtml(displayVariant(option.label))}</span></button>`).join("")}</div>`;
+    optionPicker.innerHTML = `<legend>${optionConfig.label}</legend><div class="product-variant-options" role="radiogroup" aria-label="${optionConfig.label}">${optionConfig.options.map((option) => {
+      const canonicalLabel = option.canonicalLabel || option.label;
+      const displayLabel = option.displayLabel || displayVariant(option.label);
+      const selected = canonicalLabel === currentOption.canonicalLabel;
+      return `<button type="button" class="product-variant-option${selected ? " is-selected" : ""}" role="radio" aria-checked="${selected}" data-product-option="${escapeHtml(canonicalLabel)}"><span class="variant-swatch"></span><span>${escapeHtml(displayLabel)}</span></button>`;
+    }).join("")}</div>`;
     const quantityBlock = root.querySelector(".product-quantity");
     const purchaseControlCopy = {
       en: { quantity: "Choose quantity", option: `Choose ${optionConfig.label.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" },
@@ -1281,13 +1308,39 @@
       (sum, line) => sum + line.unitPrice * line.quantity,
       0,
     );
-    const shipping = subtotal === 0 || subtotal >= 299 ? 0 : 25;
+    const settings = window.RUQO_STORE_SETTINGS || {};
+    const threshold = Number.isFinite(Number(settings.free_shipping_threshold))
+      ? Number(settings.free_shipping_threshold)
+      : 299;
+    const deliveryFee = Number.isFinite(Number(settings.standard_shipping_fee))
+      ? Number(settings.standard_shipping_fee)
+      : 25;
+    const shipping = subtotal === 0 || subtotal >= threshold ? 0 : deliveryFee;
     return { subtotal, shipping, total: subtotal + shipping };
+  }
+
+  function shippingNote() {
+    const settings = window.RUQO_STORE_SETTINGS || {};
+    const threshold = Number.isFinite(Number(settings.free_shipping_threshold))
+      ? Number(settings.free_shipping_threshold)
+      : 299;
+    const deliveryFee = Number.isFinite(Number(settings.standard_shipping_fee))
+      ? Number(settings.standard_shipping_fee)
+      : 25;
+    const freeAt = money(threshold);
+    const fee = money(deliveryFee);
+    return {
+      en: `Delivery is free on orders over ${freeAt}; a ${fee} fee applies otherwise. Taxes are included.`,
+      ar: `التوصيل مجاني للطلبات فوق ${freeAt}، وتُضاف رسوم ${fee} للطلبات الأقل. الضرائب مشمولة.`,
+      fr: `Livraison offerte dès ${freeAt}; ${fee} de frais s'appliquent sinon. Taxes incluses.`,
+      es: `Envío gratis a partir de ${freeAt}; se aplican ${fee} de envío en pedidos inferiores. Impuestos incluidos.`,
+      zh: `订单满 ${freeAt} 免运费；未达门槛收取 ${fee} 配送费。含税。`,
+    }[language] || `Delivery is free on orders over ${freeAt}; a ${fee} fee applies otherwise. Taxes are included.`;
   }
 
   function summaryMarkup(lines, includeButton = true) {
     const total = totals(lines);
-    return `<aside class="summary-panel"><h2>${t.orderSummary}</h2><div class="summary-row"><span>${t.subtotal}</span><strong>${money(total.subtotal)}</strong></div><div class="summary-row"><span>${t.shippingCost}</span><strong>${total.shipping ? money(total.shipping) : t.free}</strong></div><div class="summary-row total"><span>${t.total}</span><strong>${money(total.total)}</strong></div>${includeButton ? `<a class="commerce-button" href="/checkout.html">${t.checkout}</a>` : ""}<p class="summary-note">${t.shippingNote}</p></aside>`;
+    return `<aside class="summary-panel"><h2>${t.orderSummary}</h2><div class="summary-row"><span>${t.subtotal}</span><strong>${money(total.subtotal)}</strong></div><div class="summary-row"><span>${t.shippingCost}</span><strong>${total.shipping ? money(total.shipping) : t.free}</strong></div><div class="summary-row total"><span>${t.total}</span><strong>${money(total.total)}</strong></div>${includeButton ? `<a class="commerce-button" href="/checkout.html">${t.checkout}</a>` : ""}<p class="summary-note">${shippingNote()}</p></aside>`;
   }
 
   function renderCart() {
@@ -1313,6 +1366,19 @@
     }
     const profile = store.getProfile();
     const orderTotal = totals(lines);
+    const checkoutCopy = {
+      en: { coupon: "Discount code", apply: "Apply code", discount: "Promotion", applied: "Code applied. Discount will be verified at checkout.", invalid: "This code is invalid, expired, or does not meet the minimum order.", applyFirst: "Apply this code before placing the order." },
+      ar: { coupon: "رمز الخصم", apply: "تطبيق الرمز", discount: "الخصم", applied: "تم تطبيق الرمز مبدئياً، وسيُتحقق منه عند تأكيد الطلب.", invalid: "الرمز غير صالح أو منتهي أو لا يحقق الحد الأدنى للطلب.", applyFirst: "طبّق الرمز قبل تأكيد الطلب." },
+      fr: { coupon: "Code de réduction", apply: "Appliquer", discount: "Promotion", applied: "Code ajouté. La remise sera vérifiée à la validation.", invalid: "Code invalide, expiré ou minimum de commande non atteint.", applyFirst: "Appliquez ce code avant de commander." },
+      es: { coupon: "Código de descuento", apply: "Aplicar código", discount: "Promoción", applied: "Código aplicado. El descuento se verificará al confirmar.", invalid: "Código inválido, caducado o pedido mínimo no alcanzado.", applyFirst: "Aplica el código antes de confirmar el pedido." },
+      zh: { coupon: "优惠码", apply: "应用优惠码", discount: "优惠", applied: "已应用代码，结账时将再次验证折扣。", invalid: "优惠码无效、已过期或未达到最低订单金额。", applyFirst: "请先应用优惠码再提交订单。" },
+    }[language] || { coupon: "Discount code", apply: "Apply code", discount: "Promotion", applied: "Code applied. Discount will be verified at checkout.", invalid: "This code is invalid, expired, or does not meet the minimum order.", applyFirst: "Apply this code before placing the order." };
+    const couponDiscount = checkoutPromotion
+      ? checkoutPromotion.discount_type === "percentage"
+        ? Math.round(orderTotal.subtotal * Number(checkoutPromotion.discount_value)) / 100
+        : Math.min(orderTotal.subtotal, Number(checkoutPromotion.discount_value))
+      : 0;
+    const displayedTotal = orderTotal.total - couponDiscount;
 
     const miniLinesMarkup = lines
       .map(
@@ -1448,6 +1514,11 @@
               <i data-lucide="lock" aria-hidden="true"></i>
               <p>${t.codNotice || t.noPayment}</p>
             </div>
+            <div class="checkout-coupon-panel">
+              <label class="commerce-field"><span>${checkoutCopy.coupon}</span><input name="coupon_code" maxlength="60" autocomplete="off" value="${escapeHtml(checkoutCouponCode)}" /></label>
+              <button class="commerce-button-secondary" type="button" data-apply-coupon>${checkoutCopy.apply}</button>
+              <p class="form-feedback${checkoutCouponMessageIsError ? " is-error" : ""}" data-coupon-feedback aria-live="polite">${escapeHtml(checkoutCouponMessage)}</p>
+            </div>
           </section>
 
           <div class="form-feedback" data-checkout-feedback aria-live="polite"></div>
@@ -1481,12 +1552,13 @@
               <span>${t.shippingCost}</span>
               <strong class="${orderTotal.shipping ? "" : "text-free"}">${orderTotal.shipping ? money(orderTotal.shipping) : t.free}</strong>
             </div>
+            ${couponDiscount > 0 ? `<div class="summary-row checkout-discount-row" data-coupon-summary><span>${checkoutCopy.discount} · ${escapeHtml(checkoutPromotion.coupon_code)}</span><strong>−${money(couponDiscount)}</strong></div>` : ""}
             <div class="summary-row total luxury-total">
               <div>
                 <span>${t.total}</span>
                 <small class="tax-included-tag">${language === "ar" ? "شامل ضريبة القيمة المضافة" : "VAT included"}</small>
               </div>
-              <strong class="total-amount">${money(orderTotal.total)}</strong>
+              <strong class="total-amount">${money(displayedTotal)}</strong>
             </div>
           </div>
 
@@ -1506,10 +1578,83 @@
               </div>
             </div>
           </div>
-          <p class="summary-note">${t.shippingNote}</p>
+          <p class="summary-note">${shippingNote()}</p>
         </aside>
       </form>
     `;
+    const updateCouponSummary = () => {
+      const currentTotal = totals();
+      const discount = checkoutPromotion
+        ? checkoutPromotion.discount_type === "percentage"
+          ? Math.round(currentTotal.subtotal * Number(checkoutPromotion.discount_value)) / 100
+          : Math.min(currentTotal.subtotal, Number(checkoutPromotion.discount_value))
+        : 0;
+      const summary = root.querySelector(".summary-breakdown");
+      summary.querySelector("[data-coupon-summary]")?.remove();
+      if (discount > 0) {
+        const row = document.createElement("div");
+        row.className = "summary-row checkout-discount-row";
+        row.dataset.couponSummary = "";
+        const label = document.createElement("span");
+        label.textContent = `${checkoutCopy.discount} · ${checkoutPromotion.coupon_code}`;
+        const amount = document.createElement("strong");
+        amount.textContent = `−${money(discount)}`;
+        row.append(label, amount);
+        summary.querySelector(".luxury-total").before(row);
+      }
+      summary.querySelector(".total-amount").textContent = money(currentTotal.total - discount);
+    };
+    const couponInput = root.querySelector('[name="coupon_code"]');
+    const couponFeedback = root.querySelector("[data-coupon-feedback]");
+    couponInput.addEventListener("input", () => {
+      if (couponInput.value.trim().toUpperCase() === checkoutCouponCode) return;
+      checkoutPromotion = null;
+      checkoutCouponMessage = "";
+      checkoutCouponMessageIsError = false;
+      couponFeedback.textContent = "";
+      couponFeedback.classList.remove("is-error");
+      updateCouponSummary();
+    });
+    root.querySelector("[data-apply-coupon]").addEventListener("click", async (event) => {
+      const button = event.currentTarget;
+      const code = root.querySelector('[name="coupon_code"]').value.trim().toUpperCase();
+      checkoutCouponCode = code;
+      checkoutPromotion = null;
+      checkoutCouponMessage = "";
+      checkoutCouponMessageIsError = false;
+      if (!code) {
+        checkoutCouponMessage = checkoutCopy.invalid;
+        checkoutCouponMessageIsError = true;
+        couponFeedback.textContent = checkoutCouponMessage;
+        couponFeedback.classList.add("is-error");
+        updateCouponSummary();
+        return;
+      }
+      button.disabled = true;
+      try {
+        const { data, error } = await window.RUQO_SUPABASE
+          .from("promotions")
+          .select("coupon_code, discount_type, discount_value, minimum_order")
+          .eq("coupon_code", code)
+          .eq("is_active", true)
+          .maybeSingle();
+        if (error) throw error;
+        if (!data || orderTotal.subtotal < Number(data.minimum_order || 0)) {
+          checkoutCouponMessage = checkoutCopy.invalid;
+          checkoutCouponMessageIsError = true;
+        } else {
+          checkoutPromotion = data;
+          checkoutCouponMessage = checkoutCopy.applied;
+        }
+      } catch {
+        checkoutCouponMessage = t.checkoutUnavailable;
+        checkoutCouponMessageIsError = true;
+      }
+      button.disabled = false;
+      couponFeedback.textContent = checkoutCouponMessage;
+      couponFeedback.classList.toggle("is-error", checkoutCouponMessageIsError);
+      updateCouponSummary();
+    });
     window.lucide?.createIcons();
   }
 
@@ -1701,10 +1846,11 @@
                   <span>${t.subtotal}</span>
                   <strong>${money(order.subtotal || orderTotal.subtotal)}</strong>
                 </div>
+                ${Number(order.discount_total) > 0 ? `<div class="r-calc-row checkout-discount-row"><span>${language === "ar" ? "خصم العرض" : "Promotion discount"}${order.coupon_code ? ` · ${escapeHtml(order.coupon_code)}` : ""}</span><strong>−${money(order.discount_total)}</strong></div>` : ""}
                 <div class="r-calc-row">
                   <span>${t.shippingCost}</span>
-                  <strong class="${(order.shipping_total || orderTotal.shipping) ? "" : "text-free"}">
-                    ${(order.shipping_total || orderTotal.shipping) ? money(order.shipping_total || orderTotal.shipping) : t.free}
+                  <strong class="${(order.shipping_total ?? orderTotal.shipping) ? "" : "text-free"}">
+                    ${(order.shipping_total ?? orderTotal.shipping) ? money(order.shipping_total ?? orderTotal.shipping) : t.free}
                   </strong>
                 </div>
                 <div class="r-calc-row total-receipt-row">
@@ -1817,6 +1963,16 @@
         t.aboutContactEyebrow;
     }
     else renderSupport();
+    if (page === "support") {
+      root.querySelector("#delivery > p").textContent = shippingNote();
+      root.querySelector(".faq-list details:first-child p").textContent = shippingNote();
+      const contactForm = root.querySelector("[data-contact-form]");
+      contactForm.elements.name.minLength = 2;
+      contactForm.elements.name.maxLength = 120;
+      contactForm.elements.email.maxLength = 254;
+      contactForm.elements.message.minLength = 8;
+      contactForm.elements.message.maxLength = 3000;
+    }
     if (page === "checkout" || page === "account") {
       const cityInput = root.querySelector('input[name="city"]');
       if (cityInput?.value === "Riyadh") cityInput.value = t.cityDefault;
@@ -1837,7 +1993,10 @@
       support: { en: "Help & policies", fr: "Aide et politiques", es: "Ayuda y políticas", zh: "帮助与政策", ar: "المساعدة والسياسات" },
       about: { en: "About RUQO TECH", fr: "À propos de RUQO TECH", es: "Sobre RUQO TECH", zh: "关于 RUQO TECH", ar: "من نحن" },
     };
-    if (pageTitles[page]) document.title = `${pageTitles[page][language]} | RUQO TECH`;
+    if (pageTitles[page]) {
+      const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+      document.title = `${pageTitles[page][language].replace("RUQO TECH", storeName)} | ${storeName}`;
+    }
     window.lucide?.createIcons();
     if (location.hash) {
       requestAnimationFrame(() => {
@@ -1995,6 +2154,13 @@
         renderCheckout();
         return;
       }
+      const enteredCouponCode = String(values.coupon_code || "").trim().toUpperCase();
+      if (enteredCouponCode && (!checkoutPromotion || enteredCouponCode !== checkoutCouponCode)) {
+        feedback.textContent = language === "ar"
+          ? "تحقق من رمز الخصم أولاً قبل تأكيد الطلب."
+          : "Apply and verify your discount code before placing the order.";
+        return;
+      }
       const items = lines.map(({ product, quantity, option }) => ({
         product_slug: product.slug || product.id,
         variant_key:
@@ -2019,6 +2185,7 @@
                 language,
               },
               items,
+              coupon_code: String(values.coupon_code || "").trim().toUpperCase() || null,
             },
           },
         );
@@ -2034,6 +2201,9 @@
         if (!data?.order?.order_number) throw new Error(t.checkoutFailed);
 
         const order = data.order;
+        checkoutPromotion = null;
+        checkoutCouponCode = "";
+        checkoutCouponMessage = "";
         store.setProfile({
           name: values.name,
           email: values.email,
@@ -2088,10 +2258,35 @@
     }
     if (event.target.matches("[data-contact-form]")) {
       event.preventDefault();
-      if (event.target.reportValidity()) {
-        root.querySelector("[data-contact-feedback]").textContent =
-          t.messageSent;
-        event.target.reset();
+      const form = event.target;
+      if (!form.reportValidity()) return;
+      const feedback = root.querySelector("[data-contact-feedback]");
+      const submit = form.querySelector('[type="submit"]');
+      if (!window.RUQO_SUPABASE) {
+        feedback.textContent = language === "ar" ? "تعذر الاتصال بالخدمة. حاول لاحقاً." : "The contact service is unavailable. Try again later.";
+        return;
+      }
+      submit.disabled = true;
+      try {
+        const values = Object.fromEntries(new FormData(form));
+        const { error } = await window.RUQO_SUPABASE.from("contact_messages").insert({
+          customer_name: String(values.name || "").trim(),
+          customer_email: String(values.email || "").trim().toLowerCase(),
+          message: String(values.message || "").trim(),
+          language_code: language,
+        });
+        if (error) throw error;
+        feedback.textContent = {
+          ar: "وصلت رسالتك إلى فريق الدعم.",
+          fr: "Votre message a été envoyé à notre équipe.",
+          es: "Tu mensaje se ha enviado al equipo de soporte.",
+          zh: "消息已发送给客服团队。",
+        }[language] || "Your message has been sent to our support team.";
+        form.reset();
+      } catch {
+        feedback.textContent = language === "ar" ? "لم نتمكن من حفظ الرسالة. حاول مرة أخرى." : "We couldn't save your message. Please try again.";
+      } finally {
+        submit.disabled = false;
       }
     }
   });
@@ -2099,6 +2294,7 @@
   render();
   window.addEventListener("ruqo:currency-updated", render);
   window.addEventListener("ruqo:catalog-updated", render);
+  window.addEventListener("ruqo:store-settings-updated", render);
   window.RUQO_SUPABASE_READY?.then((loaded) => {
     if (loaded) render();
   });

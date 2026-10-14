@@ -227,12 +227,14 @@
     const theme = getTheme();
     const language = getLanguage();
     const logoFile = theme === "dark" ? "dark.png" : "ruqo-logo.png";
+    const logoUrl = window.RUQO_BRAND_LOGO_URL || new URL(logoFile, imageDirectory).href;
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
     document.documentElement.dataset.theme = theme;
     document.documentElement.lang = language === "zh" ? "zh-CN" : language;
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     document.querySelectorAll("img.brand-logo").forEach((image) => {
-      const logoUrl = new URL(logoFile, imageDirectory).href;
       if (image.src !== logoUrl) image.src = logoUrl;
+      image.alt = storeName;
     });
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       const isDark = theme === "dark";
@@ -533,6 +535,7 @@
   });
   window.addEventListener("ruqo:currency-updated", syncDropdowns);
   window.addEventListener("ruqo:language-updated", syncDropdowns);
+  window.addEventListener("ruqo:store-settings-updated", syncTheme);
 
   window.addEventListener("pageshow", () => {
     syncTheme();

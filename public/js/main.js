@@ -726,6 +726,43 @@ function syncHomepageCatalog() {
     }
   }
   formatHomepagePrices();
+  renderManagedCategories();
+}
+
+function renderManagedCategories() {
+  const categories = window.RUQO_CATEGORIES;
+  const grid = document.querySelector(".category-grid");
+  if (!Array.isArray(categories) || !categories.length || !grid) return;
+  const defaultImages = {
+    phones: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
+    laptops: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80",
+    audio: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=80",
+    wearables: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",
+  };
+  const cards = categories.map((category) => {
+    const categoryProducts = window.NoursData.products.filter((product) => product.category === category.slug);
+    const link = document.createElement("a");
+    link.href = `/products.html?category=${encodeURIComponent(category.slug)}`;
+    link.className = "category-card feature-card";
+    const image = document.createElement("img");
+    image.className = "category-image";
+    image.src = categoryProducts[0]?.image || defaultImages[category.slug] || "/images/ruqo-logo.png";
+    image.alt = "";
+    image.loading = "lazy";
+    const content = document.createElement("div");
+    content.className = "category-content";
+    const heading = document.createElement("h3");
+    heading.textContent = category.name_translations?.[currentLang] || category.name_translations?.en || category.slug;
+    const description = document.createElement("p");
+    description.textContent = category.description_translations?.[currentLang] || category.description_translations?.en || "";
+    const count = document.createElement("span");
+    const countText = new Intl.NumberFormat(localeByLanguage[currentLang] || localeByLanguage.en).format(categoryProducts.length);
+    count.textContent = currentLang === "ar" ? `${countText} منتجات` : `${countText} products`;
+    content.append(heading, description, count);
+    link.append(image, content);
+    return link;
+  });
+  grid.replaceChildren(...cards);
 }
 
 function formatHomepagePrices() {
@@ -767,10 +804,68 @@ function updateFeaturedProductTimer() {
   }
 }
 
+function bannerText(banner, field, fallback = "") {
+  const translations = banner?.[field] || {};
+  return translations[currentLang] || translations.en || fallback;
+}
+
+function bannerBackground(url) {
+  try {
+    const image = new URL(url, window.location.origin);
+    if (!["http:", "https:"].includes(image.protocol)) return "";
+    return `linear-gradient(135deg, rgba(12, 36, 34, 0.08), rgba(12, 36, 34, 0.32)), url("${image.href}")`;
+  } catch {
+    return "";
+  }
+}
+
+function renderManagedHomeBanners() {
+  const banners = window.RUQO_STORE_BANNERS || [];
+  const heroBanner = banners.find((banner) => banner.placement === "home_hero");
+  const promoBanner = banners.find((banner) => banner.placement === "home_promo");
+  if (heroBanner) {
+    const hero = document.querySelector(".hero");
+    const eyebrow = hero?.querySelector(".hero-copy .eyebrow");
+    const heading = hero?.querySelector(".hero-copy h1");
+    const description = hero?.querySelector(".hero-copy > p");
+    const primaryAction = hero?.querySelector(".cta-group .primary-btn");
+    if (eyebrow) eyebrow.textContent = currentLang === "ar" ? "محتوى المتجر" : "STORE SPOTLIGHT";
+    if (heading) heading.textContent = bannerText(heroBanner, "title_translations", heading.textContent);
+    if (description) description.textContent = bannerText(heroBanner, "description_translations", description.textContent);
+    if (primaryAction) {
+      primaryAction.textContent = bannerText(heroBanner, "button_translations", primaryAction.textContent);
+      primaryAction.href = heroBanner.destination_url || "/products.html";
+    }
+    const visual = hero?.querySelector(".hero-visual");
+    if (visual && heroBanner.image_url) {
+      visual.style.backgroundImage = bannerBackground(heroBanner.image_url);
+      visual.classList.add("has-managed-image");
+    }
+  }
+  const promo = document.querySelector("#deals");
+  if (promoBanner && promo) {
+    promo.querySelector(".promo-copy .eyebrow").textContent = currentLang === "ar" ? "عرض المتجر" : "STORE OFFER";
+    promo.querySelector(".promo-copy h2").textContent = bannerText(promoBanner, "title_translations");
+    promo.querySelector(".promo-copy p").textContent = bannerText(promoBanner, "description_translations");
+    const button = promo.querySelector(".promo-copy a");
+    button.textContent = bannerText(promoBanner, "button_translations", currentLang === "ar" ? "تسوق الآن" : "Shop now");
+    button.href = promoBanner.destination_url || "/products.html";
+    const visual = promo.querySelector(".promo-visual");
+    if (visual && promoBanner.image_url) {
+      visual.style.backgroundImage = bannerBackground(promoBanner.image_url);
+      visual.classList.add("has-managed-image");
+    }
+  }
+}
+
 reducedMotionQuery.addEventListener("change", updateFeaturedProductTimer);
 document.addEventListener("visibilitychange", updateFeaturedProductTimer);
 updateFeaturedProductTimer();
 window.addEventListener("ruqo:catalog-updated", syncHomepageCatalog);
+window.addEventListener("ruqo:store-banners-updated", () => {
+  renderManagedHomeBanners();
+  renderMobileAd();
+});
 window.RUQO_SUPABASE_READY?.then((loaded) => {
   if (loaded) syncHomepageCatalog();
 });
@@ -779,14 +874,23 @@ function renderMobileAd() {
   const banner = document.querySelector(".mobile-ad-banner");
   if (!banner) return;
 
+  const managedBanner = (window.RUQO_STORE_BANNERS || []).find((item) => item.placement === "mobile_promo");
   const slide = mobileAdSlides[mobileAdIndex];
-  const copy = slide[currentLang] || slide.en;
+  const localCopy = slide[currentLang] || slide.en;
+  const copy = managedBanner
+    ? {
+        label: currentLang === "ar" ? "عرض المتجر" : "STORE OFFER",
+        copy: bannerText(managedBanner, "description_translations") || bannerText(managedBanner, "title_translations"),
+        action: bannerText(managedBanner, "button_translations", currentLang === "ar" ? "تسوق" : "Shop now"),
+      }
+    : localCopy;
   const image = banner.querySelector(".mobile-ad-image");
+  const imageUrl = managedBanner?.mobile_image_url || managedBanner?.image_url || slide.image;
 
   banner.classList.add("is-changing");
   window.setTimeout(() => {
-    image.src = slide.image;
-    banner.href = slide.href;
+    image.src = imageUrl;
+    banner.href = managedBanner?.destination_url || (managedBanner ? "/products.html" : slide.href);
     banner.querySelector(".mobile-ad-label").textContent = copy.label;
     banner.querySelector(".mobile-ad-copy").textContent = copy.copy;
     banner.querySelector(".mobile-ad-action-label").textContent = copy.action
@@ -858,13 +962,14 @@ function applyTranslations(lang) {
   const dictionary = translations[lang] || translations.en;
   document.documentElement.lang = lang === "zh" ? "zh-CN" : lang;
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
   document.title = {
     en: "RUQO TECH | Premium Electronics Store",
     fr: "RUQO TECH | Boutique high-tech premium",
     es: "RUQO TECH | Tienda premium de electrónica",
     zh: "RUQO TECH | 高端电子产品商店",
     ar: "RUQO TECH | متجر إلكترونيات فاخر",
-  }[lang];
+  }[lang].replace("RUQO TECH", storeName);
   window.NoursStore?.setLanguage(lang);
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -927,6 +1032,7 @@ function applyTranslations(lang) {
   renderMobileAd();
   renderFeaturedProduct();
   syncHomepageCatalog();
+  renderManagedHomeBanners();
   window.NoursStore?.syncDropdowns();
 }
 
@@ -1014,24 +1120,41 @@ revealItems.forEach((item) => observer.observe(item));
 
 const newsletterForm = document.querySelector(".newsletter-form");
 if (newsletterForm) {
-  newsletterForm.addEventListener("submit", (event) => {
+  newsletterForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const button = newsletterForm.querySelector("button");
     const input = newsletterForm.querySelector("input");
-    if (button && input) {
-      const originalText = button.textContent;
-      button.textContent = {
-        ar: "تم التسجيل",
-        fr: "Inscription confirmée",
-        es: "Suscripción confirmada",
-        zh: "订阅成功",
-      }[currentLang] || "Subscribed";
-      button.disabled = true;
+    let feedback = newsletterForm.parentElement.querySelector("[data-newsletter-feedback]");
+    if (!feedback) {
+      feedback = document.createElement("p");
+      feedback.dataset.newsletterFeedback = "";
+      feedback.setAttribute("role", "status");
+      newsletterForm.after(feedback);
+    }
+    if (!input.reportValidity()) return;
+    if (!window.RUQO_SUPABASE) {
+      feedback.textContent = currentLang === "ar" ? "تعذر الاتصال بالخدمة. حاول لاحقاً." : "The subscription service is unavailable. Try again later.";
+      return;
+    }
+    const originalText = button.textContent;
+    button.disabled = true;
+    feedback.textContent = "";
+    try {
+      const email = input.value.trim().toLowerCase();
+      const { error } = await window.RUQO_SUPABASE.from("newsletter_subscriptions").insert({ email });
+      if (error && error.code !== "23505") throw error;
+      feedback.textContent = {
+        ar: "تم تسجيل بريدك بنجاح.",
+        fr: "Votre adresse est inscrite.",
+        es: "Tu correo se ha suscrito.",
+        zh: "邮箱已成功订阅。",
+      }[currentLang] || "Your email has been subscribed.";
       input.value = "";
-      setTimeout(() => {
-        button.textContent = originalText;
-        button.disabled = false;
-      }, 2200);
+    } catch {
+      feedback.textContent = currentLang === "ar" ? "لم نتمكن من حفظ الاشتراك. حاول مرة أخرى." : "We couldn't save your subscription. Please try again.";
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
     }
   });
 }

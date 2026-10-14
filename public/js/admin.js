@@ -19,16 +19,25 @@
   const adminApp = $("#admin-app");
   const loginForm = $("#login-form");
   const loginError = $("#login-error");
+  const forgotPasswordButton = $("#forgot-password");
+  const passwordRecoveryForm = $("#password-recovery-form");
+  const passwordRecoveryFeedback = $("#password-recovery-feedback");
   const productForm = $("#product-form");
   const productDialog = $("#product-dialog");
   const productError = $("#product-form-error");
+  const categoryForm = $("#category-form");
+  const categoryDialog = $("#category-dialog");
+  const categoryError = $("#category-form-error");
   const promotionForm = $("#promotion-form");
   const promotionDialog = $("#promotion-dialog");
   const bannerForm = $("#banner-form");
   const bannerDialog = $("#banner-dialog");
+  const brandSettingsForm = $("#brand-settings-form");
+  const brandSettingsError = $("#brand-settings-error");
   const productSearch = $("#product-search");
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
+  const productVariantRows = $("#product-variant-rows");
   const productsEmpty = $("#products-empty");
   let client;
   let currentUser;
@@ -36,9 +45,13 @@
   let currentRoles = [];
   let categories = [];
   let orders = [];
+  let contactMessages = [];
   let promotions = [];
   let banners = [];
+  let newsletterSubscribers = [];
+  let brandSettings = {};
   let editingSlug = null;
+  let editingCategorySlug = null;
   let editingPromotionId = null;
   let editingBannerId = null;
   let toastTimer;
@@ -67,6 +80,12 @@
     loginError.hidden = !message;
   }
 
+  function showPasswordRecovery(message, isError = false) {
+    passwordRecoveryFeedback.textContent = message;
+    passwordRecoveryFeedback.hidden = !message;
+    passwordRecoveryFeedback.classList.toggle("is-success", Boolean(message) && !isError);
+  }
+
   function showProductError(message) {
     productError.textContent = message;
     productError.hidden = !message;
@@ -88,14 +107,31 @@
     return product.name_translations?.en || product.slug;
   }
 
+  function categoryName(slug) {
+    return categories.find((category) => category.slug === slug)?.name_translations?.en || categoryLabels[slug] || slug;
+  }
+
+  function productIsAvailable(product) {
+    if (!product.in_stock) return false;
+    const activeVariants = (product.variants || []).filter((variant) => variant.is_active);
+    if (!activeVariants.length || activeVariants.some((variant) => variant.stock_quantity === null || variant.stock_quantity === undefined)) return true;
+    return activeVariants.some((variant) => Number(variant.stock_quantity) > 0);
+  }
+
   function setView(view) {
     const allowedViews = new Set(["overview"]);
-    if (currentRoles.some((role) => ["owner", "admin", "catalog_manager"].includes(role))) allowedViews.add("products");
+    if (currentRoles.some((role) => ["owner", "admin", "catalog_manager"].includes(role))) {
+      allowedViews.add("products");
+      allowedViews.add("categories");
+    }
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("orders");
+    if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("messages");
     if (currentRoles.some((role) => ["owner", "admin", "marketing_manager"].includes(role))) {
       allowedViews.add("promotions");
       allowedViews.add("banners");
+      allowedViews.add("audience");
     }
+    if (currentRoles.some((role) => ["owner", "admin"].includes(role))) allowedViews.add("settings");
     const selectedView = allowedViews.has(view) ? view : "overview";
     $$('[data-admin-panel]').forEach((panel) => {
       panel.hidden = panel.dataset.adminPanel !== selectedView;
@@ -109,9 +145,13 @@
     $("#breadcrumb-current").textContent = {
       overview: "Overview",
       products: "Products",
+      categories: "Categories",
       orders: "Orders",
+      messages: "Messages",
       promotions: "Offers",
       banners: "Banners",
+      audience: "Newsletter audience",
+      settings: "Store settings",
     }[selectedView];
   }
 
@@ -183,7 +223,7 @@
     row.append(productCell);
 
     const category = document.createElement("td");
-    category.textContent = categoryLabels[product.category_slug] || product.category_slug;
+    category.textContent = categoryName(product.category_slug);
     row.append(category);
     const price = document.createElement("td");
     price.textContent = formatPrice(product.price);
@@ -203,8 +243,18 @@
     row.append(status);
     const stock = document.createElement("td");
     const stockBadge = document.createElement("span");
-    stockBadge.className = `admin-status ${product.in_stock ? "is-published" : "is-out"}`;
-    stockBadge.textContent = product.in_stock ? "In stock" : "Out of stock";
+    const activeVariants = (product.variants || []).filter((variant) => variant.is_active);
+    const trackedVariants = activeVariants.filter((variant) => variant.stock_quantity !== null && variant.stock_quantity !== undefined);
+    const exactStock = activeVariants.length > 0 && trackedVariants.length === activeVariants.length
+      ? trackedVariants.reduce((sum, variant) => sum + Number(variant.stock_quantity), 0)
+      : null;
+    const isAvailable = productIsAvailable(product);
+    stockBadge.className = `admin-status ${isAvailable ? "is-published" : "is-out"}`;
+    stockBadge.textContent = !isAvailable
+      ? "Out of stock"
+      : exactStock === null
+        ? "In stock"
+        : `${exactStock} units`;
     stock.append(stockBadge);
     row.append(stock);
 
@@ -235,20 +285,66 @@
     productsEmpty.hidden = filtered.length > 0;
     $("#stat-products").textContent = String(products.length);
     $("#stat-published").textContent = String(products.filter((product) => product.is_active).length);
-    $("#stat-out-of-stock").textContent = String(products.filter((product) => !product.in_stock).length);
+    $("#stat-out-of-stock").textContent = String(products.filter((product) => !productIsAvailable(product)).length);
+    window.lucide?.createIcons();
+  }
+
+  function renderCategories() {
+    const rows = categories.map((category) => {
+      const row = document.createElement("tr");
+      const name = document.createElement("td");
+      name.textContent = category.name_translations?.en || category.slug;
+      row.append(name);
+      appendTextCell(row, category.slug);
+      appendTextCell(row, category.sort_order);
+      const status = document.createElement("td");
+      const badge = document.createElement("span");
+      badge.className = `admin-status ${category.is_active ? "is-published" : "is-draft"}`;
+      badge.textContent = category.is_active ? "Published" : "Draft";
+      status.append(badge);
+      row.append(status);
+      const actions = document.createElement("td");
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "admin-row-action";
+      edit.title = "Edit category";
+      edit.setAttribute("aria-label", `Edit ${name.textContent}`);
+      edit.innerHTML = '<i data-lucide="pencil" aria-hidden="true"></i>';
+      edit.addEventListener("click", () => openCategory(category.slug));
+      actions.append(edit);
+      row.append(actions);
+      return row;
+    });
+    $("#categories-body").replaceChildren(...rows);
+    $("#categories-empty").hidden = categories.length > 0;
     window.lucide?.createIcons();
   }
 
   async function loadCatalog() {
-    const [{ data: categoryRows, error: categoryError }, { data: productRows, error: productError }] = await Promise.all([
-      client.from("categories").select("slug, name_translations, sort_order").order("sort_order"),
+    const [
+      { data: categoryRows, error: categoryError },
+      { data: productRows, error: productError },
+      { data: variantRows, error: variantError },
+    ] = await Promise.all([
+      client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
       client.from("products").select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
+      client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_label_translations, sku, price_adjustment, stock_quantity, is_active, sort_order").order("sort_order"),
     ]);
     if (categoryError) throw categoryError;
     if (productError) throw productError;
+    if (variantError) throw variantError;
     categories = categoryRows || [];
-    products = productRows || [];
+    const variantsByProduct = new Map();
+    for (const variant of variantRows || []) {
+      if (!variantsByProduct.has(variant.product_slug)) variantsByProduct.set(variant.product_slug, []);
+      variantsByProduct.get(variant.product_slug).push(variant);
+    }
+    products = (productRows || []).map((product) => ({
+      ...product,
+      variants: variantsByProduct.get(product.slug) || [],
+    }));
     renderCatalog();
+    renderCategories();
   }
 
   function canManage(roles) {
@@ -259,13 +355,133 @@
     const tasks = [];
     if (canManage(["owner", "admin", "catalog_manager"])) tasks.push(loadCatalog());
     if (canManage(["owner", "admin", "order_manager"])) tasks.push(loadOrders());
+    if (canManage(["owner", "admin", "order_manager"])) tasks.push(loadContactMessages());
     if (canManage(["owner", "admin", "marketing_manager"])) {
-      tasks.push(loadPromotions(), loadBanners());
+      tasks.push(loadPromotions(), loadBanners(), loadNewsletterSubscribers());
     }
+    if (canManage(["owner", "admin"])) tasks.push(loadBrandSettings());
     const results = await Promise.allSettled(tasks);
     results.filter((result) => result.status === "rejected").forEach((result) => {
       showToast(`Could not load a section: ${result.reason?.message || "Unknown error"}`);
     });
+  }
+
+  function getBrandLogoUrl(logoPath) {
+    return logoPath
+      ? client.storage.from("store-assets").getPublicUrl(logoPath).data.publicUrl
+      : "/images/ruqo-logo.png";
+  }
+
+  async function loadBrandSettings() {
+    const { data, error } = await client
+      .from("store_settings")
+      .select("setting_value")
+      .eq("setting_key", "storefront")
+      .maybeSingle();
+    if (error) throw error;
+    brandSettings = data?.setting_value || {
+      store_name: "RUQO TECH",
+      logo_path: null,
+      support_email: "",
+      support_phone: "",
+      free_shipping_threshold: 299,
+      standard_shipping_fee: 25,
+      brand_color: "#167c72",
+    };
+    for (const field of ["store_name", "support_email", "support_phone", "free_shipping_threshold", "brand_color"]) {
+      brandSettingsForm.elements[field].value = brandSettings[field] ?? "";
+    }
+    brandSettingsForm.elements.delivery_fee.value = brandSettings.standard_shipping_fee ?? 25;
+    $("#brand-logo-preview").src = getBrandLogoUrl(brandSettings.logo_path);
+    brandSettingsForm.dataset.resetLogo = "false";
+  }
+
+  async function saveBrandSettings(event) {
+    event.preventDefault();
+    brandSettingsError.hidden = true;
+    const formData = new FormData(brandSettingsForm);
+    const imageFile = formData.get("logo_file");
+    if (imageFile instanceof File && imageFile.size > 10 * 1024 * 1024) {
+      brandSettingsError.textContent = "Logo must be 10 MB or smaller.";
+      brandSettingsError.hidden = false;
+      return;
+    }
+    if (imageFile instanceof File && imageFile.size > 0 && !/^image\/(jpeg|png|webp)$/.test(imageFile.type)) {
+      brandSettingsError.textContent = "Choose a PNG, JPEG, or WebP logo.";
+      brandSettingsError.hidden = false;
+      return;
+    }
+    const threshold = Number(formData.get("free_shipping_threshold"));
+    const deliveryFee = Number(formData.get("delivery_fee"));
+    if (!Number.isFinite(threshold) || threshold < 0 || !Number.isFinite(deliveryFee) || deliveryFee < 0) {
+      brandSettingsError.textContent = "Enter valid non-negative delivery amounts.";
+      brandSettingsError.hidden = false;
+      return;
+    }
+
+    const submit = brandSettingsForm.querySelector('[type="submit"]');
+    submit.disabled = true;
+    submit.textContent = "Saving…";
+    let uploadedPath = null;
+    const previousLogoPath = brandSettings.logo_path || null;
+    try {
+      let logoPath = brandSettingsForm.dataset.resetLogo === "true" ? null : previousLogoPath;
+      if (imageFile instanceof File && imageFile.size > 0) {
+        const safeName = imageFile.name.toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
+        uploadedPath = `logos/${currentUser.id}/${Date.now()}-${safeName}`;
+        const { error: uploadError } = await client.storage
+          .from("store-assets")
+          .upload(uploadedPath, imageFile, { cacheControl: "3600", upsert: false, contentType: imageFile.type });
+        if (uploadError) throw uploadError;
+        logoPath = uploadedPath;
+      }
+
+      const settings = {
+        ...brandSettings,
+        store_name: String(formData.get("store_name") || "").trim(),
+        logo_path: logoPath,
+        support_email: String(formData.get("support_email") || "").trim(),
+        support_phone: String(formData.get("support_phone") || "").trim(),
+        free_shipping_threshold: threshold,
+        standard_shipping_fee: deliveryFee,
+        brand_color: String(formData.get("brand_color") || "#167c72"),
+      };
+      if (!settings.store_name) throw new Error("Enter a store name.");
+      const { error } = await client.from("store_settings").upsert({
+        setting_key: "storefront",
+        setting_value: settings,
+        description: "Public storefront identity, contact, delivery, and appearance settings",
+        is_public: true,
+        updated_by: currentUser.id,
+      }, { onConflict: "setting_key" });
+      if (error) throw error;
+
+      brandSettings = settings;
+      const logoUrl = getBrandLogoUrl(settings.logo_path);
+      window.RUQO_STORE_SETTINGS = settings;
+      window.RUQO_BRAND_LOGO_URL = settings.logo_path ? logoUrl : null;
+      $("#brand-logo-preview").src = logoUrl;
+      document.querySelectorAll("[data-admin-brand-logo]").forEach((image) => {
+        image.src = logoUrl;
+        image.alt = settings.store_name;
+      });
+      document.documentElement.style.setProperty("--primary", settings.brand_color);
+      document.documentElement.style.setProperty("--primary-deep", `color-mix(in srgb, ${settings.brand_color} 72%, #101918)`);
+      window.dispatchEvent(new CustomEvent("ruqo:store-settings-updated", { detail: settings }));
+      if (previousLogoPath && previousLogoPath !== settings.logo_path) {
+        await client.storage.from("store-assets").remove([previousLogoPath]);
+      }
+      brandSettingsForm.dataset.resetLogo = "false";
+      brandSettingsForm.elements.logo_file.value = "";
+      showToast("Store settings saved.");
+    } catch (error) {
+      if (uploadedPath) await client.storage.from("store-assets").remove([uploadedPath]);
+      brandSettingsError.textContent = error.message || "Could not save store settings.";
+      brandSettingsError.hidden = false;
+    } finally {
+      submit.disabled = false;
+      submit.textContent = "Save store settings";
+    }
   }
 
   function appendTextCell(row, value) {
@@ -295,6 +511,114 @@
     if (error) throw error;
     orders = data || [];
     renderOrders();
+  }
+
+  async function loadContactMessages() {
+    const { data, error } = await client
+      .from("contact_messages")
+      .select("id, customer_name, customer_email, message, language_code, status, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw error;
+    contactMessages = data || [];
+    renderContactMessages();
+  }
+
+  function renderContactMessages() {
+    const rows = contactMessages.map((message) => {
+      const row = document.createElement("tr");
+      appendTextCell(row, formatDateTime(message.created_at));
+      const customerCell = document.createElement("td");
+      const name = document.createElement("strong");
+      name.textContent = message.customer_name;
+      const email = document.createElement("a");
+      email.href = `mailto:${message.customer_email}`;
+      email.textContent = message.customer_email;
+      email.style.display = "block";
+      customerCell.append(name, email);
+      row.append(customerCell);
+      const body = document.createElement("td");
+      body.textContent = message.message;
+      body.dir = message.language_code === "ar" ? "rtl" : "auto";
+      row.append(body);
+      const statusCell = document.createElement("td");
+      const status = document.createElement("select");
+      status.setAttribute("aria-label", `Status for message from ${message.customer_name}`);
+      for (const value of ["new", "read", "resolved"]) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value[0].toUpperCase() + value.slice(1);
+        option.selected = message.status === value;
+        status.append(option);
+      }
+      status.addEventListener("change", () => updateContactMessageStatus(message, status.value, status));
+      statusCell.append(status);
+      row.append(statusCell);
+      return row;
+    });
+    $("#messages-body").replaceChildren(...rows);
+    $("#messages-empty").hidden = contactMessages.length > 0;
+  }
+
+  async function updateContactMessageStatus(message, nextStatus, control) {
+    const previousStatus = message.status;
+    control.disabled = true;
+    const { error } = await client.from("contact_messages").update({ status: nextStatus }).eq("id", message.id);
+    if (error) {
+      control.value = previousStatus;
+      showToast(`Could not update message: ${error.message}`);
+    } else {
+      message.status = nextStatus;
+      showToast("Message status updated.");
+    }
+    control.disabled = false;
+  }
+
+  async function loadNewsletterSubscribers() {
+    const { data, error } = await client
+      .from("newsletter_subscriptions")
+      .select("email, is_active, subscribed_at")
+      .order("subscribed_at", { ascending: false })
+      .limit(500);
+    if (error) throw error;
+    newsletterSubscribers = data || [];
+    renderNewsletterSubscribers();
+  }
+
+  function renderNewsletterSubscribers() {
+    const rows = newsletterSubscribers.map((subscriber) => {
+      const row = document.createElement("tr");
+      const email = document.createElement("td");
+      const link = document.createElement("a");
+      link.href = `mailto:${subscriber.email}`;
+      link.textContent = subscriber.email;
+      email.append(link);
+      row.append(email);
+      appendTextCell(row, formatDateTime(subscriber.subscribed_at));
+      const statusCell = document.createElement("td");
+      const toggle = document.createElement("input");
+      toggle.type = "checkbox";
+      toggle.checked = subscriber.is_active;
+      toggle.setAttribute("aria-label", `Newsletter active for ${subscriber.email}`);
+      toggle.addEventListener("change", async () => {
+        toggle.disabled = true;
+        const { error } = await client.from("newsletter_subscriptions")
+          .update({ is_active: toggle.checked })
+          .eq("email", subscriber.email);
+        if (error) {
+          toggle.checked = subscriber.is_active;
+          showToast(`Could not update subscription: ${error.message}`);
+        } else {
+          subscriber.is_active = toggle.checked;
+        }
+        toggle.disabled = false;
+      });
+      statusCell.append(toggle);
+      row.append(statusCell);
+      return row;
+    });
+    $("#subscribers-body").replaceChildren(...rows);
+    $("#subscribers-empty").hidden = newsletterSubscribers.length > 0;
   }
 
   function renderOrders() {
@@ -473,6 +797,75 @@
     }
   }
 
+  function createVariantRow(variant = {}) {
+    const row = document.createElement("fieldset");
+    row.className = "variant-editor-row";
+    row.dataset.variantKey = variant.variant_key || "";
+    const controls = document.createElement("div");
+    controls.className = "variant-editor-controls";
+    const groupLabel = document.createElement("label");
+    groupLabel.textContent = "Option type";
+    const group = document.createElement("select");
+    group.dataset.variantGroup = "";
+    for (const [value, label] of [["storage", "Storage"], ["size", "Size"], ["color", "Color"]]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      option.selected = variant.option_group === value;
+      group.append(option);
+    }
+    groupLabel.append(group);
+    const createInput = (labelText, name, value, type = "text", attributes = {}) => {
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      const input = document.createElement("input");
+      input.type = type;
+      input.dataset[name] = "";
+      input.value = value ?? "";
+      for (const [key, attributeValue] of Object.entries(attributes)) input.setAttribute(key, attributeValue);
+      label.append(input);
+      return label;
+    };
+    controls.append(
+      groupLabel,
+      createInput("Option value", "variantValue", variant.option_value, "text", { required: "", maxlength: "80" }),
+      createInput("SKU", "variantSku", variant.sku, "text", { maxlength: "80" }),
+      createInput("Price adjustment (SAR)", "variantAdjustment", variant.price_adjustment ?? 0, "number", { step: "0.01" }),
+      createInput("Stock quantity", "variantStock", variant.stock_quantity, "number", { min: "0", step: "1", placeholder: "Unlimited" }),
+    );
+    const activeLabel = document.createElement("label");
+    activeLabel.className = "variant-active-toggle";
+    const activeInput = document.createElement("input");
+    activeInput.type = "checkbox";
+    activeInput.dataset.variantActive = "";
+    activeInput.checked = variant.is_active !== false;
+    activeLabel.append(activeInput, document.createTextNode("Option active"));
+    const details = document.createElement("details");
+    details.className = "variant-translation-details";
+    const summary = document.createElement("summary");
+    summary.textContent = "Localized option labels";
+    const translations = document.createElement("div");
+    translations.className = "variant-translation-grid";
+    for (const [language, label] of [["en", "English"], ["fr", "French"], ["es", "Spanish"], ["zh", "Chinese"], ["ar", "Arabic"]]) {
+      const translatedLabel = document.createElement("label");
+      translatedLabel.textContent = label;
+      const input = document.createElement("input");
+      input.dataset.variantTranslation = language;
+      input.value = variant.option_label_translations?.[language] || "";
+      translatedLabel.append(input);
+      translations.append(translatedLabel);
+    }
+    details.append(summary, translations);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "admin-danger-button variant-remove-button";
+    remove.setAttribute("aria-label", "Remove product option");
+    remove.innerHTML = '<i data-lucide="trash-2" aria-hidden="true"></i>';
+    remove.addEventListener("click", () => row.remove());
+    row.append(controls, activeLabel, details, remove);
+    return row;
+  }
+
   function translationInputName(column, language) {
     return `${column.replace(/_translations$/, "")}_${language}`;
   }
@@ -489,6 +882,92 @@
     });
   }
 
+  function openNewCategory() {
+    editingCategorySlug = null;
+    categoryForm.reset();
+    categoryForm.elements.slug.readOnly = false;
+    categoryForm.elements.sort_order.value = String(categories.length + 1);
+    categoryForm.elements.is_active.checked = true;
+    $("#category-dialog-title").textContent = "Add category";
+    $("#delete-category").hidden = true;
+    clearFormError(categoryError);
+    fillLocalizedFields(categoryForm, null, ["name_translations", "description_translations"]);
+    setLocale("en");
+    categoryDialog.showModal();
+  }
+
+  function openCategory(slug) {
+    const category = categories.find((item) => item.slug === slug);
+    if (!category) return;
+    editingCategorySlug = slug;
+    categoryForm.reset();
+    categoryForm.elements.slug.value = category.slug;
+    categoryForm.elements.slug.readOnly = true;
+    categoryForm.elements.sort_order.value = category.sort_order;
+    categoryForm.elements.is_active.checked = category.is_active;
+    $("#category-dialog-title").textContent = "Edit category";
+    $("#delete-category").hidden = false;
+    clearFormError(categoryError);
+    fillLocalizedFields(categoryForm, {
+      name_translations: category.name_translations,
+      description_translations: category.description_translations,
+    }, ["name_translations", "description_translations"]);
+    setLocale("en");
+    categoryDialog.showModal();
+  }
+
+  async function saveCategory(event) {
+    event.preventDefault();
+    clearFormError(categoryError);
+    const formData = new FormData(categoryForm);
+    const slug = String(formData.get("slug") || "").trim().toLowerCase();
+    const englishName = String(formData.get("name_en") || "").trim();
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug) || !englishName) {
+      categoryError.textContent = "Enter a valid slug and an English category name.";
+      categoryError.hidden = false;
+      setLocale("en");
+      return;
+    }
+    const translations = readLocalizedFields(categoryForm, ["name_translations", "description_translations"]);
+    for (const language of languages) {
+      translations.name_translations[language] ||= translations.name_translations.en;
+      translations.description_translations[language] ||= translations.description_translations.en;
+    }
+    const submit = categoryForm.querySelector('[type="submit"]');
+    submit.disabled = true;
+    try {
+      const { error } = await client.from("categories").upsert({
+        slug,
+        ...translations,
+        sort_order: Number(formData.get("sort_order")) || 0,
+        is_active: formData.get("is_active") === "on",
+      }, { onConflict: "slug" });
+      if (error) throw error;
+      categoryDialog.close();
+      await loadCatalog();
+      showToast("Category saved.");
+    } catch (error) {
+      categoryError.textContent = error.message || "Could not save this category.";
+      categoryError.hidden = false;
+    } finally {
+      submit.disabled = false;
+    }
+  }
+
+  async function deleteCategory() {
+    if (!editingCategorySlug || !window.confirm("Delete this category? Products assigned to it must be moved first.")) return;
+    const { error } = await client.from("categories").delete().eq("slug", editingCategorySlug);
+    if (error) {
+      categoryError.textContent = error.message || "Could not delete this category.";
+      categoryError.hidden = false;
+      return;
+    }
+    categoryDialog.close();
+    editingCategorySlug = null;
+    await loadCatalog();
+    showToast("Category deleted.");
+  }
+
   function openNewProduct() {
     editingSlug = null;
     productForm.reset();
@@ -501,6 +980,7 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(categories[0]?.slug || "");
     setProductTranslations(null);
+    productVariantRows.replaceChildren();
     setLocale("en");
     productDialog.showModal();
   }
@@ -535,6 +1015,8 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(product.category_slug);
     setProductTranslations(product, features || []);
+    productVariantRows.replaceChildren(...(product.variants || []).map(createVariantRow));
+    window.lucide?.createIcons();
     setLocale("en");
     productDialog.showModal();
   }
@@ -844,6 +1326,48 @@
     showToast("Banner deleted.");
   }
 
+  function readProductVariants(slug) {
+    const rows = [...productVariantRows.querySelectorAll(".variant-editor-row")];
+    const seenOptions = new Set();
+    let expectedGroup = null;
+    return rows.map((row, sortOrder) => {
+      const optionGroup = row.querySelector("[data-variant-group]").value;
+      const optionValue = row.querySelector("[data-variant-value]").value.trim();
+      const adjustment = Number(row.querySelector("[data-variant-adjustment]").value || 0);
+      const stockValue = row.querySelector("[data-variant-stock]").value.trim();
+      const stockQuantity = stockValue === "" ? null : Number(stockValue);
+      if (!optionValue) throw new Error("Every product option needs a value.");
+      if (expectedGroup && expectedGroup !== optionGroup) throw new Error("Use one option type per product.");
+      expectedGroup = optionGroup;
+      const uniqueKey = `${optionGroup}:${optionValue.toLocaleLowerCase()}`;
+      if (seenOptions.has(uniqueKey)) throw new Error("Product option values must be unique.");
+      seenOptions.add(uniqueKey);
+      if (!Number.isFinite(adjustment)) throw new Error("Enter a valid price adjustment for every option.");
+      if (stockQuantity !== null && (!Number.isInteger(stockQuantity) || stockQuantity < 0)) {
+        throw new Error("Stock quantities must be whole numbers greater than or equal to zero.");
+      }
+      const valueKey = optionValue.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const optionLabelTranslations = Object.fromEntries(
+        [...row.querySelectorAll("[data-variant-translation]")].map((input) => [
+          input.dataset.variantTranslation,
+          input.value.trim() || optionValue,
+        ]),
+      );
+      return {
+        variant_key: row.dataset.variantKey || `${slug}-${optionGroup}-${valueKey || crypto.randomUUID()}`,
+        product_slug: slug,
+        option_group: optionGroup,
+        option_value: optionValue,
+        option_label_translations: optionLabelTranslations,
+        sku: row.querySelector("[data-variant-sku]").value.trim() || null,
+        price_adjustment: adjustment,
+        stock_quantity: stockQuantity,
+        is_active: row.querySelector("[data-variant-active]").checked,
+        sort_order: sortOrder,
+      };
+    });
+  }
+
   async function saveProduct(event) {
     event.preventDefault();
     showProductError("");
@@ -926,6 +1450,23 @@
         if (featuresError) throw featuresError;
       }
 
+      const variantRows = readProductVariants(slug);
+      if (variantRows.length) {
+        const { error: variantError } = await client.from("product_variants").upsert(variantRows, { onConflict: "variant_key" });
+        if (variantError) throw variantError;
+      }
+      const savedVariantKeys = new Set(variantRows.map((variant) => variant.variant_key));
+      const removedVariantKeys = (products.find((product) => product.slug === slug)?.variants || [])
+        .filter((variant) => variant.is_active && !savedVariantKeys.has(variant.variant_key))
+        .map((variant) => variant.variant_key);
+      if (removedVariantKeys.length) {
+        const { error: deactivateError } = await client.from("product_variants")
+          .update({ is_active: false })
+          .eq("product_slug", slug)
+          .in("variant_key", removedVariantKeys);
+        if (deactivateError) throw deactivateError;
+      }
+
       if (imageUrl) {
         const imageRecord = {
           product_slug: slug,
@@ -997,11 +1538,65 @@
       await authorizeUser(data.user);
     });
 
+    forgotPasswordButton.addEventListener("click", async () => {
+      const email = String(loginForm.elements.email.value || "").trim().toLowerCase();
+      if (!loginForm.elements.email.reportValidity()) return;
+      forgotPasswordButton.disabled = true;
+      showLoginError("");
+      const { error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo: "https://ruqo.pro/admin/",
+      });
+      showLoginError(error
+        ? "We couldn't start password recovery. Check your email address and try again."
+        : "If this account exists, a password reset link will arrive by email.");
+      forgotPasswordButton.disabled = false;
+    });
+
+    passwordRecoveryForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      showPasswordRecovery("");
+      const password = String(passwordRecoveryForm.elements.password.value || "");
+      const confirmation = String(passwordRecoveryForm.elements.confirm_password.value || "");
+      if (password.length < 10) {
+        showPasswordRecovery("Use at least 10 characters for the new password.", true);
+        return;
+      }
+      if (password !== confirmation) {
+        showPasswordRecovery("The passwords do not match.", true);
+        return;
+      }
+      const submit = passwordRecoveryForm.querySelector('[type="submit"]');
+      submit.disabled = true;
+      const { error } = await client.auth.updateUser({ password });
+      submit.disabled = false;
+      if (error) {
+        showPasswordRecovery("The password could not be updated. Request a new recovery link.", true);
+        return;
+      }
+      await client.auth.signOut();
+      passwordRecoveryForm.hidden = true;
+      loginForm.hidden = false;
+      forgotPasswordButton.hidden = false;
+      passwordRecoveryForm.reset();
+      showLoginError("Password updated. Sign in with your new password.");
+    });
+
     client.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        adminApp.hidden = true;
+        loginScreen.hidden = false;
+        loginForm.hidden = true;
+        forgotPasswordButton.hidden = true;
+        passwordRecoveryForm.hidden = false;
+        showPasswordRecovery("");
+      }
       if (event === "SIGNED_OUT") {
         adminApp.hidden = true;
         loginScreen.hidden = false;
         currentUser = null;
+        loginForm.hidden = false;
+        forgotPasswordButton.hidden = false;
+        passwordRecoveryForm.hidden = true;
       }
     });
 
@@ -1018,11 +1613,45 @@
     $$('[data-admin-view]').forEach((button) =>
       button.addEventListener("click", () => setView(button.dataset.adminView)),
     );
+    $("#add-category").addEventListener("click", openNewCategory);
+    categoryForm.addEventListener("submit", saveCategory);
+    $("#delete-category").addEventListener("click", deleteCategory);
     $$('[data-open-product]').forEach((button) => button.addEventListener("click", openNewProduct));
+    $("#add-product-variant").addEventListener("click", () => {
+      const currentGroup = productVariantRows.querySelector("[data-variant-group]")?.value;
+      const categoryGroup = {
+        phones: "storage",
+        laptops: "storage",
+        wearables: "size",
+        audio: "color",
+      }[productForm.elements.category_slug.value] || "color";
+      productVariantRows.append(createVariantRow({ option_group: currentGroup || categoryGroup }));
+      window.lucide?.createIcons();
+    });
     $("#refresh-products").addEventListener("click", loadCatalog);
     $("#refresh-orders").addEventListener("click", loadOrders);
+    $("#refresh-messages").addEventListener("click", loadContactMessages);
+    $("#refresh-subscribers").addEventListener("click", loadNewsletterSubscribers);
     $("#add-promotion").addEventListener("click", openNewPromotion);
     $("#add-banner").addEventListener("click", openNewBanner);
+    brandSettingsForm.addEventListener("submit", saveBrandSettings);
+    brandSettingsForm.elements.logo_file.addEventListener("change", () => {
+      const preview = $("#brand-logo-preview");
+      if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+      const file = brandSettingsForm.elements.logo_file.files?.[0];
+      brandSettingsForm.dataset.resetLogo = "false";
+      if (file) {
+        preview.dataset.objectUrl = URL.createObjectURL(file);
+        preview.src = preview.dataset.objectUrl;
+      } else {
+        preview.src = getBrandLogoUrl(brandSettings.logo_path);
+      }
+    });
+    $("#reset-brand-logo").addEventListener("click", () => {
+      brandSettingsForm.elements.logo_file.value = "";
+      brandSettingsForm.dataset.resetLogo = "true";
+      $("#brand-logo-preview").src = "/images/ruqo-logo.png";
+    });
     productSearch.addEventListener("input", renderCatalog);
     $$('[data-locale-tab]').forEach((button) =>
       button.addEventListener("click", () => setLocale(button.dataset.localeTab)),
@@ -1030,7 +1659,7 @@
     $$('[data-close-dialog]').forEach((button) =>
       button.addEventListener("click", () => button.closest("dialog")?.close()),
     );
-    [productDialog, promotionDialog, bannerDialog].forEach((dialog) =>
+    [productDialog, categoryDialog, promotionDialog, bannerDialog].forEach((dialog) =>
       dialog.addEventListener("click", (event) => {
         if (event.target === dialog) dialog.close();
       }),

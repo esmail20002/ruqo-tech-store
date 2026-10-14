@@ -451,13 +451,14 @@ function setLanguage(next) {
   language = next;
   document.documentElement.lang = language === "zh" ? "zh-CN" : language;
   document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+  const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
   document.title = {
     en: "Shop All Products | RUQO TECH",
     fr: "Tous les produits | RUQO TECH",
     es: "Todos los productos | RUQO TECH",
     zh: "全部商品 | RUQO TECH",
     ar: "كل المنتجات | RUQO TECH",
-  }[language];
+  }[language].replace("RUQO TECH", storeName);
   document.body.classList.toggle("is-english", language === "en");
   $$("[data-copy]").forEach((node) => {
     const text = copy[language][node.dataset.copy];
@@ -494,6 +495,31 @@ function setLanguage(next) {
     else localStorage.setItem("nours-language", language);
   } catch {}
   render();
+  renderManagedCategoryBanner();
+}
+
+function renderManagedCategoryBanner() {
+  const banner = (window.RUQO_STORE_BANNERS || []).find((item) => item.placement === "category");
+  const container = document.querySelector("[data-desktop-banner]");
+  if (!banner || !container) return;
+  const localized = (field, fallback = "") => banner[field]?.[language] || banner[field]?.en || fallback;
+  container.querySelector(".banner-title").textContent = localized("title_translations");
+  container.querySelector(".banner-subtitle").textContent = localized("description_translations");
+  const image = container.querySelector(".banner-img");
+  if (image && banner.image_url) {
+    image.src = banner.image_url;
+    image.alt = localized("title_translations", "Store campaign");
+  }
+  const button = container.querySelector(".banner-btn");
+  if (button && banner.destination_url) {
+    const link = document.createElement("a");
+    link.className = button.className;
+    link.href = banner.destination_url;
+    link.textContent = localized("button_translations", language === "ar" ? "اكتشف" : "Explore");
+    button.replaceWith(link);
+  } else if (button) {
+    button.textContent = localized("button_translations", button.textContent);
+  }
 }
 
 function filteredProducts() {
@@ -661,6 +687,34 @@ function productCard(product) {
   return card;
 }
 
+let requestedCategoryApplied = false;
+
+function syncCategoryFilters() {
+  const categories = window.RUQO_CATEGORIES;
+  const fieldset = document.querySelector(".filter-categories");
+  if (!Array.isArray(categories) || !categories.length || !fieldset) return;
+  const selected = new Set($$('[data-category-filter]:checked').map((input) => input.value));
+  const requestedCategory = new URLSearchParams(location.search).get("category");
+  const legend = fieldset.querySelector("legend");
+  const labels = categories.map((category) => {
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = category.slug;
+    input.dataset.categoryFilter = "";
+    input.checked = selected.has(category.slug) || (!requestedCategoryApplied && requestedCategory === category.slug);
+    input.addEventListener("change", render);
+    const name = document.createElement("span");
+    name.textContent = category.name_translations?.[language] || category.name_translations?.en || category.slug;
+    const count = document.createElement("small");
+    count.textContent = String(products.filter((product) => product.category === category.slug).length);
+    label.append(input, name, count);
+    return label;
+  });
+  fieldset.replaceChildren(legend, ...labels);
+  requestedCategoryApplied = true;
+}
+
 function activeFilters() {
   const chips = [];
   const query = ui.search.value.trim();
@@ -759,6 +813,7 @@ function createDesktopAdCard() {
 }
 
 function render() {
+  syncCategoryFilters();
   const results = filteredProducts();
   const cards = results.map(productCard);
   if (results.length >= 3) {
@@ -946,6 +1001,8 @@ window.addEventListener("ruqo:currency-updated", (event) => {
   render();
 });
 window.addEventListener("ruqo:catalog-updated", render);
+window.addEventListener("ruqo:store-banners-updated", renderManagedCategoryBanner);
+window.RUQO_STORE_BANNERS_READY?.then(renderManagedCategoryBanner);
 window.RUQO_SUPABASE_READY?.then((loaded) => {
   if (loaded) render();
 });

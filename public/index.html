@@ -37,12 +37,12 @@
           <div class="topbar-texts">
             <div class="topbar-marquee-track">
               <div class="topbar-marquee-group">
-                <span data-i18n="topbar.shipping">توصيل مجاني فوق 299 ر.س</span>
+                <span data-i18n="topbar.shipping" data-store-shipping>توصيل مجاني فوق 299 ر.س</span>
                 <span data-i18n="topbar.warranty">ضمان سنتين + استرجاع خلال 7 أيام</span>
                 <span data-i18n="topbar.payment">مدفوعات آمنة</span>
               </div>
               <div class="topbar-marquee-group" aria-hidden="true">
-                <span data-i18n="topbar.shipping">توصيل مجاني فوق 299 ر.س</span>
+                <span data-i18n="topbar.shipping" data-store-shipping>توصيل مجاني فوق 299 ر.س</span>
                 <span data-i18n="topbar.warranty">ضمان سنتين + استرجاع خلال 7 أيام</span>
                 <span data-i18n="topbar.payment">مدفوعات آمنة</span>
               </div>
@@ -587,6 +587,8 @@
             <form class="newsletter-form">
               <input
                 type="email"
+                name="email"
+                required
                 data-i18n-placeholder="newsletter.placeholder"
                 placeholder="بريدك الإلكتروني"
                 aria-label="البريد الإلكتروني"

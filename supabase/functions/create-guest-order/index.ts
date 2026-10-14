@@ -90,6 +90,7 @@ Deno.serve(async (request) => {
   if (items.some((item) => !item?.product_slug || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99)) {
     return response({ error: "One or more products in your bag are invalid." }, 400, origin);
   }
+  const couponCode = payload.coupon_code == null ? null : String(payload.coupon_code).trim().toUpperCase().slice(0, 60) || null;
 
   const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const connectingIp = request.headers.get("cf-connecting-ip") || forwardedFor;
@@ -120,8 +121,8 @@ Deno.serve(async (request) => {
   };
 
   const { data: order, error: orderError } = await serviceClient.rpc(
-    "create_guest_order",
-    { p_customer: customerDetails, p_items: items },
+    "create_guest_order_with_coupon",
+    { p_customer: customerDetails, p_items: items, p_coupon_code: couponCode },
   );
   if (orderError) {
     console.error("Guest checkout rejected:", orderError.code);

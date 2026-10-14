@@ -512,14 +512,16 @@
     if (!productRows?.length) return false;
 
     const slugs = productRows.map((product) => product.slug);
-    const [featureResult, variantResult, imageResult] = await Promise.all([
+    const [featureResult, variantResult, imageResult, categoryResult] = await Promise.all([
       client.from("product_features").select("product_slug, language_code, position, content").in("product_slug", slugs).order("position"),
       client.from("product_variants").select("id, variant_key, product_slug, option_group, option_value, option_label_translations, price_adjustment, stock_quantity, sort_order").eq("is_active", true).in("product_slug", slugs).order("sort_order"),
       client.from("product_images").select("product_slug, image_url, storage_path, alt_translations, is_primary, sort_order").in("product_slug", slugs).order("sort_order"),
+      client.from("categories").select("slug, name_translations, description_translations, sort_order").eq("is_active", true).order("sort_order"),
     ]);
-    for (const result of [featureResult, variantResult, imageResult]) {
+    for (const result of [featureResult, variantResult, imageResult, categoryResult]) {
       if (result.error) throw result.error;
     }
+    window.RUQO_CATEGORIES = categoryResult.data || [];
 
     const featureMap = new Map();
     for (const feature of featureResult.data || []) {

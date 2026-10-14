@@ -29,7 +29,7 @@
     <main id="login-screen" class="admin-login-shell">
       <section class="admin-login-panel" aria-labelledby="login-title">
         <a class="admin-brand" href="/" aria-label="RUQO TECH storefront">
-          <img src="/images/ruqo-logo.png" alt="RUQO TECH" />
+          <img src="/images/ruqo-logo.png" alt="RUQO TECH" data-admin-brand-logo />
           <span>STORE MANAGEMENT</span>
         </a>
         <div class="login-copy">
@@ -43,6 +43,13 @@
           <p id="login-error" class="admin-feedback" role="alert" hidden></p>
           <button class="admin-primary-button" type="submit">Sign in <i data-lucide="arrow-up-right" aria-hidden="true"></i></button>
         </form>
+        <button id="forgot-password" class="admin-text-button" type="button">Forgot password?</button>
+        <form id="password-recovery-form" class="admin-login-form" hidden>
+          <label>New password<input name="password" type="password" autocomplete="new-password" minlength="10" required /></label>
+          <label>Confirm new password<input name="confirm_password" type="password" autocomplete="new-password" minlength="10" required /></label>
+          <p id="password-recovery-feedback" class="admin-feedback" role="status" hidden></p>
+          <button class="admin-primary-button" type="submit">Set new password <i data-lucide="key-round" aria-hidden="true"></i></button>
+        </form>
         <p class="admin-login-footnote"><i data-lucide="shield-check" aria-hidden="true"></i> Access is limited to authorized RUQO staff.</p>
       </section>
       <aside class="admin-login-aside" aria-hidden="true">
@@ -55,16 +62,20 @@
     <div id="admin-app" class="admin-app" hidden>
       <aside class="admin-sidebar">
         <a class="admin-brand" href="/" aria-label="RUQO TECH storefront">
-          <img src="/images/ruqo-logo.png" alt="RUQO TECH" />
+          <img src="/images/ruqo-logo.png" alt="RUQO TECH" data-admin-brand-logo />
           <span>STORE MANAGEMENT</span>
         </a>
         <div class="workspace-label">WORKSPACE <strong>RUQO TECH</strong></div>
         <nav class="admin-navigation" aria-label="Admin navigation">
           <button class="admin-nav-item is-active" type="button" data-admin-view="overview"><i data-lucide="layout-dashboard" aria-hidden="true"></i><span>Overview</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="products"><i data-lucide="package-2" aria-hidden="true"></i><span>Products</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="categories"><i data-lucide="layers-3" aria-hidden="true"></i><span>Categories</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="orders"><i data-lucide="clipboard-list" aria-hidden="true"></i><span>Orders</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="messages"><i data-lucide="messages-square" aria-hidden="true"></i><span>Messages</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="promotions"><i data-lucide="badge-percent" aria-hidden="true"></i><span>Offers</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="banners"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>Banners</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="audience"><i data-lucide="users-round" aria-hidden="true"></i><span>Audience</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="settings"><i data-lucide="settings-2" aria-hidden="true"></i><span>Store settings</span></button>
         </nav>
         <div class="sidebar-footer">
           <span class="connection-indicator"><i></i> Supabase connected</span>
@@ -109,9 +120,24 @@
             </section>
           </section>
 
+          <section class="admin-view" data-admin-panel="categories" hidden>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">CATALOG STRUCTURE</span><h1>Categories</h1><p>Manage translated category names, visibility, and ordering.</p></div><button id="add-category" class="admin-primary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add category</button></div>
+            <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Category</th><th>Slug</th><th>Order</th><th>Status</th><th></th></tr></thead><tbody id="categories-body"></tbody></table><div id="categories-empty" class="admin-empty" hidden><i data-lucide="layers-3" aria-hidden="true"></i><strong>No categories configured</strong></div></div></section>
+          </section>
+
           <section class="admin-view" data-admin-panel="orders" hidden>
             <div class="admin-page-heading"><div><span class="admin-eyebrow">FULFILLMENT</span><h1>Orders</h1><p>Review incoming orders and update their fulfillment status.</p></div><button id="refresh-orders" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh</button></div>
             <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Order</th><th>Customer</th><th>Placed</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead><tbody id="orders-body"></tbody></table><div id="orders-empty" class="admin-empty" hidden><i data-lucide="clipboard-list" aria-hidden="true"></i><strong>No orders yet</strong><span>Guest checkout orders will appear here.</span></div></div></section>
+          </section>
+
+          <section class="admin-view" data-admin-panel="messages" hidden>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">CUSTOMER CARE</span><h1>Messages</h1><p>Support requests submitted from the storefront.</p></div><button id="refresh-messages" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh</button></div>
+            <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Received</th><th>Customer</th><th>Message</th><th>Status</th></tr></thead><tbody id="messages-body"></tbody></table><div id="messages-empty" class="admin-empty" hidden><i data-lucide="messages-square" aria-hidden="true"></i><strong>No messages yet</strong></div></div></section>
+          </section>
+
+          <section class="admin-view" data-admin-panel="audience" hidden>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">CUSTOMER RELATIONSHIPS</span><h1>Newsletter audience</h1><p>Review and manage email subscriptions.</p></div><button id="refresh-subscribers" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh</button></div>
+            <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Email</th><th>Subscribed</th><th>Status</th></tr></thead><tbody id="subscribers-body"></tbody></table><div id="subscribers-empty" class="admin-empty" hidden><i data-lucide="users-round" aria-hidden="true"></i><strong>No subscribers yet</strong></div></div></section>
           </section>
 
           <section class="admin-view" data-admin-panel="promotions" hidden>
@@ -122,6 +148,25 @@
           <section class="admin-view" data-admin-panel="banners" hidden>
             <div class="admin-page-heading"><div><span class="admin-eyebrow">STOREFRONT CONTENT</span><h1>Banners</h1><p>Schedule multilingual campaign banners across the store.</p></div><button id="add-banner" class="admin-primary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add banner</button></div>
             <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Banner</th><th>Placement</th><th>Schedule</th><th>Status</th><th></th></tr></thead><tbody id="banners-body"></tbody></table><div id="banners-empty" class="admin-empty" hidden><i data-lucide="panels-top-left" aria-hidden="true"></i><strong>No banners configured</strong><span>Create a banner for the storefront.</span></div></div></section>
+          </section>
+          <section class="admin-view" data-admin-panel="settings" hidden>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">STORE IDENTITY</span><h1>Store settings</h1><p>Manage the public brand, contact details, and delivery threshold.</p></div></div>
+            <section class="admin-section">
+              <form id="brand-settings-form" class="admin-settings-form">
+                <div class="admin-form-grid">
+                  <label>Store name<input name="store_name" maxlength="80" required /></label>
+                  <label>Support email<input name="support_email" type="email" /></label>
+                  <label>Support phone<input name="support_phone" type="tel" /></label>
+                  <label>Free delivery threshold (SAR)<input name="free_shipping_threshold" type="number" min="0" step="0.01" required /></label>
+                  <label>Standard delivery fee (SAR)<input name="delivery_fee" type="number" min="0" step="0.01" required /></label>
+                  <label>Primary brand color<input name="brand_color" type="color" required /></label>
+                  <label class="admin-upload">Replace store logo<input name="logo_file" type="file" accept="image/png,image/jpeg,image/webp" /><small>PNG, JPEG, or WebP. Maximum 10 MB.</small></label>
+                </div>
+                <div class="brand-logo-preview-row"><img id="brand-logo-preview" src="/images/ruqo-logo.png" alt="Current store logo" /><button id="reset-brand-logo" class="admin-secondary-button" type="button">Use default logo</button></div>
+                <p id="brand-settings-error" class="admin-feedback" role="alert" hidden></p>
+                <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save store settings</button></div>
+              </form>
+            </section>
           </section>
           <div id="admin-toast" class="admin-toast" role="status" aria-live="polite"></div>
         </main>
@@ -143,6 +188,10 @@
             <label class="form-field-wide admin-upload">Upload a replacement image<input name="image_file" type="file" accept="image/png,image/jpeg,image/webp" /><small>PNG, JPEG, or WebP. Maximum 10 MB.</small></label>
           </div>
           <div class="admin-switch-row"><label><input name="is_active" type="checkbox" checked /><span><strong>Published</strong><small>Visible to customers</small></span></label><label><input name="in_stock" type="checkbox" checked /><span><strong>In stock</strong><small>Available to purchase</small></span></label><label><input name="is_featured" type="checkbox" /><span><strong>Featured</strong><small>Highlight in the store</small></span></label></div>
+          <section class="variant-editor">
+            <div class="variant-editor-heading"><div><h3>Options & inventory</h3><p>Set variant labels, SKU, price adjustment, and exact stock. Leave stock blank for unlimited inventory.</p></div><button id="add-product-variant" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add option</button></div>
+            <div id="product-variant-rows" class="variant-editor-rows"></div>
+          </section>
           <div class="translation-editor"><div class="translation-heading"><div><h3>Product copy</h3><p>Names, descriptions, and feature bullets</p></div><div class="locale-tabs" role="tablist" aria-label="Product language"><button class="is-active" type="button" data-locale-tab="en">EN</button><button type="button" data-locale-tab="fr">FR</button><button type="button" data-locale-tab="es">ES</button><button type="button" data-locale-tab="zh">中文</button><button type="button" data-locale-tab="ar">عربي</button></div></div>
             <div class="locale-panel is-active" data-locale-panel="en"><label>Name<input name="name_en" required /></label><label>Description<textarea name="description_en" rows="2"></textarea></label><label>Feature bullets<textarea name="features_en" rows="4" placeholder="One feature per line"></textarea></label></div>
             <div class="locale-panel" data-locale-panel="fr" hidden><label>Nom<input name="name_fr" /></label><label>Description<textarea name="description_fr" rows="2"></textarea></label><label>Caractéristiques<textarea name="features_fr" rows="4" placeholder="One feature per line"></textarea></label></div>
@@ -153,6 +202,25 @@
           <p id="product-form-error" class="admin-feedback" role="alert" hidden></p>
         </div>
         <footer class="dialog-footer"><button id="delete-product" class="admin-danger-button" type="button" hidden><i data-lucide="trash-2" aria-hidden="true"></i> Delete</button><span></span><button class="admin-secondary-button" type="button" data-close-dialog>Cancel</button><button id="save-product" class="admin-primary-button" type="submit">Save product</button></footer>
+      </form>
+    </dialog>
+
+    <dialog id="category-dialog" class="product-dialog">
+      <form id="category-form" method="dialog" novalidate>
+        <header class="dialog-header"><div><span class="admin-eyebrow">CATALOG STRUCTURE</span><h2 id="category-dialog-title">Add category</h2></div><button class="admin-icon-button" type="button" data-close-dialog aria-label="Close"><i data-lucide="x" aria-hidden="true"></i></button></header>
+        <div class="dialog-body">
+          <div class="admin-form-grid"><label>Category slug<input name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" required placeholder="smart-home" /></label><label>Sort order<input name="sort_order" type="number" step="1" value="0" required /></label></div>
+          <label class="admin-inline-check"><input name="is_active" type="checkbox" checked /><span><strong>Category published</strong><small>Visible to customers</small></span></label>
+          <div class="translation-editor"><div class="translation-heading"><div><h3>Category content</h3><p>Names and descriptions by language</p></div><div class="locale-tabs" role="tablist" aria-label="Category language"><button class="is-active" type="button" data-locale-tab="en">EN</button><button type="button" data-locale-tab="fr">FR</button><button type="button" data-locale-tab="es">ES</button><button type="button" data-locale-tab="zh">中文</button><button type="button" data-locale-tab="ar">عربي</button></div></div>
+            <div class="locale-panel is-active" data-locale-panel="en"><label>Name<input name="name_en" required /></label><label>Description<textarea name="description_en" rows="3"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="fr" hidden><label>Nom<input name="name_fr" /></label><label>Description<textarea name="description_fr" rows="3"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="es" hidden><label>Nombre<input name="name_es" /></label><label>Descripción<textarea name="description_es" rows="3"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="zh" hidden><label>分类名称<input name="name_zh" /></label><label>分类描述<textarea name="description_zh" rows="3"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>اسم التصنيف<input name="name_ar" /></label><label>وصف التصنيف<textarea name="description_ar" rows="3"></textarea></label></div>
+          </div>
+          <p id="category-form-error" class="admin-feedback" role="alert" hidden></p>
+        </div>
+        <footer class="dialog-footer"><button id="delete-category" class="admin-danger-button" type="button" hidden><i data-lucide="trash-2" aria-hidden="true"></i> Delete</button><span></span><button class="admin-secondary-button" type="button" data-close-dialog>Cancel</button><button class="admin-primary-button" type="submit">Save category</button></footer>
       </form>
     </dialog>
 
