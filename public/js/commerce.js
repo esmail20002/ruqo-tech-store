@@ -734,6 +734,14 @@
     }[language] || {
       gallery: "Product gallery", galleryNote: "Select a thumbnail to explore a closer crop of the product image.", previousImage: "Previous image", nextImage: "Next image", view: "View", zoom: "View larger image", specs: "Specifications", detailedSpecs: "View detailed specifications", detailsTitle: "Detailed specifications", labels: { phones: ["Camera / platform", "Storage / display", "Core technology", "Design / experience"], laptops: ["Display", "Processor", "Memory / design", "Power / connectivity"], audio: ["Sound", "Noise control", "Connectivity", "Comfort"], wearables: ["Health", "Tracking", "Connectivity", "Design"] }, arrival: "Estimated delivery", arrivalValue: "1–2 business days", secure: "Secure checkout", returnsInfo: "7-day return window", reviewTitle: "Ratings & reviews", basedOn: "Based on customer ratings", reviewForm: "Share your experience", reviewName: "Your name", reviewText: "Your review", reviewSubmit: "Submit review", reviewThanks: "Thanks. Your review is saved on this device.", recentReviews: "Recent reviews", verified: "Customer review", related: "You may also like", keepBrowsing: "View all products", quantity: "Quantity", close: "Close image", noReviews: "Written review excerpts are not available yet. Share your experience below.",
     };
+    const reviewUi = {
+      en: { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match this rating.", empty: "No written reviews yet. Be the first to share your experience." },
+      ar: { written: "المراجعات المكتوبة", localNote: "المراجعات المرسلة من هذا المتصفح", all: "كل التقييمات", newest: "الأحدث", highest: "الأعلى تقييماً", lowest: "الأقل تقييماً", filter: "تصفية", sort: "ترتيب", rating: "تقييمك", ratingHint: "اختر عدد النجوم", chars: "حرفاً", emptyFiltered: "لا توجد مراجعات بهذا التقييم.", empty: "لا توجد مراجعات مكتوبة بعد. كن أول من يشارك تجربته." },
+      fr: { written: "Avis écrits", localNote: "Avis envoyés depuis ce navigateur", all: "Toutes les notes", newest: "Plus récents", highest: "Mieux notés", lowest: "Moins bien notés", filter: "Filtrer", sort: "Trier", rating: "Votre note", ratingHint: "Choisissez une note", chars: "caractères", emptyFiltered: "Aucun avis ne correspond à cette note.", empty: "Aucun avis écrit pour le moment. Soyez le premier à partager votre expérience." },
+      es: { written: "Reseñas escritas", localNote: "Reseñas enviadas desde este navegador", all: "Todas las valoraciones", newest: "Más recientes", highest: "Mejor valoradas", lowest: "Peor valoradas", filter: "Filtrar", sort: "Ordenar", rating: "Tu valoración", ratingHint: "Elige una valoración", chars: "caracteres", emptyFiltered: "No hay reseñas con esta valoración.", empty: "Todavía no hay reseñas escritas. Sé la primera persona en compartir su experiencia." },
+      zh: { written: "文字评价", localNote: "从此浏览器提交的评价", all: "全部评分", newest: "最新", highest: "评分最高", lowest: "评分最低", filter: "筛选", sort: "排序", rating: "你的评分", ratingHint: "请选择星级", chars: "字", emptyFiltered: "没有符合此评分的评价。", empty: "暂无文字评价，欢迎分享你的使用体验。" },
+    }[language] || { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match this rating.", empty: "No written reviews yet. Be the first to share your experience." };
+
     const productImages = product.images?.filter(Boolean) || [product.image];
     const gallery = productImages.length > 1
       ? productImages.map((image) => ({ ...product, image, position: "center" }))
@@ -798,6 +806,112 @@
             .join("")}`
         : `<div class="review-empty">${icon("message-circle")}<p>${detail.noReviews}</p></div>`
     }</div><form class="product-review-form" id="review-form" data-product-review><h3>${detail.reviewForm}</h3><label class="commerce-field">${detail.reviewName}<input name="name" maxlength="60" required /></label><label class="commerce-field">${language === "ar" ? "التقييم" : "Rating"}<select name="rating"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select></label><label class="commerce-field">${detail.reviewText}<textarea name="text" minlength="8" maxlength="600" required></textarea></label><div class="form-feedback" data-review-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${detail.reviewSubmit}</button></form></div></section><section class="related-products-section detail-scroll-reveal"><div class="product-section-heading"><div><span class="commerce-eyebrow">${escapeHtml(product.brand)}</span><h2>${detail.related}</h2></div><a href="/products.html?category=${product.category}" class="section-link">${detail.keepBrowsing} ${icon("arrow-up-left")}</a></div><div class="commerce-product-grid">${recommendations}</div></section><dialog class="product-lightbox" data-product-lightbox><button type="button" data-close-lightbox aria-label="${detail.close}">${icon("x")}</button><img src="${product.image}" alt="${escapeHtml(product.name)}" /></dialog>`;
+    const reviewList = root.querySelector(".product-review-list");
+    const reviewHeader = document.createElement("div");
+    reviewHeader.className = "review-list-header";
+    reviewHeader.innerHTML = `<div><h3>${reviewUi.written}</h3><p>${reviewUi.localNote}</p></div><span class="review-written-count">${reviews.length}</span>`;
+    const reviewTools = document.createElement("div");
+    reviewTools.className = "review-toolbar";
+    reviewTools.innerHTML = `<label class="review-tool"><span>${reviewUi.filter}</span><select data-review-filter aria-label="${reviewUi.filter}"><option value="all">${reviewUi.all}</option>${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${value} ★</option>`).join("")}</select></label><label class="review-tool"><span>${reviewUi.sort}</span><select data-review-sort aria-label="${reviewUi.sort}"><option value="newest">${reviewUi.newest}</option><option value="highest">${reviewUi.highest}</option><option value="lowest">${reviewUi.lowest}</option></select></label>`;
+    const reviewEntries = document.createElement("div");
+    reviewEntries.className = "review-entries";
+    reviewList.replaceChildren(reviewHeader, reviewTools, reviewEntries);
+    const renderLocalReviews = () => {
+      const selectedRating = reviewTools.querySelector("[data-review-filter]").value;
+      const sortOrder = reviewTools.querySelector("[data-review-sort]").value;
+      const visibleReviews = reviews
+        .filter((review) => selectedRating === "all" || Number(review.rating) === Number(selectedRating))
+        .slice()
+        .sort((left, right) => {
+          if (sortOrder === "highest") return Number(right.rating) - Number(left.rating);
+          if (sortOrder === "lowest") return Number(left.rating) - Number(right.rating);
+          return String(right.date || "").localeCompare(String(left.date || ""));
+        });
+      reviewEntries.replaceChildren();
+      if (!visibleReviews.length) {
+        const empty = document.createElement("div");
+        empty.className = "review-empty";
+        const emptyIcon = document.createElement("span");
+        emptyIcon.innerHTML = icon("message-circle");
+        empty.append(emptyIcon.firstElementChild);
+        const message = document.createElement("p");
+        message.textContent = reviews.length ? reviewUi.emptyFiltered : reviewUi.empty;
+        empty.append(message);
+        reviewEntries.append(empty);
+        window.lucide?.createIcons();
+        return;
+      }
+      for (const review of visibleReviews) {
+        const card = document.createElement("article");
+        card.className = "product-review";
+        const head = document.createElement("div");
+        head.className = "review-author";
+        const author = document.createElement("strong");
+        author.textContent = review.name;
+        const source = document.createElement("span");
+        source.className = "review-source-label";
+        source.textContent = detail.verified;
+        const stars = document.createElement("span");
+        stars.className = "review-stars";
+        stars.textContent = `${"★".repeat(Number(review.rating))}${"☆".repeat(5 - Number(review.rating))}`;
+        const date = document.createElement("time");
+        date.className = "review-date";
+        date.dateTime = review.date || "";
+        date.textContent = review.date
+          ? new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, { dateStyle: "medium" }).format(new Date(review.date))
+          : "";
+        head.append(author, stars, source, date);
+        const body = document.createElement("p");
+        body.textContent = review.text;
+        card.append(head, body);
+        reviewEntries.append(card);
+      }
+    };
+    reviewTools.querySelectorAll("select").forEach((select) => select.addEventListener("change", renderLocalReviews));
+    renderLocalReviews();
+
+    const reviewForm = root.querySelector("[data-product-review]");
+    const nativeRating = reviewForm.elements.rating;
+    nativeRating.hidden = true;
+    const starPicker = document.createElement("div");
+    starPicker.className = "review-star-picker";
+    starPicker.setAttribute("role", "radiogroup");
+    starPicker.setAttribute("aria-label", reviewUi.rating);
+    const starValue = document.createElement("strong");
+    starValue.className = "review-star-value";
+    const updateStarPicker = (rating) => {
+      nativeRating.value = String(rating);
+      starValue.textContent = `${rating} / 5`;
+      starPicker.querySelectorAll("button").forEach((button) => {
+        const active = Number(button.dataset.reviewRating) <= rating;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-checked", String(Number(button.dataset.reviewRating) === rating));
+      });
+    };
+    for (let rating = 1; rating <= 5; rating += 1) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.reviewRating = String(rating);
+      button.setAttribute("role", "radio");
+      button.setAttribute("aria-label", `${rating} / 5`);
+      button.textContent = "★";
+      button.addEventListener("click", () => updateStarPicker(rating));
+      starPicker.append(button);
+    }
+    starPicker.append(starValue);
+    nativeRating.parentElement.append(starPicker);
+    updateStarPicker(Number(nativeRating.value) || 5);
+
+    const reviewTextarea = reviewForm.elements.text;
+    const characterCounter = document.createElement("small");
+    characterCounter.className = "review-character-count";
+    const updateCharacterCount = () => {
+      characterCounter.textContent = `${reviewTextarea.value.length} / ${reviewTextarea.maxLength} ${reviewUi.chars}`;
+    };
+    reviewTextarea.after(characterCounter);
+    reviewTextarea.addEventListener("input", updateCharacterCount);
+    updateCharacterCount();
+
     root.querySelector(".product-long-description").textContent =
       `${product.description[language]} ${t.productDetailStory}`;
     root.querySelector(

@@ -972,6 +972,63 @@ html[data-theme="dark"] .product-purchase-row {
   box-shadow: none;
 }
 
+html[data-theme="dark"] .review-written-count,
+html[data-theme="dark"] .review-source-label {
+  border-color: rgba(103, 200, 184, 0.28);
+  background: rgba(37, 142, 134, 0.16);
+  color: #8be1d4;
+}
+
+html[data-theme="dark"] .review-toolbar,
+html[data-theme="dark"] .review-tool select,
+html[data-theme="dark"] .product-review,
+html[data-theme="dark"] .review-empty {
+  border-color: rgba(177, 197, 218, 0.14);
+  background: rgba(22, 33, 49, 0.86);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .product-review:hover {
+  border-color: rgba(103, 200, 184, 0.3);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25), 0 0 15px rgba(37, 142, 134, 0.08);
+}
+
+html[data-theme="dark"] .product-rating-panel,
+html[data-theme="dark"] .product-review-form {
+  border-color: rgba(177, 197, 218, 0.16);
+  background: linear-gradient(145deg, rgba(29, 43, 59, 0.94), rgba(20, 31, 46, 0.94));
+  color: var(--text);
+}
+
+html[data-theme="dark"] .product-review > p {
+  color: #cfdae5;
+}
+
+html[data-theme="dark"] .review-star-picker button {
+  color: #647386;
+}
+
+html[data-theme="dark"] .review-star-picker button.is-active,
+html[data-theme="dark"] .review-star-picker button:hover {
+  color: #ffd36a;
+  text-shadow: 0 0 13px rgba(255, 211, 106, 0.42);
+}
+
+@media (max-width: 650px) {
+  .review-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .review-tool {
+    justify-content: space-between;
+  }
+  .review-tool + .review-tool {
+    padding: 8px 0 0;
+    border-inline-start: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+
 html[data-theme="dark"] .product-spec-row:nth-child(odd),
 html[data-theme="dark"] .product-rating-panel,
 html[data-theme="dark"] .product-review-form {
