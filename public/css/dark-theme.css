@@ -762,6 +762,42 @@ html[data-theme="dark"] .commerce-heading p {
   color: #b7c4d2;
 }
 
+html[data-theme="dark"] .product-detail-gallery .product-detail-image {
+  border-color: rgba(177, 197, 218, 0.14);
+  background: linear-gradient(145deg, #172435, #111b29);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
+}
+
+html[data-theme="dark"] .product-feature-list li {
+  background: rgba(22, 33, 49, 0.85);
+  border-color: rgba(177, 197, 218, 0.14);
+  color: #d4dee8;
+}
+
+html[data-theme="dark"] .product-purchase-panel {
+  border-color: rgba(103, 200, 184, 0.28);
+  background: linear-gradient(145deg, rgba(22, 33, 49, 0.96), rgba(17, 39, 42, 0.85));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+}
+
+html[data-theme="dark"] .purchase-panel-heading,
+html[data-theme="dark"] .detail-saving-note {
+  color: #72dbcf;
+}
+
+html[data-theme="dark"] .detail-saving-note {
+  background: rgba(37, 142, 134, 0.2);
+}
+
+html[data-theme="dark"] .product-purchase-panel .detail-delivery > span {
+  background: rgba(26, 40, 56, 0.82);
+}
+
+html[data-theme="dark"] .product-faq-item {
+  background: rgba(22, 33, 49, 0.82);
+  border-color: rgba(177, 197, 218, 0.14);
+}
+
 html[data-theme="dark"] .detail-discount,
 html[data-theme="dark"] .catalog-badge.is-sale,
 html[data-theme="dark"] .tag-sale {

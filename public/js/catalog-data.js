@@ -549,6 +549,11 @@
       const image = firstImage?.storage_path
         ? client.storage.from("product-images").getPublicUrl(firstImage.storage_path).data.publicUrl
         : firstImage?.image_url || row.external_image_url || "";
+      const productImages = imageRows.map((imageRow) =>
+        imageRow.storage_path
+          ? client.storage.from("product-images").getPublicUrl(imageRow.storage_path).data.publicUrl
+          : imageRow.image_url || row.external_image_url || "",
+      ).filter(Boolean);
       const localizedFeatures = Object.fromEntries(
         Object.entries(featureMap.get(row.slug) || {}).map(([language, entries]) => [
           language,
@@ -573,6 +578,7 @@
         rating: Number(row.rating) || 0,
         reviews: Number(row.review_count) || 0,
         image,
+        images: productImages.length ? productImages : image ? [image] : [],
         badge: row.badge,
         stock: row.in_stock,
         newest: row.sort_order,

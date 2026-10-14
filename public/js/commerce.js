@@ -734,13 +734,13 @@
     }[language] || {
       gallery: "Product gallery", galleryNote: "Explore this item alongside other picks from its collection.", previousImage: "Previous image", nextImage: "Next image", view: "View", zoom: "View larger image", specs: "Specifications", detailedSpecs: "View detailed specifications", detailsTitle: "Detailed specifications", labels: { phones: ["Camera / platform", "Storage / display", "Core technology", "Design / experience"], laptops: ["Display", "Processor", "Memory / design", "Power / connectivity"], audio: ["Sound", "Noise control", "Connectivity", "Comfort"], wearables: ["Health", "Tracking", "Connectivity", "Design"] }, arrival: "Estimated delivery", arrivalValue: "1–2 business days", secure: "Secure checkout", returnsInfo: "7-day return window", reviewTitle: "Ratings & reviews", basedOn: "Based on customer ratings", reviewForm: "Share your experience", reviewName: "Your name", reviewText: "Your review", reviewSubmit: "Submit review", reviewThanks: "Thanks. Your review is saved on this device.", recentReviews: "Recent reviews", verified: "Customer review", related: "You may also like", keepBrowsing: "View all products", quantity: "Quantity", close: "Close image", noReviews: "Written review excerpts are not available yet. Share your experience below.",
     };
-    const categoryImages = products
-      .filter((item) => item.category === product.category)
-      .map(localizeProduct);
-    const gallery = [
-      product,
-      ...categoryImages.filter((item) => item.id !== product.id),
-    ].slice(0, 4);
+    const gallery = (product.images?.length ? product.images : [product.image])
+      .filter(Boolean)
+      .map((image, index) => ({
+        id: `${product.id}-${index}`,
+        image,
+        name: product.name,
+      }));
     const galleryMarkup = gallery
       .map(
         (item, index) =>
@@ -830,7 +830,6 @@
       .querySelector(".product-detail-price")
       .append(currencyEdit, currencySelect);
     const detailPriceBlock = root.querySelector(".detail-price-block");
-    root.querySelector(".gallery-caption").before(detailPriceBlock);
     const currentPrice = product.price + currentOption.adjustment;
     root.querySelector(".product-detail-price > strong").textContent =
       money(currentPrice);
@@ -845,6 +844,12 @@
       : 0;
     const discountBadge = root.querySelector(".detail-discount");
     if (discountBadge) discountBadge.textContent = `-${currentDiscount}%`;
+    if (product.oldPrice && product.oldPrice > currentPrice) {
+      const savings = document.createElement("span");
+      savings.className = "detail-saving-note";
+      savings.innerHTML = `${language === "ar" ? "وفّر" : "You save"} <strong>${money(product.oldPrice - currentPrice)}</strong>`;
+      root.querySelector(".product-detail-price").append(savings);
+    }
     currencyEdit.addEventListener("click", () => {
       currencyEdit.hidden = true;
       currencySelect.hidden = false;
@@ -861,6 +866,24 @@
       renderProduct();
     });
 
+    const purchasePanel = document.createElement("section");
+    purchasePanel.className = "product-purchase-panel";
+    const purchaseHeading = {
+      en: "YOUR SELECTION",
+      ar: "اختيارك المميز",
+      fr: "VOTRE SÉLECTION",
+      es: "TU SELECCIÓN",
+      zh: "为你精选",
+    }[language] || "YOUR SELECTION";
+    purchasePanel.innerHTML = `<div class="purchase-panel-heading"><span>${purchaseHeading}</span><i data-lucide="shield-check" aria-hidden="true"></i></div>`;
+    const purchaseRow = root.querySelector(".product-purchase-row");
+    const deliveryDetails = root.querySelector(".detail-delivery");
+    purchasePanel.append(detailPriceBlock, root.querySelector(".product-detail-stock"), purchaseRow);
+    if (deliveryDetails) purchasePanel.append(deliveryDetails);
+    root.querySelector(".product-detail-layout").append(purchasePanel);
+
+    window.lucide?.createIcons();
+
     let featureList = root.querySelector(".product-feature-list");
     if (!featureList) {
       const featureHeading = document.createElement("h2");
@@ -874,18 +897,30 @@
             `<li>${icon("circle-check")}<span>${escapeHtml(feature)}</span></li>`,
         )
         .join("");
-      root
-        .querySelector(".detail-rating-link")
-        .before(featureHeading, featureList);
+      const description = root.querySelector(".detail-description");
+      const ratingLink = root.querySelector(".detail-rating-link");
+      description.after(ratingLink);
+      root.querySelector(".product-detail-copy").append(featureHeading, featureList);
     }
 
-    const detailsDisclosure = document.createElement("details");
-    detailsDisclosure.className = "product-spec-disclosure";
-    detailsDisclosure.innerHTML = `<summary>${icon("chevron-down")}<span>${detail.detailedSpecs}</span></summary><div class="product-spec-expanded"><h3>${detail.detailsTitle}</h3><p>${escapeHtml(product.description[language])}</p><div class="product-spec-table">${specs}<div class="product-spec-row"><span>${t.category}</span><strong>${t.categoryNames[product.category]}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "رقم المنتج" : "Product reference"}</span><strong>${product.id.toUpperCase()}</strong></div><div class="product-spec-row"><span>${t.warranty}</span><strong>${t.returns}</strong></div><div class="product-spec-row"><span>${optionConfig.label}</span><strong>${escapeHtml(currentOption.label)}</strong></div></div></div>`;
-    featureList.after(detailsDisclosure);
-    detailsDisclosure.querySelector(
-      ".product-spec-row:nth-last-child(3) > span",
-    ).textContent = t.productReference;
+    const productFaq = document.createElement("section");
+    productFaq.className = "product-faq-section detail-scroll-reveal";
+    const faqLabels = {
+      en: { title: "Good to know", questions: ["When will my order arrive?", "What about warranty and returns?", "How can I pay?"] },
+      ar: { title: "قبل اتخاذ قرارك", questions: ["متى يصل طلبي؟", "ما الضمان وسياسة الاسترجاع؟", "كيف يمكنني الدفع؟"] },
+      fr: { title: "Bon à savoir", questions: ["Quand vais-je recevoir ma commande ?", "Quelle est la garantie et la politique de retour ?", "Comment puis-je payer ?"] },
+      es: { title: "Información útil", questions: ["¿Cuándo llegará mi pedido?", "¿Qué garantía y devoluciones se ofrecen?", "¿Cómo puedo pagar?"] },
+      zh: { title: "购买前须知", questions: ["订单何时送达？", "商品有哪些保修与退货政策？", "我可以如何付款？"] },
+    };
+    const faqCopy = faqLabels[language] || faqLabels.en;
+    const faqAnswers = [
+      t.deliveryBody,
+      `${t.warranty} · ${t.returnsBody}`,
+      t.codNote,
+    ];
+    const faqEyebrow = { en: "PRODUCT & SERVICE", ar: "تفاصيل تهمك", fr: "PRODUIT & SERVICE", es: "PRODUCTO Y SERVICIO", zh: "商品与服务" }[language] || "PRODUCT & SERVICE";
+    productFaq.innerHTML = `<div class="product-section-heading"><span class="commerce-eyebrow">${faqEyebrow}</span><h2>${faqCopy.title}</h2></div><div class="product-faq-list">${faqCopy.questions.map((question, index) => `<details class="product-faq-item"><summary>${icon("plus")}<span>${question}</span></summary><p>${escapeHtml(faqAnswers[index])}</p></details>`).join("")}</div>`;
+    root.querySelector(".product-detail-lower").after(productFaq);
 
     const mainImage = root.querySelector("[data-detail-image]");
     const lightbox = root.querySelector("[data-product-lightbox]");
@@ -924,18 +959,23 @@
         showGalleryImage(galleryIndex + step),
       );
     };
-    addGalleryArrow(
-      root.querySelector(".product-detail-image"),
-      -1,
-      "gallery-arrow is-previous",
-    );
-    addGalleryArrow(
-      root.querySelector(".product-detail-image"),
-      1,
-      "gallery-arrow is-next",
-    );
-    addGalleryArrow(lightbox, -1, "lightbox-arrow is-previous");
-    addGalleryArrow(lightbox, 1, "lightbox-arrow is-next");
+    if (gallery.length > 1) {
+      addGalleryArrow(
+        root.querySelector(".product-detail-image"),
+        -1,
+        "gallery-arrow is-previous",
+      );
+      addGalleryArrow(
+        root.querySelector(".product-detail-image"),
+        1,
+        "gallery-arrow is-next",
+      );
+      addGalleryArrow(lightbox, -1, "lightbox-arrow is-previous");
+      addGalleryArrow(lightbox, 1, "lightbox-arrow is-next");
+    } else {
+      root.querySelector(".product-gallery-thumbs").hidden = true;
+      root.querySelector(".gallery-caption").textContent = detail.zoom;
+    }
     galleryButtons.forEach((button, index) =>
       button.addEventListener("click", () => showGalleryImage(index)),
     );
