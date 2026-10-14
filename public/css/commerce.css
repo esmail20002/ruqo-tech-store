@@ -3402,12 +3402,12 @@
   }
   .product-purchase-row {
     position: static;
-    padding: 9px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.94);
-    box-shadow: 0 8px 28px rgba(31, 22, 45, 0.12);
-    backdrop-filter: blur(14px);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
   }
   .product-quantity .quantity-control button {
     width: 33px;

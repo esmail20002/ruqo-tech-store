@@ -967,9 +967,9 @@ html[data-theme="dark"] .lightbox-arrow:hover {
 }
 
 html[data-theme="dark"] .product-purchase-row {
-  border-color: var(--line);
-  background: rgba(20, 32, 46, 0.94);
-  box-shadow: 0 12px 28px rgba(2, 8, 18, 0.34);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 html[data-theme="dark"] .product-spec-row:nth-child(odd),
