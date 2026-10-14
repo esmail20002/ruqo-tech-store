@@ -734,13 +734,19 @@
     }[language] || {
       gallery: "Product gallery", galleryNote: "Explore this item alongside other picks from its collection.", previousImage: "Previous image", nextImage: "Next image", view: "View", zoom: "View larger image", specs: "Specifications", detailedSpecs: "View detailed specifications", detailsTitle: "Detailed specifications", labels: { phones: ["Camera / platform", "Storage / display", "Core technology", "Design / experience"], laptops: ["Display", "Processor", "Memory / design", "Power / connectivity"], audio: ["Sound", "Noise control", "Connectivity", "Comfort"], wearables: ["Health", "Tracking", "Connectivity", "Design"] }, arrival: "Estimated delivery", arrivalValue: "1–2 business days", secure: "Secure checkout", returnsInfo: "7-day return window", reviewTitle: "Ratings & reviews", basedOn: "Based on customer ratings", reviewForm: "Share your experience", reviewName: "Your name", reviewText: "Your review", reviewSubmit: "Submit review", reviewThanks: "Thanks. Your review is saved on this device.", recentReviews: "Recent reviews", verified: "Customer review", related: "You may also like", keepBrowsing: "View all products", quantity: "Quantity", close: "Close image", noReviews: "Written review excerpts are not available yet. Share your experience below.",
     };
-    const gallery = product.images?.length
-      ? product.images.filter(Boolean).map((image) => ({ ...product, image }))
-      : [{ ...product, image: product.image }];
+    const productImages = product.images?.filter(Boolean) || [product.image];
+    const gallery = productImages.length > 1
+      ? productImages.map((image) => ({ ...product, image, position: "center" }))
+      : [
+          { ...product, image: productImages[0], position: "center" },
+          { ...product, image: productImages[0], position: "left top" },
+          { ...product, image: productImages[0], position: "right top" },
+          { ...product, image: productImages[0], position: "center bottom" },
+        ];
     const galleryMarkup = gallery
       .map(
         (item, index) =>
-          `<button class="product-gallery-thumb${index === 0 ? " is-active" : ""}" type="button" data-gallery-image="${item.image}" data-gallery-alt="${escapeHtml(item.name)}" aria-label="${detail.view} ${index + 1}" aria-pressed="${index === 0}"><img src="${item.image}" alt="" loading="lazy" /></button>`,
+          `<button class="product-gallery-thumb${index === 0 ? " is-active" : ""}" type="button" data-gallery-image="${item.image}" data-gallery-position="${item.position || "center"}" data-gallery-alt="${escapeHtml(item.name)}" aria-label="${detail.view} ${index + 1}" aria-pressed="${index === 0}"><img src="${item.image}" alt="" style="object-position:${item.position || "center"}" loading="lazy" /></button>`,
       )
       .join("");
     const labels = detail.labels[product.category];
@@ -886,7 +892,7 @@
       const productDescription = root.querySelector(".detail-description");
       const productRating = root.querySelector(".detail-rating-link");
       productDescription.after(productRating);
-      productRating.after(featureHeading, featureList);
+      productRating.after(detailPriceBlock, featureHeading, featureList);
     }
 
     const detailsDisclosure = document.createElement("details");
@@ -909,10 +915,12 @@
       window.setTimeout(() => {
         mainImage.src = selectedImage.image;
         mainImage.alt = selectedImage.name;
+        mainImage.style.objectPosition = selectedImage.position || "center";
         root.querySelector(".detail-image-label").textContent =
           selectedImage.name;
         lightboxImage.src = selectedImage.image;
         lightboxImage.alt = selectedImage.name;
+        lightboxImage.style.objectPosition = selectedImage.position || "center";
         mainImage.classList.remove("is-changing");
       }, 120);
       galleryButtons.forEach((button, index) => {
@@ -947,12 +955,14 @@
       );
       addGalleryArrow(lightbox, -1, "lightbox-arrow is-previous");
       addGalleryArrow(lightbox, 1, "lightbox-arrow is-next");
-    } else {
-      root.querySelector(".product-gallery-thumbs").hidden = true;
-      root.querySelector(".gallery-caption").textContent = detail.zoom;
     }
     galleryButtons.forEach((button, index) =>
-      button.addEventListener("click", () => showGalleryImage(index)),
+      button.addEventListener("click", () => {
+        const selectedImage = gallery[index];
+        mainImage.style.objectPosition = selectedImage.position || "center";
+        lightboxImage.style.objectPosition = selectedImage.position || "center";
+        showGalleryImage(index);
+      }),
     );
     mainImage.addEventListener("click", () => {
       if (mainImage.dataset.suppressClick === "true") {
