@@ -810,6 +810,19 @@
     optionPicker.classList.toggle("is-color", optionConfig.label === t.color);
     optionPicker.innerHTML = `<legend>${optionConfig.label}</legend><div class="product-variant-options" role="radiogroup" aria-label="${optionConfig.label}">${optionConfig.options.map((option) => `<button type="button" class="product-variant-option${displayVariant(option.label) === currentOption.label ? " is-selected" : ""}" role="radio" aria-checked="${displayVariant(option.label) === currentOption.label}" data-product-option="${escapeHtml(option.label)}"><span class="variant-swatch"></span><span>${escapeHtml(displayVariant(option.label))}</span></button>`).join("")}</div>`;
     const quantityBlock = root.querySelector(".product-quantity");
+    const purchaseControlCopy = {
+      en: { quantity: "Choose quantity", option: `Choose ${optionConfig.label.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" },
+      ar: { quantity: "اختر الكمية", option: `اختر ${optionConfig.label}`, inStock: "متوفر · الشحن خلال يوم إلى يومي عمل" },
+      fr: { quantity: "Choisir la quantité", option: `Choisir : ${optionConfig.label.toLowerCase()}`, inStock: "En stock · expédition sous 1 à 2 jours ouvrés" },
+      es: { quantity: "Elige la cantidad", option: `Elige ${optionConfig.label.toLowerCase()}`, inStock: "Disponible · envío en 1–2 días laborables" },
+      zh: { quantity: "选择数量", option: `选择${optionConfig.label}`, inStock: "有货 · 1–2 个工作日内发货" },
+    }[language] || { quantity: "Choose quantity", option: `Choose ${optionConfig.label.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" };
+    quantityBlock.querySelector(":scope > span").textContent = purchaseControlCopy.quantity;
+    optionPicker.querySelector("legend").textContent = purchaseControlCopy.option;
+    optionPicker.setAttribute("aria-label", purchaseControlCopy.option);
+    if (product.stock) {
+      root.querySelector(".product-detail-stock").lastChild.textContent = purchaseControlCopy.inStock;
+    }
     const optionColumn = document.createElement("div");
     optionColumn.className = "product-buy-config";
     quantityBlock.before(optionColumn);
