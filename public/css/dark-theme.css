@@ -808,6 +808,15 @@ html[data-theme="dark"] .detail-delivery > span {
   background: rgba(26, 40, 56, 0.7);
 }
 
+html[data-theme="dark"] .product-detail-gallery .detail-delivery-gallery {
+  border-color: rgba(103, 200, 184, 0.24);
+  background: linear-gradient(120deg, rgba(37, 142, 134, 0.12), rgba(120, 56, 211, 0.08));
+}
+
+html[data-theme="dark"] .product-detail-gallery .detail-delivery-gallery > span {
+  background: rgba(26, 40, 56, 0.78);
+}
+
 html[data-theme="dark"] .detail-discount,
 html[data-theme="dark"] .catalog-badge.is-sale,
 html[data-theme="dark"] .tag-sale {

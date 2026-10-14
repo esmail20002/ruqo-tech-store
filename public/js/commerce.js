@@ -846,6 +846,10 @@
       .append(currencyEdit, currencySelect);
     const detailPriceBlock = root.querySelector(".detail-price-block");
     root.querySelector(".detail-rating-link").after(detailPriceBlock);
+    const deliveryDetails = root.querySelector(".detail-delivery");
+    const galleryDeliveryDetails = deliveryDetails.cloneNode(true);
+    galleryDeliveryDetails.classList.add("detail-delivery-gallery");
+    root.querySelector(".product-detail-gallery").append(galleryDeliveryDetails);
     const currentPrice = product.price + currentOption.adjustment;
     root.querySelector(".product-detail-price > strong").textContent =
       money(currentPrice);
