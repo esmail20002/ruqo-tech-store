@@ -1353,13 +1353,13 @@ html[dir="rtl"] .mobile-ad-arrow {
 }
 
 .card-one {
-  left: 4%;
+  left: 0;
   bottom: 16%;
 }
 
 .card-two {
-  right: 3%;
-  top: 8%;
+  right: 0;
+  top: 4%;
 }
 
 .partners {
@@ -2407,7 +2407,7 @@ section {
   }
 
   .mini-card {
-    width: min(220px, 68%);
+    width: min(180px, 62%);
     min-height: 120px;
     padding: 10px 12px;
     border-radius: 14px;
@@ -2427,13 +2427,14 @@ section {
   }
 
   .card-one {
-    left: 0;
-    bottom: 8%;
+    left: -2%;
+    bottom: calc(8% + 8px);
   }
 
   .card-two {
-    right: 0;
+    right: -5%;
     top: 8%;
+    width: min(150px, 52%);
   }
 
   section {
@@ -2878,8 +2879,8 @@ section {
   .card-one {
     display: block;
     z-index: 4;
-    left: 0;
-    bottom: 8%;
+    left: -2%;
+    bottom: calc(8% + 8px);
     max-width: 72%;
     min-width: 0;
   }
