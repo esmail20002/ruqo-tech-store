@@ -498,6 +498,12 @@ html[data-theme="dark"] .product-badge {
   color: #8fe2b3;
 }
 
+html[data-theme="dark"] .mini-card .featured-discount-rate {
+  border-color: color-mix(in srgb, var(--accent) 36%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, #1a2838);
+  color: #ffd6dd;
+}
+
 html[data-theme="dark"] .eyebrow {
   background: rgba(103, 200, 184, 0.12);
   color: #a0e3d7;

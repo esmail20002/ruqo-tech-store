@@ -774,9 +774,23 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   topCard.querySelector("span").textContent = saleActive ? copy.sale : copy.featured;
   topCard.querySelector("strong").textContent = localized.name;
   const topDetail = topCard.querySelector("small");
-  topDetail.textContent = saleActive
-    ? `${discountPercent}% · ${formatShowcasePrice(regularPrice)} → ${formatShowcasePrice(product.price)}`
-    : formatShowcasePrice(product.price);
+  topDetail.replaceChildren();
+  topDetail.classList.toggle("featured-sale-detail", saleActive);
+  if (saleActive) {
+    const discount = document.createElement("span");
+    discount.className = "featured-discount-rate";
+    discount.textContent = `${discountPercent}% OFF`;
+    const priceComparison = document.createElement("span");
+    priceComparison.className = "featured-price-comparison";
+    const oldPrice = document.createElement("s");
+    oldPrice.textContent = formatShowcasePrice(regularPrice);
+    const currentPrice = document.createElement("strong");
+    currentPrice.textContent = formatShowcasePrice(product.price);
+    priceComparison.append(oldPrice, document.createTextNode(" → "), currentPrice);
+    topDetail.append(discount, priceComparison);
+  } else {
+    topDetail.textContent = formatShowcasePrice(product.price);
+  }
   countdownRibbon.hidden = true;
   countdownLabel.textContent = "";
   countdownValue.textContent = "";

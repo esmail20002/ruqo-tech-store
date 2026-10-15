@@ -1368,6 +1368,61 @@ html[dir="rtl"] .mobile-ad-arrow {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
+
+.mini-card .featured-sale-detail {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  color: var(--text);
+  -webkit-line-clamp: unset;
+}
+
+.mini-card .featured-discount-rate {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, white);
+  color: var(--primary-deep);
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.mini-card .featured-price-comparison {
+  display: inline-flex;
+  flex: 1 1 105px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 3px;
+  min-width: 0;
+  overflow: visible;
+  color: var(--muted);
+  line-height: 1.25;
+  -webkit-line-clamp: unset;
+}
+
+.mini-card .featured-price-comparison s {
+  font-size: 0.72rem;
+}
+
+.mini-card .featured-price-comparison strong {
+  display: inline;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  color: var(--primary-deep);
+  font-size: 0.78rem;
+  line-height: inherit;
+}
+
 .mini-card strong {
   display: -webkit-box;
   min-height: 2.5em;
