@@ -517,7 +517,7 @@
     if (!client) return false;
     const { data: productRows, error: productsError } = await client
       .from("products")
-      .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
+      .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
       .eq("is_active", true)
       .order("sort_order", { ascending: false });
     if (productsError) throw productsError;
@@ -607,6 +607,7 @@
         description_name_translations: row.description_name_translations || {},
         description: row.description_translations || {},
         description_translations: row.description_translations || {},
+        product_benefits: Array.isArray(row.product_benefits) ? row.product_benefits : [],
         features: localizedFeatures,
         localized_features: localizedFeatures,
         specifications: localizedSpecifications,

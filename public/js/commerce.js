@@ -1090,6 +1090,24 @@
     const detailPriceBlock = root.querySelector(".detail-price-block");
     root.querySelector(".detail-rating-link").after(detailPriceBlock);
     const deliveryDetails = root.querySelector(".detail-delivery");
+    const defaultBenefits = [
+      { icon: "truck", title: detail.arrival, description: detail.arrivalValue },
+      { icon: "shield-check", title: t.warranty || "2-year warranty", description: detail.secure },
+      { icon: "rotate-ccw", title: detail.returnsInfo, description: t.returns || detail.returnsInfo },
+    ];
+    const availableBenefitIcons = new Set(["truck", "shield-check", "rotate-ccw", "package-check", "badge-check", "headphones", "credit-card", "lock-keyhole", "circle-check", "wrench", "heart", "clock-3"]);
+    const benefits = Array.isArray(product.product_benefits) && product.product_benefits.length === 3
+      ? product.product_benefits.map((benefit, index) => ({
+        icon: availableBenefitIcons.has(benefit.icon) ? benefit.icon : defaultBenefits[index].icon,
+        title: benefit.title_translations?.[language] || benefit.title_translations?.en || defaultBenefits[index].title,
+        description: benefit.description_translations?.[language] || benefit.description_translations?.en || defaultBenefits[index].description,
+      }))
+      : defaultBenefits;
+    deliveryDetails.replaceChildren(...benefits.map((benefit) => {
+      const card = document.createElement("span");
+      card.innerHTML = `${icon(benefit.icon)}<span><strong>${escapeHtml(benefit.title)}</strong><small>${escapeHtml(benefit.description)}</small></span>`;
+      return card;
+    }));
     const galleryDeliveryDetails = deliveryDetails.cloneNode(true);
     galleryDeliveryDetails.classList.add("detail-delivery-gallery");
     root.querySelector(".product-detail-gallery").append(galleryDeliveryDetails);

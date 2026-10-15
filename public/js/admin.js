@@ -7,6 +7,37 @@
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
   const languages = ["en", "fr", "es", "zh", "ar"];
+  const productBenefitIconOptions = [
+    ["truck", "Delivery truck"],
+    ["shield-check", "Protection"],
+    ["rotate-ccw", "Returns"],
+    ["package-check", "Package"],
+    ["badge-check", "Verified"],
+    ["headphones", "Support"],
+    ["credit-card", "Payment"],
+    ["lock-keyhole", "Security"],
+    ["circle-check", "Check"],
+    ["wrench", "Service"],
+    ["heart", "Care"],
+    ["clock-3", "Time"],
+  ];
+  const defaultProductBenefits = [
+    {
+      icon: "truck",
+      title_translations: { en: "Estimated delivery", fr: "Livraison estimée", es: "Entrega estimada", zh: "预计送达", ar: "موعد التوصيل المتوقع" },
+      description_translations: { en: "1–2 business days", fr: "1 à 2 jours ouvrés", es: "1–2 días laborables", zh: "1 至 2 个工作日", ar: "خلال يوم إلى يومي عمل" },
+    },
+    {
+      icon: "shield-check",
+      title_translations: { en: "2-year warranty", fr: "Garantie de 2 ans", es: "Garantía de 2 años", zh: "两年保修", ar: "ضمان سنتين" },
+      description_translations: { en: "Secure checkout", fr: "Paiement sécurisé", es: "Pago seguro", zh: "安全结账", ar: "إتمام شراء آمن" },
+    },
+    {
+      icon: "rotate-ccw",
+      title_translations: { en: "7-day return window", fr: "Retours sous 7 jours", es: "Devoluciones en 7 días", zh: "七天退货期限", ar: "استرجاع خلال 7 أيام" },
+      description_translations: { en: "7-day returns", fr: "Retours sous 7 jours", es: "Devoluciones en 7 días", zh: "七天退货", ar: "استرجاع خلال 7 أيام" },
+    },
+  ];
   const currency = new Intl.NumberFormat("en-SA", {
     style: "currency",
     currency: "SAR",
@@ -47,6 +78,7 @@
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
   const productVariantRows = $("#product-variant-rows");
+  const productBenefitRows = $("#product-benefit-rows");
   const productsEmpty = $("#products-empty");
   let client;
   let currentUser;
@@ -343,7 +375,7 @@
       { data: variantRows, error: variantError },
     ] = await Promise.all([
       client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
-      client.from("products").select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
+      client.from("products").select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
       client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_label_translations, sku, price_adjustment, stock_quantity, is_active, sort_order").order("sort_order"),
     ]);
     if (categoryError) throw categoryError;
@@ -1140,6 +1172,78 @@
     window.lucide?.createIcons();
   }
 
+  function createProductBenefitRow(benefit, index) {
+    const row = document.createElement("fieldset");
+    row.className = "product-benefit-row";
+    row.dataset.productBenefitIndex = String(index);
+    const legend = document.createElement("legend");
+    legend.textContent = `Benefit ${index + 1}`;
+    const iconLabel = document.createElement("label");
+    iconLabel.className = "product-benefit-icon-field";
+    iconLabel.textContent = "Lucide icon";
+    const iconSelect = document.createElement("select");
+    iconSelect.dataset.productBenefitIcon = "";
+    for (const [iconName, iconLabelText] of productBenefitIconOptions) {
+      const option = document.createElement("option");
+      option.value = iconName;
+      option.textContent = `${iconLabelText} (${iconName})`;
+      option.selected = benefit.icon === iconName;
+      iconSelect.append(option);
+    }
+    iconLabel.append(iconSelect);
+    const locales = document.createElement("div");
+    locales.className = "product-benefit-locales";
+    for (const language of languages) {
+      const localePanel = document.createElement("div");
+      localePanel.className = "product-benefit-locale";
+      localePanel.dataset.benefitLocale = language;
+      localePanel.hidden = language !== "en";
+      if (language === "ar") localePanel.dir = "rtl";
+      const titleLabel = document.createElement("label");
+      titleLabel.textContent = "Title";
+      const titleInput = document.createElement("input");
+      titleInput.type = "text";
+      titleInput.maxLength = 120;
+      titleInput.required = language === "en";
+      titleInput.dataset.productBenefitTitle = "";
+      titleInput.value = benefit.title_translations?.[language] || benefit.title_translations?.en || "";
+      titleLabel.append(titleInput);
+      const descriptionLabel = document.createElement("label");
+      descriptionLabel.textContent = "Description";
+      const descriptionInput = document.createElement("textarea");
+      descriptionInput.rows = 2;
+      descriptionInput.maxLength = 240;
+      descriptionInput.required = language === "en";
+      descriptionInput.dataset.productBenefitDescription = "";
+      descriptionInput.value = benefit.description_translations?.[language] || benefit.description_translations?.en || "";
+      descriptionLabel.append(descriptionInput);
+      localePanel.append(titleLabel, descriptionLabel);
+      locales.append(localePanel);
+    }
+    row.append(legend, iconLabel, locales);
+    return row;
+  }
+
+  function renderProductBenefits(benefits = []) {
+    const values = Array.from({ length: 3 }, (_, index) => {
+      const benefit = benefits[index] || defaultProductBenefits[index];
+      return {
+        ...defaultProductBenefits[index],
+        ...benefit,
+        title_translations: {
+          ...defaultProductBenefits[index].title_translations,
+          ...(benefit.title_translations || {}),
+        },
+        description_translations: {
+          ...defaultProductBenefits[index].description_translations,
+          ...(benefit.description_translations || {}),
+        },
+      };
+    });
+    productBenefitRows.replaceChildren(...values.map(createProductBenefitRow));
+    window.lucide?.createIcons();
+  }
+
   function addProductSpecification() {
     const englishPanel = $('[data-specification-locale="en"]');
     const positions = [...englishPanel.querySelectorAll("[data-specification-index]")]
@@ -1152,7 +1256,7 @@
     $(`[data-specification-locale="en"] [data-specification-index="${nextPosition}"] [data-specification-title]`)?.focus();
   }
 
-  function setProductTranslations(product, features = [], specifications = []) {
+  function setProductTranslations(product, features = [], specifications = [], benefits = []) {
     for (const language of ["en", "fr", "es", "zh", "ar"]) {
       productForm.elements[`name_${language}`].value = product?.name_translations?.[language] || "";
       productForm.elements[`description_name_${language}`].value = product?.description_name_translations?.[language] || "";
@@ -1163,7 +1267,8 @@
         .map((feature) => feature.content)
         .join("\n");
     }
-      renderProductSpecifications(specifications);
+    renderProductSpecifications(specifications);
+    renderProductBenefits(benefits.length ? benefits : product?.product_benefits || []);
   }
 
   function createVariantRow(variant = {}) {
@@ -1251,6 +1356,9 @@
     });
     $$('[data-specification-locale]').forEach((panel) => {
       panel.hidden = panel.dataset.specificationLocale !== locale;
+    });
+    $$('[data-benefit-locale]').forEach((panel) => {
+      panel.hidden = panel.dataset.benefitLocale !== locale;
     });
   }
 
@@ -1395,7 +1503,7 @@
     $("#delete-product").hidden = false;
     $("#product-form-error").hidden = true;
     populateCategoryOptions(product.category_slug);
-    setProductTranslations(product, features || [], specifications || []);
+    setProductTranslations(product, features || [], specifications || [], product.product_benefits || []);
     productVariantRows.replaceChildren(...(product.variants || []).map(createVariantRow));
     window.lucide?.createIcons();
     setLocale("en");
@@ -1804,6 +1912,33 @@
         description: translatedSpecifications[position]?.description || englishSpecification.description,
       }))];
     }));
+    const productBenefits = [...productBenefitRows.querySelectorAll(".product-benefit-row")].map((row) => {
+      const titleTranslations = {};
+      const descriptionTranslations = {};
+      const englishTitle = row.querySelector('[data-benefit-locale="en"] [data-product-benefit-title]').value.trim();
+      const englishDescription = row.querySelector('[data-benefit-locale="en"] [data-product-benefit-description]').value.trim();
+      for (const language of languages) {
+        titleTranslations[language] = row.querySelector(`[data-benefit-locale="${language}"] [data-product-benefit-title]`).value.trim() || englishTitle;
+        descriptionTranslations[language] = row.querySelector(`[data-benefit-locale="${language}"] [data-product-benefit-description]`).value.trim() || englishDescription;
+      }
+      return {
+        icon: row.querySelector("[data-product-benefit-icon]").value,
+        title_translations: titleTranslations,
+        description_translations: descriptionTranslations,
+      };
+    });
+    const incompleteBenefit = productBenefits.findIndex((benefit) => !benefit.title_translations.en || !benefit.description_translations.en);
+    if (productBenefits.length !== 3 || incompleteBenefit !== -1) {
+      showProductError("Add an English title and description to each of the three product benefits.");
+      setLocale("en");
+      const row = productBenefitRows.querySelectorAll(".product-benefit-row")[Math.max(0, incompleteBenefit)];
+      row?.querySelector(
+        row.querySelector('[data-benefit-locale="en"] [data-product-benefit-title]').value.trim()
+          ? '[data-benefit-locale="en"] [data-product-benefit-description]'
+          : '[data-benefit-locale="en"] [data-product-benefit-title]',
+      ).focus();
+      return;
+    }
 
     const saveButton = $("#save-product");
     saveButton.disabled = true;
@@ -1843,6 +1978,7 @@
         name_translations: nameTranslations,
         description_name_translations: descriptionNameTranslations,
         description_translations: descriptionTranslations,
+        product_benefits: productBenefits,
         price,
         compare_at_price: compareAtPrice,
         currency: "SAR",

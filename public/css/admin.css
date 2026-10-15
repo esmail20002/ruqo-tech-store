@@ -170,6 +170,16 @@ html[data-theme="dark"] .admin-nav-item.is-active { color: var(--admin-accent-st
 .product-specification-fields input, .product-specification-fields textarea { width: 100%; min-width: 0; min-height: 38px; padding: 8px; border: 1px solid var(--admin-border); border-radius: 7px; background: var(--admin-surface); color: var(--admin-text); font: inherit; font-size: 0.75rem; resize: vertical; }
 .product-specification-fields textarea { min-height: 58px; }
 .product-specification-row .variant-remove-button { grid-column: 2; grid-row: 1; }
+.benefit-editor { display: grid; gap: 14px; padding: 15px 0; border-block: 1px solid var(--admin-border); }
+.product-benefit-rows { display: grid; gap: 10px; }
+.product-benefit-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; min-inline-size: 0; margin: 0; padding: 12px; border: 1px solid var(--admin-border); border-radius: 8px; }
+.product-benefit-row legend { padding-inline: 5px; color: var(--admin-text); font-size: 0.72rem; font-weight: 800; }
+.product-benefit-row label { display: grid; gap: 6px; min-width: 0; color: var(--admin-text); font-size: 0.66rem; font-weight: 700; }
+.product-benefit-row select, .product-benefit-row input, .product-benefit-row textarea { width: 100%; min-width: 0; min-height: 38px; padding: 8px; border: 1px solid var(--admin-border); border-radius: 7px; background: var(--admin-surface); color: var(--admin-text); font: inherit; font-size: 0.75rem; }
+.product-benefit-row textarea { min-height: 54px; resize: vertical; }
+.product-benefit-locales { display: grid; }
+.product-benefit-locale { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 10px; }
+.product-benefit-locale[hidden] { display: none !important; }
 .variant-active-toggle { display: inline-flex !important; grid-column: 1; align-items: center; gap: 7px !important; justify-self: start; }
 .variant-active-toggle input { width: 15px; min-height: 15px; accent-color: var(--admin-accent); }
 .variant-translation-details { grid-column: 1; color: var(--admin-muted); font-size: 0.7rem; }
@@ -245,6 +255,7 @@ html[data-theme="dark"] .admin-nav-item.is-active { color: var(--admin-accent-st
   .variant-editor-row { grid-template-columns: minmax(0, 1fr) 36px; }
   .product-specification-fields { grid-template-columns: 1fr; }
   .variant-translation-grid { grid-template-columns: 1fr; }
+  .product-benefit-locale { grid-template-columns: 1fr; }
   .form-field-wide { grid-column: auto; }
   .dialog-header, .dialog-footer { padding: 12px; }
   .dialog-body { padding: 13px; }
