@@ -490,6 +490,14 @@
           product.description[language] ||
           product.description.en,
       },
+      descriptionName: {
+        ...product.descriptionName,
+        [language]:
+          product.description_name_translations?.[language] ||
+          product.descriptionName?.[language] ||
+          product.description[language] ||
+          product.description.en,
+      },
       features: {
         ...product.features,
         [language]:
@@ -509,7 +517,7 @@
     if (!client) return false;
     const { data: productRows, error: productsError } = await client
       .from("products")
-      .select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
+      .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
       .eq("is_active", true)
       .order("sort_order", { ascending: false });
     if (productsError) throw productsError;
@@ -596,6 +604,7 @@
         brand: row.brand,
         name: row.name_translations?.en || row.slug,
         name_translations: row.name_translations || {},
+        description_name_translations: row.description_name_translations || {},
         description: row.description_translations || {},
         description_translations: row.description_translations || {},
         features: localizedFeatures,

@@ -343,7 +343,7 @@
       { data: variantRows, error: variantError },
     ] = await Promise.all([
       client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
-      client.from("products").select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
+      client.from("products").select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
       client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_label_translations, sku, price_adjustment, stock_quantity, is_active, sort_order").order("sort_order"),
     ]);
     if (categoryError) throw categoryError;
@@ -1155,6 +1155,7 @@
   function setProductTranslations(product, features = [], specifications = []) {
     for (const language of ["en", "fr", "es", "zh", "ar"]) {
       productForm.elements[`name_${language}`].value = product?.name_translations?.[language] || "";
+      productForm.elements[`description_name_${language}`].value = product?.description_name_translations?.[language] || "";
       productForm.elements[`description_${language}`].value = product?.description_translations?.[language] || "";
       productForm.elements[`features_${language}`].value = features
         .filter((feature) => feature.language_code === language)
@@ -1293,6 +1294,7 @@
     const formData = new FormData(categoryForm);
     const slug = String(formData.get("slug") || "").trim().toLowerCase();
     const englishName = String(formData.get("name_en") || "").trim();
+    const englishDescriptionName = String(formData.get("description_name_en") || "").trim();
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug) || !englishName) {
       categoryError.textContent = "Enter a valid slug and an English category name.";
       categoryError.hidden = false;
@@ -1768,6 +1770,12 @@
       setLocale("en");
       return;
     }
+    if (!englishDescriptionName) {
+      showProductError("Enter an English description name.");
+      setLocale("en");
+      productForm.elements.description_name_en.focus();
+      return;
+    }
     if (compareAtPrice !== null && (!Number.isFinite(compareAtPrice) || compareAtPrice < price)) {
       showProductError("Compare-at price must be greater than or equal to the price.");
       return;
@@ -1802,10 +1810,12 @@
     saveButton.textContent = "Saving…";
     try {
       const nameTranslations = {};
+      const descriptionNameTranslations = {};
       const descriptionTranslations = {};
       const featuresByLanguage = {};
       for (const language of ["en", "fr", "es", "zh", "ar"]) {
         nameTranslations[language] = String(formData.get(`name_${language}`) || "").trim() || englishName;
+        descriptionNameTranslations[language] = String(formData.get(`description_name_${language}`) || "").trim() || englishDescriptionName;
         descriptionTranslations[language] = String(formData.get(`description_${language}`) || "").trim() || String(formData.get("description_en") || "").trim();
         featuresByLanguage[language] = String(formData.get(`features_${language}`) || "").split("\n").map((line) => line.trim()).filter(Boolean);
         if (!featuresByLanguage[language].length) featuresByLanguage[language] = String(formData.get("features_en") || "").split("\n").map((line) => line.trim()).filter(Boolean);
@@ -1831,6 +1841,7 @@
         category_slug: String(formData.get("category_slug")),
         brand: String(formData.get("brand") || "").trim(),
         name_translations: nameTranslations,
+        description_name_translations: descriptionNameTranslations,
         description_translations: descriptionTranslations,
         price,
         compare_at_price: compareAtPrice,

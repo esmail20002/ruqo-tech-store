@@ -845,6 +845,9 @@
             .join("")}`
         : `<div class="review-empty">${icon("message-circle")}<p>${detail.noReviews}</p></div>`
     }</div><form class="product-review-form" id="review-form" data-product-review><h3>${detail.reviewForm}</h3><label class="commerce-field">${detail.reviewName}<input name="name" maxlength="60" required /></label><label class="commerce-field">${language === "ar" ? "التقييم" : "Rating"}<select name="rating"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select></label><label class="commerce-field">${detail.reviewText}<textarea name="text" minlength="8" maxlength="600" required></textarea></label><div class="form-feedback" data-review-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${detail.reviewSubmit}</button></form></div></section><section class="related-products-section detail-scroll-reveal"><div class="product-section-heading"><div><span class="commerce-eyebrow">${escapeHtml(product.brand)}</span><h2>${detail.related}</h2></div><a href="/products.html?category=${product.category}" class="section-link">${detail.keepBrowsing} ${icon("arrow-up-left")}</a></div><div class="commerce-product-grid">${recommendations}</div></section><dialog class="product-lightbox" data-product-lightbox><button type="button" data-close-lightbox aria-label="${detail.close}">${icon("x")}</button><img src="${product.image}" alt="${escapeHtml(product.name)}" /></dialog>`;
+    const upperDescription = root.querySelector(".detail-description");
+    if (upperDescription) upperDescription.textContent = product.descriptionName[language];
+
     const reviewList = root.querySelector(".product-review-list");
     const reviewHeader = document.createElement("div");
     reviewHeader.className = "review-list-header";
