@@ -1006,6 +1006,38 @@ html[dir="rtl"] .topbar-marquee-track {
   justify-content: center;
   isolation: isolate;
 }
+.featured-countdown-ribbon {
+  position: absolute;
+  z-index: 6;
+  top: 12px;
+  left: 50%;
+  display: flex;
+  max-width: calc(100% - 28px);
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(227, 193, 127, 0.44);
+  border-radius: 9px;
+  background: linear-gradient(110deg, #103b38, #174e49);
+  box-shadow: 0 9px 25px rgba(16, 48, 43, 0.22);
+  color: #f8f2e6;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+}
+.featured-countdown-label {
+  color: #ead09a;
+  font-size: 0.61rem;
+  font-weight: 800;
+}
+.featured-countdown-value {
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.featured-countdown-ribbon[hidden] {
+  display: none !important;
+}
 
 .hero-visual::before {
   content: "";
@@ -1284,16 +1316,6 @@ html[dir="rtl"] .mobile-ad-arrow {
   display: block;
   color: var(--muted);
 }
-.mini-card .featured-countdown:not([hidden]) {
-  margin-top: 7px;
-  padding-top: 6px;
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
-  color: var(--primary-deep);
-  font-size: 0.67rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
 .mini-card strong {
   display: block;
   font-size: 1.15rem;
@@ -1308,7 +1330,7 @@ html[dir="rtl"] .mobile-ad-arrow {
 
 .card-two {
   right: 3%;
-  top: 8%;
+  top: 16%;
   animation: float-card 6.5s ease-in-out -1.8s infinite;
 }
 
@@ -2353,6 +2375,14 @@ section {
     min-height: 365px;
   }
 
+  .featured-countdown-ribbon {
+    top: 8px;
+    gap: 7px;
+    padding: 6px 9px;
+  }
+  .featured-countdown-label { font-size: 0.52rem; }
+  .featured-countdown-value { font-size: 0.76rem; }
+
   .glass-panel {
     padding: 16px;
     border-radius: 24px;
@@ -2389,7 +2419,7 @@ section {
 
   .card-two {
     right: 0;
-    top: 4%;
+    top: 29%;
   }
 
   section {

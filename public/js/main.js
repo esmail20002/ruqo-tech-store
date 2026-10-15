@@ -707,12 +707,9 @@ function renderManagedFeaturedProduct(card) {
     : 0;
   const topCard = document.querySelector(".floating-card.card-two");
   const bottomCard = document.querySelector(".floating-card.card-one");
-  let countdownLabel = topCard.querySelector(".featured-countdown");
-  if (!countdownLabel) {
-    countdownLabel = document.createElement("small");
-    countdownLabel.className = "featured-countdown";
-    topCard.append(countdownLabel);
-  }
+  const countdownRibbon = document.querySelector(".featured-countdown-ribbon");
+  const countdownLabel = countdownRibbon.querySelector(".featured-countdown-label");
+  const countdownValue = countdownRibbon.querySelector(".featured-countdown-value");
 
   card.classList.add("is-changing");
   image.src = product.image;
@@ -732,8 +729,9 @@ function renderManagedFeaturedProduct(card) {
   topDetail.textContent = saleActive
     ? `${discountPercent}% · ${formatShowcasePrice(regularPrice)} → ${formatShowcasePrice(product.price)}`
     : formatShowcasePrice(product.price);
-  countdownLabel.hidden = true;
+  countdownRibbon.hidden = true;
   countdownLabel.textContent = "";
+  countdownValue.textContent = "";
 
   const detailMode = showcase.bottom_detail || "description";
   const firstFeature = localized.features?.[0];
@@ -764,7 +762,7 @@ function renderManagedFeaturedProduct(card) {
         product.price = offerHasStarted ? salePrice : regularPrice;
         product.oldPrice = offerHasStarted ? regularPrice : null;
         product.badge = offerHasStarted ? "sale" : product.regularBadge === "sale" ? null : product.regularBadge;
-        countdownLabel.hidden = true;
+        countdownRibbon.hidden = true;
         window.clearInterval(featuredCountdownTimer);
         window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
         return;
@@ -773,8 +771,9 @@ function renderManagedFeaturedProduct(card) {
       const hours = Math.floor((remaining % 86400000) / 3600000);
       const minutes = Math.floor((remaining % 3600000) / 60000);
       const seconds = Math.floor((remaining % 60000) / 1000);
-      countdownLabel.hidden = false;
-      countdownLabel.textContent = `${saleActive ? copy.ends : copy.begins} ${days}${copy.days} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      countdownRibbon.hidden = false;
+      countdownLabel.textContent = saleActive ? copy.ends : copy.begins;
+      countdownValue.textContent = `${String(days).padStart(2, "0")}${copy.days} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
     updateCountdown();
     featuredCountdownTimer = window.setInterval(updateCountdown, 1000);
@@ -938,7 +937,7 @@ function updateFeaturedProductTimer() {
   const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
   const shouldRotate = spotlights.length > 1;
   if (shouldRotate && !reducedMotionQuery.matches && document.visibilityState === "visible") {
-    featuredProductTimer = window.setInterval(advanceFeaturedProduct, 5500);
+    featuredProductTimer = window.setInterval(advanceFeaturedProduct, 4000);
   }
 }
 
