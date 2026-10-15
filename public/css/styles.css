@@ -877,6 +877,15 @@ html[dir="rtl"] .topbar-marquee-track {
   gap: 48px;
   padding: 64px 0 40px;
 }
+.hero.has-no-showcase {
+  grid-template-columns: minmax(0, 1fr);
+}
+.hero.has-no-showcase .hero-copy {
+  max-width: 900px;
+}
+.hero-visual[hidden] {
+  display: none !important;
+}
 
 .eyebrow {
   display: inline-flex;

@@ -785,6 +785,18 @@ function renderManagedFeaturedProduct(card) {
 function renderFeaturedProduct() {
   const card = document.querySelector(".highlight-card");
   if (!card) return;
+  const heroVisual = document.querySelector(".hero-visual");
+  const hero = document.querySelector(".hero");
+  const spotlights = window.RUQO_HOME_SPOTLIGHTS;
+  if (!Array.isArray(spotlights) || !spotlights.length) {
+    heroVisual.hidden = true;
+    hero?.classList.add("has-no-showcase");
+    window.clearInterval(featuredProductTimer);
+    window.clearInterval(featuredCountdownTimer);
+    return;
+  }
+  heroVisual.hidden = false;
+  hero?.classList.remove("has-no-showcase");
   window.clearInterval(featuredCountdownTimer);
   if (renderManagedFeaturedProduct(card)) {
     window.clearInterval(featuredProductTimer);
@@ -924,7 +936,7 @@ function advanceFeaturedProduct() {
 function updateFeaturedProductTimer() {
   window.clearInterval(featuredProductTimer);
   const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
-  const shouldRotate = spotlights.length > 1 || (!spotlights.length && featuredProducts.length > 1);
+  const shouldRotate = spotlights.length > 1;
   if (shouldRotate && !reducedMotionQuery.matches && document.visibilityState === "visible") {
     featuredProductTimer = window.setInterval(advanceFeaturedProduct, 5500);
   }
