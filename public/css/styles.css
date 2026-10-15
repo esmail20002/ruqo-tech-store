@@ -1317,7 +1317,13 @@ html[dir="rtl"] .mobile-ad-arrow {
 
 .mini-card {
   position: absolute;
-  padding: 16px 18px;
+  display: grid;
+  width: clamp(190px, 22vw, 250px);
+  min-height: 138px;
+  align-content: center;
+  gap: 2px;
+  padding: 14px 16px;
+  overflow: hidden;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(15, 23, 42, 0.07);
@@ -1327,13 +1333,23 @@ html[dir="rtl"] .mobile-ad-arrow {
 
 .mini-card span,
 .mini-card small {
-  display: block;
+  display: -webkit-box;
+  overflow: hidden;
   color: var(--muted);
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 .mini-card strong {
-  display: block;
+  display: -webkit-box;
+  min-height: 2.5em;
+  max-height: 2.5em;
+  overflow: hidden;
   font-size: 1.15rem;
-  margin: 6px 0 4px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .card-one {
@@ -1343,7 +1359,7 @@ html[dir="rtl"] .mobile-ad-arrow {
 
 .card-two {
   right: 3%;
-  top: 16%;
+  top: 8%;
 }
 
 .partners {
@@ -2391,16 +2407,22 @@ section {
   }
 
   .mini-card {
+    width: min(220px, 68%);
+    min-height: 120px;
     padding: 10px 12px;
     border-radius: 14px;
     font-size: 0.75rem;
   }
 
   .mini-card strong {
+    min-height: 2.4em;
+    max-height: 2.4em;
     font-size: 0.9rem;
   }
 
   .mini-card small {
+    min-height: 2.4em;
+    max-height: 2.4em;
     font-size: 0.66rem;
   }
 
@@ -2411,7 +2433,7 @@ section {
 
   .card-two {
     right: 0;
-    top: 29%;
+    top: 8%;
   }
 
   section {

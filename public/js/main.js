@@ -752,34 +752,31 @@ function renderManagedFeaturedProduct(card) {
     ? `${localized.category || product.category}`
     : (translations[currentLang]?.["tags.unavailable"] || "Out of stock");
   if (shouldAnimateTransition && !reducedMotionQuery.matches) {
-    const revealText = (element, delay = 0, duration = 380) => {
+    const revealText = (element, delay = 0, duration = 500) => {
       if (!element) return;
       element.getAnimations().forEach((animation) => animation.cancel());
       element.animate(
-        [
-          { opacity: 0.25, transform: "translateY(7px)" },
-          { opacity: 1, transform: "translateY(0)" },
-        ],
+        [{ opacity: 0.35 }, { opacity: 1 }],
         { duration, delay, easing: "cubic-bezier(0.22, 0.68, 0.2, 1)", fill: "none" },
       );
     };
     image.getAnimations().forEach((animation) => animation.cancel());
     image.animate(
       [
-        { opacity: 0.3, transform: "scale(1.035)" },
+        { opacity: 0.35, transform: "scale(1.02)" },
         { opacity: 1, transform: "scale(1)" },
       ],
-      { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "none" },
+      { duration: 580, easing: "cubic-bezier(0.2, 0.7, 0.25, 1)", fill: "none" },
     );
-    revealText(card.querySelector(".product-summary p"), 70, 340);
-    revealText(card.querySelector(".product-summary h3"), 105, 430);
-    revealText(card.querySelector(".product-badge"), 45, 360);
-    revealText(topCard.querySelector("span"), 80, 340);
-    revealText(topCard.querySelector("strong"), 115, 430);
-    revealText(topCard.querySelector("small"), 145, 360);
-    revealText(bottomCard.querySelector("span"), 100, 340);
-    revealText(bottomCard.querySelector("strong"), 135, 430);
-    revealText(bottomCard.querySelector("small"), 165, 340);
+    revealText(card.querySelector(".product-summary p"), 50, 460);
+    revealText(card.querySelector(".product-summary h3"), 90, 520);
+    revealText(card.querySelector(".product-badge"), 35, 440);
+    revealText(topCard.querySelector("span"), 55, 460);
+    revealText(topCard.querySelector("strong"), 95, 520);
+    revealText(topCard.querySelector("small"), 130, 470);
+    revealText(bottomCard.querySelector("span"), 80, 460);
+    revealText(bottomCard.querySelector("strong"), 120, 520);
+    revealText(bottomCard.querySelector("small"), 155, 450);
   }
 
   window.clearInterval(featuredCountdownTimer);
