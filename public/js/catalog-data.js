@@ -498,6 +498,10 @@
           product.features[language] ||
           product.features.en,
       },
+      specifications: {
+        ...product.specifications,
+        [language]: product.specifications?.[language] || product.specifications?.en || [],
+      },
     };
   };
 
@@ -512,13 +516,14 @@
     if (!productRows?.length) return false;
 
     const slugs = productRows.map((product) => product.slug);
-    const [featureResult, variantResult, imageResult, categoryResult] = await Promise.all([
+    const [featureResult, specificationResult, variantResult, imageResult, categoryResult] = await Promise.all([
       client.from("product_features").select("product_slug, language_code, position, content").in("product_slug", slugs).order("position"),
+      client.from("product_specifications").select("product_slug, language_code, position, title, description").in("product_slug", slugs).order("position"),
       client.from("product_variants").select("id, variant_key, product_slug, option_group, option_value, option_label_translations, price_adjustment, stock_quantity, sort_order").eq("is_active", true).in("product_slug", slugs).order("sort_order"),
       client.from("product_images").select("product_slug, image_url, storage_path, alt_translations, is_primary, sort_order").in("product_slug", slugs).order("sort_order"),
       client.from("categories").select("slug, name_translations, description_translations, sort_order").eq("is_active", true).order("sort_order"),
     ]);
-    for (const result of [featureResult, variantResult, imageResult, categoryResult]) {
+    for (const result of [featureResult, specificationResult, variantResult, imageResult, categoryResult]) {
       if (result.error) throw result.error;
     }
     window.RUQO_CATEGORIES = categoryResult.data || [];
@@ -528,6 +533,12 @@
       if (!featureMap.has(feature.product_slug)) featureMap.set(feature.product_slug, {});
       const byLanguage = featureMap.get(feature.product_slug);
       (byLanguage[feature.language_code] ||= []).push(feature);
+    }
+    const specificationMap = new Map();
+    for (const specification of specificationResult.data || []) {
+      if (!specificationMap.has(specification.product_slug)) specificationMap.set(specification.product_slug, {});
+      const byLanguage = specificationMap.get(specification.product_slug);
+      (byLanguage[specification.language_code] ||= []).push(specification);
     }
     const variantsMap = new Map();
     for (const variant of variantResult.data || []) {
@@ -570,6 +581,14 @@
           entries.sort((left, right) => left.position - right.position).map((entry) => entry.content),
         ]),
       );
+      const localizedSpecifications = Object.fromEntries(
+        Object.entries(specificationMap.get(row.slug) || {}).map(([language, entries]) => [
+          language,
+          entries
+            .sort((left, right) => left.position - right.position)
+            .map(({ title, description }) => ({ title, description })),
+        ]),
+      );
       return {
         id: row.slug,
         slug: row.slug,
@@ -581,6 +600,7 @@
         description_translations: row.description_translations || {},
         features: localizedFeatures,
         localized_features: localizedFeatures,
+        specifications: localizedSpecifications,
         variants: variantsMap.get(row.slug) || [],
         price: timedSaleActive ? salePrice : regularPrice,
         regularPrice,

@@ -787,12 +787,22 @@
       )
       .join("");
     const labels = detail.labels[product.category];
-    const specs = product.features[language]
-      .map(
-        (feature, index) =>
-          `<div class="product-spec-row"><span>${labels[index] || detail.specs}</span><strong>${escapeHtml(feature)}</strong></div>`,
-      )
-      .join("");
+    const localizedSpecifications = product.specifications?.[language];
+    const customSpecifications = localizedSpecifications?.length
+      ? localizedSpecifications
+      : product.specifications?.en || [];
+    const specs = customSpecifications.length
+      ? customSpecifications
+        .map((specification) =>
+          `<div class="product-spec-row"><span>${escapeHtml(specification.title)}</span><strong>${escapeHtml(specification.description)}</strong></div>`,
+        )
+        .join("")
+      : (product.features?.[language] || product.features?.en || [])
+        .map(
+          (feature, index) =>
+            `<div class="product-spec-row"><span>${labels[index] || detail.specs}</span><strong>${escapeHtml(feature)}</strong></div>`,
+        )
+        .join("");
     const discount = product.oldPrice
       ? Math.round((1 - product.price / product.oldPrice) * 100)
       : 0;

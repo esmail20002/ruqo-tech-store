@@ -1089,7 +1089,70 @@
     }
   }
 
-  function setProductTranslations(product, features = []) {
+  function createProductSpecificationRow(language, specification = {}, position = 0) {
+    const row = document.createElement("fieldset");
+    row.className = "product-specification-row";
+    row.dataset.specificationIndex = String(position);
+    const fields = document.createElement("div");
+    fields.className = "product-specification-fields";
+    const createField = (labelText, value, attribute, multiline = false) => {
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      const field = multiline ? document.createElement("textarea") : document.createElement("input");
+      if (multiline) field.rows = 2;
+      field.maxLength = multiline ? 500 : 120;
+      field.value = value || "";
+      field.dataset[attribute] = "";
+      label.append(field);
+      return label;
+    };
+    fields.append(
+      createField("Detail title", specification.title, "specificationTitle"),
+      createField("Description", specification.description, "specificationDescription", true),
+    );
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "admin-danger-button variant-remove-button";
+    remove.setAttribute("aria-label", `Remove ${language} detail`);
+    remove.innerHTML = '<i data-lucide="trash-2" aria-hidden="true"></i>';
+    remove.addEventListener("click", () => {
+      $$(`[data-specification-index="${position}"]`).forEach((matchingRow) => matchingRow.remove());
+    });
+    row.append(fields, remove);
+    return row;
+  }
+
+  function renderProductSpecifications(specifications = []) {
+    const byLanguage = Object.fromEntries(languages.map((language) => [
+      language,
+      specifications
+        .filter((specification) => specification.language_code === language)
+        .sort((left, right) => left.position - right.position),
+    ]));
+    const rowCount = Math.max(0, ...Object.values(byLanguage).map((rows) => rows.length));
+    for (const language of languages) {
+      const panel = $(`[data-specification-locale="${language}"]`);
+      panel.replaceChildren();
+      for (let position = 0; position < rowCount; position += 1) {
+        panel.append(createProductSpecificationRow(language, byLanguage[language][position], position));
+      }
+    }
+    window.lucide?.createIcons();
+  }
+
+  function addProductSpecification() {
+    const englishPanel = $('[data-specification-locale="en"]');
+    const positions = [...englishPanel.querySelectorAll("[data-specification-index]")]
+      .map((row) => Number(row.dataset.specificationIndex));
+    const nextPosition = Math.max(-1, ...positions) + 1;
+    for (const language of languages) {
+      $(`[data-specification-locale="${language}"]`).append(createProductSpecificationRow(language, {}, nextPosition));
+    }
+    window.lucide?.createIcons();
+    $(`[data-specification-locale="en"] [data-specification-index="${nextPosition}"] [data-specification-title]`)?.focus();
+  }
+
+  function setProductTranslations(product, features = [], specifications = []) {
     for (const language of ["en", "fr", "es", "zh", "ar"]) {
       productForm.elements[`name_${language}`].value = product?.name_translations?.[language] || "";
       productForm.elements[`description_${language}`].value = product?.description_translations?.[language] || "";
@@ -1099,6 +1162,7 @@
         .map((feature) => feature.content)
         .join("\n");
     }
+      renderProductSpecifications(specifications);
   }
 
   function createVariantRow(variant = {}) {
@@ -1183,6 +1247,9 @@
     $$('[data-locale-panel]').forEach((panel) => {
       panel.hidden = panel.dataset.localePanel !== locale;
       panel.classList.toggle("is-active", !panel.hidden);
+    });
+    $$('[data-specification-locale]').forEach((panel) => {
+      panel.hidden = panel.dataset.specificationLocale !== locale;
     });
   }
 
@@ -1301,6 +1368,15 @@
       showToast("Could not load product translations.");
       return;
     }
+    const { data: specifications, error: specificationsError } = await client
+      .from("product_specifications")
+      .select("language_code, position, title, description")
+      .eq("product_slug", slug)
+      .order("position");
+    if (specificationsError) {
+      showToast("Could not load product specifications.");
+      return;
+    }
     editingSlug = slug;
     productForm.reset();
     productForm.elements.slug.value = product.slug;
@@ -1318,7 +1394,7 @@
     $("#delete-product").hidden = false;
     $("#product-form-error").hidden = true;
     populateCategoryOptions(product.category_slug);
-    setProductTranslations(product, features || []);
+    setProductTranslations(product, features || [], specifications || []);
     productVariantRows.replaceChildren(...(product.variants || []).map(createVariantRow));
     window.lucide?.createIcons();
     setLocale("en");
@@ -1696,6 +1772,30 @@
       showProductError("Compare-at price must be greater than or equal to the price.");
       return;
     }
+    const readSpecifications = (language) => [...$(`[data-specification-locale="${language}"]`).querySelectorAll(".product-specification-row")]
+      .map((row) => ({
+        title: row.querySelector("[data-specification-title]").value.trim(),
+        description: row.querySelector("[data-specification-description]").value.trim(),
+      }));
+    const englishSpecifications = readSpecifications("en");
+    const incompleteSpecificationIndex = englishSpecifications.findIndex((specification) => !specification.title || !specification.description);
+    if (incompleteSpecificationIndex !== -1) {
+      showProductError("Each specification needs an English detail title and description.");
+      setLocale("en");
+      const incompleteSpecification = $('[data-specification-locale="en"]')
+        .querySelectorAll(".product-specification-row")[incompleteSpecificationIndex];
+      incompleteSpecification?.querySelector(
+        englishSpecifications[incompleteSpecificationIndex].title ? "[data-specification-description]" : "[data-specification-title]",
+      ).focus();
+      return;
+    }
+    const specificationsByLanguage = Object.fromEntries(languages.map((language) => {
+      const translatedSpecifications = readSpecifications(language);
+      return [language, englishSpecifications.map((englishSpecification, position) => ({
+        title: translatedSpecifications[position]?.title || englishSpecification.title,
+        description: translatedSpecifications[position]?.description || englishSpecification.description,
+      }))];
+    }));
 
     const saveButton = $("#save-product");
     saveButton.disabled = true;
@@ -1752,6 +1852,22 @@
       if (featureRows.length) {
         const { error: featuresError } = await client.from("product_features").insert(featureRows);
         if (featuresError) throw featuresError;
+      }
+
+      const { error: deleteSpecificationsError } = await client.from("product_specifications").delete().eq("product_slug", slug);
+      if (deleteSpecificationsError) throw deleteSpecificationsError;
+      const specificationRows = Object.entries(specificationsByLanguage).flatMap(([language, specifications]) =>
+        specifications.map((specification, position) => ({
+          product_slug: slug,
+          language_code: language,
+          position,
+          title: specification.title,
+          description: specification.description,
+        })),
+      );
+      if (specificationRows.length) {
+        const { error: specificationsError } = await client.from("product_specifications").insert(specificationRows);
+        if (specificationsError) throw specificationsError;
       }
 
       const variantRows = readProductVariants(slug);
@@ -1945,6 +2061,7 @@
       productVariantRows.append(createVariantRow({ option_group: currentGroup || categoryGroup }));
       window.lucide?.createIcons();
     });
+    $("#add-product-specification").addEventListener("click", addProductSpecification);
     $("#refresh-products").addEventListener("click", loadCatalog);
     $("#refresh-orders").addEventListener("click", loadOrders);
     $("#refresh-messages").addEventListener("click", loadContactMessages);
