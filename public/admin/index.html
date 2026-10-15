@@ -76,6 +76,7 @@
           <button class="admin-nav-item" type="button" data-admin-view="promotions"><i data-lucide="badge-percent" aria-hidden="true"></i><span>Offers</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="banners"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>Banners</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="audience"><i data-lucide="users-round" aria-hidden="true"></i><span>Audience</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="homepage-showcase"><i data-lucide="gallery-horizontal-end" aria-hidden="true"></i><span>Homepage spotlight</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="settings"><i data-lucide="settings-2" aria-hidden="true"></i><span>Store settings</span></button>
         </nav>
         <div class="sidebar-footer">
@@ -169,8 +170,10 @@
                 <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save store settings</button></div>
               </form>
             </section>
+          </section>
+          <section class="admin-view" data-admin-panel="homepage-showcase" hidden>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">HOMEPAGE FEATURE</span><h1>Homepage spotlight</h1><p>Choose the large product image, floating product details, and an optional timed price.</p></div></div>
             <section class="admin-section homepage-showcase-section">
-              <div class="admin-section-heading"><div><h2>Homepage spotlight</h2><p>Choose the product shown in the large home feature and configure its timed offer.</p></div></div>
               <form id="homepage-showcase-form" class="admin-settings-form">
                 <div class="admin-form-grid">
                   <label class="form-field-wide">Featured product<select name="product_slug" id="home-showcase-product"><option value="">Choose a published product</option></select></label>

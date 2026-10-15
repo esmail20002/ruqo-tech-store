@@ -139,7 +139,10 @@
       allowedViews.add("banners");
       allowedViews.add("audience");
     }
-    if (currentRoles.some((role) => ["owner", "admin"].includes(role))) allowedViews.add("settings");
+    if (currentRoles.some((role) => ["owner", "admin"].includes(role))) {
+      allowedViews.add("settings");
+      allowedViews.add("homepage-showcase");
+    }
     const selectedView = allowedViews.has(view) ? view : "overview";
     $$('[data-admin-panel]').forEach((panel) => {
       panel.hidden = panel.dataset.adminPanel !== selectedView;
@@ -160,6 +163,7 @@
       banners: "Banners",
       audience: "Newsletter audience",
       settings: "Store settings",
+      "homepage-showcase": "Homepage spotlight",
     }[selectedView];
   }
 
