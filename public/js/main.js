@@ -752,23 +752,34 @@ function renderManagedFeaturedProduct(card) {
     ? `${localized.category || product.category}`
     : (translations[currentLang]?.["tags.unavailable"] || "Out of stock");
   if (shouldAnimateTransition && !reducedMotionQuery.matches) {
-    const fadeIn = (element, delay = 0, duration = 360) => {
+    const revealText = (element, delay = 0, duration = 380) => {
       if (!element) return;
       element.getAnimations().forEach((animation) => animation.cancel());
       element.animate(
-        [{ opacity: 0.45 }, { opacity: 1 }],
+        [
+          { opacity: 0.25, transform: "translateY(7px)" },
+          { opacity: 1, transform: "translateY(0)" },
+        ],
         { duration, delay, easing: "cubic-bezier(0.22, 0.68, 0.2, 1)", fill: "none" },
       );
     };
-    fadeIn(image, 0, 520);
-    fadeIn(card.querySelector(".product-summary p"), 55);
-    fadeIn(card.querySelector(".product-summary h3"), 85, 420);
-    fadeIn(card.querySelector(".product-badge"), 35);
-    fadeIn(topCard.querySelector("span"), 70);
-    fadeIn(topCard.querySelector("strong"), 100, 420);
-    fadeIn(topCard.querySelector("small"), 135);
-    fadeIn(bottomCard.querySelector("span"), 95);
-    fadeIn(bottomCard.querySelector("strong"), 125, 420);
+    image.getAnimations().forEach((animation) => animation.cancel());
+    image.animate(
+      [
+        { opacity: 0.3, transform: "scale(1.035)" },
+        { opacity: 1, transform: "scale(1)" },
+      ],
+      { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "none" },
+    );
+    revealText(card.querySelector(".product-summary p"), 70, 340);
+    revealText(card.querySelector(".product-summary h3"), 105, 430);
+    revealText(card.querySelector(".product-badge"), 45, 360);
+    revealText(topCard.querySelector("span"), 80, 340);
+    revealText(topCard.querySelector("strong"), 115, 430);
+    revealText(topCard.querySelector("small"), 145, 360);
+    revealText(bottomCard.querySelector("span"), 100, 340);
+    revealText(bottomCard.querySelector("strong"), 135, 430);
+    revealText(bottomCard.querySelector("small"), 165, 340);
   }
 
   window.clearInterval(featuredCountdownTimer);
