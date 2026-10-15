@@ -668,6 +668,7 @@ const featuredProducts = [
 let featuredProductIndex = 0;
 let managedSpotlightIndex = 0;
 let lastManagedSpotlightSlug = null;
+let managedSpotlightTransitionInProgress = false;
 let featuredProductTimer;
 let featuredCountdownTimer;
 
@@ -681,17 +682,16 @@ function formatShowcasePrice(amount) {
   }).format(Number(amount) * rates[currency]);
 }
 
-function renderManagedFeaturedProduct(card) {
+function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
   if (!spotlights.length) return false;
+  if (managedSpotlightTransitionInProgress && !isTransitionEntrance) return true;
   managedSpotlightIndex %= spotlights.length;
   const showcase = spotlights[managedSpotlightIndex];
   const product = showcase.product || window.NoursData?.products?.find((item) => item.slug === showcase.product_slug || item.id === showcase.product_slug);
   if (!product) return false;
   const spotlightSlug = product.slug || product.id;
   const previousSpotlightSlug = lastManagedSpotlightSlug;
-  const shouldAnimateTransition = previousSpotlightSlug !== null && previousSpotlightSlug !== spotlightSlug;
-  lastManagedSpotlightSlug = spotlightSlug;
 
   const localized = window.NoursData.localizeProduct(product, currentLang);
   const copy = {
@@ -715,6 +715,51 @@ function renderManagedFeaturedProduct(card) {
   const countdownRibbon = document.querySelector(".featured-countdown-ribbon");
   const countdownLabel = countdownRibbon.querySelector(".featured-countdown-label");
   const countdownValue = countdownRibbon.querySelector(".featured-countdown-value");
+  const transitionElements = [
+    image,
+    card.querySelector(".product-badge"),
+    card.querySelector(".product-summary p"),
+    card.querySelector(".product-summary h3"),
+    card.querySelector(".price-block"),
+    topCard,
+    bottomCard,
+  ].filter(Boolean);
+  const shouldAnimateTransition = previousSpotlightSlug !== null
+    && previousSpotlightSlug !== spotlightSlug
+    && !reducedMotionQuery.matches;
+
+  if (shouldAnimateTransition && !isTransitionEntrance) {
+    managedSpotlightTransitionInProgress = true;
+    const exitAnimations = transitionElements.map((element) => {
+      const opacity = Number.parseFloat(getComputedStyle(element).opacity);
+      const transform = element === image ? getComputedStyle(image).transform : null;
+      element.getAnimations().forEach((animation) => animation.cancel());
+      return element === image
+        ? element.animate(
+          [
+            { opacity, transform },
+            { opacity: 0, transform: "scale(1.025)" },
+          ],
+          { duration: 380, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" },
+        )
+        : element.animate(
+          [{ opacity }, { opacity: 0 }],
+          { duration: 380, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" },
+        );
+    });
+    Promise.all(exitAnimations.map((animation) => animation.finished.catch(() => null))).then(() => {
+      managedSpotlightTransitionInProgress = false;
+      renderManagedFeaturedProduct(card, true);
+    });
+    return true;
+  }
+
+  lastManagedSpotlightSlug = spotlightSlug;
+  if (isTransitionEntrance) {
+    transitionElements.forEach((element) => {
+      element.getAnimations().forEach((animation) => animation.cancel());
+    });
+  }
 
   image.src = product.image;
   image.alt = localized.name;
@@ -751,7 +796,7 @@ function renderManagedFeaturedProduct(card) {
   bottomCard.querySelector("small").textContent = product.stock
     ? `${localized.category || product.category}`
     : (translations[currentLang]?.["tags.unavailable"] || "Out of stock");
-  if (shouldAnimateTransition && !reducedMotionQuery.matches) {
+  if (isTransitionEntrance && !reducedMotionQuery.matches) {
     const revealText = (element, delay = 0, duration = 1100) => {
       if (!element) return;
       element.getAnimations().forEach((animation) => animation.cancel());
@@ -771,12 +816,9 @@ function renderManagedFeaturedProduct(card) {
     revealText(card.querySelector(".product-summary p"), 80, 1050);
     revealText(card.querySelector(".product-summary h3"), 150, 1250);
     revealText(card.querySelector(".product-badge"), 40, 1000);
-    revealText(topCard.querySelector("span"), 180, 1050);
-    revealText(topCard.querySelector("strong"), 240, 1250);
-    revealText(topCard.querySelector("small"), 310, 1050);
-    revealText(bottomCard.querySelector("span"), 360, 1050);
-    revealText(bottomCard.querySelector("strong"), 410, 1250);
-    revealText(bottomCard.querySelector("small"), 480, 1050);
+    revealText(card.querySelector(".price-block"), 180, 1200);
+    revealText(topCard, 180, 1050);
+    revealText(bottomCard, 360, 1050);
   }
 
   window.clearInterval(featuredCountdownTimer);
