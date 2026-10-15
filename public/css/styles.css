@@ -1079,6 +1079,13 @@ html[dir="rtl"] .topbar-marquee-track {
   }
 }
 
+@media (max-width: 400px) {
+  .card-two {
+    right: max(-8%, calc(100% - 100vw + 20px));
+    width: min(142px, 49%);
+  }
+}
+
 .brand-mark {
   background: linear-gradient(
     135deg,
