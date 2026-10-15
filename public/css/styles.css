@@ -1024,24 +1024,41 @@ html[dir="rtl"] .topbar-marquee-track {
   gap: 9px;
   margin-inline-start: 0;
   padding: 8px 11px;
-  border: 1px solid rgba(227, 193, 127, 0.44);
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
   border-radius: 999px;
-  background: linear-gradient(110deg, #103b38, #174e49);
-  box-shadow: 0 7px 20px rgba(16, 48, 43, 0.18);
-  color: #f8f2e6;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.96),
+    color-mix(in srgb, var(--primary) 5%, white) 58%,
+    color-mix(in srgb, var(--accent) 8%, white)
+  );
+  box-shadow:
+    0 8px 22px color-mix(in srgb, var(--primary-deep) 13%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: var(--primary-deep);
   white-space: nowrap;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   animation: countdown-ribbon-enter 0.32s ease-out both;
+}
+.featured-countdown-ribbon::before {
+  content: "";
+  flex: 0 0 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 13%, transparent);
 }
 .hero-offer-strip .featured-countdown-ribbon[hidden] { display: none !important; }
 .featured-countdown-label {
-  color: #ead09a;
+  color: var(--muted);
   font-size: 0.58rem;
   font-weight: 800;
 }
 .featured-countdown-value {
-  color: #fff9ec;
+  color: var(--primary-deep);
   font-size: 0.82rem;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }

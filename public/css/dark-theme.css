@@ -503,6 +503,23 @@ html[data-theme="dark"] .eyebrow {
   color: #a0e3d7;
 }
 
+html[data-theme="dark"] .featured-countdown-ribbon {
+  border-color: color-mix(in srgb, var(--primary) 26%, transparent);
+  background: linear-gradient(
+    125deg,
+    rgba(24, 38, 54, 0.96),
+    rgba(32, 38, 55, 0.94) 58%,
+    rgba(49, 36, 52, 0.92)
+  );
+  box-shadow:
+    0 8px 22px rgba(2, 8, 18, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"] .featured-countdown-ribbon::before {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
 html[data-theme="dark"] .brand-wordmark,
 html[data-theme="dark"] .section-link,
 html[data-theme="dark"] .price-block,
