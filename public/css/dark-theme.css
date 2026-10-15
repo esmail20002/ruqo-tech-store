@@ -514,6 +514,17 @@ html[data-theme="dark"] .mini-card .featured-discount-rate {
   text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
+html[data-theme="dark"] .mini-card .featured-discount-rate .featured-discount-value {
+  color: #a6eee2;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--primary) 52%, transparent);
+}
+
+html[data-theme="dark"] .mini-card .featured-discount-rate .featured-discount-off {
+  background: color-mix(in srgb, var(--accent) 22%, #1a2838);
+  color: #ffd6dd;
+  text-shadow: 0 0 7px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
 html[data-theme="dark"] .eyebrow {
   background: rgba(103, 200, 184, 0.12);
   color: #a0e3d7;

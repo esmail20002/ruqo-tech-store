@@ -1385,9 +1385,10 @@ html[dir="rtl"] .mobile-ad-arrow {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
-  padding: 4px 8px;
+  gap: 5px;
+  padding: 4px 6px;
   border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--primary) 24%);
-  border-radius: 999px;
+  border-radius: 8px;
   background: linear-gradient(
     125deg,
     color-mix(in srgb, var(--accent) 19%, white),
@@ -1399,11 +1400,31 @@ html[dir="rtl"] .mobile-ad-arrow {
     0 0 22px color-mix(in srgb, var(--primary) 18%, transparent),
     inset 0 0 9px color-mix(in srgb, var(--accent) 8%, transparent);
   color: var(--primary-deep);
-  font-size: 0.7rem;
-  font-weight: 800;
-  line-height: 1.2;
-  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 24%, transparent);
   white-space: nowrap;
+}
+
+.mini-card .featured-discount-rate .featured-discount-value {
+  display: inline;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  color: var(--primary-deep);
+  font-size: 0.88rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+.mini-card .featured-discount-rate .featured-discount-off {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 5px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 18%, white);
+  color: var(--accent);
+  font-size: 0.54rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .mini-card .featured-price-comparison {

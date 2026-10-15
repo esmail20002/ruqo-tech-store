@@ -779,7 +779,13 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   if (saleActive) {
     const discount = document.createElement("span");
     discount.className = "featured-discount-rate";
-    discount.textContent = `${discountPercent}% OFF`;
+    const percentage = document.createElement("strong");
+    percentage.className = "featured-discount-value";
+    percentage.textContent = `${discountPercent}%`;
+    const offerLabel = document.createElement("span");
+    offerLabel.className = "featured-discount-off";
+    offerLabel.textContent = "OFF";
+    discount.append(percentage, offerLabel);
     const priceComparison = document.createElement("span");
     priceComparison.className = "featured-price-comparison";
     const oldPrice = document.createElement("s");
