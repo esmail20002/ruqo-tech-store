@@ -960,7 +960,7 @@ function updateFeaturedProductTimer() {
   const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
   const shouldRotate = spotlights.length > 1;
   if (shouldRotate && !reducedMotionQuery.matches && document.visibilityState === "visible") {
-    featuredProductTimer = window.setInterval(advanceFeaturedProduct, 4000);
+    featuredProductTimer = window.setInterval(advanceFeaturedProduct, 3000);
   }
 }
 
