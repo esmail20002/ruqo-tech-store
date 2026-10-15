@@ -752,17 +752,19 @@ function renderManagedFeaturedProduct(card) {
     ? `${localized.category || product.category}`
     : (translations[currentLang]?.["tags.unavailable"] || "Out of stock");
   if (shouldAnimateTransition && !reducedMotionQuery.matches) {
-    const previousIndex = spotlights.findIndex((item) => item.product_slug === previousSpotlightSlug);
-    const direction = previousIndex < 0 || managedSpotlightIndex >= previousIndex ? 1 : -1;
-    const enter = (element, delay = 0) => element?.animate([
-      { opacity: 0.25, transform: `translateX(${direction * 12}px) translateY(4px) scale(0.985)` },
-      { opacity: 1, transform: "translateX(0) translateY(0) scale(1)" },
-    ], { duration: 420, delay, easing: "cubic-bezier(0.2, 0.75, 0.25, 1)" });
-    enter(image);
-    enter(card.querySelector(".product-summary"), 45);
-    enter(card.querySelector(".product-badge"), 25);
-    enter(topCard, 80);
-    enter(bottomCard, 125);
+    const fadeIn = (element, delay = 0, duration = 260) => element?.animate(
+      [{ opacity: 0.2 }, { opacity: 1 }],
+      { duration, delay, easing: "ease-out" },
+    );
+    fadeIn(image, 0, 340);
+    fadeIn(card.querySelector(".product-summary p"), 25);
+    fadeIn(card.querySelector(".product-summary h3"), 55, 300);
+    fadeIn(card.querySelector(".product-badge"), 35);
+    fadeIn(topCard.querySelector("span"), 45);
+    fadeIn(topCard.querySelector("strong"), 75, 300);
+    fadeIn(topCard.querySelector("small"), 105);
+    fadeIn(bottomCard.querySelector("span"), 70);
+    fadeIn(bottomCard.querySelector("strong"), 100, 300);
   }
 
   window.clearInterval(featuredCountdownTimer);

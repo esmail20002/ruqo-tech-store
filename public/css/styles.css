@@ -1069,7 +1069,6 @@ html[dir="rtl"] .topbar-marquee-track {
       rgba(242, 114, 140, 0.13) 77%
     ),
     linear-gradient(25deg, rgba(255, 255, 255, 0.4), rgba(248, 236, 255, 0.58));
-  animation: hero-panel-drift 14s ease-in-out infinite alternate;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1340,32 +1339,11 @@ html[dir="rtl"] .mobile-ad-arrow {
 .card-one {
   left: 4%;
   bottom: 16%;
-  animation: float-card 5.5s ease-in-out infinite;
 }
 
 .card-two {
   right: 3%;
   top: 16%;
-  animation: float-card 6.5s ease-in-out -1.8s infinite;
-}
-
-@keyframes float-card {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-9px);
-  }
-}
-
-@keyframes hero-panel-drift {
-  from {
-    transform: rotate(-3deg) translateY(0);
-  }
-  to {
-    transform: rotate(1deg) translateY(-6px);
-  }
 }
 
 .partners {
