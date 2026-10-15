@@ -821,7 +821,6 @@ function renderFeaturedProduct() {
   hero?.classList.remove("has-no-showcase");
   window.clearInterval(featuredCountdownTimer);
   if (renderManagedFeaturedProduct(card)) {
-    window.clearInterval(featuredProductTimer);
     return;
   }
 
