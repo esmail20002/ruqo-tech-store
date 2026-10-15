@@ -667,10 +667,125 @@ const featuredProducts = [
 ];
 let featuredProductIndex = 0;
 let featuredProductTimer;
+let featuredCountdownTimer;
+
+function formatShowcasePrice(amount) {
+  const currency = window.NoursStore?.getCurrency() || "USD";
+  const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
+  return new Intl.NumberFormat(localeByLanguage[currentLang] || localeByLanguage.en, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: currency === "SAR" ? 0 : 2,
+  }).format(Number(amount) * rates[currency]);
+}
+
+function renderManagedFeaturedProduct(card) {
+  const showcase = window.RUQO_STORE_SETTINGS?.home_showcase;
+  const product = window.NoursData?.products?.find((item) => item.slug === showcase?.product_slug || item.id === showcase?.product_slug);
+  if (!showcase?.product_slug || !product) return false;
+
+  const localized = window.NoursData.localizeProduct(product, currentLang);
+  const copy = {
+    en: { sale: "Limited offer", featured: "Featured product", begins: "Offer starts in", ends: "Offer ends in", days: "d", hours: "h", minutes: "m", seconds: "s", brand: "Brand", rating: "Customer rating", description: "Product detail", feature: "Key feature" },
+    ar: { sale: "عرض لفترة محدودة", featured: "منتج مميز", begins: "يبدأ العرض خلال", ends: "ينتهي العرض خلال", days: "ي", hours: "س", minutes: "د", seconds: "ث", brand: "العلامة التجارية", rating: "تقييم العملاء", description: "تفاصيل المنتج", feature: "ميزة بارزة" },
+    fr: { sale: "Offre limitée", featured: "Produit à la une", begins: "Début dans", ends: "Fin dans", days: "j", hours: "h", minutes: "m", seconds: "s", brand: "Marque", rating: "Note client", description: "Détail produit", feature: "Atout clé" },
+    es: { sale: "Oferta limitada", featured: "Producto destacado", begins: "Empieza en", ends: "Termina en", days: "d", hours: "h", minutes: "m", seconds: "s", brand: "Marca", rating: "Valoración", description: "Detalle del producto", feature: "Característica" },
+    zh: { sale: "限时优惠", featured: "精选商品", begins: "开始倒计时", ends: "结束倒计时", days: "天", hours: "时", minutes: "分", seconds: "秒", brand: "品牌", rating: "客户评分", description: "商品详情", feature: "核心特点" },
+  }[currentLang] || { sale: "Limited offer", featured: "Featured product", begins: "Offer starts in", ends: "Offer ends in", days: "d", hours: "h", minutes: "m", seconds: "s", brand: "Brand", rating: "Customer rating", description: "Product detail", feature: "Key feature" };
+
+  const image = card.querySelector(".featured-product-image");
+  const saleActive = Boolean(product.timedSaleActive);
+  const saleConfigured = product.salePrice !== null && product.salePrice !== undefined && product.saleEndsAt;
+  const regularPrice = Number(product.regularPrice ?? product.price);
+  const salePrice = Number(product.salePrice);
+  const discountPercent = saleActive && regularPrice > 0
+    ? Math.round((1 - salePrice / regularPrice) * 100)
+    : 0;
+  const topCard = document.querySelector(".floating-card.card-two");
+  const bottomCard = document.querySelector(".floating-card.card-one");
+  let countdownLabel = topCard.querySelector(".featured-countdown");
+  if (!countdownLabel) {
+    countdownLabel = document.createElement("small");
+    countdownLabel.className = "featured-countdown";
+    topCard.append(countdownLabel);
+  }
+
+  card.classList.add("is-changing");
+  image.src = product.image;
+  image.alt = localized.name;
+  card.querySelector(".product-badge").textContent = saleActive
+    ? `${discountPercent}% OFF`
+    : translations[currentLang]?.[`tags.${product.badge === "new" ? "new" : "featured"}`] || copy.featured;
+  card.querySelector(".product-summary p").textContent = product.brand;
+  card.querySelector(".product-summary h3").textContent = localized.name;
+  const price = card.querySelector(".price-block span");
+  price.dataset.priceSar = String(product.price);
+  formatHomepagePrices();
+
+  topCard.querySelector("span").textContent = saleActive ? copy.sale : copy.featured;
+  topCard.querySelector("strong").textContent = localized.name;
+  const topDetail = topCard.querySelector("small");
+  topDetail.textContent = saleActive
+    ? `${discountPercent}% · ${formatShowcasePrice(regularPrice)} → ${formatShowcasePrice(product.price)}`
+    : formatShowcasePrice(product.price);
+  countdownLabel.hidden = true;
+  countdownLabel.textContent = "";
+
+  const detailMode = showcase.bottom_detail || "description";
+  const firstFeature = localized.features?.[0];
+  const bottomDetail = detailMode === "brand"
+    ? `${product.brand} · ${localized.category || product.category}`
+    : detailMode === "rating"
+      ? `${Number(product.rating || 0).toFixed(1)} ★ · ${Number(product.reviews || 0)} reviews`
+      : detailMode === "feature"
+        ? firstFeature || localized.description?.[currentLang] || localized.description?.en
+        : localized.description?.[currentLang] || localized.description?.en || product.brand;
+  bottomCard.querySelector("span").textContent = detailMode === "brand" ? copy.brand : detailMode === "rating" ? copy.rating : detailMode === "feature" ? copy.feature : copy.description;
+  bottomCard.querySelector("strong").textContent = bottomDetail;
+  bottomCard.querySelector("small").textContent = product.stock
+    ? `${localized.category || product.category}`
+    : (translations[currentLang]?.["tags.unavailable"] || "Out of stock");
+  card.classList.remove("is-changing");
+
+  window.clearInterval(featuredCountdownTimer);
+  const startsAt = showcase.sale_starts_at ? Date.parse(showcase.sale_starts_at) : null;
+  const endsAt = Date.parse(showcase.sale_ends_at || product.saleEndsAt || "");
+  const countdownTarget = saleActive ? endsAt : startsAt && startsAt > Date.now() ? startsAt : null;
+  if (saleConfigured && Number.isFinite(countdownTarget)) {
+    const updateCountdown = () => {
+      const remaining = countdownTarget - Date.now();
+      if (remaining <= 0) {
+        const offerHasStarted = !saleActive && startsAt !== null && startsAt <= Date.now() && endsAt > Date.now();
+        product.timedSaleActive = offerHasStarted;
+        product.price = offerHasStarted ? salePrice : regularPrice;
+        product.oldPrice = offerHasStarted ? regularPrice : null;
+        product.badge = offerHasStarted ? "sale" : product.regularBadge === "sale" ? null : product.regularBadge;
+        countdownLabel.hidden = true;
+        window.clearInterval(featuredCountdownTimer);
+        window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
+        return;
+      }
+      const days = Math.floor(remaining / 86400000);
+      const hours = Math.floor((remaining % 86400000) / 3600000);
+      const minutes = Math.floor((remaining % 3600000) / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      countdownLabel.hidden = false;
+      countdownLabel.textContent = `${saleActive ? copy.ends : copy.begins} ${days}${copy.days} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    };
+    updateCountdown();
+    featuredCountdownTimer = window.setInterval(updateCountdown, 1000);
+  }
+  return true;
+}
 
 function renderFeaturedProduct() {
   const card = document.querySelector(".highlight-card");
   if (!card) return;
+  window.clearInterval(featuredCountdownTimer);
+  if (renderManagedFeaturedProduct(card)) {
+    window.clearInterval(featuredProductTimer);
+    return;
+  }
 
   const product = featuredProducts[featuredProductIndex];
   const content = product[currentLang] || product.en;
@@ -727,6 +842,7 @@ function syncHomepageCatalog() {
   }
   formatHomepagePrices();
   renderManagedCategories();
+  renderFeaturedProduct();
 }
 
 function renderManagedCategories() {
@@ -799,7 +915,7 @@ function advanceFeaturedProduct() {
 
 function updateFeaturedProductTimer() {
   window.clearInterval(featuredProductTimer);
-  if (!reducedMotionQuery.matches && document.visibilityState === "visible") {
+  if (!window.RUQO_STORE_SETTINGS?.home_showcase?.product_slug && !reducedMotionQuery.matches && document.visibilityState === "visible") {
     featuredProductTimer = window.setInterval(advanceFeaturedProduct, 5500);
   }
 }
@@ -862,6 +978,7 @@ reducedMotionQuery.addEventListener("change", updateFeaturedProductTimer);
 document.addEventListener("visibilitychange", updateFeaturedProductTimer);
 updateFeaturedProductTimer();
 window.addEventListener("ruqo:catalog-updated", syncHomepageCatalog);
+window.addEventListener("ruqo:store-settings-updated", renderFeaturedProduct);
 window.addEventListener("ruqo:store-banners-updated", () => {
   renderManagedHomeBanners();
   renderMobileAd();

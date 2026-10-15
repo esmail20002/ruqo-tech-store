@@ -4,5 +4,6 @@ dist/
 .env.*
 supabase/.temp/
 supabase/.branches/
+public/js/admin-local-dev.js
 npm-debug.log*
 .DS_Store

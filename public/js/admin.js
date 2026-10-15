@@ -1,6 +1,9 @@
 (() => {
   const config = window.RUQO_SUPABASE_CONFIG;
   const clientFactory = window.supabase?.createClient;
+  const isLocalDevHost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+  const isLocalDevMode = isLocalDevHost && new URLSearchParams(window.location.search).get("dev") === "1";
+  let localDevCredentials = null;
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
   const languages = ["en", "fr", "es", "zh", "ar"];
@@ -19,6 +22,8 @@
   const adminApp = $("#admin-app");
   const loginForm = $("#login-form");
   const loginError = $("#login-error");
+  const localDevLoginNote = $("#local-dev-login-note");
+  const localDevNotice = $("#local-dev-notice");
   const forgotPasswordButton = $("#forgot-password");
   const passwordRecoveryForm = $("#password-recovery-form");
   const passwordRecoveryFeedback = $("#password-recovery-feedback");
@@ -34,6 +39,8 @@
   const bannerDialog = $("#banner-dialog");
   const brandSettingsForm = $("#brand-settings-form");
   const brandSettingsError = $("#brand-settings-error");
+  const homepageShowcaseForm = $("#homepage-showcase-form");
+  const homepageShowcaseError = $("#home-showcase-error");
   const productSearch = $("#product-search");
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
@@ -41,6 +48,7 @@
   const productsEmpty = $("#products-empty");
   let client;
   let currentUser;
+  let localDemoMode = false;
   let products = [];
   let currentRoles = [];
   let categories = [];
@@ -327,7 +335,7 @@
       { data: variantRows, error: variantError },
     ] = await Promise.all([
       client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
-      client.from("products").select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
+      client.from("products").select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
       client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_label_translations, sku, price_adjustment, stock_quantity, is_active, sort_order").order("sort_order"),
     ]);
     if (categoryError) throw categoryError;
@@ -345,6 +353,7 @@
     }));
     renderCatalog();
     renderCategories();
+    populateHomepageShowcaseOptions();
   }
 
   function canManage(roles) {
@@ -363,6 +372,102 @@
     const results = await Promise.allSettled(tasks);
     results.filter((result) => result.status === "rejected").forEach((result) => {
       showToast(`Could not load a section: ${result.reason?.message || "Unknown error"}`);
+    });
+  }
+
+  function enterLocalDemo() {
+    localDemoMode = true;
+    currentUser = { id: "local-demo", email: "admin@localhost" };
+    currentRoles = ["owner", "admin", "catalog_manager", "order_manager", "marketing_manager"];
+    categories = [
+      { slug: "phones", name_translations: { en: "Phones" }, sort_order: 1, is_active: true },
+      { slug: "laptops", name_translations: { en: "Laptops" }, sort_order: 2, is_active: true },
+      { slug: "audio", name_translations: { en: "Audio" }, sort_order: 3, is_active: true },
+      { slug: "wearables", name_translations: { en: "Wearables" }, sort_order: 4, is_active: true },
+    ];
+    products = [
+      { slug: "macbook-pro", brand: "Apple", category_slug: "laptops", name_translations: { en: "MacBook Pro 14 M4" }, price: 5700, compare_at_price: 9999, badge: "popular", in_stock: true, is_active: true, is_featured: true, sort_order: 4, external_image_url: "/images/ruqo-logo.png", variants: [{ variant_key: "macbook-pro-storage-1tb", option_group: "storage", option_value: "1TB", sku: "MBP-1TB", price_adjustment: 0, stock_quantity: 3, is_active: true }] },
+      { slug: "galaxy-s25", brand: "Samsung", category_slug: "phones", name_translations: { en: "Galaxy S25 Ultra" }, price: 4499, compare_at_price: null, badge: "new", in_stock: true, is_active: true, is_featured: false, sort_order: 3, external_image_url: "/images/ruqo-logo.png", variants: [] },
+      { slug: "airpods-pro", brand: "Apple", category_slug: "audio", name_translations: { en: "AirPods Pro" }, price: 899, compare_at_price: null, badge: "sale", in_stock: true, is_active: false, is_featured: false, sort_order: 2, external_image_url: "/images/ruqo-logo.png", variants: [] },
+      { slug: "apple-watch", brand: "Apple", category_slug: "wearables", name_translations: { en: "Apple Watch" }, price: 1299, compare_at_price: null, badge: null, in_stock: false, is_active: true, is_featured: false, sort_order: 1, external_image_url: "/images/ruqo-logo.png", variants: [] },
+    ];
+    orders = [
+      { id: "local-order-1", order_number: "RUQ-DEMO-001", customer_name: "Demo Customer", customer_email: "customer@example.com", customer_phone: "+966500000000", status: "pending", payment_method: "cash_on_delivery", payment_status: "pending", currency: "SAR", total: 5700, created_at: new Date().toISOString() },
+    ];
+    promotions = [{ id: "local-promo-1", name: "Demo weekend offer", title_translations: { en: "Weekend offer" }, coupon_code: "DEMO15", discount_type: "percentage", discount_value: 15, minimum_order: 500, starts_at: new Date().toISOString(), ends_at: new Date(Date.now() + 86400000).toISOString(), is_active: true }];
+    banners = [{ id: "local-banner-1", name: "Demo campaign", placement: "home_promo", title_translations: { en: "Demo campaign" }, image_path: null, starts_at: null, ends_at: null, is_active: true }];
+    contactMessages = [{ id: "local-message-1", customer_name: "Demo Customer", customer_email: "customer@example.com", message: "Sample support message for local preview.", language_code: "en", status: "new", created_at: new Date().toISOString() }];
+    newsletterSubscribers = [{ email: "subscriber@example.com", is_active: true, subscribed_at: new Date().toISOString() }];
+    brandSettings = {
+      store_name: "RUQO TECH",
+      logo_path: null,
+      support_email: "hello@example.com",
+      support_phone: "+966500000000",
+      free_shipping_threshold: 299,
+      standard_shipping_fee: 25,
+      brand_color: "#167c72",
+      home_showcase: {
+        product_slug: "macbook-pro",
+        sale_enabled: true,
+        sale_price: 4999,
+        sale_starts_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+        sale_ends_at: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
+        bottom_detail: "feature",
+      },
+    };
+    for (const field of ["store_name", "support_email", "support_phone", "free_shipping_threshold", "brand_color"]) {
+      brandSettingsForm.elements[field].value = brandSettings[field];
+    }
+    brandSettingsForm.elements.delivery_fee.value = brandSettings.standard_shipping_fee;
+    $("#brand-logo-preview").src = "/images/ruqo-logo.png";
+    populateHomepageShowcaseOptions();
+    loginScreen.hidden = true;
+    adminApp.hidden = false;
+    localDevNotice.hidden = false;
+    $("#admin-user").textContent = "Local demo · read only";
+    $(".connection-indicator").innerHTML = "<i></i> Local demo · no Supabase writes";
+    setView("overview");
+    renderCatalog();
+    renderCategories();
+    renderOrders();
+    renderPromotions();
+    renderBanners();
+    renderContactMessages();
+    renderNewsletterSubscribers();
+    $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
+      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out"))
+      .forEach((element) => { element.disabled = true; });
+    window.lucide?.createIcons();
+  }
+
+  function bindLocalDevEvents() {
+    localDevLoginNote.textContent = `Local development only · username: ${localDevCredentials.username} · password: ${localDevCredentials.password}`;
+    localDevLoginNote.hidden = false;
+    forgotPasswordButton.hidden = true;
+    $$('[data-admin-view]').forEach((button) => {
+      button.addEventListener("click", () => setView(button.dataset.adminView));
+    });
+    loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      showLoginError("");
+      const username = String(loginForm.elements.email.value || "").trim().toLowerCase();
+      const password = String(loginForm.elements.password.value || "");
+      if (username !== localDevCredentials.username || password !== localDevCredentials.password) {
+        showLoginError("Local preview sign-in failed. Check the local demo credentials.");
+        return;
+      }
+      enterLocalDemo();
+    });
+    $("#sign-out").addEventListener("click", () => {
+      localDemoMode = false;
+      adminApp.hidden = true;
+      localDevNotice.hidden = true;
+      loginScreen.hidden = false;
+      loginForm.reset();
+    });
+    $("#admin-theme-toggle").addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      setTheme(current === "dark" ? "light" : "dark");
     });
   }
 
@@ -394,6 +499,42 @@
     brandSettingsForm.elements.delivery_fee.value = brandSettings.standard_shipping_fee ?? 25;
     $("#brand-logo-preview").src = getBrandLogoUrl(brandSettings.logo_path);
     brandSettingsForm.dataset.resetLogo = "false";
+    populateHomepageShowcaseOptions();
+  }
+
+  function populateHomepageShowcaseOptions() {
+    const select = homepageShowcaseForm.elements.product_slug;
+    const showcase = brandSettings.home_showcase || {};
+    const selectedSlug = showcase.product_slug || "";
+    const options = [new Option("Choose a published product", "")];
+    for (const product of products.filter((item) => item.is_active)) {
+      options.push(new Option(`${translateName(product)} · ${product.slug}`, product.slug));
+    }
+    select.replaceChildren(...options);
+    select.value = selectedSlug;
+    homepageShowcaseForm.elements.sale_enabled.checked = Boolean(showcase.sale_enabled);
+    homepageShowcaseForm.elements.sale_price.value = showcase.sale_price ?? "";
+    homepageShowcaseForm.elements.sale_starts_at.value = toLocalDateTime(showcase.sale_starts_at);
+    homepageShowcaseForm.elements.sale_ends_at.value = toLocalDateTime(showcase.sale_ends_at);
+    homepageShowcaseForm.elements.bottom_detail.value = showcase.bottom_detail || "description";
+    updateHomepageShowcasePreview();
+  }
+
+  function updateHomepageShowcasePreview() {
+    const saleEnabled = homepageShowcaseForm.elements.sale_enabled.checked;
+    $$(".showcase-sale-field").forEach((field) => field.classList.toggle("is-hidden", !saleEnabled));
+    const product = products.find((item) => item.slug === homepageShowcaseForm.elements.product_slug.value);
+    const preview = $("#home-showcase-preview");
+    preview.src = product?.external_image_url || "/images/ruqo-logo.png";
+    const details = $("#home-showcase-price-preview");
+    if (!product) {
+      details.textContent = "Choose a product to preview its current price.";
+      return;
+    }
+    const salePrice = Number(homepageShowcaseForm.elements.sale_price.value);
+    details.textContent = saleEnabled && Number.isFinite(salePrice) && salePrice >= 0
+      ? `${translateName(product)} · ${formatPrice(product.price)} → ${formatPrice(salePrice)}`
+      : `${translateName(product)} · ${formatPrice(product.price)}`;
   }
 
   async function saveBrandSettings(event) {
@@ -481,6 +622,61 @@
     } finally {
       submit.disabled = false;
       submit.textContent = "Save store settings";
+    }
+  }
+
+  async function saveHomepageShowcase(event) {
+    event.preventDefault();
+    homepageShowcaseError.hidden = true;
+    const formData = new FormData(homepageShowcaseForm);
+    const productSlug = String(formData.get("product_slug") || "").trim() || null;
+    const saleEnabled = formData.get("sale_enabled") === "on";
+    const selectedProduct = products.find((product) => product.slug === productSlug);
+    const salePriceValue = String(formData.get("sale_price") || "").trim();
+    const salePrice = salePriceValue ? Number(salePriceValue) : null;
+    const startsAt = fromLocalDateTime(String(formData.get("sale_starts_at") || ""));
+    const endsAt = fromLocalDateTime(String(formData.get("sale_ends_at") || ""));
+    if (productSlug && !selectedProduct) {
+      homepageShowcaseError.textContent = "Choose a published product.";
+      homepageShowcaseError.hidden = false;
+      return;
+    }
+    if (saleEnabled) {
+      if (!productSlug || !selectedProduct || salePrice === null || !Number.isFinite(salePrice) || salePrice < 0 || salePrice >= Number(selectedProduct.price)) {
+        homepageShowcaseError.textContent = "The offer price must be lower than the selected product's regular price.";
+        homepageShowcaseError.hidden = false;
+        return;
+      }
+      if (!endsAt || new Date(endsAt) <= new Date(startsAt || Date.now())) {
+        homepageShowcaseError.textContent = "Choose an offer end time later than its start time.";
+        homepageShowcaseError.hidden = false;
+        return;
+      }
+    }
+
+    const submit = homepageShowcaseForm.querySelector('[type="submit"]');
+    submit.disabled = true;
+    submit.textContent = "Saving…";
+    try {
+      const { data, error } = await client.rpc("save_homepage_showcase", {
+        p_product_slug: productSlug,
+        p_sale_enabled: saleEnabled,
+        p_sale_price: saleEnabled ? salePrice : null,
+        p_sale_starts_at: saleEnabled ? startsAt : null,
+        p_sale_ends_at: saleEnabled ? endsAt : null,
+        p_bottom_detail: String(formData.get("bottom_detail") || "description"),
+      });
+      if (error) throw error;
+      brandSettings.home_showcase = data?.cleared ? null : data;
+      await loadCatalog();
+      showToast(productSlug ? "Homepage spotlight saved." : "Homepage spotlight cleared.");
+    } catch (error) {
+      homepageShowcaseError.textContent = error.message || "Could not save the homepage spotlight.";
+      homepageShowcaseError.hidden = false;
+    } finally {
+      submit.disabled = false;
+      submit.textContent = "Save homepage spotlight";
+      updateHomepageShowcasePreview();
     }
   }
 
@@ -1524,9 +1720,11 @@
       submit.disabled = true;
       submit.textContent = "Signing in…";
       const values = new FormData(loginForm);
+      const enteredUsername = String(values.get("email") || "").trim().toLowerCase();
+      const enteredPassword = String(values.get("password") || "");
       const { data, error } = await client.auth.signInWithPassword({
-        email: String(values.get("email") || "").trim(),
-        password: String(values.get("password") || ""),
+        email: enteredUsername,
+        password: enteredPassword,
       });
       submit.disabled = false;
       submit.innerHTML = 'Sign in <i data-lucide="arrow-up-right" aria-hidden="true"></i>';
@@ -1540,7 +1738,10 @@
 
     forgotPasswordButton.addEventListener("click", async () => {
       const email = String(loginForm.elements.email.value || "").trim().toLowerCase();
-      if (!loginForm.elements.email.reportValidity()) return;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showLoginError("Enter the account email address to receive a reset link.");
+        return;
+      }
       forgotPasswordButton.disabled = true;
       showLoginError("");
       const { error } = await client.auth.resetPasswordForEmail(email, {
@@ -1601,6 +1802,14 @@
     });
 
     $("#sign-out").addEventListener("click", async () => {
+      if (localDemoMode) {
+        localDemoMode = false;
+        adminApp.hidden = true;
+        localDevNotice.hidden = true;
+        loginScreen.hidden = false;
+        loginForm.reset();
+        return;
+      }
       const { error } = await client.auth.signOut();
       if (error) showToast("Sign out could not be completed.");
     });
@@ -1635,6 +1844,10 @@
     $("#add-promotion").addEventListener("click", openNewPromotion);
     $("#add-banner").addEventListener("click", openNewBanner);
     brandSettingsForm.addEventListener("submit", saveBrandSettings);
+    homepageShowcaseForm.addEventListener("submit", saveHomepageShowcase);
+    homepageShowcaseForm.elements.product_slug.addEventListener("change", updateHomepageShowcasePreview);
+    homepageShowcaseForm.elements.sale_enabled.addEventListener("change", updateHomepageShowcasePreview);
+    homepageShowcaseForm.elements.sale_price.addEventListener("input", updateHomepageShowcasePreview);
     brandSettingsForm.elements.logo_file.addEventListener("change", () => {
       const preview = $("#brand-logo-preview");
       if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
@@ -1674,6 +1887,20 @@
 
   async function start() {
     setTheme(readSavedTheme());
+    if (isLocalDevMode) {
+      try {
+        const localDev = await import("/js/admin-local-dev.js");
+        localDevCredentials = localDev.credentials;
+        if (!localDevCredentials?.username || !localDevCredentials?.password) {
+          throw new Error("Local development credentials are not configured.");
+        }
+        bindLocalDevEvents();
+        window.lucide?.createIcons();
+      } catch {
+        showLoginError("Local preview credentials are not installed in this workspace.");
+      }
+      return;
+    }
     if (!config?.url || !config?.publishableKey || !clientFactory) {
       showLoginError("Supabase client configuration is not available.");
       return;

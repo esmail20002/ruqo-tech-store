@@ -505,7 +505,7 @@
     if (!client) return false;
     const { data: productRows, error: productsError } = await client
       .from("products")
-      .select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
+      .select("slug, category_slug, brand, name_translations, description_translations, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
       .eq("is_active", true)
       .order("sort_order", { ascending: false });
     if (productsError) throw productsError;
@@ -543,7 +543,15 @@
       imagesMap.get(image.product_slug).push(image);
     }
 
+    const now = Date.now();
     const syncedProducts = productRows.map((row) => {
+      const regularPrice = Number(row.price);
+      const salePrice = row.sale_price === null ? null : Number(row.sale_price);
+      const saleStartsAt = row.sale_starts_at ? Date.parse(row.sale_starts_at) : null;
+      const saleEndsAt = row.sale_ends_at ? Date.parse(row.sale_ends_at) : null;
+      const timedSaleConfigured = salePrice !== null && Number.isFinite(salePrice) && Number.isFinite(saleEndsAt);
+      const timedSaleActive = timedSaleConfigured && saleEndsAt > now && (saleStartsAt === null || saleStartsAt <= now);
+      const timedSaleExpired = timedSaleConfigured && saleEndsAt <= now;
       const imageRows = (imagesMap.get(row.slug) || []).sort(
         (left, right) => Number(right.is_primary) - Number(left.is_primary) || left.sort_order - right.sort_order,
       );
@@ -574,14 +582,20 @@
         features: localizedFeatures,
         localized_features: localizedFeatures,
         variants: variantsMap.get(row.slug) || [],
-        price: Number(row.price),
-        oldPrice: row.compare_at_price === null ? null : Number(row.compare_at_price),
+        price: timedSaleActive ? salePrice : regularPrice,
+        regularPrice,
+        salePrice,
+        saleStartsAt: row.sale_starts_at,
+        saleEndsAt: row.sale_ends_at,
+        timedSaleActive,
+        oldPrice: timedSaleActive ? regularPrice : timedSaleExpired ? null : row.compare_at_price === null ? null : Number(row.compare_at_price),
         currency: row.currency || "SAR",
         rating: Number(row.rating) || 0,
         reviews: Number(row.review_count) || 0,
         image,
         images: productImages.length ? productImages : image ? [image] : [],
-        badge: row.badge,
+        regularBadge: row.badge,
+        badge: timedSaleActive ? "sale" : timedSaleExpired && row.badge === "sale" ? null : row.badge,
         stock: row.in_stock,
         newest: row.sort_order,
         is_active: row.is_active,
@@ -593,6 +607,7 @@
     const serializedOld = localStorage.getItem("ruqo-catalog-cache-v1");
     products.splice(0, products.length, ...syncedProducts);
     if (window.NoursData) window.NoursData.loaded = true;
+    scheduleProductSaleRefresh();
     try {
       localStorage.setItem("ruqo-catalog-cache-v1", serializedNew);
     } catch (_) {}
@@ -601,6 +616,39 @@
     }
     return true;
   }
+
+  let saleRefreshTimer = null;
+  const scheduleProductSaleRefresh = () => {
+    window.clearTimeout(saleRefreshTimer);
+    const now = Date.now();
+    let nextChange = Infinity;
+    let changed = false;
+    for (const product of products) {
+      if (product.salePrice === null || !product.saleEndsAt) continue;
+      const startsAt = product.saleStartsAt ? Date.parse(product.saleStartsAt) : null;
+      const endsAt = Date.parse(product.saleEndsAt);
+      if (!Number.isFinite(endsAt)) continue;
+      const shouldBeActive = endsAt > now && (startsAt === null || startsAt <= now);
+      if (shouldBeActive !== product.timedSaleActive) {
+        product.timedSaleActive = shouldBeActive;
+        product.price = shouldBeActive ? product.salePrice : product.regularPrice;
+        product.oldPrice = shouldBeActive ? product.regularPrice : null;
+        product.badge = shouldBeActive ? "sale" : product.regularBadge === "sale" ? null : product.regularBadge;
+        changed = true;
+      }
+      if (startsAt !== null && startsAt > now) nextChange = Math.min(nextChange, startsAt - now + 25);
+      if (endsAt > now) nextChange = Math.min(nextChange, endsAt - now + 25);
+    }
+    if (changed) {
+      try {
+        localStorage.setItem("ruqo-catalog-cache-v1", JSON.stringify(products));
+      } catch (_) {}
+      window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
+    }
+    if (Number.isFinite(nextChange)) {
+      saleRefreshTimer = window.setTimeout(scheduleProductSaleRefresh, Math.max(25, nextChange));
+    }
+  };
 
   let isLoadedFromCache = false;
   try {
@@ -615,4 +663,5 @@
   } catch (_) {}
 
   window.NoursData = { products, localizeProduct, loadFromSupabase, loaded: isLoadedFromCache };
+  scheduleProductSaleRefresh();
 })();

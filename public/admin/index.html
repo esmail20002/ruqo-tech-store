@@ -38,11 +38,12 @@
           <p>Use your invited store-admin account to continue.</p>
         </div>
         <form id="login-form" class="admin-login-form">
-          <label>Email address<input name="email" type="email" autocomplete="username" required /></label>
+          <label>Email or local username<input name="email" type="text" inputmode="email" autocomplete="username" required /></label>
           <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
           <p id="login-error" class="admin-feedback" role="alert" hidden></p>
           <button class="admin-primary-button" type="submit">Sign in <i data-lucide="arrow-up-right" aria-hidden="true"></i></button>
         </form>
+        <p id="local-dev-login-note" class="admin-login-footnote" hidden>Local development only · use the workspace demo credentials.</p>
         <button id="forgot-password" class="admin-text-button" type="button">Forgot password?</button>
         <form id="password-recovery-form" class="admin-login-form" hidden>
           <label>New password<input name="password" type="password" autocomplete="new-password" minlength="10" required /></label>
@@ -91,6 +92,7 @@
             <button id="admin-theme-toggle" class="admin-icon-button" type="button" aria-label="Toggle color theme"><i data-lucide="moon" aria-hidden="true"></i></button>
           </div>
         </header>
+        <div id="local-dev-notice" class="local-dev-notice" hidden><i data-lucide="flask-conical" aria-hidden="true"></i> Local development preview · changes are disabled and are not saved.</div>
 
         <main class="admin-main">
           <section class="admin-view" data-admin-panel="overview">
@@ -165,6 +167,22 @@
                 <div class="brand-logo-preview-row"><img id="brand-logo-preview" src="/images/ruqo-logo.png" alt="Current store logo" /><button id="reset-brand-logo" class="admin-secondary-button" type="button">Use default logo</button></div>
                 <p id="brand-settings-error" class="admin-feedback" role="alert" hidden></p>
                 <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save store settings</button></div>
+              </form>
+            </section>
+            <section class="admin-section homepage-showcase-section">
+              <div class="admin-section-heading"><div><h2>Homepage spotlight</h2><p>Choose the product shown in the large home feature and configure its timed offer.</p></div></div>
+              <form id="homepage-showcase-form" class="admin-settings-form">
+                <div class="admin-form-grid">
+                  <label class="form-field-wide">Featured product<select name="product_slug" id="home-showcase-product"><option value="">Choose a published product</option></select></label>
+                  <label class="form-field-wide">Lower card detail<select name="bottom_detail"><option value="description">Product description</option><option value="brand">Brand and category</option><option value="rating">Customer rating</option><option value="feature">First product highlight</option></select></label>
+                  <label class="admin-inline-check form-field-wide"><input name="sale_enabled" type="checkbox" /><span><strong>Enable timed discount</strong><small>Sale price is used in product pages, cart, and checkout until it expires.</small></span></label>
+                  <label class="showcase-sale-field">Offer price (SAR)<input name="sale_price" type="number" min="0" step="0.01" /></label>
+                  <label class="showcase-sale-field">Starts at (optional)<input name="sale_starts_at" type="datetime-local" /></label>
+                  <label class="showcase-sale-field">Ends at<input name="sale_ends_at" type="datetime-local" /></label>
+                </div>
+                <div class="brand-logo-preview-row"><img id="home-showcase-preview" src="/images/ruqo-logo.png" alt="Featured product preview" /><p id="home-showcase-price-preview" class="admin-muted-copy"></p></div>
+                <p id="home-showcase-error" class="admin-feedback" role="alert" hidden></p>
+                <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save homepage spotlight</button></div>
               </form>
             </section>
           </section>

@@ -1275,6 +1275,15 @@ html[dir="rtl"] .mobile-ad-arrow {
   display: block;
   color: var(--muted);
 }
+.mini-card .featured-countdown:not([hidden]) {
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  color: var(--primary-deep);
+  font-size: 0.67rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 
 .mini-card strong {
   display: block;
@@ -2814,7 +2823,18 @@ section {
   }
 
   .card-one {
-    display: none;
+    display: block;
+    z-index: 4;
+    left: 0;
+    bottom: 8%;
+    max-width: 72%;
+    min-width: 0;
+  }
+
+  .card-one strong,
+  .card-one small {
+    overflow-wrap: anywhere;
+    line-height: 1.4;
   }
 
   .glass-panel {
