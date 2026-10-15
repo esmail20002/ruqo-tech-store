@@ -77,7 +77,6 @@
   const productSearch = $("#product-search");
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
-  const productVariantRows = $("#product-variant-rows");
   const productBenefitRows = $("#product-benefit-rows");
   const productsEmpty = $("#products-empty");
   let client;
@@ -1271,75 +1270,6 @@
     renderProductBenefits(benefits.length ? benefits : product?.product_benefits || []);
   }
 
-  function createVariantRow(variant = {}) {
-    const row = document.createElement("fieldset");
-    row.className = "variant-editor-row";
-    row.dataset.variantKey = variant.variant_key || "";
-    const controls = document.createElement("div");
-    controls.className = "variant-editor-controls";
-    const groupLabel = document.createElement("label");
-    groupLabel.textContent = "Option type";
-    const group = document.createElement("select");
-    group.dataset.variantGroup = "";
-    for (const [value, label] of [["storage", "Storage"], ["size", "Size"], ["color", "Color"]]) {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = label;
-      option.selected = variant.option_group === value;
-      group.append(option);
-    }
-    groupLabel.append(group);
-    const createInput = (labelText, name, value, type = "text", attributes = {}) => {
-      const label = document.createElement("label");
-      label.textContent = labelText;
-      const input = document.createElement("input");
-      input.type = type;
-      input.dataset[name] = "";
-      input.value = value ?? "";
-      for (const [key, attributeValue] of Object.entries(attributes)) input.setAttribute(key, attributeValue);
-      label.append(input);
-      return label;
-    };
-    controls.append(
-      groupLabel,
-      createInput("Option value", "variantValue", variant.option_value, "text", { required: "", maxlength: "80" }),
-      createInput("SKU", "variantSku", variant.sku, "text", { maxlength: "80" }),
-      createInput("Price adjustment (SAR)", "variantAdjustment", variant.price_adjustment ?? 0, "number", { step: "0.01" }),
-      createInput("Stock quantity", "variantStock", variant.stock_quantity, "number", { min: "0", step: "1", placeholder: "Unlimited" }),
-    );
-    const activeLabel = document.createElement("label");
-    activeLabel.className = "variant-active-toggle";
-    const activeInput = document.createElement("input");
-    activeInput.type = "checkbox";
-    activeInput.dataset.variantActive = "";
-    activeInput.checked = variant.is_active !== false;
-    activeLabel.append(activeInput, document.createTextNode("Option active"));
-    const details = document.createElement("details");
-    details.className = "variant-translation-details";
-    const summary = document.createElement("summary");
-    summary.textContent = "Localized option labels";
-    const translations = document.createElement("div");
-    translations.className = "variant-translation-grid";
-    for (const [language, label] of [["en", "English"], ["fr", "French"], ["es", "Spanish"], ["zh", "Chinese"], ["ar", "Arabic"]]) {
-      const translatedLabel = document.createElement("label");
-      translatedLabel.textContent = label;
-      const input = document.createElement("input");
-      input.dataset.variantTranslation = language;
-      input.value = variant.option_label_translations?.[language] || "";
-      translatedLabel.append(input);
-      translations.append(translatedLabel);
-    }
-    details.append(summary, translations);
-    const remove = document.createElement("button");
-    remove.type = "button";
-    remove.className = "admin-danger-button variant-remove-button";
-    remove.setAttribute("aria-label", "Remove product option");
-    remove.innerHTML = '<i data-lucide="trash-2" aria-hidden="true"></i>';
-    remove.addEventListener("click", () => row.remove());
-    row.append(controls, activeLabel, details, remove);
-    return row;
-  }
-
   function translationInputName(column, language) {
     return `${column.replace(/_translations$/, "")}_${language}`;
   }
@@ -1460,7 +1390,6 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(categories[0]?.slug || "");
     setProductTranslations(null);
-    productVariantRows.replaceChildren();
     setLocale("en");
     productDialog.showModal();
   }
@@ -1504,7 +1433,6 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(product.category_slug);
     setProductTranslations(product, features || [], specifications || [], product.product_benefits || []);
-    productVariantRows.replaceChildren(...(product.variants || []).map(createVariantRow));
     window.lucide?.createIcons();
     setLocale("en");
     productDialog.showModal();
@@ -1815,48 +1743,6 @@
     showToast("Banner deleted.");
   }
 
-  function readProductVariants(slug) {
-    const rows = [...productVariantRows.querySelectorAll(".variant-editor-row")];
-    const seenOptions = new Set();
-    let expectedGroup = null;
-    return rows.map((row, sortOrder) => {
-      const optionGroup = row.querySelector("[data-variant-group]").value;
-      const optionValue = row.querySelector("[data-variant-value]").value.trim();
-      const adjustment = Number(row.querySelector("[data-variant-adjustment]").value || 0);
-      const stockValue = row.querySelector("[data-variant-stock]").value.trim();
-      const stockQuantity = stockValue === "" ? null : Number(stockValue);
-      if (!optionValue) throw new Error("Every product option needs a value.");
-      if (expectedGroup && expectedGroup !== optionGroup) throw new Error("Use one option type per product.");
-      expectedGroup = optionGroup;
-      const uniqueKey = `${optionGroup}:${optionValue.toLocaleLowerCase()}`;
-      if (seenOptions.has(uniqueKey)) throw new Error("Product option values must be unique.");
-      seenOptions.add(uniqueKey);
-      if (!Number.isFinite(adjustment)) throw new Error("Enter a valid price adjustment for every option.");
-      if (stockQuantity !== null && (!Number.isInteger(stockQuantity) || stockQuantity < 0)) {
-        throw new Error("Stock quantities must be whole numbers greater than or equal to zero.");
-      }
-      const valueKey = optionValue.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const optionLabelTranslations = Object.fromEntries(
-        [...row.querySelectorAll("[data-variant-translation]")].map((input) => [
-          input.dataset.variantTranslation,
-          input.value.trim() || optionValue,
-        ]),
-      );
-      return {
-        variant_key: row.dataset.variantKey || `${slug}-${optionGroup}-${valueKey || crypto.randomUUID()}`,
-        product_slug: slug,
-        option_group: optionGroup,
-        option_value: optionValue,
-        option_label_translations: optionLabelTranslations,
-        sku: row.querySelector("[data-variant-sku]").value.trim() || null,
-        price_adjustment: adjustment,
-        stock_quantity: stockQuantity,
-        is_active: row.querySelector("[data-variant-active]").checked,
-        sort_order: sortOrder,
-      };
-    });
-  }
-
   async function saveProduct(event) {
     event.preventDefault();
     showProductError("");
@@ -2015,23 +1901,6 @@
       if (specificationRows.length) {
         const { error: specificationsError } = await client.from("product_specifications").insert(specificationRows);
         if (specificationsError) throw specificationsError;
-      }
-
-      const variantRows = readProductVariants(slug);
-      if (variantRows.length) {
-        const { error: variantError } = await client.from("product_variants").upsert(variantRows, { onConflict: "variant_key" });
-        if (variantError) throw variantError;
-      }
-      const savedVariantKeys = new Set(variantRows.map((variant) => variant.variant_key));
-      const removedVariantKeys = (products.find((product) => product.slug === slug)?.variants || [])
-        .filter((variant) => variant.is_active && !savedVariantKeys.has(variant.variant_key))
-        .map((variant) => variant.variant_key);
-      if (removedVariantKeys.length) {
-        const { error: deactivateError } = await client.from("product_variants")
-          .update({ is_active: false })
-          .eq("product_slug", slug)
-          .in("variant_key", removedVariantKeys);
-        if (deactivateError) throw deactivateError;
       }
 
       if (imageUrl) {
@@ -2197,17 +2066,6 @@
     categoryForm.addEventListener("submit", saveCategory);
     $("#delete-category").addEventListener("click", deleteCategory);
     $$('[data-open-product]').forEach((button) => button.addEventListener("click", openNewProduct));
-    $("#add-product-variant").addEventListener("click", () => {
-      const currentGroup = productVariantRows.querySelector("[data-variant-group]")?.value;
-      const categoryGroup = {
-        phones: "storage",
-        laptops: "storage",
-        wearables: "size",
-        audio: "color",
-      }[productForm.elements.category_slug.value] || "color";
-      productVariantRows.append(createVariantRow({ option_group: currentGroup || categoryGroup }));
-      window.lucide?.createIcons();
-    });
     $("#add-product-specification").addEventListener("click", addProductSpecification);
     $("#refresh-products").addEventListener("click", loadCatalog);
     $("#refresh-orders").addEventListener("click", loadOrders);
