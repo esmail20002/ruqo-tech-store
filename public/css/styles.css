@@ -1228,6 +1228,10 @@ html[dir="rtl"] .mobile-ad-arrow {
   font-size: 0.72rem;
 }
 
+.product-badge[hidden] {
+  display: none !important;
+}
+
 .product-art {
   margin-top: 18px;
   display: flex;

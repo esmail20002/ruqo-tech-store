@@ -710,6 +710,7 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   const discountPercent = saleActive && regularPrice > 0
     ? Math.round((1 - salePrice / regularPrice) * 100)
     : 0;
+  const productBadge = card.querySelector(".product-badge");
   const topCard = document.querySelector(".floating-card.card-two");
   const bottomCard = document.querySelector(".floating-card.card-one");
   const countdownRibbon = document.querySelector(".featured-countdown-ribbon");
@@ -717,7 +718,7 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   const countdownValue = countdownRibbon.querySelector(".featured-countdown-value");
   const transitionElements = [
     image,
-    card.querySelector(".product-badge"),
+    !productBadge.hidden && productBadge,
     card.querySelector(".product-summary p"),
     card.querySelector(".product-summary h3"),
     card.querySelector(".price-block"),
@@ -761,7 +762,7 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
 
   image.src = product.image;
   image.alt = localized.name;
-  card.querySelector(".product-badge").textContent = saleActive
+  productBadge.textContent = saleActive
     ? `${discountPercent}% OFF`
     : translations[currentLang]?.[`tags.${product.badge === "new" ? "new" : "featured"}`] || copy.featured;
   card.querySelector(".product-summary p").textContent = product.brand;
@@ -821,7 +822,9 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   const startsAt = showcase.sale_starts_at ? Date.parse(showcase.sale_starts_at) : null;
   const endsAt = Date.parse(showcase.sale_ends_at || product.saleEndsAt || "");
   const countdownTarget = saleActive ? endsAt : startsAt && startsAt > Date.now() ? startsAt : null;
-  if (saleConfigured && Number.isFinite(countdownTarget)) {
+  const hasCountdown = saleConfigured && Number.isFinite(countdownTarget);
+  productBadge.hidden = hasCountdown;
+  if (hasCountdown) {
     const updateCountdown = () => {
       const remaining = countdownTarget - Date.now();
       if (remaining <= 0) {
