@@ -499,30 +499,24 @@ html[data-theme="dark"] .product-badge {
 }
 
 html[data-theme="dark"] .mini-card .featured-discount-rate {
-  border-color: color-mix(in srgb, var(--accent) 58%, var(--primary) 24%);
-  background: linear-gradient(
-    125deg,
-    color-mix(in srgb, var(--accent) 22%, #1a2838),
-    color-mix(in srgb, var(--primary) 18%, #1a2838)
-  );
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--primary) 13%, transparent),
-    0 0 13px color-mix(in srgb, var(--accent) 44%, transparent),
-    0 0 23px color-mix(in srgb, var(--primary) 32%, transparent),
-    inset 0 0 10px color-mix(in srgb, var(--accent) 13%, transparent);
+  border-color: transparent;
+  background:
+    linear-gradient(
+      125deg,
+      color-mix(in srgb, var(--accent) 22%, #1a2838),
+      color-mix(in srgb, var(--primary) 18%, #1a2838)
+    ) padding-box,
+    linear-gradient(125deg, var(--primary), var(--accent), var(--primary)) border-box;
   color: #ffd6dd;
-  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 html[data-theme="dark"] .mini-card .featured-discount-rate .featured-discount-value {
   color: #a6eee2;
-  text-shadow: 0 0 10px color-mix(in srgb, var(--primary) 52%, transparent);
 }
 
 html[data-theme="dark"] .mini-card .featured-discount-rate .featured-discount-off {
   background: color-mix(in srgb, var(--accent) 22%, #1a2838);
   color: #ffd6dd;
-  text-shadow: 0 0 7px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 html[data-theme="dark"] .eyebrow {

@@ -1387,18 +1387,15 @@ html[dir="rtl"] .mobile-ad-arrow {
   align-items: center;
   gap: 5px;
   padding: 4px 6px;
-  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--primary) 24%);
+  border: 1px solid transparent;
   border-radius: 8px;
-  background: linear-gradient(
-    125deg,
-    color-mix(in srgb, var(--accent) 19%, white),
-    color-mix(in srgb, var(--primary) 8%, white)
-  );
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--primary) 7%, transparent),
-    0 0 13px color-mix(in srgb, var(--accent) 30%, transparent),
-    0 0 22px color-mix(in srgb, var(--primary) 18%, transparent),
-    inset 0 0 9px color-mix(in srgb, var(--accent) 8%, transparent);
+  background:
+    linear-gradient(
+      125deg,
+      color-mix(in srgb, var(--accent) 19%, white),
+      color-mix(in srgb, var(--primary) 8%, white)
+    ) padding-box,
+    linear-gradient(125deg, var(--primary), var(--accent), var(--primary)) border-box;
   color: var(--primary-deep);
   white-space: nowrap;
 }
@@ -1412,7 +1409,6 @@ html[dir="rtl"] .mobile-ad-arrow {
   font-size: 0.88rem;
   font-weight: 900;
   line-height: 1;
-  text-shadow: 0 0 8px color-mix(in srgb, var(--primary) 28%, transparent);
 }
 
 .mini-card .featured-discount-rate .featured-discount-off {
