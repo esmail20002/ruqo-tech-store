@@ -1294,7 +1294,6 @@
     const formData = new FormData(categoryForm);
     const slug = String(formData.get("slug") || "").trim().toLowerCase();
     const englishName = String(formData.get("name_en") || "").trim();
-    const englishDescriptionName = String(formData.get("description_name_en") || "").trim();
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug) || !englishName) {
       categoryError.textContent = "Enter a valid slug and an English category name.";
       categoryError.hidden = false;
@@ -1756,6 +1755,7 @@
     const formData = new FormData(productForm);
     const slug = String(formData.get("slug") || "").trim().toLowerCase();
     const englishName = String(formData.get("name_en") || "").trim();
+    const englishDescriptionName = String(formData.get("description_name_en") || "").trim();
     const price = Number(formData.get("price"));
     const compareValue = String(formData.get("compare_at_price") || "").trim();
     const compareAtPrice = compareValue ? Number(compareValue) : null;
