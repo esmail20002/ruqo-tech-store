@@ -2325,8 +2325,14 @@
   render();
   window.addEventListener("ruqo:currency-updated", render);
   window.addEventListener("ruqo:catalog-updated", render);
-  window.addEventListener("ruqo:store-settings-updated", render);
-  window.RUQO_SUPABASE_READY?.then((loaded) => {
-    if (loaded) render();
+  window.addEventListener("ruqo:store-settings-updated", () => {
+    if (page === "product") {
+      const product = productById(new URLSearchParams(location.search).get("id"));
+      if (product) {
+        document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH"}`;
+      }
+      return;
+    }
+    render();
   });
 })();
