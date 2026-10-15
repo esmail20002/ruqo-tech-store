@@ -756,8 +756,8 @@ function renderManagedFeaturedProduct(card) {
       if (!element) return;
       element.getAnimations().forEach((animation) => animation.cancel());
       element.animate(
-        [{ opacity: 0.15 }, { opacity: 1 }],
-        { duration, delay, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "none" },
+        [{ opacity: 0.25 }, { opacity: 1 }],
+        { duration, delay, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "backwards" },
       );
     };
     image.getAnimations().forEach((animation) => animation.cancel());
