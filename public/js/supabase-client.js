@@ -124,4 +124,25 @@
       console.warn("Could not load the RUQO catalog from Supabase; using the local catalog.", error.message);
       return false;
     });
+  window.RUQO_HOME_SPOTLIGHTS_READY = client
+    .from("homepage_spotlight_items")
+    .select("id, product_slug, sort_order, bottom_detail, sale_enabled, sale_price, sale_starts_at, sale_ends_at, is_active")
+    .eq("is_active", true)
+    .order("sort_order")
+    .then(async ({ data, error }) => {
+      if (error) throw error;
+      await window.RUQO_SUPABASE_READY;
+      const products = window.NoursData?.products || [];
+      window.RUQO_HOME_SPOTLIGHTS = (data || []).map((item) => ({
+        ...item,
+        product: products.find((product) => product.slug === item.product_slug || product.id === item.product_slug),
+      })).filter((item) => item.product?.is_active !== false);
+      window.dispatchEvent(new CustomEvent("ruqo:home-spotlights-updated", { detail: window.RUQO_HOME_SPOTLIGHTS }));
+      return window.RUQO_HOME_SPOTLIGHTS;
+    })
+    .catch((error) => {
+      console.warn("Could not load homepage spotlight products.", error.message);
+      window.RUQO_HOME_SPOTLIGHTS = [];
+      return [];
+    });
 })();

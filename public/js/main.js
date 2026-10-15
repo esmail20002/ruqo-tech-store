@@ -666,6 +666,7 @@ const featuredProducts = [
   },
 ];
 let featuredProductIndex = 0;
+let managedSpotlightIndex = 0;
 let featuredProductTimer;
 let featuredCountdownTimer;
 
@@ -680,9 +681,12 @@ function formatShowcasePrice(amount) {
 }
 
 function renderManagedFeaturedProduct(card) {
-  const showcase = window.RUQO_STORE_SETTINGS?.home_showcase;
-  const product = window.NoursData?.products?.find((item) => item.slug === showcase?.product_slug || item.id === showcase?.product_slug);
-  if (!showcase?.product_slug || !product) return false;
+  const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
+  if (!spotlights.length) return false;
+  managedSpotlightIndex %= spotlights.length;
+  const showcase = spotlights[managedSpotlightIndex];
+  const product = showcase.product || window.NoursData?.products?.find((item) => item.slug === showcase.product_slug || item.id === showcase.product_slug);
+  if (!product) return false;
 
   const localized = window.NoursData.localizeProduct(product, currentLang);
   const copy = {
@@ -909,13 +913,19 @@ function formatHomepagePrices() {
 }
 
 function advanceFeaturedProduct() {
-  featuredProductIndex = (featuredProductIndex + 1) % featuredProducts.length;
+  if (window.RUQO_HOME_SPOTLIGHTS?.length) {
+    managedSpotlightIndex = (managedSpotlightIndex + 1) % window.RUQO_HOME_SPOTLIGHTS.length;
+  } else {
+    featuredProductIndex = (featuredProductIndex + 1) % featuredProducts.length;
+  }
   renderFeaturedProduct();
 }
 
 function updateFeaturedProductTimer() {
   window.clearInterval(featuredProductTimer);
-  if (!window.RUQO_STORE_SETTINGS?.home_showcase?.product_slug && !reducedMotionQuery.matches && document.visibilityState === "visible") {
+  const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
+  const shouldRotate = spotlights.length > 1 || (!spotlights.length && featuredProducts.length > 1);
+  if (shouldRotate && !reducedMotionQuery.matches && document.visibilityState === "visible") {
     featuredProductTimer = window.setInterval(advanceFeaturedProduct, 5500);
   }
 }
@@ -978,6 +988,11 @@ reducedMotionQuery.addEventListener("change", updateFeaturedProductTimer);
 document.addEventListener("visibilitychange", updateFeaturedProductTimer);
 updateFeaturedProductTimer();
 window.addEventListener("ruqo:catalog-updated", syncHomepageCatalog);
+window.addEventListener("ruqo:home-spotlights-updated", () => {
+  managedSpotlightIndex = 0;
+  renderFeaturedProduct();
+  updateFeaturedProductTimer();
+});
 window.addEventListener("ruqo:store-settings-updated", renderFeaturedProduct);
 window.addEventListener("ruqo:store-banners-updated", () => {
   renderManagedHomeBanners();
@@ -985,6 +1000,10 @@ window.addEventListener("ruqo:store-banners-updated", () => {
 });
 window.RUQO_SUPABASE_READY?.then((loaded) => {
   if (loaded) syncHomepageCatalog();
+});
+window.RUQO_HOME_SPOTLIGHTS_READY?.then(() => {
+  renderFeaturedProduct();
+  updateFeaturedProductTimer();
 });
 
 function renderMobileAd() {

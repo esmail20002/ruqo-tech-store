@@ -172,27 +172,34 @@
             </section>
           </section>
           <section class="admin-view" data-admin-panel="homepage-showcase" hidden>
-            <div class="admin-page-heading"><div><span class="admin-eyebrow">HOMEPAGE FEATURE</span><h1>Homepage spotlight</h1><p>Choose the large product image, floating product details, and an optional timed price.</p></div></div>
-            <section class="admin-section homepage-showcase-section">
-              <form id="homepage-showcase-form" class="admin-settings-form">
-                <div class="admin-form-grid">
-                  <label class="form-field-wide">Featured product<select name="product_slug" id="home-showcase-product"><option value="">Choose a published product</option></select></label>
-                  <label class="form-field-wide">Lower card detail<select name="bottom_detail"><option value="description">Product description</option><option value="brand">Brand and category</option><option value="rating">Customer rating</option><option value="feature">First product highlight</option></select></label>
-                  <label class="admin-inline-check form-field-wide"><input name="sale_enabled" type="checkbox" /><span><strong>Enable timed discount</strong><small>Sale price is used in product pages, cart, and checkout until it expires.</small></span></label>
-                  <label class="showcase-sale-field">Offer price (SAR)<input name="sale_price" type="number" min="0" step="0.01" /></label>
-                  <label class="showcase-sale-field">Starts at (optional)<input name="sale_starts_at" type="datetime-local" /></label>
-                  <label class="showcase-sale-field">Ends at<input name="sale_ends_at" type="datetime-local" /></label>
-                </div>
-                <div class="brand-logo-preview-row"><img id="home-showcase-preview" src="/images/ruqo-logo.png" alt="Featured product preview" /><p id="home-showcase-price-preview" class="admin-muted-copy"></p></div>
-                <p id="home-showcase-error" class="admin-feedback" role="alert" hidden></p>
-                <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save homepage spotlight</button></div>
-              </form>
-            </section>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">HOMEPAGE FEATURE</span><h1>Homepage spotlight</h1><p>Choose and order multiple products for the homepage feature carousel.</p></div><button id="add-home-spotlight" class="admin-primary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add product</button></div>
+            <section class="admin-section homepage-showcase-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Product</th><th>Price</th><th>Offer</th><th>Schedule</th><th>Position</th><th>Status</th><th></th></tr></thead><tbody id="home-spotlights-body"></tbody></table><div id="home-spotlights-empty" class="admin-empty" hidden><i data-lucide="gallery-horizontal-end" aria-hidden="true"></i><strong>No spotlight products</strong><span>Add one or more products for the homepage feature.</span></div></div></section>
           </section>
           <div id="admin-toast" class="admin-toast" role="status" aria-live="polite"></div>
         </main>
       </div>
     </div>
+
+    <dialog id="homepage-showcase-dialog" class="product-dialog">
+      <form id="homepage-showcase-form" method="dialog" novalidate>
+        <header class="dialog-header"><div><span class="admin-eyebrow">HOMEPAGE FEATURE</span><h2 id="home-showcase-dialog-title">Add product to spotlight</h2></div><button class="admin-icon-button" type="button" data-close-dialog aria-label="Close"><i data-lucide="x" aria-hidden="true"></i></button></header>
+        <div class="dialog-body">
+          <div class="admin-form-grid">
+            <label class="form-field-wide">Product<select name="product_slug" id="home-showcase-product" required><option value="">Choose a published product</option></select></label>
+            <label>Position<input name="sort_order" type="number" min="0" step="1" value="0" required /></label>
+            <label>Lower card detail<select name="bottom_detail"><option value="description">Product description</option><option value="brand">Brand and category</option><option value="rating">Customer rating</option><option value="feature">First product highlight</option></select></label>
+            <label class="admin-inline-check form-field-wide"><input name="is_active" type="checkbox" checked /><span><strong>Show on homepage</strong><small>Turn off to pause this spotlight item.</small></span></label>
+            <label class="admin-inline-check form-field-wide"><input name="sale_enabled" type="checkbox" /><span><strong>Enable timed discount</strong><small>Changes the live product and checkout price until it expires.</small></span></label>
+            <label class="showcase-sale-field">Offer price (SAR)<input name="sale_price" type="number" min="0" step="0.01" /></label>
+            <label class="showcase-sale-field">Starts at (optional)<input name="sale_starts_at" type="datetime-local" /></label>
+            <label class="showcase-sale-field">Ends at<input name="sale_ends_at" type="datetime-local" /></label>
+          </div>
+          <div class="brand-logo-preview-row"><img id="home-showcase-preview" src="/images/ruqo-logo.png" alt="Featured product preview" /><p id="home-showcase-price-preview" class="admin-muted-copy"></p></div>
+          <p id="home-showcase-error" class="admin-feedback" role="alert" hidden></p>
+        </div>
+        <footer class="dialog-footer"><button id="delete-home-showcase-item" class="admin-danger-button" type="button" hidden><i data-lucide="trash-2" aria-hidden="true"></i> Remove product</button><span></span><button class="admin-secondary-button" type="button" data-close-dialog>Cancel</button><button class="admin-primary-button" type="submit">Save spotlight product</button></footer>
+      </form>
+    </dialog>
 
     <dialog id="product-dialog" class="product-dialog">
       <form id="product-form" method="dialog" novalidate>

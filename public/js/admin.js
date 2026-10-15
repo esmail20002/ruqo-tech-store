@@ -41,6 +41,8 @@
   const brandSettingsError = $("#brand-settings-error");
   const homepageShowcaseForm = $("#homepage-showcase-form");
   const homepageShowcaseError = $("#home-showcase-error");
+  const homepageShowcaseDialog = $("#homepage-showcase-dialog");
+  const homeSpotlightsBody = $("#home-spotlights-body");
   const productSearch = $("#product-search");
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
@@ -57,9 +59,11 @@
   let promotions = [];
   let banners = [];
   let newsletterSubscribers = [];
+  let homepageSpotlights = [];
   let brandSettings = {};
   let editingSlug = null;
   let editingCategorySlug = null;
+  let editingSpotlightSlug = null;
   let editingPromotionId = null;
   let editingBannerId = null;
   let toastTimer;
@@ -357,7 +361,7 @@
     }));
     renderCatalog();
     renderCategories();
-    populateHomepageShowcaseOptions();
+    renderHomepageSpotlights();
   }
 
   function canManage(roles) {
@@ -372,11 +376,69 @@
     if (canManage(["owner", "admin", "marketing_manager"])) {
       tasks.push(loadPromotions(), loadBanners(), loadNewsletterSubscribers());
     }
-    if (canManage(["owner", "admin"])) tasks.push(loadBrandSettings());
+    if (canManage(["owner", "admin"])) tasks.push(loadBrandSettings(), loadHomepageSpotlights());
     const results = await Promise.allSettled(tasks);
     results.filter((result) => result.status === "rejected").forEach((result) => {
       showToast(`Could not load a section: ${result.reason?.message || "Unknown error"}`);
     });
+  }
+
+  async function loadHomepageSpotlights() {
+    const { data, error } = await client
+      .from("homepage_spotlight_items")
+      .select("id, product_slug, sort_order, bottom_detail, sale_enabled, sale_price, sale_starts_at, sale_ends_at, is_active, products(slug, brand, name_translations, price, sale_price, sale_starts_at, sale_ends_at, external_image_url)")
+      .order("sort_order")
+      .order("created_at");
+    if (error) throw error;
+    homepageSpotlights = data || [];
+    renderHomepageSpotlights();
+  }
+
+  function renderHomepageSpotlights() {
+    if (!homeSpotlightsBody) return;
+    const rows = homepageSpotlights.map((item) => {
+      const product = item.products || products.find((entry) => entry.slug === item.product_slug);
+      const row = document.createElement("tr");
+      const productCell = document.createElement("td");
+      const productName = document.createElement("strong");
+      productName.textContent = product?.name_translations?.en || item.product_slug;
+      const slug = document.createElement("small");
+      slug.textContent = `${product?.brand || ""} · ${item.product_slug}`;
+      slug.style.display = "block";
+      productCell.append(productName, slug);
+      row.append(productCell);
+      appendTextCell(row, formatPrice(product?.price));
+      appendTextCell(row, item.sale_enabled ? `${formatPrice(item.sale_price)} offer` : "No discount");
+      appendTextCell(row, item.sale_enabled ? `${formatDateTime(item.sale_starts_at)} – ${formatDateTime(item.sale_ends_at)}` : "—");
+      appendTextCell(row, item.sort_order);
+      const statusCell = document.createElement("td");
+      const status = document.createElement("span");
+      status.className = `admin-status ${item.is_active ? "is-published" : "is-draft"}`;
+      status.textContent = item.is_active ? "Published" : "Paused";
+      statusCell.append(status);
+      row.append(statusCell);
+      const actions = document.createElement("td");
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "admin-row-action";
+      edit.title = "Edit spotlight product";
+      edit.setAttribute("aria-label", `Edit ${productName.textContent}`);
+      edit.innerHTML = '<i data-lucide="pencil" aria-hidden="true"></i>';
+      edit.addEventListener("click", () => openHomepageSpotlight(item.product_slug));
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "admin-row-action is-danger";
+      remove.title = "Remove from homepage spotlight";
+      remove.setAttribute("aria-label", `Remove ${productName.textContent} from homepage spotlight`);
+      remove.innerHTML = '<i data-lucide="trash-2" aria-hidden="true"></i>';
+      remove.addEventListener("click", () => deleteHomepageSpotlight(item.product_slug));
+      actions.append(edit, remove);
+      row.append(actions);
+      return row;
+    });
+    homeSpotlightsBody.replaceChildren(...rows);
+    $("#home-spotlights-empty").hidden = homepageSpotlights.length > 0;
+    window.lucide?.createIcons();
   }
 
   function enterLocalDemo() {
@@ -410,21 +472,17 @@
       free_shipping_threshold: 299,
       standard_shipping_fee: 25,
       brand_color: "#167c72",
-      home_showcase: {
-        product_slug: "macbook-pro",
-        sale_enabled: true,
-        sale_price: 4999,
-        sale_starts_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-        sale_ends_at: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
-        bottom_detail: "feature",
-      },
     };
+    homepageSpotlights = [
+      { id: "local-spotlight-1", product_slug: "macbook-pro", sort_order: 1, bottom_detail: "feature", sale_enabled: true, sale_price: 4999, sale_starts_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(), sale_ends_at: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(), is_active: true },
+      { id: "local-spotlight-2", product_slug: "galaxy-s25", sort_order: 2, bottom_detail: "rating", sale_enabled: false, sale_price: null, sale_starts_at: null, sale_ends_at: null, is_active: true },
+    ];
     for (const field of ["store_name", "support_email", "support_phone", "free_shipping_threshold", "brand_color"]) {
       brandSettingsForm.elements[field].value = brandSettings[field];
     }
     brandSettingsForm.elements.delivery_fee.value = brandSettings.standard_shipping_fee;
     $("#brand-logo-preview").src = "/images/ruqo-logo.png";
-    populateHomepageShowcaseOptions();
+    renderHomepageSpotlights();
     loginScreen.hidden = true;
     adminApp.hidden = false;
     localDevNotice.hidden = false;
@@ -503,25 +561,52 @@
     brandSettingsForm.elements.delivery_fee.value = brandSettings.standard_shipping_fee ?? 25;
     $("#brand-logo-preview").src = getBrandLogoUrl(brandSettings.logo_path);
     brandSettingsForm.dataset.resetLogo = "false";
-    populateHomepageShowcaseOptions();
   }
 
-  function populateHomepageShowcaseOptions() {
+  function populateHomepageSpotlightOptions(selectedSlug = "") {
     const select = homepageShowcaseForm.elements.product_slug;
-    const showcase = brandSettings.home_showcase || {};
-    const selectedSlug = showcase.product_slug || "";
     const options = [new Option("Choose a published product", "")];
+    const existingSlugs = new Set(homepageSpotlights.map((item) => item.product_slug));
     for (const product of products.filter((item) => item.is_active)) {
+      if (existingSlugs.has(product.slug) && product.slug !== selectedSlug) continue;
       options.push(new Option(`${translateName(product)} · ${product.slug}`, product.slug));
     }
     select.replaceChildren(...options);
     select.value = selectedSlug;
-    homepageShowcaseForm.elements.sale_enabled.checked = Boolean(showcase.sale_enabled);
-    homepageShowcaseForm.elements.sale_price.value = showcase.sale_price ?? "";
-    homepageShowcaseForm.elements.sale_starts_at.value = toLocalDateTime(showcase.sale_starts_at);
-    homepageShowcaseForm.elements.sale_ends_at.value = toLocalDateTime(showcase.sale_ends_at);
-    homepageShowcaseForm.elements.bottom_detail.value = showcase.bottom_detail || "description";
     updateHomepageShowcasePreview();
+  }
+
+  function openNewHomepageSpotlight() {
+    editingSpotlightSlug = null;
+    homepageShowcaseForm.reset();
+    homepageShowcaseForm.elements.sort_order.value = String(homepageSpotlights.length + 1);
+    homepageShowcaseForm.elements.is_active.checked = true;
+    homepageShowcaseForm.elements.is_active.checked = true;
+    populateHomepageSpotlightOptions();
+    $("#home-showcase-dialog-title").textContent = "Add product to spotlight";
+    $("#delete-home-showcase-item").hidden = true;
+    homepageShowcaseError.hidden = true;
+    homepageShowcaseDialog.showModal();
+  }
+
+  function openHomepageSpotlight(productSlug) {
+    const item = homepageSpotlights.find((entry) => entry.product_slug === productSlug);
+    if (!item) return;
+    editingSpotlightSlug = productSlug;
+    homepageShowcaseForm.reset();
+    homepageShowcaseForm.elements.sort_order.value = item.sort_order;
+    homepageShowcaseForm.elements.bottom_detail.value = item.bottom_detail || "description";
+    homepageShowcaseForm.elements.is_active.checked = item.is_active;
+    homepageShowcaseForm.elements.sale_enabled.checked = item.sale_enabled;
+    homepageShowcaseForm.elements.sale_price.value = item.sale_price ?? "";
+    homepageShowcaseForm.elements.sale_starts_at.value = toLocalDateTime(item.sale_starts_at);
+    homepageShowcaseForm.elements.sale_ends_at.value = toLocalDateTime(item.sale_ends_at);
+    homepageShowcaseForm.elements.is_active.checked = item.is_active;
+    populateHomepageSpotlightOptions(productSlug);
+    $("#home-showcase-dialog-title").textContent = "Edit spotlight product";
+    $("#delete-home-showcase-item").hidden = false;
+    homepageShowcaseError.hidden = true;
+    homepageShowcaseDialog.showModal();
   }
 
   function updateHomepageShowcasePreview() {
@@ -633,14 +718,14 @@
     event.preventDefault();
     homepageShowcaseError.hidden = true;
     const formData = new FormData(homepageShowcaseForm);
-    const productSlug = String(formData.get("product_slug") || "").trim() || null;
+    const productSlug = String(formData.get("product_slug") || "").trim();
     const saleEnabled = formData.get("sale_enabled") === "on";
     const selectedProduct = products.find((product) => product.slug === productSlug);
     const salePriceValue = String(formData.get("sale_price") || "").trim();
     const salePrice = salePriceValue ? Number(salePriceValue) : null;
     const startsAt = fromLocalDateTime(String(formData.get("sale_starts_at") || ""));
     const endsAt = fromLocalDateTime(String(formData.get("sale_ends_at") || ""));
-    if (productSlug && !selectedProduct) {
+    if (!productSlug || !selectedProduct) {
       homepageShowcaseError.textContent = "Choose a published product.";
       homepageShowcaseError.hidden = false;
       return;
@@ -662,26 +747,45 @@
     submit.disabled = true;
     submit.textContent = "Saving…";
     try {
-      const { data, error } = await client.rpc("save_homepage_showcase", {
+      const { error } = await client.rpc("save_homepage_spotlight_item", {
         p_product_slug: productSlug,
+        p_sort_order: Number(formData.get("sort_order")) || 0,
+        p_bottom_detail: String(formData.get("bottom_detail") || "description"),
         p_sale_enabled: saleEnabled,
         p_sale_price: saleEnabled ? salePrice : null,
         p_sale_starts_at: saleEnabled ? startsAt : null,
         p_sale_ends_at: saleEnabled ? endsAt : null,
-        p_bottom_detail: String(formData.get("bottom_detail") || "description"),
+        p_is_active: formData.get("is_active") === "on",
       });
       if (error) throw error;
-      brandSettings.home_showcase = data?.cleared ? null : data;
       await loadCatalog();
-      showToast(productSlug ? "Homepage spotlight saved." : "Homepage spotlight cleared.");
+      await loadHomepageSpotlights();
+      homepageShowcaseDialog.close();
+      editingSpotlightSlug = null;
+      showToast("Homepage spotlight product saved.");
     } catch (error) {
       homepageShowcaseError.textContent = error.message || "Could not save the homepage spotlight.";
       homepageShowcaseError.hidden = false;
     } finally {
       submit.disabled = false;
-      submit.textContent = "Save homepage spotlight";
+      submit.textContent = "Save spotlight product";
       updateHomepageShowcasePreview();
     }
+  }
+
+  async function deleteHomepageSpotlight(productSlug = editingSpotlightSlug) {
+    if (!productSlug || !window.confirm("Remove this product from the homepage spotlight?")) return;
+    const { error } = await client.rpc("delete_homepage_spotlight_item", { p_product_slug: productSlug });
+    if (error) {
+      homepageShowcaseError.textContent = error.message || "Could not remove this spotlight product.";
+      homepageShowcaseError.hidden = false;
+      return;
+    }
+    if (homepageShowcaseDialog.open) homepageShowcaseDialog.close();
+    editingSpotlightSlug = null;
+    await loadCatalog();
+    await loadHomepageSpotlights();
+    showToast("Product removed from homepage spotlight.");
   }
 
   function appendTextCell(row, value) {
@@ -1845,10 +1949,12 @@
     $("#refresh-orders").addEventListener("click", loadOrders);
     $("#refresh-messages").addEventListener("click", loadContactMessages);
     $("#refresh-subscribers").addEventListener("click", loadNewsletterSubscribers);
+    $("#add-home-spotlight").addEventListener("click", openNewHomepageSpotlight);
     $("#add-promotion").addEventListener("click", openNewPromotion);
     $("#add-banner").addEventListener("click", openNewBanner);
     brandSettingsForm.addEventListener("submit", saveBrandSettings);
     homepageShowcaseForm.addEventListener("submit", saveHomepageShowcase);
+    $("#delete-home-showcase-item").addEventListener("click", () => deleteHomepageSpotlight());
     homepageShowcaseForm.elements.product_slug.addEventListener("change", updateHomepageShowcasePreview);
     homepageShowcaseForm.elements.sale_enabled.addEventListener("change", updateHomepageShowcasePreview);
     homepageShowcaseForm.elements.sale_price.addEventListener("input", updateHomepageShowcasePreview);
@@ -1876,7 +1982,7 @@
     $$('[data-close-dialog]').forEach((button) =>
       button.addEventListener("click", () => button.closest("dialog")?.close()),
     );
-    [productDialog, categoryDialog, promotionDialog, bannerDialog].forEach((dialog) =>
+    [productDialog, categoryDialog, promotionDialog, bannerDialog, homepageShowcaseDialog].forEach((dialog) =>
       dialog.addEventListener("click", (event) => {
         if (event.target === dialog) dialog.close();
       }),
