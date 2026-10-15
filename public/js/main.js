@@ -721,8 +721,6 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
     card.querySelector(".product-summary p"),
     card.querySelector(".product-summary h3"),
     card.querySelector(".price-block"),
-    topCard,
-    bottomCard,
   ].filter(Boolean);
   const shouldAnimateTransition = previousSpotlightSlug !== null
     && previousSpotlightSlug !== spotlightSlug
@@ -817,8 +815,6 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
     revealText(card.querySelector(".product-summary h3"), 150, 1250);
     revealText(card.querySelector(".product-badge"), 40, 1000);
     revealText(card.querySelector(".price-block"), 180, 1200);
-    revealText(topCard, 180, 1050);
-    revealText(bottomCard, 360, 1050);
   }
 
   window.clearInterval(featuredCountdownTimer);
