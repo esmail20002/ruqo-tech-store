@@ -667,6 +667,7 @@ const featuredProducts = [
 ];
 let featuredProductIndex = 0;
 let managedSpotlightIndex = 0;
+let lastManagedSpotlightSlug = null;
 let featuredProductTimer;
 let featuredCountdownTimer;
 
@@ -687,6 +688,10 @@ function renderManagedFeaturedProduct(card) {
   const showcase = spotlights[managedSpotlightIndex];
   const product = showcase.product || window.NoursData?.products?.find((item) => item.slug === showcase.product_slug || item.id === showcase.product_slug);
   if (!product) return false;
+  const spotlightSlug = product.slug || product.id;
+  const previousSpotlightSlug = lastManagedSpotlightSlug;
+  const shouldAnimateTransition = previousSpotlightSlug !== null && previousSpotlightSlug !== spotlightSlug;
+  lastManagedSpotlightSlug = spotlightSlug;
 
   const localized = window.NoursData.localizeProduct(product, currentLang);
   const copy = {
@@ -711,7 +716,6 @@ function renderManagedFeaturedProduct(card) {
   const countdownLabel = countdownRibbon.querySelector(".featured-countdown-label");
   const countdownValue = countdownRibbon.querySelector(".featured-countdown-value");
 
-  card.classList.add("is-changing");
   image.src = product.image;
   image.alt = localized.name;
   card.querySelector(".product-badge").textContent = saleActive
@@ -747,7 +751,19 @@ function renderManagedFeaturedProduct(card) {
   bottomCard.querySelector("small").textContent = product.stock
     ? `${localized.category || product.category}`
     : (translations[currentLang]?.["tags.unavailable"] || "Out of stock");
-  card.classList.remove("is-changing");
+  if (shouldAnimateTransition && !reducedMotionQuery.matches) {
+    const previousIndex = spotlights.findIndex((item) => item.product_slug === previousSpotlightSlug);
+    const direction = previousIndex < 0 || managedSpotlightIndex >= previousIndex ? 1 : -1;
+    const enter = (element, delay = 0) => element?.animate([
+      { opacity: 0.25, transform: `translateX(${direction * 12}px) translateY(4px) scale(0.985)` },
+      { opacity: 1, transform: "translateX(0) translateY(0) scale(1)" },
+    ], { duration: 420, delay, easing: "cubic-bezier(0.2, 0.75, 0.25, 1)" });
+    enter(image);
+    enter(card.querySelector(".product-summary"), 45);
+    enter(card.querySelector(".product-badge"), 25);
+    enter(topCard, 80);
+    enter(bottomCard, 125);
+  }
 
   window.clearInterval(featuredCountdownTimer);
   const startsAt = showcase.sale_starts_at ? Date.parse(showcase.sale_starts_at) : null;
@@ -790,6 +806,7 @@ function renderFeaturedProduct() {
   if (!Array.isArray(spotlights) || !spotlights.length) {
     heroVisual.hidden = true;
     hero?.classList.add("has-no-showcase");
+    lastManagedSpotlightSlug = null;
     window.clearInterval(featuredProductTimer);
     window.clearInterval(featuredCountdownTimer);
     return;

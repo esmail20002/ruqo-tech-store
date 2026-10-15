@@ -1006,37 +1006,52 @@ html[dir="rtl"] .topbar-marquee-track {
   justify-content: center;
   isolation: isolate;
 }
-.featured-countdown-ribbon {
-  position: absolute;
-  z-index: 6;
-  top: 12px;
-  left: 50%;
+.hero-offer-strip {
+  position: relative;
+  z-index: 7;
   display: flex;
-  max-width: calc(100% - 28px);
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  flex-wrap: wrap;
+  min-width: 0;
+  margin-bottom: 12px;
+}
+.featured-countdown-ribbon {
+  display: flex;
+  max-width: 100%;
   align-items: center;
   gap: 9px;
-  padding: 8px 12px;
-  transform: translateX(-50%);
+  margin-inline-start: 0;
+  padding: 8px 11px;
   border: 1px solid rgba(227, 193, 127, 0.44);
-  border-radius: 9px;
+  border-radius: 999px;
   background: linear-gradient(110deg, #103b38, #174e49);
-  box-shadow: 0 9px 25px rgba(16, 48, 43, 0.22);
+  box-shadow: 0 7px 20px rgba(16, 48, 43, 0.18);
   color: #f8f2e6;
   white-space: nowrap;
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(12px);
+  animation: countdown-ribbon-enter 0.32s ease-out both;
 }
+.hero-offer-strip .featured-countdown-ribbon[hidden] { display: none !important; }
 .featured-countdown-label {
   color: #ead09a;
-  font-size: 0.61rem;
+  font-size: 0.58rem;
   font-weight: 800;
 }
 .featured-countdown-value {
-  font-size: 0.88rem;
+  color: #fff9ec;
+  font-size: 0.82rem;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.featured-countdown-ribbon[hidden] {
-  display: none !important;
+@keyframes countdown-ribbon-enter {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (max-width: 400px) {
+  .hero-offer-strip { flex-wrap: wrap; }
+  .hero-offer-strip .featured-countdown-ribbon { margin-inline-start: 0; }
 }
 
 .hero-visual::before {
@@ -2376,9 +2391,8 @@ section {
   }
 
   .featured-countdown-ribbon {
-    top: 8px;
     gap: 7px;
-    padding: 6px 9px;
+    padding: 6px 8px;
   }
   .featured-countdown-label { font-size: 0.52rem; }
   .featured-countdown-value { font-size: 0.76rem; }
