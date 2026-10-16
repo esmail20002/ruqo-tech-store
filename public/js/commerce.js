@@ -441,7 +441,12 @@
     ar: { Black: "أسود", Silver: "فضي", White: "أبيض", Small: "صغير", Large: "كبير" },
   };
   const displayVariant = (label) => variantTranslations[language]?.[label] || label;
-  const optionGroupLabel = (group) => ({ storage: t.storage, size: t.size, color: t.color })[group] || t.chooseVariant;
+  const optionGroupLabel = (group) => window.RUQO_PRODUCT_OPTION_GROUP_LABELS?.[language]?.[group]
+    || window.RUQO_PRODUCT_OPTION_GROUP_LABELS?.en?.[group]
+    || ({ storage: t.storage, size: t.size, color: t.color, material: "Material" })[group]
+    || t.chooseVariant;
+  const productOptionGroups = window.RUQO_PRODUCT_OPTION_GROUPS || ["size", "storage", "color", "material"];
+  const colorPalette = window.RUQO_PRODUCT_COLOR_PALETTE || [];
   const money = (amount) => {
     const currency = store.getCurrency();
     const locale = localeByLanguage[language] || localeByLanguage.en;
@@ -451,78 +456,126 @@
       maximumFractionDigits: currency === "SAR" ? 0 : 2,
     }).format(amount * currencyRates[currency]);
   };
+  const canonicalOptionValue = (group, value) => {
+    const normalized = String(value ?? "").trim();
+    if (group !== "color") return normalized;
+    return colorPalette.find((color) => [color.value, color.label].some((candidate) => candidate.toLowerCase() === normalized.toLowerCase()))?.value || normalized;
+  };
+  const optionValuesForVariant = (variant) => {
+    const values = variant.option_values && Object.keys(variant.option_values).length
+      ? variant.option_values
+      : variant.option_group && variant.option_value
+        ? { [variant.option_group]: variant.option_value }
+        : {};
+    return Object.fromEntries(productOptionGroups.filter((group) => values[group])
+      .map((group) => [group, canonicalOptionValue(group, values[group])]));
+  };
+  const optionValueLabel = (group, value) => group === "color"
+    ? colorPalette.find((color) => color.value === value)?.label || displayVariant(value)
+    : displayVariant(value);
+  const combinationLabel = (optionValues) => productOptionGroups
+    .filter((group) => optionValues[group])
+    .map((group) => `${optionGroupLabel(group)}: ${optionValueLabel(group, optionValues[group])}`)
+    .join(" · ");
   const optionSet = (product) => {
-    if (product.variants?.length) {
-      const group = product.variants[0].option_group;
+    const allVariants = product.variants || [];
+    const activeVariants = allVariants.filter((variant) => variant.is_active !== false
+      && (variant.stock_quantity === null || variant.stock_quantity === undefined || Number(variant.stock_quantity) > 0));
+    const savedOptionGroups = product.product_option_values || {};
+    if (allVariants.length || Object.keys(savedOptionGroups).length) {
+      const values = productOptionGroups.map((group) => [
+        group,
+        savedOptionGroups[group]?.length
+          ? savedOptionGroups[group].map((value) => canonicalOptionValue(group, value))
+          : [...new Set(allVariants.map((variant) => optionValuesForVariant(variant)[group]).filter(Boolean))],
+      ]);
+      const valuesByGroup = Object.fromEntries(values);
       return {
-        label: optionGroupLabel(group),
-        options: product.variants.map((variant) => ({
-          label: variant.option_value,
-          canonicalLabel: variant.option_value,
-          displayLabel: variant.option_label_translations?.[language] || variant.option_label_translations?.en || variant.option_value,
-          adjustment: Number(variant.price_adjustment) || 0,
-        })),
+        groups: productOptionGroups
+          .filter((group) => valuesByGroup[group].length)
+          .map((group) => ({ group, label: optionGroupLabel(group), values: valuesByGroup[group] })),
+        variants: activeVariants,
+        allVariants,
+        hasConfiguredVariants: true,
       };
     }
-    if (product.category === "phones") {
-      const options =
-        product.id === "ipad-air"
-          ? ["128GB", "256GB", "512GB"]
-          : ["256GB", "512GB", "1TB"];
-      const baseIndex =
-        product.id === "galaxy-s25" ? 1 : product.id === "iphone-16" ? 0 : 0;
-      return {
-        label: t.storage,
-        options: options.map((label, index) => ({
-          label,
-          adjustment: (index - baseIndex) * 500,
-        })),
-      };
-    }
-    if (product.category === "laptops") {
-      return {
-        label: t.storage,
-        options: ["512GB", "1TB", "2TB"].map((label, index) => ({
-          label,
-          adjustment: index * 700,
-        })),
-      };
-    }
-    if (product.category === "wearables") {
-      const labels =
-        product.id === "apple-watch"
-          ? ["42mm", "46mm"]
-          : product.id === "fitbit-sense"
-            ? ["Small", "Large"]
-            : ["40mm", "44mm"];
-      return {
-        label: t.size,
-        options: labels.map((label, index) => ({
-          label,
-          adjustment: product.id === "fitbit-sense" ? 0 : index * 100,
-        })),
-      };
+    if (!Array.isArray(product.variants)) {
+      if (["phones", "laptops"].includes(product.category)) {
+        const values = product.category === "phones"
+          ? product.id === "ipad-air" ? ["128GB", "256GB", "512GB"] : ["256GB", "512GB", "1TB"]
+          : ["512GB", "1TB", "2TB"];
+        const phoneBaseIndex = product.id === "galaxy-s25" ? 1 : 0;
+        const adjustmentStep = product.category === "phones" ? 500 : 700;
+        return {
+          groups: [{ group: "storage", label: optionGroupLabel("storage"), values }],
+          variants: [],
+          hasConfiguredVariants: false,
+          fallbackAdjustments: Object.fromEntries(values.map((value, index) => [value, (index - (product.category === "phones" ? phoneBaseIndex : 0)) * adjustmentStep])),
+        };
+      }
+      if (product.category === "wearables") {
+        const values = product.id === "apple-watch" ? ["42mm", "46mm"] : product.id === "fitbit-sense" ? ["Small", "Large"] : ["40mm", "44mm"];
+        return {
+          groups: [{ group: "size", label: optionGroupLabel("size"), values }],
+          variants: [],
+          hasConfiguredVariants: false,
+          fallbackAdjustments: Object.fromEntries(values.map((value, index) => [value, product.id === "fitbit-sense" ? 0 : index * 100])),
+        };
+      }
+      const values = ["black", "silver", "white"];
+      return { groups: [{ group: "color", label: optionGroupLabel("color"), values }], variants: [], hasConfiguredVariants: false, fallbackAdjustments: Object.fromEntries(values.map((value) => [value, 0])) };
     }
     return {
-      label: t.color,
-      options: ["Black", "Silver", "White"].map((label) => ({
-        label,
-        adjustment: 0,
-      })),
+      groups: [],
+      variants: [],
+      hasConfiguredVariants: false,
     };
   };
-  const selectedOption = (product) => {
+  const selectedOption = (product, preferredVariantKey = null) => {
     const config = optionSet(product);
-    const saved = store.getProductVariant(product.id);
-    const fallbackIndex = product.id === "galaxy-s25" ? 1 : 0;
-    const selected =
-      config.options.find((option) => (option.canonicalLabel || option.label) === saved) ||
-      config.options[fallbackIndex] ||
-      config.options[0]
+    const savedValues = store.getProductOptionSelections?.(product.id) || {};
+    const legacySavedValue = store.getProductVariant(product.id);
+    if (typeof legacySavedValue === "string") {
+      const legacyGroup = config.groups.find(({ group, values }) =>
+        values.includes(canonicalOptionValue(group, legacySavedValue)),
+      );
+      if (legacyGroup && !savedValues[legacyGroup.group]) {
+        savedValues[legacyGroup.group] = canonicalOptionValue(legacyGroup.group, legacySavedValue);
+      }
+    }
+    const preferredVariant = preferredVariantKey
+      ? (config.allVariants || config.variants).find((variant) => variant.variant_key === preferredVariantKey)
+      : null;
+    const hasSavedSelection = config.groups.some(({ group }) => savedValues[group]);
+    const selectedVariant = preferredVariant || (preferredVariantKey ? null : config.variants.find((variant) =>
+      config.groups.every(({ group }) => {
+        const availableValue = optionValuesForVariant(variant)[group];
+        return !savedValues[group] || savedValues[group] === availableValue;
+      }),
+    ) || (hasSavedSelection ? null : config.variants[0]));
+    const selectedValues = selectedVariant
+      ? optionValuesForVariant(selectedVariant)
+      : Object.fromEntries(config.groups.map(({ group, values }) => {
+        const savedValue = savedValues[group] || (config.groups.length === 1 ? legacySavedValue : null);
+        return [group, values.includes(savedValue) ? savedValue : values[0]];
+      }));
+    const regularBasePrice = Number(product.regularPrice ?? product.price) || 0;
+    const adjustment = selectedVariant
+      ? selectedVariant.final_price !== null && selectedVariant.final_price !== undefined
+        ? Number(selectedVariant.final_price) - regularBasePrice
+        : Number(selectedVariant.price_adjustment) || 0
+      : Object.entries(selectedValues).reduce((total, [group, value]) => total + (config.fallbackAdjustments?.[value] || 0), 0);
+    const label = combinationLabel(selectedValues);
     return {
-      ...selected,
-      canonicalLabel: selected.canonicalLabel || selected.label,
-      label: selected.displayLabel || displayVariant(selected.label),
+      optionValues: selectedValues,
+      variantKey: preferredVariantKey || selectedVariant?.variant_key || null,
+      variant: selectedVariant || null,
+      unavailable: Boolean(preferredVariantKey && (!selectedVariant || !config.variants.some((variant) => variant.variant_key === preferredVariantKey)))
+        || Boolean(config.hasConfiguredVariants && !selectedVariant),
+      adjustment,
+      label: label || (config.groups.length ? t.chooseVariant : ""),
+      canonicalLabel: label,
+      config,
     };
   };
   const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
@@ -1010,41 +1063,57 @@
       ".product-review-form .commerce-field:nth-of-type(2)",
     ).childNodes[0].textContent = `${t.ratingLabel} `;
     const currentOption = selectedOption(product);
-    const selectedVariant = product.variants?.find(
-      (variant) => variant.option_value === currentOption.canonicalLabel,
-    );
+    const selectedVariant = currentOption.variant;
     const variantStock = selectedVariant?.stock_quantity;
     const hasInventoryCount = variantStock !== null && variantStock !== undefined && Number.isFinite(Number(variantStock));
     const inventoryCount = hasInventoryCount ? Number(variantStock) : null;
     const addToBagButton = root.querySelector(".product-purchase-row [data-add]");
     const stockStatus = root.querySelector(".product-detail-stock");
-    if (product.stock && inventoryCount === 0) {
+    if (product.stock && (currentOption.unavailable || inventoryCount === 0)) {
       stockStatus.classList.add("is-out");
       stockStatus.lastChild.textContent = t.outStock;
       if (addToBagButton) addToBagButton.disabled = true;
     }
     const optionConfig = optionSet(product);
-    const optionPicker = document.createElement("fieldset");
-    optionPicker.className = "product-variant-picker";
-    optionPicker.classList.toggle("is-color", optionConfig.label === t.color);
-    optionPicker.innerHTML = `<legend>${optionConfig.label}</legend><div class="product-variant-options" role="radiogroup" aria-label="${optionConfig.label}">${optionConfig.options.map((option) => {
-      const canonicalLabel = option.canonicalLabel || option.label;
-      const displayLabel = option.displayLabel || displayVariant(option.label);
-      const selected = canonicalLabel === currentOption.canonicalLabel;
-      return `<button type="button" class="product-variant-option${selected ? " is-selected" : ""}" role="radio" aria-checked="${selected}" data-product-option="${escapeHtml(canonicalLabel)}"><span class="variant-swatch"></span><span>${escapeHtml(displayLabel)}</span></button>`;
-    }).join("")}</div>`;
+    const optionPickers = document.createElement("div");
+    optionPickers.className = "product-variant-pickers";
+    optionConfig.groups.forEach(({ group, label, values }) => {
+      const picker = document.createElement("fieldset");
+      picker.className = `product-variant-picker${group === "color" ? " is-color" : ""}`;
+      picker.dataset.optionGroup = group;
+      const legend = document.createElement("legend");
+      legend.textContent = label;
+      const options = document.createElement("div");
+      options.className = "product-variant-options";
+      options.setAttribute("role", "radiogroup");
+      options.setAttribute("aria-label", label);
+      options.innerHTML = values.map((value) => {
+        const selected = currentOption.optionValues[group] === value;
+        const color = group === "color" ? colorPalette.find((item) => item.value === value) : null;
+        const hasValidCombination = !optionConfig.hasConfiguredVariants || optionConfig.variants.some((variant) =>
+          optionValuesForVariant(variant)[group] === value,
+        );
+        const swatch = color
+          ? `<span class="variant-swatch" style="--option-color:${color.hex}"></span>`
+          : "";
+        return `<button type="button" class="product-variant-option${selected ? " is-selected" : ""}" role="radio" aria-checked="${selected}" aria-disabled="${!hasValidCombination}" ${hasValidCombination ? "" : "disabled"} data-option-group="${group}" data-option-value="${escapeHtml(value)}">${swatch}<span>${escapeHtml(optionValueLabel(group, value))}</span></button>`;
+      }).join("");
+      picker.append(legend, options);
+      optionPickers.append(picker);
+    });
     const quantityBlock = root.querySelector(".product-quantity");
+    const optionGroupNames = optionConfig.groups.map(({ label }) => label);
+    const optionGroupNamesText = optionGroupNames.join(" / ");
     const purchaseControlCopy = {
-      en: { quantity: "Choose quantity", option: `Choose ${optionConfig.label.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" },
-      ar: { quantity: "اختر الكمية", option: `اختر ${optionConfig.label}`, inStock: "متوفر · الشحن خلال يوم إلى يومي عمل" },
-      fr: { quantity: "Choisir la quantité", option: `Choisir : ${optionConfig.label.toLowerCase()}`, inStock: "En stock · expédition sous 1 à 2 jours ouvrés" },
-      es: { quantity: "Elige la cantidad", option: `Elige ${optionConfig.label.toLowerCase()}`, inStock: "Disponible · envío en 1–2 días laborables" },
-      zh: { quantity: "选择数量", option: `选择${optionConfig.label}`, inStock: "有货 · 1–2 个工作日内发货" },
-    }[language] || { quantity: "Choose quantity", option: `Choose ${optionConfig.label.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" };
+      en: { quantity: "Choose quantity", option: `Choose ${optionGroupNamesText.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" },
+      ar: { quantity: "اختر الكمية", option: `اختر ${optionGroupNamesText}`, inStock: "متوفر · الشحن خلال يوم إلى يومي عمل" },
+      fr: { quantity: "Choisir la quantité", option: `Choisir : ${optionGroupNamesText.toLowerCase()}`, inStock: "En stock · expédition sous 1 à 2 jours ouvrés" },
+      es: { quantity: "Elige la cantidad", option: `Elige ${optionGroupNamesText.toLowerCase()}`, inStock: "Disponible · envío en 1–2 días laborables" },
+      zh: { quantity: "选择数量", option: `选择${optionGroupNamesText}`, inStock: "有货 · 1–2 个工作日内发货" },
+    }[language] || { quantity: "Choose quantity", option: `Choose ${optionGroupNamesText.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" };
     quantityBlock.querySelector(":scope > span").textContent = purchaseControlCopy.quantity;
-    optionPicker.querySelector("legend").textContent = purchaseControlCopy.option;
-    optionPicker.setAttribute("aria-label", purchaseControlCopy.option);
-    if (product.stock && inventoryCount !== 0) {
+    if (optionConfig.groups.length) optionPickers.setAttribute("aria-label", purchaseControlCopy.option);
+    if (product.stock && !currentOption.unavailable && inventoryCount !== 0) {
       stockStatus.lastChild.textContent = purchaseControlCopy.inStock;
     }
     if (product.stock && inventoryCount !== null && inventoryCount > 0 && inventoryCount <= 3) {
@@ -1056,7 +1125,8 @@
     const optionColumn = document.createElement("div");
     optionColumn.className = "product-buy-config";
     quantityBlock.before(optionColumn);
-    optionColumn.append(quantityBlock, optionPicker);
+    optionColumn.append(quantityBlock);
+    if (optionConfig.groups.length) optionColumn.append(optionPickers);
 
     const currencyEdit = document.createElement("button");
     currencyEdit.className = "currency-edit";
@@ -1111,15 +1181,13 @@
     const galleryDeliveryDetails = deliveryDetails.cloneNode(true);
     galleryDeliveryDetails.classList.add("detail-delivery-gallery");
     root.querySelector(".product-detail-gallery").append(galleryDeliveryDetails);
-    const currentPrice = product.price + currentOption.adjustment;
-    root.querySelector(".product-detail-price > strong").textContent =
-      money(currentPrice);
+    const finalPrice = product.price + currentOption.adjustment;
+    root.querySelector(".product-detail-price > strong").textContent = money(finalPrice);
     const oldPrice = root.querySelector(".product-detail-price del");
-    if (oldPrice)
-      oldPrice.textContent = money(product.oldPrice + currentOption.adjustment);
+    if (oldPrice) oldPrice.textContent = money(product.oldPrice + currentOption.adjustment);
     const currentDiscount = oldPrice
       ? Math.round(
-          (1 - currentPrice / (product.oldPrice + currentOption.adjustment)) *
+          (1 - finalPrice / (product.oldPrice + currentOption.adjustment)) *
             100,
         )
       : 0;
@@ -1134,10 +1202,19 @@
       store.setCurrency(currencySelect.value);
       renderProduct();
     });
-    optionPicker.addEventListener("click", (event) => {
-      const optionButton = event.target.closest("[data-product-option]");
+    optionPickers.addEventListener("click", (event) => {
+      const optionButton = event.target.closest("[data-option-group][data-option-value]");
       if (!optionButton) return;
-      store.setProductVariant(product.id, optionButton.dataset.productOption);
+      const nextSelections = { ...currentOption.optionValues, [optionButton.dataset.optionGroup]: optionButton.dataset.optionValue };
+      const matchingCombination = optionConfig.variants.find((variant) => {
+        const values = optionValuesForVariant(variant);
+        return values[optionButton.dataset.optionGroup] === optionButton.dataset.optionValue
+          && optionConfig.groups.every(({ group }) => group === optionButton.dataset.optionGroup || !nextSelections[group] || values[group] === nextSelections[group]);
+      }) || optionConfig.variants.find((variant) =>
+        optionValuesForVariant(variant)[optionButton.dataset.optionGroup] === optionButton.dataset.optionValue,
+      );
+      if (matchingCombination) Object.assign(nextSelections, optionValuesForVariant(matchingCombination));
+      store.setProductOptionSelections(product.id, nextSelections);
       renderProduct();
     });
 
@@ -1167,6 +1244,10 @@
     detailsDisclosure.querySelector(
       ".product-spec-row:nth-last-child(3) > span",
     ).textContent = t.productReference;
+    const selectedOptionsRow = detailsDisclosure.querySelector(".product-spec-row:last-child");
+    selectedOptionsRow.querySelector("span").textContent = optionGroupNamesText;
+    selectedOptionsRow.querySelector("strong").textContent = currentOption.label;
+    selectedOptionsRow.hidden = optionConfig.groups.length === 0;
 
     const mainImage = root.querySelector("[data-detail-image]");
     const lightbox = root.querySelector("[data-product-lightbox]");
@@ -1321,10 +1402,11 @@
 
   function lineItems() {
     return Object.entries(store.cart())
-      .map(([id, quantity]) => {
-        const product = productById(id);
-        const option = product ? selectedOption(product) : null;
+      .map(([lineKey, quantity]) => {
+        const product = productById(store.cartProductId(lineKey));
+        const option = product ? selectedOption(product, store.cartVariantKey(lineKey)) : null;
         return {
+          lineKey,
           product,
           quantity: Number(quantity) || 0,
           option,
@@ -1382,8 +1464,8 @@
     }
     const lineMarkup = lines
       .map(
-        ({ product, quantity, option, unitPrice }) =>
-          `<article class="cart-line" data-cart-line="${product.id}"><a href="${productUrl(product.id)}"><img src="${product.image}" alt="${escapeHtml(product.name)}" loading="lazy" /></a><div><span class="commerce-product-brand">${escapeHtml(product.brand)}</span><h2><a href="${productUrl(product.id)}">${escapeHtml(product.name)}</a></h2><p>${money(unitPrice)} · ${escapeHtml(option.label)} ${product.stock ? "" : `· ${t.lowStock}`}</p><div class="quantity-control" aria-label="${t.qty}"><button type="button" data-quantity="-1" data-id="${product.id}" aria-label="Decrease quantity">−</button><output>${quantity}</output><button type="button" data-quantity="1" data-id="${product.id}" aria-label="Increase quantity">+</button></div></div><div class="cart-line-end"><strong class="commerce-price">${money(unitPrice * quantity)}</strong><button class="commerce-danger" type="button" data-remove-cart="${product.id}">${icon("trash-2")}<span>${t.remove}</span></button></div></article>`,
+        ({ lineKey, product, quantity, option, unitPrice }) =>
+          `<article class="cart-line" data-cart-line="${escapeHtml(lineKey)}"><a href="${productUrl(product.id)}"><img src="${product.image}" alt="${escapeHtml(product.name)}" loading="lazy" /></a><div><span class="commerce-product-brand">${escapeHtml(product.brand)}</span><h2><a href="${productUrl(product.id)}">${escapeHtml(product.name)}</a></h2><p>${money(unitPrice)} · ${escapeHtml(option.label)} ${product.stock ? "" : `· ${t.lowStock}`}</p><div class="quantity-control" aria-label="${t.qty}"><button type="button" data-quantity="-1" data-id="${escapeHtml(lineKey)}" aria-label="Decrease quantity">−</button><output>${quantity}</output><button type="button" data-quantity="1" data-id="${escapeHtml(lineKey)}" aria-label="Increase quantity">+</button></div></div><div class="cart-line-end"><strong class="commerce-price">${money(unitPrice * quantity)}</strong><button class="commerce-danger" type="button" data-remove-cart="${escapeHtml(lineKey)}">${icon("trash-2")}<span>${t.remove}</span></button></div></article>`,
       )
       .join("");
     root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.bag}</h1><p>${t.bagIntro}</p></div><a class="commerce-button-secondary" href="/products.html">${t.continue}</a></div><div class="cart-layout"><section class="cart-lines">${lineMarkup}</section>${summaryMarkup(lines)}</div>`;
@@ -2063,7 +2145,7 @@
           const quantity = page === "product" ? productQuantity : 1;
           const option = selectedOption(product);
           const unitPrice = product.price + (page === "product" ? option.adjustment : 0);
-          store.addToCart(product.id, quantity);
+          store.addToCart(product.id, quantity, option.variantKey);
           store.showAddedToBag(product, { quantity, price: money(unitPrice) });
           if (page === "cart" || page === "wishlist") render();
         }
@@ -2185,6 +2267,10 @@
         renderCheckout();
         return;
       }
+      if (lines.some((line) => line.option?.unavailable)) {
+        feedback.textContent = t.outStock;
+        return;
+      }
       const enteredCouponCode = String(values.coupon_code || "").trim().toUpperCase();
       if (enteredCouponCode && (!checkoutPromotion || enteredCouponCode !== checkoutCouponCode)) {
         feedback.textContent = language === "ar"
@@ -2194,8 +2280,7 @@
       }
       const items = lines.map(({ product, quantity, option }) => ({
         product_slug: product.slug || product.id,
-        variant_key:
-          product.variants?.find((variant) => variant.option_value === option.canonicalLabel)?.variant_key || null,
+        variant_key: option.variantKey,
         quantity,
       }));
       submitButton.disabled = true;

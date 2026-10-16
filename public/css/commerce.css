@@ -3872,6 +3872,11 @@
   gap: 10px;
   min-width: 0;
 }
+.product-variant-pickers {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
 .product-variant-picker {
   min-width: 0;
   margin: 0;
@@ -3925,16 +3930,8 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #25242a;
+  background: var(--option-color, #25242a);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
-}
-.product-variant-picker.is-color
-  [data-product-option="Silver"]
-  .variant-swatch {
-  background: #c8cbd0;
-}
-.product-variant-picker.is-color [data-product-option="White"] .variant-swatch {
-  background: #fff;
 }
 .product-spec-disclosure {
   margin: -7px 0 22px;

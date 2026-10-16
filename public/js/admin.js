@@ -7,6 +7,8 @@
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
   const languages = ["en", "fr", "es", "zh", "ar"];
+  const productOptionGroups = window.RUQO_PRODUCT_OPTION_GROUPS;
+  const productOptionGroupLabels = window.RUQO_PRODUCT_OPTION_GROUP_LABELS;
   const productBenefitIconOptions = [
     ["truck", "Delivery truck"],
     ["shield-check", "Protection"],
@@ -21,6 +23,7 @@
     ["heart", "Care"],
     ["clock-3", "Time"],
   ];
+  const productColorPalette = window.RUQO_PRODUCT_COLOR_PALETTE.map((color) => [color.value, color.label, color.hex]);
   const defaultProductBenefits = [
     {
       icon: "truck",
@@ -78,6 +81,8 @@
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
   const productBenefitRows = $("#product-benefit-rows");
+  const productColorPaletteElement = $("[data-product-color-palette]");
+  const productCombinationRows = $("#product-combination-rows");
   const productsEmpty = $("#products-empty");
   let client;
   let currentUser;
@@ -109,10 +114,7 @@
     const button = $("#admin-theme-toggle");
     if (button) {
       button.setAttribute("aria-pressed", String(nextTheme === "dark"));
-      button.setAttribute(
-        "aria-label",
-        nextTheme === "dark" ? "Switch to light mode" : "Switch to dark mode",
-      );
+      button.setAttribute("aria-label", nextTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
       button.innerHTML = `<i data-lucide="${nextTheme === "dark" ? "sun" : "moon"}" aria-hidden="true"></i>`;
       window.lucide?.createIcons();
     }
@@ -157,7 +159,9 @@
   function productIsAvailable(product) {
     if (!product.in_stock) return false;
     const activeVariants = (product.variants || []).filter((variant) => variant.is_active);
-    if (!activeVariants.length || activeVariants.some((variant) => variant.stock_quantity === null || variant.stock_quantity === undefined)) return true;
+    const hasConfiguredOptions = productOptionGroups.some((group) => product.product_option_values?.[group]?.length);
+    if (!activeVariants.length) return !hasConfiguredOptions;
+    if (activeVariants.some((variant) => variant.stock_quantity === null || variant.stock_quantity === undefined)) return true;
     return activeVariants.some((variant) => Number(variant.stock_quantity) > 0);
   }
 
@@ -373,9 +377,9 @@
       { data: productRows, error: productError },
       { data: variantRows, error: variantError },
     ] = await Promise.all([
-      client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
-      client.from("products").select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
-      client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_label_translations, sku, price_adjustment, stock_quantity, is_active, sort_order").order("sort_order"),
+        client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
+        client.from("products").select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, product_option_values, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
+        client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_values, option_label_translations, sku, price_adjustment, final_price, stock_quantity, is_active, sort_order").order("sort_order"),
     ]);
     if (categoryError) throw categoryError;
     if (productError) throw productError;
@@ -1243,6 +1247,277 @@
     window.lucide?.createIcons();
   }
 
+  function canonicalOptionValue(group, value) {
+    const normalized = String(value ?? "").trim();
+    if (group !== "color") return normalized;
+    return productColorPalette.find(([colorValue, label]) =>
+      [colorValue, label].some((candidate) => candidate.toLowerCase() === normalized.toLowerCase()),
+    )?.[0] || normalized;
+  }
+
+  function optionValuesForVariant(variant) {
+    const values = variant.option_values && Object.keys(variant.option_values).length
+      ? variant.option_values
+      : variant.option_group && variant.option_value
+        ? { [variant.option_group]: variant.option_value }
+        : {};
+    return Object.fromEntries(productOptionGroups
+      .filter((group) => values[group])
+      .map((group) => [group, canonicalOptionValue(group, values[group])]));
+  }
+
+  function optionCombinationSignature(optionValues) {
+    return JSON.stringify(Object.fromEntries(productOptionGroups
+      .filter((group) => optionValues[group])
+      .map((group) => [group, canonicalOptionValue(group, optionValues[group])]))) ;
+  }
+
+  function productOptionValues(product) {
+    if (product?.product_option_values && Object.keys(product.product_option_values).length) {
+      return Object.fromEntries(productOptionGroups.map((group) => [
+        group,
+        (product.product_option_values[group] || []).map((value) => canonicalOptionValue(group, value)),
+      ]));
+    }
+    const values = {};
+    for (const variant of product?.variants || []) {
+      for (const [group, value] of Object.entries(optionValuesForVariant(variant))) {
+        const normalized = canonicalOptionValue(group, value);
+        if (productOptionGroups.includes(group) && !values[group]?.includes(normalized)) {
+          (values[group] ||= []).push(normalized);
+        }
+      }
+    }
+    return values;
+  }
+
+  function displayOptionCombination(optionValues, language = "en") {
+    return productOptionGroups.flatMap((group) => {
+      const value = optionValues[group];
+      if (!value) return [];
+      const displayedValue = group === "color"
+        ? productColorPalette.find(([colorValue]) => colorValue === value)?.[1] || value
+        : value;
+      const groupLabel = productOptionGroupLabels[language]?.[group] || productOptionGroupLabels.en[group];
+      return [`${groupLabel}: ${displayedValue}`];
+    }).join(" · ");
+  }
+
+  function createProductCombinationRow(optionValues, variant = {}, basePrice = 0) {
+    const values = Object.fromEntries(productOptionGroups
+      .filter((group) => optionValues[group])
+      .map((group) => [group, canonicalOptionValue(group, optionValues[group])]));
+    const row = document.createElement("fieldset");
+    row.className = "product-combination-row";
+    row.dataset.optionValues = optionCombinationSignature(values);
+    row.dataset.variantKey = variant.variant_key || "";
+    const legend = document.createElement("legend");
+    legend.textContent = displayOptionCombination(values) || "Combination";
+    const fields = document.createElement("div");
+    fields.className = "product-combination-fields";
+    const createInput = (labelText, value, datasetName, type = "text", attributes = {}) => {
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      const input = document.createElement("input");
+      input.type = type;
+      input.dataset[datasetName] = "";
+      input.value = value ?? "";
+      for (const [key, attributeValue] of Object.entries(attributes)) input.setAttribute(key, attributeValue);
+      label.append(input);
+      return label;
+    };
+    const hasFinalPrice = Object.hasOwn(variant, "final_price");
+    const currentFinalPrice = hasFinalPrice
+      ? variant.final_price ?? ""
+      : variant.variant_key ? Number(basePrice) + (Number(variant.price_adjustment) || 0) : "";
+    fields.append(
+      createInput("Final price (SAR)", currentFinalPrice, "combinationPrice", "number", { min: "0", step: "0.01", placeholder: "Base price" }),
+      createInput("SKU", variant.sku, "combinationSku", "text", { maxlength: "80" }),
+      createInput("Stock quantity", Object.hasOwn(variant, "stock_quantity") ? variant.stock_quantity ?? "" : 0, "combinationStock", "number", { min: "0", step: "1", placeholder: "Unlimited" }),
+    );
+    const activeLabel = document.createElement("label");
+    activeLabel.className = "product-combination-active";
+    const active = document.createElement("input");
+    active.type = "checkbox";
+    active.dataset.combinationActive = "";
+    active.checked = variant.is_active !== false;
+    activeLabel.append(active, document.createTextNode("Available"));
+    row.append(legend, fields, activeLabel);
+    return row;
+  }
+
+  function renderProductOptions(product = null) {
+    const values = productOptionValues(product);
+    for (const group of ["size", "storage", "material"]) {
+      $(`[data-option-values="${group}"]`).value = (values[group] || []).join("\n");
+    }
+    const selectedColors = new Set(values.color || []);
+    productColorPaletteElement.replaceChildren(...productColorPalette.map(([value, label, hex]) => {
+      const colorLabel = document.createElement("label");
+      colorLabel.className = "product-color-option";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.dataset.productColor = "";
+      checkbox.value = value;
+      checkbox.checked = selectedColors.has(value);
+      const sample = document.createElement("span");
+      sample.className = "product-color-swatch";
+      sample.style.setProperty("--option-color", hex);
+      const text = document.createElement("span");
+      text.className = "product-color-label";
+      text.textContent = label;
+      colorLabel.append(checkbox, sample, text);
+      return colorLabel;
+    }));
+    const basePrice = Number(productForm.elements.price.value) || 0;
+    productCombinationRows.replaceChildren(...(product?.variants || []).map((variant) =>
+      createProductCombinationRow(optionValuesForVariant(variant), variant, basePrice),
+    ));
+    productCombinationRows.dataset.optionSignature = JSON.stringify(readProductOptionValues());
+  }
+
+  function readProductOptionValues() {
+    const values = {};
+    for (const group of productOptionGroups.filter((value) => value !== "color")) {
+      const entriesByLowerCase = new Map();
+      $(`[data-option-values="${group}"]`).value
+        .split("\n").map((value) => value.trim()).filter(Boolean)
+        .forEach((value) => entriesByLowerCase.set(value.toLocaleLowerCase(), value));
+      const entries = [...entriesByLowerCase.values()];
+      if (entries.length) values[group] = entries;
+    }
+    const colors = [...productColorPaletteElement.querySelectorAll("[data-product-color]:checked")]
+      .map((input) => input.value);
+    if (colors.length) values.color = colors;
+    return Object.fromEntries(productOptionGroups.filter((group) => values[group]?.length)
+      .map((group) => [group, values[group].map((value) => canonicalOptionValue(group, value))]));
+  }
+
+  function readExistingCombinationRow(row) {
+    const priceText = row.querySelector("[data-combination-price]").value.trim();
+    const stockText = row.querySelector("[data-combination-stock]").value.trim();
+    return {
+      row,
+      optionValues: JSON.parse(row.dataset.optionValues || "{}"),
+      finalPrice: priceText === "" ? null : Number(priceText),
+      stockQuantity: stockText === "" ? null : Number(stockText),
+      isActive: row.querySelector("[data-combination-active]").checked,
+    };
+  }
+
+  function isCombinationSubset(source, target) {
+    const sourceEntries = Object.entries(source);
+    const targetEntries = Object.entries(target);
+    const smaller = sourceEntries.length <= targetEntries.length ? sourceEntries : targetEntries;
+    const larger = sourceEntries.length <= targetEntries.length ? target : source;
+    return smaller.length > 0 && smaller.every(([group, value]) => larger[group] === value);
+  }
+
+  function generateProductCombinations() {
+    showProductError("");
+    const optionValues = readProductOptionValues();
+    const dimensions = productOptionGroups.filter((group) => optionValues[group]?.length);
+    if (!dimensions.length) {
+      productCombinationRows.replaceChildren();
+      productCombinationRows.dataset.optionSignature = JSON.stringify(optionValues);
+      return true;
+    }
+    const combinationCount = dimensions.reduce((count, group) => count * optionValues[group].length, 1);
+    if (combinationCount > 250) {
+      showProductError("This selection creates more than 250 combinations. Reduce the selected values.");
+      return;
+    }
+    const existingRows = [...productCombinationRows.querySelectorAll(".product-combination-row")]
+      .map(readExistingCombinationRow);
+    const combinations = [];
+    const build = (position, combination) => {
+      if (position === dimensions.length) {
+        combinations.push({ ...combination });
+        return;
+      }
+      const group = dimensions[position];
+      for (const value of optionValues[group]) build(position + 1, { ...combination, [group]: value });
+    };
+    build(0, {});
+    const exactRows = new Map(existingRows.map((entry) => [optionCombinationSignature(entry.optionValues), entry.row]));
+    const matchingRows = combinations.map((combination) => existingRows.filter((entry) =>
+      isCombinationSubset(entry.optionValues, combination) || isCombinationSubset(combination, entry.optionValues),
+    ));
+    const expansionCounts = new Map();
+    combinations.forEach((combination, index) => {
+      if (exactRows.has(optionCombinationSignature(combination)) || matchingRows[index].length !== 1) return;
+      const source = matchingRows[index][0];
+      if (Object.keys(source.optionValues).length < Object.keys(combination).length) {
+        expansionCounts.set(source, (expansionCounts.get(source) || 0) + 1);
+      }
+    });
+    const expansionIndices = new Map();
+    const basePrice = Number(productForm.elements.price.value) || 0;
+    const rows = combinations.map((combination, index) => {
+      const signature = optionCombinationSignature(combination);
+      const existing = exactRows.get(signature);
+      if (existing) return existing;
+      const sources = matchingRows[index];
+      if (!sources.length) return createProductCombinationRow(combination, {}, basePrice);
+      const sourcePrices = sources.map((source) => source.finalPrice);
+      const samePrice = sourcePrices.every((value) => value === sourcePrices[0]);
+      let stockQuantity = sources.some((source) => source.stockQuantity === null)
+        ? null
+        : sources.reduce((sum, source) => sum + (source.stockQuantity || 0), 0);
+      let isActive = sources.some((source) => source.isActive);
+      if (sources.length === 1) {
+        const source = sources[0];
+        const count = expansionCounts.get(source) || 1;
+        const indexWithinExpansion = expansionIndices.get(source) || 0;
+        expansionIndices.set(source, indexWithinExpansion + 1);
+        if (stockQuantity !== null) {
+          const each = Math.floor(stockQuantity / count);
+          stockQuantity = each + (indexWithinExpansion < stockQuantity % count ? 1 : 0);
+        }
+        isActive = source.isActive;
+      }
+      return createProductCombinationRow(combination, {
+        final_price: samePrice ? sourcePrices[0] : null,
+        stock_quantity: stockQuantity,
+        is_active: isActive,
+      }, basePrice);
+    });
+    productCombinationRows.replaceChildren(...rows);
+    productCombinationRows.dataset.optionSignature = JSON.stringify(optionValues);
+    window.lucide?.createIcons();
+    return true;
+  }
+
+  function readProductCombinations(slug, basePrice) {
+    return [...productCombinationRows.querySelectorAll(".product-combination-row")].map((row, sortOrder) => {
+      const optionValues = JSON.parse(row.dataset.optionValues || "{}");
+      const groups = productOptionGroups.filter((group) => optionValues[group]);
+      const label = displayOptionCombination(optionValues);
+      const priceText = row.querySelector("[data-combination-price]").value.trim();
+      const finalPrice = priceText === "" ? null : Number(priceText);
+      const stockText = row.querySelector("[data-combination-stock]").value.trim();
+      const stockQuantity = stockText === "" ? null : Number(stockText);
+      if (!groups.length) throw new Error("Each combination needs at least one selected option.");
+      if (finalPrice !== null && (!Number.isFinite(finalPrice) || finalPrice < 0)) throw new Error("Enter a valid final price for every combination.");
+      if (stockQuantity !== null && (!Number.isInteger(stockQuantity) || stockQuantity < 0)) throw new Error("Stock quantities must be whole numbers greater than or equal to zero.");
+      row.dataset.variantKey ||= `${slug}-${crypto.randomUUID()}`;
+      return {
+        variant_key: row.dataset.variantKey,
+        product_slug: slug,
+        option_group: groups.length === 1 ? groups[0] : "combination",
+        option_value: label,
+        option_values: optionValues,
+        option_label_translations: Object.fromEntries(languages.map((language) => [language, displayOptionCombination(optionValues, language)])),
+        sku: row.querySelector("[data-combination-sku]").value.trim() || null,
+        final_price: finalPrice,
+        price_adjustment: finalPrice === null ? 0 : finalPrice - basePrice,
+        stock_quantity: stockQuantity,
+        is_active: row.querySelector("[data-combination-active]").checked,
+        sort_order: sortOrder,
+      };
+    });
+  }
+
   function addProductSpecification() {
     const englishPanel = $('[data-specification-locale="en"]');
     const positions = [...englishPanel.querySelectorAll("[data-specification-index]")]
@@ -1268,6 +1543,7 @@
     }
     renderProductSpecifications(specifications);
     renderProductBenefits(benefits.length ? benefits : product?.product_benefits || []);
+    renderProductOptions(product);
   }
 
   function translationInputName(column, language) {
@@ -1798,6 +2074,29 @@
         description: translatedSpecifications[position]?.description || englishSpecification.description,
       }))];
     }));
+    const optionValues = readProductOptionValues();
+    const optionSignature = JSON.stringify(optionValues);
+    if (productCombinationRows.dataset.optionSignature !== optionSignature) {
+      showProductError("Generate combinations after changing the selected option values.");
+      return;
+    }
+    const selectedGroupCount = productOptionGroups.filter((group) => optionValues[group]?.length).length;
+    const expectedCombinationCount = selectedGroupCount
+      ? productOptionGroups
+        .filter((group) => optionValues[group]?.length)
+        .reduce((count, group) => count * optionValues[group].length, 1)
+      : 0;
+    let variantRows;
+    try {
+      variantRows = readProductCombinations(slug, price);
+    } catch (error) {
+      showProductError(error.message || "Check the product combinations.");
+      return;
+    }
+    if (variantRows.length !== expectedCombinationCount) {
+      showProductError("Generate all combinations before saving this product.");
+      return;
+    }
     const productBenefits = [...productBenefitRows.querySelectorAll(".product-benefit-row")].map((row) => {
       const titleTranslations = {};
       const descriptionTranslations = {};
@@ -1865,6 +2164,7 @@
         description_name_translations: descriptionNameTranslations,
         description_translations: descriptionTranslations,
         product_benefits: productBenefits,
+        product_option_values: optionValues,
         price,
         compare_at_price: compareAtPrice,
         currency: "SAR",
@@ -1901,6 +2201,22 @@
       if (specificationRows.length) {
         const { error: specificationsError } = await client.from("product_specifications").insert(specificationRows);
         if (specificationsError) throw specificationsError;
+      }
+
+      if (variantRows.length) {
+        const { error: variantError } = await client.from("product_variants").upsert(variantRows, { onConflict: "variant_key" });
+        if (variantError) throw variantError;
+      }
+      const savedVariantKeys = new Set(variantRows.filter((variant) => variant.is_active).map((variant) => variant.variant_key));
+      const removedVariantKeys = (products.find((product) => product.slug === slug)?.variants || [])
+        .filter((variant) => variant.is_active && !savedVariantKeys.has(variant.variant_key))
+        .map((variant) => variant.variant_key);
+      if (removedVariantKeys.length) {
+        const { error: deactivateError } = await client.from("product_variants")
+          .update({ is_active: false })
+          .eq("product_slug", slug)
+          .in("variant_key", removedVariantKeys);
+        if (deactivateError) throw deactivateError;
       }
 
       if (imageUrl) {
@@ -2109,6 +2425,7 @@
         if (event.target === dialog) dialog.close();
       }),
     );
+    $("#generate-product-combinations").addEventListener("click", generateProductCombinations);
     productForm.addEventListener("submit", saveProduct);
     promotionForm.addEventListener("submit", savePromotion);
     bannerForm.addEventListener("submit", saveBanner);

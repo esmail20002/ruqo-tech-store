@@ -29,6 +29,9 @@
     } catch {}
   };
   const cart = () => read(keys.cart, {});
+  const cartLineKey = (id, variantKey = null) => variantKey ? `${id}::${variantKey}` : id;
+  const cartProductId = (lineKey) => String(lineKey).split("::", 1)[0];
+  const cartVariantKey = (lineKey) => String(lineKey).includes("::") ? String(lineKey).split("::").slice(1).join("::") : null;
   const setQuantity = (id, quantity) => {
     const next = cart();
     if (quantity > 0) next[id] = Math.min(99, Math.floor(quantity));
@@ -37,9 +40,10 @@
     syncCartCount();
     return next;
   };
-  const addToCart = (id, quantity = 1) => {
+  const addToCart = (id, quantity = 1, variantKey = null) => {
     const next = cart();
-    next[id] = Math.min(99, (Number(next[id]) || 0) + quantity);
+    const lineKey = cartLineKey(id, variantKey);
+    next[lineKey] = Math.min(99, (Number(next[lineKey]) || 0) + quantity);
     write(keys.cart, next);
     syncCartCount();
     return next;
@@ -287,6 +291,15 @@
     next[id] = variant;
     write(keys.variants, next);
   };
+  const getProductOptionSelections = (id) => {
+    const saved = productVariants()[id];
+    return saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+  };
+  const setProductOptionSelections = (id, selections) => {
+    const next = productVariants();
+    next[id] = selections;
+    write(keys.variants, next);
+  };
 
   const currencyMeta = {
     USD: { symbol: "$", label: "USD dollar", subtitle: "الدولار الأمريكي" },
@@ -501,6 +514,9 @@
     read,
     write,
     cart,
+    cartLineKey,
+    cartProductId,
+    cartVariantKey,
     setQuantity,
     addToCart,
     removeFromCart,
@@ -526,6 +542,8 @@
     productVariants,
     getProductVariant,
     setProductVariant,
+    getProductOptionSelections,
+    setProductOptionSelections,
     syncDropdowns,
   };
   document.addEventListener("click", (event) => {

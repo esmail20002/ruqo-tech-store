@@ -644,18 +644,25 @@ function productCard(product) {
   const add = document.createElement("button");
   add.type = "button";
   add.className = "catalog-add";
-  add.disabled = !product.stock;
+  const selectedVariant = product.variants?.find((variant) => variant.is_active !== false && (variant.stock_quantity === null || variant.stock_quantity === undefined || Number(variant.stock_quantity) > 0));
+  const hasConfiguredOptions = Object.values(product.product_option_values || {}).some((values) => Array.isArray(values) && values.length > 0);
+  add.disabled = !product.stock || (hasConfiguredOptions && !selectedVariant);
   add.setAttribute(
     "aria-label",
-    product.stock
+    product.stock && (!hasConfiguredOptions || selectedVariant)
       ? `${copy[language].add}: ${localized.name}`
       : copy[language].unavailable,
   );
   add.append(icon(product.stock ? "shopping-bag" : "minus"));
   add.addEventListener("click", () => {
-    if (window.NoursStore) {
-      window.NoursStore.addToCart(product.id);
+    if (window.NoursStore && !add.disabled) {
+      const unitPrice = product.price + (Number(selectedVariant?.price_adjustment) || 0);
+      window.NoursStore.addToCart(product.id, 1, selectedVariant?.variant_key || null);
       cartCount = window.NoursStore.cartCount();
+      window.NoursStore.showAddedToBag(localized, {
+        quantity: 1,
+        price: formatPrice(unitPrice),
+      });
     } else {
       cartCount += 1;
     }
@@ -663,10 +670,6 @@ function productCard(product) {
     try {
       localStorage.setItem("nours-cart-count", String(cartCount));
     } catch {}
-    window.NoursStore?.showAddedToBag(localized, {
-      quantity: 1,
-      price: formatPrice(product.price),
-    });
   });
   const discountPercent = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)

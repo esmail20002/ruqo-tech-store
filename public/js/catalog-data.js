@@ -517,7 +517,7 @@
     if (!client) return false;
     const { data: productRows, error: productsError } = await client
       .from("products")
-      .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
+      .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, product_option_values, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
       .eq("is_active", true)
       .order("sort_order", { ascending: false });
     if (productsError) throw productsError;
@@ -527,7 +527,7 @@
     const [featureResult, specificationResult, variantResult, imageResult, categoryResult] = await Promise.all([
       client.from("product_features").select("product_slug, language_code, position, content").in("product_slug", slugs).order("position"),
       client.from("product_specifications").select("product_slug, language_code, position, title, description").in("product_slug", slugs).order("position"),
-      client.from("product_variants").select("id, variant_key, product_slug, option_group, option_value, option_label_translations, price_adjustment, stock_quantity, sort_order").eq("is_active", true).in("product_slug", slugs).order("sort_order"),
+      client.from("product_variants").select("id, variant_key, product_slug, option_group, option_value, option_values, option_label_translations, price_adjustment, final_price, stock_quantity, sort_order").eq("is_active", true).in("product_slug", slugs).order("sort_order"),
       client.from("product_images").select("product_slug, image_url, storage_path, alt_translations, is_primary, sort_order").in("product_slug", slugs).order("sort_order"),
       client.from("categories").select("slug, name_translations, description_translations, sort_order").eq("is_active", true).order("sort_order"),
     ]);
@@ -554,6 +554,8 @@
       variantsMap.get(variant.product_slug).push({
         ...variant,
         price_adjustment: Number(variant.price_adjustment) || 0,
+        final_price: variant.final_price === null || variant.final_price === undefined ? null : Number(variant.final_price),
+        option_values: variant.option_values || { [variant.option_group]: variant.option_value },
       });
     }
     const imagesMap = new Map();
@@ -608,6 +610,7 @@
         description: row.description_translations || {},
         description_translations: row.description_translations || {},
         product_benefits: Array.isArray(row.product_benefits) ? row.product_benefits : [],
+        product_option_values: row.product_option_values || {},
         features: localizedFeatures,
         localized_features: localizedFeatures,
         specifications: localizedSpecifications,
