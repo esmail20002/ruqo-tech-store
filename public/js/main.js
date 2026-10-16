@@ -1,3 +1,6 @@
+const mainScriptUrl = document.currentScript?.src || document.baseURI;
+const defaultLightLogoUrl = new URL("../images/new/li.png", mainScriptUrl).href;
+
 const translations = {
   ar: {
     "topbar.shipping": "توصيل مجاني فوق 299 ر.س",
@@ -968,7 +971,7 @@ function renderManagedCategories() {
     link.className = "category-card feature-card";
     const image = document.createElement("img");
     image.className = "category-image";
-    image.src = categoryProducts[0]?.image || defaultImages[category.slug] || "/images/ruqo-logo.png";
+    image.src = categoryProducts[0]?.image || defaultImages[category.slug] || defaultLightLogoUrl;
     image.alt = "";
     image.loading = "lazy";
     const content = document.createElement("div");

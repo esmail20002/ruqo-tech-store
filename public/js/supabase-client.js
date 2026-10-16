@@ -14,10 +14,18 @@
     },
   });
   window.RUQO_SUPABASE = client;
+  const scriptUrl = document.currentScript?.src || location.href;
+  const defaultLogoUrls = {
+    light: new URL("../images/new/li.png", scriptUrl).href,
+    dark: new URL("../images/new/dark.png", scriptUrl).href,
+  };
   const applyPublicStoreSettings = () => {
     const settings = window.RUQO_STORE_SETTINGS;
     if (!settings) return;
     const logoUrl = window.RUQO_BRAND_LOGO_URL;
+    const displayLogoUrl = document.documentElement.dataset.theme === "dark"
+      ? defaultLogoUrls.dark
+      : logoUrl || defaultLogoUrls.light;
     const storeName = settings.store_name || "RUQO TECH";
     document.title = document.title.replace("RUQO TECH", storeName);
     const brandColor = /^#[0-9a-f]{6}$/i.test(settings.brand_color || "")
@@ -53,10 +61,10 @@
     }
     document.querySelectorAll("img.brand-logo").forEach((image) => {
       image.alt = storeName;
-      if (logoUrl) image.src = logoUrl;
+      image.src = displayLogoUrl;
     });
     const favicon = document.querySelector('link[rel="icon"]');
-    if (favicon && logoUrl) favicon.href = logoUrl;
+    if (favicon) favicon.href = displayLogoUrl;
   };
   window.addEventListener("ruqo:language-updated", applyPublicStoreSettings);
   window.addEventListener("ruqo:store-settings-updated", applyPublicStoreSettings);

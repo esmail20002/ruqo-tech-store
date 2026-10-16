@@ -230,16 +230,19 @@
   const syncTheme = () => {
     const theme = getTheme();
     const language = getLanguage();
-    const logoFile = theme === "dark" ? "dark.png" : "ruqo-logo.png";
-    const logoUrl = window.RUQO_BRAND_LOGO_URL || new URL(logoFile, imageDirectory).href;
+    const logoFile = theme === "dark" ? "new/dark.png" : "new/li.png";
+    const defaultLogoUrl = new URL(logoFile, imageDirectory).href;
+    const logoUrl = theme === "dark" ? defaultLogoUrl : window.RUQO_BRAND_LOGO_URL || defaultLogoUrl;
     const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
     document.documentElement.dataset.theme = theme;
     document.documentElement.lang = language === "zh" ? "zh-CN" : language;
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
-    document.querySelectorAll("img.brand-logo").forEach((image) => {
+    document.querySelectorAll("img.brand-logo, img[data-admin-brand-logo]").forEach((image) => {
       if (image.src !== logoUrl) image.src = logoUrl;
       image.alt = storeName;
     });
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (favicon) favicon.href = logoUrl;
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       const isDark = theme === "dark";
       const labels = {

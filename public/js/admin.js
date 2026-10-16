@@ -1,4 +1,7 @@
 (() => {
+  const adminScriptUrl = document.currentScript?.src || window.location.href;
+  const defaultLightLogoUrl = new URL("../images/new/li.png", adminScriptUrl).href;
+  const defaultDarkLogoUrl = new URL("../images/new/dark.png", adminScriptUrl).href;
   const config = window.RUQO_SUPABASE_CONFIG;
   const clientFactory = window.supabase?.createClient;
   const isLocalDevHost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
@@ -118,6 +121,9 @@
       button.innerHTML = `<i data-lucide="${nextTheme === "dark" ? "sun" : "moon"}" aria-hidden="true"></i>`;
       window.lucide?.createIcons();
     }
+    document.querySelectorAll("[data-admin-brand-logo]").forEach((image) => {
+      image.src = getAdminBrandLogoUrl(brandSettings.logo_path);
+    });
   }
 
   function showLoginError(message) {
@@ -256,11 +262,11 @@
     const productWrap = document.createElement("div");
     productWrap.className = "admin-product-cell";
     const image = document.createElement("img");
-    image.src = product.external_image_url || "/images/ruqo-logo.png";
+    image.src = product.external_image_url || defaultLightLogoUrl;
     image.alt = "";
     image.loading = "lazy";
     image.onerror = () => {
-      image.src = "/images/ruqo-logo.png";
+      image.src = defaultLightLogoUrl;
     };
     const meta = document.createElement("div");
     meta.className = "admin-product-meta";
@@ -487,10 +493,10 @@
       { slug: "wearables", name_translations: { en: "Wearables" }, sort_order: 4, is_active: true },
     ];
     products = [
-      { slug: "macbook-pro", brand: "Apple", category_slug: "laptops", name_translations: { en: "MacBook Pro 14 M4" }, price: 5700, compare_at_price: 9999, badge: "popular", in_stock: true, is_active: true, is_featured: true, sort_order: 4, external_image_url: "/images/ruqo-logo.png", variants: [{ variant_key: "macbook-pro-storage-1tb", option_group: "storage", option_value: "1TB", sku: "MBP-1TB", price_adjustment: 0, stock_quantity: 3, is_active: true }] },
-      { slug: "galaxy-s25", brand: "Samsung", category_slug: "phones", name_translations: { en: "Galaxy S25 Ultra" }, price: 4499, compare_at_price: null, badge: "new", in_stock: true, is_active: true, is_featured: false, sort_order: 3, external_image_url: "/images/ruqo-logo.png", variants: [] },
-      { slug: "airpods-pro", brand: "Apple", category_slug: "audio", name_translations: { en: "AirPods Pro" }, price: 899, compare_at_price: null, badge: "sale", in_stock: true, is_active: false, is_featured: false, sort_order: 2, external_image_url: "/images/ruqo-logo.png", variants: [] },
-      { slug: "apple-watch", brand: "Apple", category_slug: "wearables", name_translations: { en: "Apple Watch" }, price: 1299, compare_at_price: null, badge: null, in_stock: false, is_active: true, is_featured: false, sort_order: 1, external_image_url: "/images/ruqo-logo.png", variants: [] },
+      { slug: "macbook-pro", brand: "Apple", category_slug: "laptops", name_translations: { en: "MacBook Pro 14 M4" }, price: 5700, compare_at_price: 9999, badge: "popular", in_stock: true, is_active: true, is_featured: true, sort_order: 4, external_image_url: defaultLightLogoUrl, variants: [{ variant_key: "macbook-pro-storage-1tb", option_group: "storage", option_value: "1TB", sku: "MBP-1TB", price_adjustment: 0, stock_quantity: 3, is_active: true }] },
+      { slug: "galaxy-s25", brand: "Samsung", category_slug: "phones", name_translations: { en: "Galaxy S25 Ultra" }, price: 4499, compare_at_price: null, badge: "new", in_stock: true, is_active: true, is_featured: false, sort_order: 3, external_image_url: defaultLightLogoUrl, variants: [] },
+      { slug: "airpods-pro", brand: "Apple", category_slug: "audio", name_translations: { en: "AirPods Pro" }, price: 899, compare_at_price: null, badge: "sale", in_stock: true, is_active: false, is_featured: false, sort_order: 2, external_image_url: defaultLightLogoUrl, variants: [] },
+      { slug: "apple-watch", brand: "Apple", category_slug: "wearables", name_translations: { en: "Apple Watch" }, price: 1299, compare_at_price: null, badge: null, in_stock: false, is_active: true, is_featured: false, sort_order: 1, external_image_url: defaultLightLogoUrl, variants: [] },
     ];
     orders = [
       { id: "local-order-1", order_number: "RUQ-DEMO-001", customer_name: "Demo Customer", customer_email: "customer@example.com", customer_phone: "+966500000000", status: "pending", payment_method: "cash_on_delivery", payment_status: "pending", currency: "SAR", total: 5700, created_at: new Date().toISOString() },
@@ -516,7 +522,7 @@
       brandSettingsForm.elements[field].value = brandSettings[field];
     }
     brandSettingsForm.elements.delivery_fee.value = brandSettings.standard_shipping_fee;
-    $("#brand-logo-preview").src = "/images/ruqo-logo.png";
+    $("#brand-logo-preview").src = getDefaultBrandLogoUrl();
     renderHomepageSpotlights();
     loginScreen.hidden = true;
     adminApp.hidden = false;
@@ -571,7 +577,19 @@
   function getBrandLogoUrl(logoPath) {
     return logoPath
       ? client.storage.from("store-assets").getPublicUrl(logoPath).data.publicUrl
-      : "/images/ruqo-logo.png";
+      : getDefaultBrandLogoUrl();
+  }
+
+  function getDefaultBrandLogoUrl() {
+    return document.documentElement.dataset.theme === "dark"
+      ? defaultDarkLogoUrl
+      : defaultLightLogoUrl;
+  }
+
+  function getAdminBrandLogoUrl(logoPath) {
+    return document.documentElement.dataset.theme === "dark"
+      ? getDefaultBrandLogoUrl()
+      : getBrandLogoUrl(logoPath);
   }
 
   async function loadBrandSettings() {
@@ -594,7 +612,14 @@
       brandSettingsForm.elements[field].value = brandSettings[field] ?? "";
     }
     brandSettingsForm.elements.delivery_fee.value = brandSettings.standard_shipping_fee ?? 25;
-    $("#brand-logo-preview").src = getBrandLogoUrl(brandSettings.logo_path);
+    const logoUrl = getBrandLogoUrl(brandSettings.logo_path);
+    $("#brand-logo-preview").src = logoUrl;
+    window.RUQO_BRAND_LOGO_URL = brandSettings.logo_path ? logoUrl : null;
+    const adminLogoUrl = getAdminBrandLogoUrl(brandSettings.logo_path);
+    document.querySelectorAll("[data-admin-brand-logo]").forEach((image) => {
+      image.src = adminLogoUrl;
+      image.alt = brandSettings.store_name || "RUQO TECH";
+    });
     brandSettingsForm.dataset.resetLogo = "false";
   }
 
@@ -649,7 +674,7 @@
     $$(".showcase-sale-field").forEach((field) => field.classList.toggle("is-hidden", !saleEnabled));
     const product = products.find((item) => item.slug === homepageShowcaseForm.elements.product_slug.value);
     const preview = $("#home-showcase-preview");
-    preview.src = product?.external_image_url || "/images/ruqo-logo.png";
+    preview.src = product?.external_image_url || defaultLightLogoUrl;
     const details = $("#home-showcase-price-preview");
     if (!product) {
       details.textContent = "Choose a product to preview its current price.";
@@ -723,11 +748,12 @@
 
       brandSettings = settings;
       const logoUrl = getBrandLogoUrl(settings.logo_path);
+      const adminLogoUrl = getAdminBrandLogoUrl(settings.logo_path);
       window.RUQO_STORE_SETTINGS = settings;
       window.RUQO_BRAND_LOGO_URL = settings.logo_path ? logoUrl : null;
       $("#brand-logo-preview").src = logoUrl;
       document.querySelectorAll("[data-admin-brand-logo]").forEach((image) => {
-        image.src = logoUrl;
+        image.src = adminLogoUrl;
         image.alt = settings.store_name;
       });
       document.documentElement.style.setProperty("--primary", settings.brand_color);
@@ -2411,7 +2437,7 @@
     $("#reset-brand-logo").addEventListener("click", () => {
       brandSettingsForm.elements.logo_file.value = "";
       brandSettingsForm.dataset.resetLogo = "true";
-      $("#brand-logo-preview").src = "/images/ruqo-logo.png";
+      $("#brand-logo-preview").src = getDefaultBrandLogoUrl();
     });
     productSearch.addEventListener("input", renderCatalog);
     $$('[data-locale-tab]').forEach((button) =>
