@@ -535,6 +535,13 @@
       if (result.error) throw result.error;
     }
     window.RUQO_CATEGORIES = categoryResult.data || [];
+    const productCurrencies = new Map(productRows.map((product) => [product.slug, product.currency || "SAR"]));
+    const productPrices = new Map(productRows.map((product) => [product.slug, Number(product.price) || 0]));
+    const convertPriceToSar = (value, currency) => {
+      if (value === null || value === undefined) return value;
+      const amount = Number(value);
+      return window.NoursStore?.convertCurrency(amount, currency, "SAR") ?? amount;
+    };
 
     const featureMap = new Map();
     for (const feature of featureResult.data || []) {
@@ -551,10 +558,13 @@
     const variantsMap = new Map();
     for (const variant of variantResult.data || []) {
       if (!variantsMap.has(variant.product_slug)) variantsMap.set(variant.product_slug, []);
+      const currency = productCurrencies.get(variant.product_slug) || "SAR";
+      const productPrice = productPrices.get(variant.product_slug) || 0;
+      const productPriceInSar = convertPriceToSar(productPrice, currency);
       variantsMap.get(variant.product_slug).push({
         ...variant,
-        price_adjustment: Number(variant.price_adjustment) || 0,
-        final_price: variant.final_price === null || variant.final_price === undefined ? null : Number(variant.final_price),
+        price_adjustment: convertPriceToSar(productPrice + (Number(variant.price_adjustment) || 0), currency) - productPriceInSar,
+        final_price: convertPriceToSar(variant.final_price, currency),
         option_values: variant.option_values || { [variant.option_group]: variant.option_value },
       });
     }
@@ -566,6 +576,8 @@
 
     const now = Date.now();
     const syncedProducts = productRows.map((row) => {
+      const currency = row.currency || "SAR";
+      const priceToSar = (value) => convertPriceToSar(value, currency);
       const regularPrice = Number(row.price);
       const salePrice = row.sale_price === null ? null : Number(row.sale_price);
       const saleStartsAt = row.sale_starts_at ? Date.parse(row.sale_starts_at) : null;
@@ -615,14 +627,15 @@
         localized_features: localizedFeatures,
         specifications: localizedSpecifications,
         variants: variantsMap.get(row.slug) || [],
-        price: timedSaleActive ? salePrice : regularPrice,
-        regularPrice,
-        salePrice,
+        price: priceToSar(timedSaleActive ? salePrice : regularPrice),
+        regularPrice: priceToSar(regularPrice),
+        salePrice: priceToSar(salePrice),
         saleStartsAt: row.sale_starts_at,
         saleEndsAt: row.sale_ends_at,
         timedSaleActive,
-        oldPrice: timedSaleActive ? regularPrice : timedSaleExpired ? null : row.compare_at_price === null ? null : Number(row.compare_at_price),
-        currency: row.currency || "SAR",
+        oldPrice: timedSaleActive ? priceToSar(regularPrice) : timedSaleExpired ? null : row.compare_at_price === null ? null : priceToSar(Number(row.compare_at_price)),
+        currency,
+        priceCurrency: "SAR",
         rating: Number(row.rating) || 0,
         reviews: Number(row.review_count) || 0,
         image,

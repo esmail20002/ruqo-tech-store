@@ -431,14 +431,16 @@ try {
 function fmt(value) {
   return new Intl.NumberFormat(localeByLanguage[language] || localeByLanguage.en).format(value);
 }
-function formatPrice(value) {
+function formatPrice(value, sourceCurrency = "SAR") {
   const currency = window.NoursStore?.getCurrency() || "USD";
   const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
+  const converted = window.NoursStore?.convertCurrency(value, sourceCurrency, currency)
+    ?? value * rates[currency];
   return new Intl.NumberFormat(localeByLanguage[language] || localeByLanguage.en, {
     style: "currency",
     currency,
     maximumFractionDigits: currency === "SAR" ? 0 : 2,
-  }).format(value * rates[currency]);
+  }).format(converted);
 }
 function icon(name) {
   const item = document.createElement("i");
@@ -527,6 +529,9 @@ function filteredProducts() {
   const cats = $$("[data-category-filter]:checked").map((input) => input.value);
   const min = Number(ui.min.value) || 0;
   const max = Number(ui.max.value) || 10000;
+  const currency = window.NoursStore?.getCurrency() || "USD";
+  const minInSar = window.NoursStore?.convertCurrency(min, currency, "SAR") ?? min;
+  const maxInSar = window.NoursStore?.convertCurrency(max, currency, "SAR") ?? max;
   const rating = Number($("[data-rating-filter]:checked").value);
   const results = products.filter((product) => {
     const localized = localizeProduct(product);
@@ -536,7 +541,8 @@ function filteredProducts() {
       (!query || searchText.includes(query)) &&
       (!cats.length || cats.includes(product.category)) &&
       product.price >= min &&
-      product.price <= max &&
+      product.price >= minInSar &&
+      product.price <= maxInSar &&
       product.rating >= rating &&
       (!dealsOnly || (product.oldPrice && product.oldPrice > product.price)) &&
       (!ui.stock.checked || product.stock)
@@ -548,7 +554,12 @@ function filteredProducts() {
       b.rating - a.rating,
     newest: (a, b) => b.newest - a.newest,
     "price-asc": (a, b) => a.price - b.price,
-    "price-desc": (a, b) => b.price - a.price,
+    "price-asc": (a, b) =>
+      (window.NoursStore?.convertCurrency(a.price, "SAR", currency) ?? a.price)
+      - (window.NoursStore?.convertCurrency(b.price, "SAR", currency) ?? b.price),
+    "price-desc": (a, b) =>
+      (window.NoursStore?.convertCurrency(b.price, "SAR", currency) ?? b.price)
+      - (window.NoursStore?.convertCurrency(a.price, "SAR", currency) ?? a.price),
     rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews,
   };
   return results.sort(comparators[ui.sort.value] || comparators.featured);
@@ -742,7 +753,7 @@ function activeFilters() {
     max = Number(ui.max.value) || 10000;
   if (min > 0 || max < 10000)
     chips.push({
-      text: `${formatPrice(min)} – ${formatPrice(max)}`,
+      text: `${formatPrice(min, window.NoursStore?.getCurrency() || "USD")} – ${formatPrice(max, window.NoursStore?.getCurrency() || "USD")}`,
       clear: () => {
         ui.min.value = 0;
         ui.max.value = 10000;

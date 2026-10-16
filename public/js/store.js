@@ -287,6 +287,13 @@
     window.dispatchEvent(new CustomEvent("ruqo:currency-updated", { detail: { currency: next } }));
     return next;
   };
+  const currencyRates = Object.freeze({ SAR: 1, USD: 1 / 3.75, EUR: 0.245 });
+  const convertCurrency = (amount, fromCurrency = "SAR", toCurrency = getCurrency()) => {
+    const value = Number(amount) || 0;
+    const sourceRate = currencyRates[fromCurrency] || currencyRates.SAR;
+    const targetRate = currencyRates[toCurrency] || currencyRates.SAR;
+    return Math.round((value * targetRate / sourceRate + Number.EPSILON) * 100) / 100;
+  };
   const productVariants = () => read(keys.variants, {});
   const getProductVariant = (id) => productVariants()[id] || "";
   const setProductVariant = (id, variant) => {
@@ -542,6 +549,7 @@
     setSettings,
     getCurrency,
     setCurrency,
+    convertCurrency,
     productVariants,
     getProductVariant,
     setProductVariant,

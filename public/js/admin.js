@@ -44,11 +44,6 @@
       description_translations: { en: "7-day returns", fr: "Retours sous 7 jours", es: "Devoluciones en 7 días", zh: "七天退货", ar: "استرجاع خلال 7 أيام" },
     },
   ];
-  const currency = new Intl.NumberFormat("en-SA", {
-    style: "currency",
-    currency: "SAR",
-    maximumFractionDigits: 0,
-  });
   const categoryLabels = {
     phones: "Phones",
     laptops: "Laptops",
@@ -150,8 +145,12 @@
     toastTimer = setTimeout(() => node.classList.remove("is-visible"), 2600);
   }
 
-  function formatPrice(value) {
-    return currency.format(Number(value) || 0);
+  function formatPrice(value, currencyCode = "SAR") {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: currencyCode || "SAR",
+      maximumFractionDigits: 2,
+    }).format(Number(value) || 0);
   }
 
   function translateName(product) {
@@ -283,7 +282,7 @@
     category.textContent = categoryName(product.category_slug);
     row.append(category);
     const price = document.createElement("td");
-    price.textContent = formatPrice(product.price);
+    price.textContent = formatPrice(product.price, product.currency);
     row.append(price);
 
     if (!recent) {
@@ -427,7 +426,7 @@
   async function loadHomepageSpotlights() {
     const { data, error } = await client
       .from("homepage_spotlight_items")
-      .select("id, product_slug, sort_order, bottom_detail, sale_enabled, sale_price, sale_starts_at, sale_ends_at, is_active, products(slug, brand, name_translations, price, sale_price, sale_starts_at, sale_ends_at, external_image_url)")
+      .select("id, product_slug, sort_order, bottom_detail, sale_enabled, sale_price, sale_starts_at, sale_ends_at, is_active, products(slug, brand, name_translations, price, currency, sale_price, sale_starts_at, sale_ends_at, external_image_url)")
       .order("sort_order")
       .order("created_at");
     if (error) throw error;
@@ -448,8 +447,8 @@
       slug.style.display = "block";
       productCell.append(productName, slug);
       row.append(productCell);
-      appendTextCell(row, formatPrice(product?.price));
-      appendTextCell(row, item.sale_enabled ? `${formatPrice(item.sale_price)} offer` : "No discount");
+      appendTextCell(row, formatPrice(product?.price, product?.currency));
+      appendTextCell(row, item.sale_enabled ? `${formatPrice(item.sale_price, product?.currency)} offer` : "No discount");
       appendTextCell(row, item.sale_enabled ? `${formatDateTime(item.sale_starts_at)} – ${formatDateTime(item.sale_ends_at)}` : "—");
       appendTextCell(row, item.sort_order);
       const statusCell = document.createElement("td");
@@ -592,6 +591,17 @@
       : getBrandLogoUrl(logoPath);
   }
 
+  function updateProductCurrencyLabels() {
+    const currencyCode = productForm.elements.currency.value || "SAR";
+    $$('[data-product-currency]').forEach((node) => {
+      node.textContent = currencyCode;
+    });
+    $$("[data-combination-price-label]").forEach((label) => {
+      if (label.firstChild) label.firstChild.textContent = `Final price (${currencyCode})`;
+    });
+    updateHomepageShowcasePreview();
+  }
+
   async function loadBrandSettings() {
     const { data, error } = await client
       .from("store_settings")
@@ -673,6 +683,8 @@
     const saleEnabled = homepageShowcaseForm.elements.sale_enabled.checked;
     $$(".showcase-sale-field").forEach((field) => field.classList.toggle("is-hidden", !saleEnabled));
     const product = products.find((item) => item.slug === homepageShowcaseForm.elements.product_slug.value);
+    const currencyCode = product?.currency || "SAR";
+    $("[data-showcase-currency]").textContent = currencyCode;
     const preview = $("#home-showcase-preview");
     preview.src = product?.external_image_url || defaultLightLogoUrl;
     const details = $("#home-showcase-price-preview");
@@ -682,8 +694,8 @@
     }
     const salePrice = Number(homepageShowcaseForm.elements.sale_price.value);
     details.textContent = saleEnabled && Number.isFinite(salePrice) && salePrice >= 0
-      ? `${translateName(product)} · ${formatPrice(product.price)} → ${formatPrice(salePrice)}`
-      : `${translateName(product)} · ${formatPrice(product.price)}`;
+      ? `${translateName(product)} · ${formatPrice(product.price, currencyCode)} → ${formatPrice(salePrice, currencyCode)}`
+      : `${translateName(product)} · ${formatPrice(product.price, currencyCode)}`;
   }
 
   async function saveBrandSettings(event) {
@@ -1356,8 +1368,10 @@
     const currentFinalPrice = hasFinalPrice
       ? variant.final_price ?? ""
       : variant.variant_key ? Number(basePrice) + (Number(variant.price_adjustment) || 0) : "";
+    const priceLabel = createInput(`Final price (${productForm.elements.currency.value || "SAR"})`, currentFinalPrice, "combinationPrice", "number", { min: "0", step: "0.01", placeholder: "Base price" });
+    priceLabel.dataset.combinationPriceLabel = "";
     fields.append(
-      createInput("Final price (SAR)", currentFinalPrice, "combinationPrice", "number", { min: "0", step: "0.01", placeholder: "Base price" }),
+      priceLabel,
       createInput("SKU", variant.sku, "combinationSku", "text", { maxlength: "80" }),
       createInput("Stock quantity", Object.hasOwn(variant, "stock_quantity") ? variant.stock_quantity ?? "" : 0, "combinationStock", "number", { min: "0", step: "1", placeholder: "Unlimited" }),
     );
@@ -1683,6 +1697,7 @@
   function openNewProduct() {
     editingSlug = null;
     productForm.reset();
+    productForm.elements.currency.value = "SAR";
     productForm.elements.slug.readOnly = false;
     productForm.elements.is_active.checked = true;
     productForm.elements.in_stock.checked = true;
@@ -1692,6 +1707,7 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(categories[0]?.slug || "");
     setProductTranslations(null);
+    updateProductCurrencyLabels();
     setLocale("en");
     productDialog.showModal();
   }
@@ -1722,6 +1738,7 @@
     productForm.elements.slug.value = product.slug;
     productForm.elements.slug.readOnly = true;
     productForm.elements.brand.value = product.brand;
+    productForm.elements.currency.value = ["SAR", "USD", "EUR"].includes(product.currency) ? product.currency : "SAR";
     productForm.elements.badge.value = product.badge || "";
     productForm.elements.price.value = product.price;
     productForm.elements.compare_at_price.value = product.compare_at_price ?? "";
@@ -1735,6 +1752,7 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(product.category_slug);
     setProductTranslations(product, features || [], specifications || [], product.product_benefits || []);
+    updateProductCurrencyLabels();
     window.lucide?.createIcons();
     setLocale("en");
     productDialog.showModal();
@@ -2053,6 +2071,7 @@
     const englishName = String(formData.get("name_en") || "").trim();
     const englishDescriptionName = String(formData.get("description_name_en") || "").trim();
     const price = Number(formData.get("price"));
+    const currencyCode = String(formData.get("currency") || "SAR");
     const compareValue = String(formData.get("compare_at_price") || "").trim();
     const compareAtPrice = compareValue ? Number(compareValue) : null;
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
@@ -2064,6 +2083,10 @@
     if (!englishName || !Number.isFinite(price) || price < 0) {
       showProductError("Enter an English product name and a valid price.");
       setLocale("en");
+      return;
+    }
+    if (!["SAR", "USD", "EUR"].includes(currencyCode)) {
+      showProductError("Choose a supported product currency.");
       return;
     }
     if (!englishDescriptionName) {
@@ -2193,7 +2216,7 @@
         product_option_values: optionValues,
         price,
         compare_at_price: compareAtPrice,
-        currency: "SAR",
+        currency: currencyCode,
         badge: String(formData.get("badge") || "") || null,
         in_stock: formData.get("in_stock") === "on",
         is_active: formData.get("is_active") === "on",
@@ -2452,6 +2475,7 @@
       }),
     );
     $("#generate-product-combinations").addEventListener("click", generateProductCombinations);
+    productForm.elements.currency.addEventListener("change", updateProductCurrencyLabels);
     productForm.addEventListener("submit", saveProduct);
     promotionForm.addEventListener("submit", savePromotion);
     bannerForm.addEventListener("submit", saveBanner);

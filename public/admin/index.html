@@ -190,7 +190,7 @@
             <label>Lower card detail<select name="bottom_detail"><option value="description">Product description</option><option value="brand">Brand and category</option><option value="rating">Customer rating</option><option value="feature">First product highlight</option></select></label>
             <label class="admin-inline-check form-field-wide"><input name="is_active" type="checkbox" checked /><span><strong>Show on homepage</strong><small>Turn off to pause this spotlight item.</small></span></label>
             <label class="admin-inline-check form-field-wide"><input name="sale_enabled" type="checkbox" /><span><strong>Enable timed discount</strong><small>Changes the live product and checkout price until it expires.</small></span></label>
-            <label class="showcase-sale-field">Offer price (SAR)<input name="sale_price" type="number" min="0" step="0.01" /></label>
+            <label class="showcase-sale-field">Offer price (<span data-showcase-currency>SAR</span>)<input name="sale_price" type="number" min="0" step="0.01" /></label>
             <label class="showcase-sale-field">Starts at (optional)<input name="sale_starts_at" type="datetime-local" /></label>
             <label class="showcase-sale-field">Ends at<input name="sale_ends_at" type="datetime-local" /></label>
           </div>
@@ -210,8 +210,9 @@
             <label>Brand<input name="brand" required placeholder="Brand name" /></label>
             <label>Category<select name="category_slug" id="product-category" required></select></label>
             <label>Badge<select name="badge"><option value="">No badge</option><option value="new">New</option><option value="sale">Sale</option><option value="popular">Popular</option></select></label>
-            <label>Price (SAR)<input name="price" type="number" min="0" step="0.01" required /></label>
-            <label>Compare-at price<input name="compare_at_price" type="number" min="0" step="0.01" placeholder="Optional" /></label>
+            <label>Currency<select name="currency" id="product-currency" required><option value="SAR">SAR · Saudi riyal</option><option value="USD">USD · US dollar</option><option value="EUR">EUR · Euro</option></select></label>
+            <label>Price (<span data-product-currency>SAR</span>)<input name="price" type="number" min="0" step="0.01" required /></label>
+            <label>Compare-at price (<span data-product-currency>SAR</span>)<input name="compare_at_price" type="number" min="0" step="0.01" placeholder="Optional" /></label>
             <label class="form-field-wide">Product image URL<input name="external_image_url" type="url" placeholder="https://…" /></label>
             <label class="form-field-wide admin-upload">Upload a replacement image<input name="image_file" type="file" accept="image/png,image/jpeg,image/webp" /><small>PNG, JPEG, or WebP. Maximum 10 MB.</small></label>
           </div>
