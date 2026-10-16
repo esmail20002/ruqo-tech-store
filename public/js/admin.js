@@ -1752,6 +1752,7 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(product.category_slug);
     setProductTranslations(product, features || [], specifications || [], product.product_benefits || []);
+    generateProductCombinations();
     updateProductCurrencyLabels();
     window.lucide?.createIcons();
     setLocale("en");
