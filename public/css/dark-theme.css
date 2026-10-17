@@ -807,6 +807,38 @@ html[data-theme="dark"] .commerce-heading p {
   color: #b7c4d2;
 }
 
+html[data-theme="dark"] .support-hero {
+  background-color: #050608;
+}
+
+html[data-theme="dark"] .support-trust-grid,
+html[data-theme="dark"] .support-contact-aside,
+html[data-theme="dark"] .support-policy-grid article {
+  border-color: var(--line);
+  background-color: var(--surface);
+}
+
+html[data-theme="dark"] .support-anchor-nav {
+  border-color: var(--line);
+  background: rgba(15, 25, 37, 0.96);
+}
+
+html[data-theme="dark"] .support-anchor-nav a:hover,
+html[data-theme="dark"] .support-anchor-nav a:focus-visible {
+  background: rgba(103, 200, 184, 0.13);
+  color: #a0e3d7;
+}
+
+html[data-theme="dark"] .support-hero-actions .commerce-button {
+  background-image: linear-gradient(110deg, #432586, #3153b8, #1762b6, #087c83, #432586);
+  background-size: 300% 100%;
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .support-hero-actions .support-text-link {
+  color: #d8e0e7;
+}
+
 html[data-theme="dark"] .product-detail-gallery .product-detail-image {
   border-color: rgba(177, 197, 218, 0.14);
   background:

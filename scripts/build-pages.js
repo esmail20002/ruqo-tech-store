@@ -1,8 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
-const repositoryName = process.env.GITHUB_REPOSITORY?.split('/').pop() || 'ruqo-tech-store';
-const basePath = `/${repositoryName}/`;
+const basePath = process.env.SITE_BASE_PATH || '/';
 const sourceDirectory = path.resolve('public');
 const outputDirectory = path.resolve('dist');
 const transformExtensions = new Set(['.html', '.js', '.css']);

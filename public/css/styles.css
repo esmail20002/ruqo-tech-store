@@ -1999,11 +1999,11 @@ section {
 }
 
 .site-footer {
-  --footer-bg: #11191f;
-  --footer-text: #eef3f5;
-  --footer-muted: #a7b4bc;
-  --footer-line: rgba(210, 229, 233, 0.13);
-  --footer-accent: #55d3b8;
+  --footer-bg: #050608;
+  --footer-text: #f4f5f8;
+  --footer-muted: #b7c0ca;
+  --footer-line: rgba(225, 238, 247, 0.14);
+  --footer-accent: #83eaff;
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -2011,9 +2011,10 @@ section {
   margin-top: 42px;
   background-color: var(--footer-bg);
   background-image:
+    linear-gradient(110deg, rgba(115, 45, 174, 0.13), transparent 43%, transparent 57%, rgba(0, 184, 211, 0.11)),
     linear-gradient(rgba(226, 240, 240, 0.018) 1px, transparent 1px),
     linear-gradient(90deg, rgba(226, 240, 240, 0.018) 1px, transparent 1px);
-  background-size: 44px 44px;
+  background-size: auto, 44px 44px, 44px 44px;
   color: var(--footer-text);
 }
 
@@ -2021,10 +2022,10 @@ section {
   position: absolute;
   inset: 0 0 auto;
   height: 2px;
-  background: linear-gradient(90deg, transparent 0%, #00f5d4 18%, #53c8ff 38%, #ff6fb1 62%, #ffd166 82%, transparent 100%);
-  background-size: 240% 100%;
-  box-shadow: 0 0 8px rgba(0, 245, 212, 0.38), 0 0 15px rgba(83, 200, 255, 0.24), 0 0 20px rgba(255, 111, 177, 0.14);
-  animation: footer-neon-sweep 8s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent 0%, #9747d3 18%, #6566e9 38%, #258fe8 62%, #24d6e5 82%, transparent 100%);
+  background-size: 220% 100%;
+  box-shadow: 0 0 8px rgba(151, 71, 211, 0.24), 0 0 15px rgba(37, 143, 232, 0.2), 0 0 20px rgba(36, 214, 229, 0.14);
+  animation: footer-neon-sweep 14s ease-in-out infinite;
   content: "";
 }
 
@@ -2076,10 +2077,10 @@ section {
   width: 24px;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #00f5d4, #53c8ff 36%, #ff6fb1 70%, #ffd166);
+  background: linear-gradient(90deg, #9747d3, #6566e9 36%, #258fe8 70%, #24d6e5);
   background-size: 220% 100%;
-  box-shadow: 0 0 8px rgba(0, 245, 212, 0.4), 0 0 15px rgba(255, 111, 177, 0.24);
-  animation: footer-neon-sweep 8s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(151, 71, 211, 0.26), 0 0 15px rgba(36, 214, 229, 0.2);
+  animation: footer-neon-sweep 14s ease-in-out infinite;
   content: "";
 }
 

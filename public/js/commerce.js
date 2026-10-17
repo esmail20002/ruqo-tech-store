@@ -2051,8 +2051,229 @@
     root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.account}</h1></div></div><div class="account-layout"><nav class="account-tabs"><a href="#profile" aria-current="page">${t.profile}</a><a href="#settings">${t.settings}</a><a href="#orders">${t.orders}</a></nav><div class="account-content"><section class="commerce-panel" id="profile"><h2>${t.profile}</h2><form class="commerce-form" data-profile-form><div class="commerce-form-grid"><label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" value="${escapeHtml(profile.name)}" /></label><label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" value="${escapeHtml(profile.email)}" /></label><label class="commerce-field">${t.phone}<input name="phone" type="tel" autocomplete="tel" value="${escapeHtml(profile.phone)}" /></label><label class="commerce-field">${t.city}<input name="city" value="${escapeHtml(profile.city || t.cityDefault)}" /></label></div><div class="form-feedback" data-profile-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${t.saveProfile}</button></form></section><section class="commerce-panel" id="settings"><h2>${t.settings}</h2><form data-settings-form><label class="settings-row"><span>${t.updates}<small>${t.updatesNote}</small></span><input type="checkbox" name="orderUpdates" ${settings.orderUpdates ? "checked" : ""} /></label><label class="settings-row"><span>${t.offers}<small>${t.offersNote}</small></span><input type="checkbox" name="offers" ${settings.offers ? "checked" : ""} /></label><div class="form-feedback" data-settings-feedback aria-live="polite"></div><button class="commerce-button-secondary" type="submit">${t.saveSettings}</button></form></section><section class="commerce-panel" id="orders"><h2>${t.orders}</h2>${orderMarkup}</section></div></div>`;
   }
 
+  function getSupportCopy() {
+    const copy = {
+      en: {
+        intro: "Straightforward guidance on ordering, delivery, payment, returns, and contacting our team.",
+        trustOrder: "Orders reach our store", trustOrderText: "Checkout details are submitted to RUQO TECH for order processing.",
+        trustPayment: "Pay when it arrives", trustPaymentText: "Choose cash or card on delivery. Online card payment is not offered here.",
+        trustDelivery: "Delivery costs shown upfront", trustDeliveryText: "Review the delivery fee and order total before confirming.",
+        trustReturns: "After-sales policies", trustReturnsText: "Eligible items may be requested for return within 7 days; products include a 2-year manufacturing-defect warranty.",
+        flowTitle: "How ordering works", flowOne: "Choose your items", flowOneText: "Browse the catalog and add the products you want to your bag.",
+        flowTwo: "Confirm your details", flowTwoText: "Enter your delivery information and review the full order total at checkout.",
+        flowThree: "Pay on delivery", flowThreeText: "Pay the courier by cash or card when your order arrives.",
+        deliveryBody: "Standard delivery usually takes 1–2 business days. Timing may vary by destination.",
+        paymentBody: "Payment is collected when the order arrives. Select cash or card on delivery at checkout; this storefront does not request online card details.",
+        returnsBody: "You can request a return within 7 days of delivery for eligible items in their original condition. Products include a 2-year warranty against manufacturing defects; accidental damage and normal wear are not covered.",
+        accountBody: "For help with an existing order, include its order number and the contact details used at checkout. Never send passwords or payment card details in a support message.",
+        faqDeliveryAnswer: "Standard delivery usually takes 1–2 business days. Timing can vary by destination; the delivery fee for your order is shown at checkout.",
+        faqReturnAnswer: "Contact us within 7 days of receiving an eligible item and keep it with its accessories in original condition. Our team can guide you through the request.",
+        faqWarrantyAnswer: "The 2-year warranty covers manufacturing defects. Accidental damage and normal wear are not included.",
+        faqPaymentAnswer: "Choose cash or card on delivery during checkout. Payment is collected by the courier when the order arrives.",
+        faqAccountAnswer: "Your order details are submitted to the store when you check out. Include your order number when contacting us about it.",
+        faqContactAnswer: "Use the form below to send a message to our support system. A confirmation appears when your message is saved.",
+        termsBody: "Prices, availability, and delivery charges may change before an order is submitted. Review the products, any discount, delivery fee, and final total shown at checkout before confirming. Orders are submitted to the store for processing. Payment is collected on delivery. Returns and warranty requests are handled according to the policies stated on this page and the product's eligibility.",
+        privacyBody: "Information entered at checkout is sent to the store to process your order. Messages submitted through this form are saved in the store's support system. Your cart, profile, preferences, and wishlist may be stored in this browser. This storefront does not request online card details; please do not include passwords or card information in messages.",
+        contactIntro: "Send a message using the form and it will be submitted to our support team.",
+        contactPrivacy: "Your message and contact details are saved so the team can review your request.",
+        noContactChannels: "Direct phone and email details are not currently available. Please use the message form.",
+      },
+      ar: {
+        intro: "إرشادات واضحة لإتمام الطلب والتوصيل والدفع والاسترجاع والتواصل مع فريقنا.",
+        trustOrder: "طلباتك تصل إلى المتجر", trustOrderText: "تُرسل بيانات الطلب عند إتمام الشراء إلى RUQO TECH لمعالجته.",
+        trustPayment: "ادفع عند الاستلام", trustPaymentText: "اختر الدفع نقداً أو بالبطاقة عند الاستلام. لا نطلب دفعاً إلكترونياً بالبطاقة هنا.",
+        trustDelivery: "رسوم التوصيل واضحة", trustDeliveryText: "راجع رسوم التوصيل والإجمالي قبل تأكيد الطلب.",
+        trustReturns: "سياسات ما بعد الشراء", trustReturnsText: "يمكن طلب استرجاع المنتجات المؤهلة خلال 7 أيام، وتشمل المنتجات ضماناً لمدة سنتين ضد عيوب التصنيع.",
+        flowTitle: "كيف يتم الطلب؟", flowOne: "اختر منتجاتك", flowOneText: "تصفح المنتجات وأضف ما ترغب به إلى سلة التسوق.",
+        flowTwo: "أكد بياناتك", flowTwoText: "أدخل معلومات التوصيل وراجع إجمالي الطلب قبل تأكيده.",
+        flowThree: "ادفع عند الاستلام", flowThreeText: "ادفع للمندوب نقداً أو بالبطاقة عند وصول طلبك.",
+        deliveryBody: "يصل التوصيل المعتاد غالباً خلال يوم إلى يومي عمل، وقد تختلف المدة بحسب الوجهة.",
+        paymentBody: "يتم تحصيل المبلغ عند وصول الطلب. اختر الدفع نقداً أو بالبطاقة عند الاستلام؛ لا يطلب المتجر بيانات البطاقة للدفع الإلكتروني.",
+        returnsBody: "يمكنك طلب استرجاع المنتجات المؤهلة خلال 7 أيام من الاستلام وبحالتها الأصلية. تشمل المنتجات ضماناً لمدة سنتين ضد عيوب التصنيع، ولا يشمل التلف العرضي أو الاستهلاك المعتاد.",
+        accountBody: "للمساعدة بشأن طلب قائم، أرفق رقم الطلب وبيانات التواصل المستخدمة عند الشراء. لا ترسل كلمات المرور أو بيانات البطاقة في رسائل الدعم.",
+        faqDeliveryAnswer: "يصل التوصيل المعتاد غالباً خلال يوم إلى يومي عمل، وقد تختلف المدة بحسب الوجهة. تظهر رسوم توصيل طلبك عند إتمام الشراء.",
+        faqReturnAnswer: "تواصل معنا خلال 7 أيام من استلام المنتج المؤهل، مع الحفاظ عليه وملحقاته بحالتها الأصلية. سيساعدك فريقنا في معرفة الخطوات.",
+        faqWarrantyAnswer: "يغطي الضمان لمدة سنتين عيوب التصنيع، ولا يشمل التلف العرضي أو الاستهلاك المعتاد.",
+        faqPaymentAnswer: "اختر الدفع نقداً أو بالبطاقة عند الاستلام أثناء إتمام الطلب. يحصّل المندوب المبلغ عند وصول الطلب.",
+        faqAccountAnswer: "تُرسل بيانات طلبك إلى المتجر عند إتمام الشراء. أرفق رقم الطلب عند التواصل بشأنه.",
+        faqContactAnswer: "استخدم النموذج أدناه لإرسال رسالة إلى نظام دعم المتجر. ستظهر رسالة تأكيد بعد حفظها.",
+        termsBody: "قد تتغير الأسعار والتوفر ورسوم التوصيل قبل إرسال الطلب. راجع المنتجات وأي خصم ورسوم التوصيل والإجمالي النهائي الظاهر عند إتمام الشراء قبل التأكيد. تُرسل الطلبات إلى المتجر لمعالجتها، ويُحصّل المبلغ عند الاستلام. تتم معالجة طلبات الاسترجاع والضمان وفق السياسات الموضحة هنا وأهلية المنتج.",
+        privacyBody: "تُرسل البيانات التي تدخلها عند إتمام الشراء إلى المتجر لمعالجة طلبك. وتُحفظ الرسائل المرسلة عبر النموذج في نظام دعم المتجر. قد تُحفظ سلتك وملفك الشخصي وتفضيلاتك ومفضلتك في هذا المتصفح. لا يطلب المتجر بيانات بطاقة للدفع الإلكتروني؛ يرجى عدم تضمين كلمات المرور أو بيانات البطاقة في الرسائل.",
+        contactIntro: "أرسل رسالتك عبر النموذج لتصل إلى فريق الدعم.",
+        contactPrivacy: "تُحفظ رسالتك وبيانات التواصل ليتمكن الفريق من مراجعة طلبك.",
+        noContactChannels: "بيانات الهاتف والبريد المباشر غير متاحة حالياً. يرجى استخدام نموذج الرسائل.",
+      },
+      fr: {
+        intro: "Des informations claires sur les commandes, la livraison, le paiement, les retours et notre équipe.",
+        trustOrder: "Commandes transmises au magasin", trustOrderText: "Les informations de commande sont envoyées à RUQO TECH pour traitement.",
+        trustPayment: "Paiement à la livraison", trustPaymentText: "Payez en espèces ou par carte à la livraison. Aucun paiement par carte en ligne n'est proposé ici.",
+        trustDelivery: "Frais affichés à l'avance", trustDeliveryText: "Consultez les frais de livraison et le total avant de confirmer.",
+        trustReturns: "Politiques après-vente", trustReturnsText: "Le retour des articles éligibles peut être demandé sous 7 jours ; les produits bénéficient d'une garantie de 2 ans contre les défauts de fabrication.",
+        flowTitle: "Comment commander", flowOne: "Choisissez vos articles", flowOneText: "Parcourez le catalogue et ajoutez les produits souhaités au panier.",
+        flowTwo: "Confirmez vos coordonnées", flowTwoText: "Saisissez vos informations de livraison et vérifiez le total à la commande.",
+        flowThree: "Payez à la livraison", flowThreeText: "Réglez le livreur en espèces ou par carte à l'arrivée de votre commande.",
+        deliveryBody: "La livraison standard prend généralement 1 à 2 jours ouvrables. Le délai peut varier selon la destination.",
+        paymentBody: "Le paiement est perçu à l'arrivée de la commande. Choisissez les espèces ou la carte à la livraison ; ce site ne demande pas de données de carte en ligne.",
+        returnsBody: "Vous pouvez demander le retour d'un article éligible sous 7 jours après réception, dans son état d'origine. Les produits bénéficient d'une garantie de 2 ans contre les défauts de fabrication ; les dommages accidentels et l'usure normale ne sont pas couverts.",
+        accountBody: "Pour une question sur une commande, indiquez son numéro et les coordonnées utilisées lors de l'achat. N'envoyez jamais de mot de passe ni de données de carte au support.",
+        faqDeliveryAnswer: "La livraison standard prend généralement 1 à 2 jours ouvrables. Le délai peut varier selon la destination ; les frais sont affichés au paiement.",
+        faqReturnAnswer: "Contactez-nous sous 7 jours après réception d'un article éligible et conservez-le avec ses accessoires dans son état d'origine. Notre équipe vous guidera.",
+        faqWarrantyAnswer: "La garantie de 2 ans couvre les défauts de fabrication, mais pas les dommages accidentels ni l'usure normale.",
+        faqPaymentAnswer: "Choisissez les espèces ou la carte à la livraison lors de la commande. Le livreur perçoit le paiement à l'arrivée.",
+        faqAccountAnswer: "Les informations de commande sont transmises au magasin lors du paiement. Indiquez le numéro de commande pour toute question.",
+        faqContactAnswer: "Utilisez le formulaire ci-dessous pour envoyer un message à notre support. Une confirmation s'affiche une fois le message enregistré.",
+        termsBody: "Les prix, la disponibilité et les frais de livraison peuvent changer avant l'envoi d'une commande. Vérifiez les articles, les remises, les frais et le total affichés avant de confirmer. Les commandes sont transmises au magasin pour traitement et le paiement est perçu à la livraison. Les demandes de retour et de garantie suivent les politiques indiquées ici et l'éligibilité du produit.",
+        privacyBody: "Les informations saisies lors de la commande sont transmises au magasin pour son traitement. Les messages envoyés via ce formulaire sont enregistrés dans le système d'assistance du magasin. Le panier, le profil, les préférences et les favoris peuvent être conservés dans ce navigateur. Aucune donnée de carte en ligne n'est demandée ; n'incluez pas de mot de passe ni de carte dans vos messages.",
+        contactIntro: "Envoyez un message avec le formulaire ; il sera transmis à notre équipe d'assistance.",
+        contactPrivacy: "Votre message et vos coordonnées sont enregistrés afin que l'équipe puisse examiner votre demande.",
+        noContactChannels: "Aucun numéro ni e-mail direct n'est disponible pour le moment. Utilisez le formulaire.",
+      },
+      es: {
+        intro: "Información clara sobre pedidos, entrega, pagos, devoluciones y cómo contactar con el equipo.",
+        trustOrder: "El pedido llega a la tienda", trustOrderText: "Los datos del pedido se envían a RUQO TECH para su tramitación.",
+        trustPayment: "Paga al recibirlo", trustPaymentText: "Elige efectivo o tarjeta al recibir. Aquí no se solicita el pago online con tarjeta.",
+        trustDelivery: "Costes visibles antes de confirmar", trustDeliveryText: "Revisa el envío y el total del pedido antes de confirmarlo.",
+        trustReturns: "Políticas posventa", trustReturnsText: "Se puede solicitar la devolución de artículos aptos durante 7 días; los productos incluyen 2 años de garantía por defectos de fabricación.",
+        flowTitle: "Cómo hacer un pedido", flowOne: "Elige tus productos", flowOneText: "Explora el catálogo y añade los productos que quieras a la bolsa.",
+        flowTwo: "Confirma tus datos", flowTwoText: "Introduce los datos de entrega y revisa el total al finalizar la compra.",
+        flowThree: "Paga al recibir", flowThreeText: "Paga al repartidor en efectivo o con tarjeta cuando llegue el pedido.",
+        deliveryBody: "La entrega estándar suele tardar entre 1 y 2 días laborables. El plazo puede variar según el destino.",
+        paymentBody: "El pago se cobra al llegar el pedido. Elige efectivo o tarjeta al recibir; esta tienda no solicita datos de tarjeta online.",
+        returnsBody: "Puedes solicitar la devolución de artículos aptos durante los 7 días posteriores a la entrega y en su estado original. Los productos incluyen 2 años de garantía por defectos de fabricación; no cubre daños accidentales ni desgaste normal.",
+        accountBody: "Para consultar un pedido, incluye su número y los datos de contacto usados al comprar. No envíes contraseñas ni datos de tarjetas en los mensajes de soporte.",
+        faqDeliveryAnswer: "La entrega estándar suele tardar entre 1 y 2 días laborables. El plazo puede variar según el destino; el coste aparece al finalizar la compra.",
+        faqReturnAnswer: "Contáctanos durante los 7 días posteriores a recibir un artículo apto y consérvalo con sus accesorios en su estado original. El equipo te indicará cómo continuar.",
+        faqWarrantyAnswer: "La garantía de 2 años cubre defectos de fabricación, pero no daños accidentales ni desgaste normal.",
+        faqPaymentAnswer: "Elige efectivo o tarjeta al recibir durante la compra. El repartidor cobrará al entregar el pedido.",
+        faqAccountAnswer: "Los datos del pedido se envían a la tienda al finalizar la compra. Incluye el número del pedido cuando nos contactes.",
+        faqContactAnswer: "Usa el formulario para enviar un mensaje a soporte. Verás una confirmación cuando el mensaje se guarde.",
+        termsBody: "Los precios, la disponibilidad y los gastos de envío pueden cambiar antes de enviar un pedido. Revisa los productos, descuentos, envío y total antes de confirmarlo. Los pedidos se envían a la tienda para su tramitación y el pago se cobra al recibir. Las solicitudes de devolución y garantía se rigen por las políticas indicadas aquí y la elegibilidad del producto.",
+        privacyBody: "Los datos introducidos al comprar se envían a la tienda para tramitar el pedido. Los mensajes enviados mediante este formulario se guardan en el sistema de soporte. La bolsa, el perfil, las preferencias y la lista de deseos pueden guardarse en este navegador. Esta tienda no solicita datos de tarjeta online; no incluyas contraseñas ni datos de tarjeta en tus mensajes.",
+        contactIntro: "Envía un mensaje mediante el formulario para que llegue al equipo de soporte.",
+        contactPrivacy: "El mensaje y tus datos de contacto se guardan para que el equipo pueda revisar tu solicitud.",
+        noContactChannels: "Por el momento no hay teléfono ni correo directo disponibles. Usa el formulario.",
+      },
+      zh: {
+        intro: "了解下单、配送、付款、退货政策，以及如何联系店铺团队。",
+        trustOrder: "订单提交至店铺", trustOrderText: "结账信息会发送至 RUQO TECH 以处理订单。",
+        trustPayment: "收货时付款", trustPaymentText: "可选择现金或配送时刷卡。本店不提供在线银行卡付款。",
+        trustDelivery: "配送费用提前显示", trustDeliveryText: "确认前请查看配送费用和订单总额。",
+        trustReturns: "售后政策", trustReturnsText: "符合条件的商品可在 7 天内申请退货；商品享有两年制造缺陷保修。",
+        flowTitle: "下单流程", flowOne: "挑选商品", flowOneText: "浏览商品目录，将需要的商品加入购物袋。",
+        flowTwo: "确认信息", flowTwoText: "填写配送信息，并在结账时核对订单总额。",
+        flowThree: "收货时付款", flowThreeText: "订单送达时向配送员支付现金或刷卡。",
+        deliveryBody: "标准配送通常需要 1 至 2 个工作日，具体时间可能因配送地点而异。",
+        paymentBody: "订单送达时收款。结账时可选择现金或配送时刷卡；本店不会在线收集银行卡信息。",
+        returnsBody: "符合条件的商品可在收货后 7 天内按原状申请退货。商品享有两年制造缺陷保修；不包括意外损坏和正常损耗。",
+        accountBody: "咨询已有订单时，请提供订单号及下单时使用的联系方式。请勿在客服消息中发送密码或银行卡信息。",
+        faqDeliveryAnswer: "标准配送通常需要 1 至 2 个工作日，具体时间可能因配送地点而异。配送费用会在结账时显示。",
+        faqReturnAnswer: "请在收到符合条件的商品后 7 天内联系我们，并保持商品及配件原状。客服团队会为你说明后续流程。",
+        faqWarrantyAnswer: "两年保修涵盖制造缺陷，不包括意外损坏或正常损耗。",
+        faqPaymentAnswer: "结账时选择现金或配送时刷卡，配送员会在送达时收款。",
+        faqAccountAnswer: "下单后，订单信息会提交至店铺。咨询订单时请附上订单号。",
+        faqContactAnswer: "请使用下方表单向客服发送消息。消息保存后会显示确认信息。",
+        termsBody: "订单提交前，商品价格、库存及配送费用可能发生变化。确认前请核对商品、优惠、配送费和结账时显示的总额。订单会提交至店铺处理，款项在收货时支付。退货和保修申请按照本页政策及商品适用条件处理。",
+        privacyBody: "结账时填写的信息会发送至店铺以处理订单。通过此表单提交的消息会保存在店铺客服系统中。购物袋、个人资料、偏好和心愿单可能保存在此浏览器中。本店不收集在线银行卡信息；请勿在消息中填写密码或银行卡资料。",
+        contactIntro: "通过表单发送消息，内容会提交给客服团队。",
+        contactPrivacy: "消息和联系方式会被保存，以便团队查看你的请求。",
+        noContactChannels: "目前没有可用的直接电话或邮箱，请使用消息表单。",
+      },
+    };
+    return copy[language] || copy.en;
+  }
+
   function renderSupport() {
-    root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.helpTitle}</h1><p>${t.helpIntro}</p></div></div><nav class="support-anchor-nav"><a href="#faq">${t.faq}</a><a href="#delivery">${t.deliveryTitle}</a><a href="#contact">${t.contactTitle}</a><a href="#terms">${t.terms}</a><a href="#privacy">${t.privacy}</a></nav><section class="support-section" id="faq"><h2>${t.faq}</h2><div class="faq-list"><details><summary>${t.faqDelivery}</summary><p>${t.faqDeliveryAnswer}</p></details><details><summary>${t.faqReturn}</summary><p>${t.faqReturnAnswer}</p></details><details><summary>${t.faqWarranty}</summary><p>${t.faqWarrantyAnswer}</p></details></div></section><section class="support-section" id="delivery"><h2>${t.deliveryTitle}</h2><p>${t.deliveryBody}</p></section><section class="support-section" id="payment"><h2>${t.paymentsTitle}</h2><p>${t.paymentsBody}</p></section><section class="support-section" id="returns"><h2>${t.returnsTitle}</h2><p>${t.returnsBody}</p></section><section class="support-section" id="account-help"><h2>${t.accountTitle}</h2><p>${t.accountBody}</p></section><section class="support-section contact-layout" id="contact"><div><h2>${t.contactTitle}</h2><p>${t.contactIntro}</p><form class="commerce-form" data-contact-form><label class="commerce-field">${t.fullName}<input name="name" required /></label><label class="commerce-field">${t.email}<input name="email" type="email" required /></label><label class="commerce-field">${t.message}<textarea name="message" required></textarea></label><div class="form-feedback" data-contact-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${t.sendMessage}</button></form></div><div class="contact-details"><strong>${t.support}</strong><a href="tel:+966500000000">${t.supportPhone}</a><a href="mailto:hello@noursstore.com">${t.supportEmail}</a><span>${t.cityDefault}</span></div></section><section class="support-section" id="terms"><h2>${t.termsTitle}</h2><p>${t.termsBody}</p></section><section class="support-section" id="privacy"><h2>${t.privacyTitle}</h2><p>${t.privacyBody}</p></section>`;
+    const copy = getSupportCopy();
+    const settings = window.RUQO_STORE_SETTINGS || {};
+    const phone = String(settings.support_phone || "").trim();
+    const phoneHref = phone.replace(/[^+\d]/g, "");
+    const email = String(settings.support_email || "").trim();
+    const contacts = [
+      phoneHref ? `<a href="tel:${escapeHtml(phoneHref)}"><i data-lucide="phone" aria-hidden="true"></i><span>${escapeHtml(phone)}</span></a>` : "",
+      email ? `<a href="mailto:${escapeHtml(email)}"><i data-lucide="mail" aria-hidden="true"></i><span>${escapeHtml(email)}</span></a>` : "",
+    ].filter(Boolean).join("");
+
+    root.innerHTML = `
+      <div class="support-page">
+        <section class="support-hero">
+          <div class="support-hero-copy">
+            <span class="commerce-eyebrow">${t.eyebrow}</span>
+            <h1>${t.helpTitle}</h1>
+            <p>${copy.intro}</p>
+            <div class="support-hero-actions">
+              <a class="commerce-button" href="#contact"><i data-lucide="message-circle" aria-hidden="true"></i>${t.contactTitle}</a>
+              <a class="support-text-link" href="#faq">${t.faq}<i data-lucide="arrow-down" aria-hidden="true"></i></a>
+            </div>
+          </div>
+          <aside class="support-hero-note">
+            <span class="support-hero-icon"><i data-lucide="badge-check" aria-hidden="true"></i></span>
+            <strong>${copy.trustOrder}</strong>
+            <p>${copy.trustOrderText}</p>
+          </aside>
+        </section>
+
+        <section class="support-trust-grid" aria-label="${t.support}">
+          <article class="support-trust-item"><i data-lucide="banknote" aria-hidden="true"></i><div><h2>${copy.trustPayment}</h2><p>${copy.trustPaymentText}</p></div></article>
+          <article class="support-trust-item"><i data-lucide="truck" aria-hidden="true"></i><div><h2>${copy.trustDelivery}</h2><p>${shippingNote()}</p></div></article>
+          <article class="support-trust-item"><i data-lucide="rotate-ccw" aria-hidden="true"></i><div><h2>${copy.trustReturns}</h2><p>${copy.trustReturnsText}</p></div></article>
+        </section>
+
+        <nav class="support-anchor-nav" aria-label="${t.helpTitle}">
+          <a href="#ordering">${copy.flowTitle}</a><a href="#faq">${t.faq}</a><a href="#delivery">${t.deliveryTitle}</a><a href="#payment">${t.paymentsTitle}</a><a href="#returns">${t.returnsTitle}</a><a href="#contact">${t.contactTitle}</a><a href="#terms">${t.terms}</a><a href="#privacy">${t.privacy}</a>
+        </nav>
+
+        <section class="support-section support-flow" id="ordering">
+          <div class="support-section-heading"><span class="commerce-eyebrow">${t.checkout}</span><h2>${copy.flowTitle}</h2></div>
+          <div class="support-flow-grid">
+            <article><span class="support-step-number">01</span><h3>${copy.flowOne}</h3><p>${copy.flowOneText}</p></article>
+            <article><span class="support-step-number">02</span><h3>${copy.flowTwo}</h3><p>${copy.flowTwoText}</p></article>
+            <article><span class="support-step-number">03</span><h3>${copy.flowThree}</h3><p>${copy.flowThreeText}</p></article>
+          </div>
+        </section>
+
+        <section class="support-section" id="faq">
+          <div class="support-section-heading"><span class="commerce-eyebrow">${t.support}</span><h2>${t.faq}</h2></div>
+          <div class="faq-list">
+            <details><summary>${t.faqDelivery}</summary><p>${copy.faqDeliveryAnswer}</p></details>
+            <details><summary>${t.paymentsTitle}</summary><p>${copy.faqPaymentAnswer}</p></details>
+            <details><summary>${t.faqReturn}</summary><p>${copy.faqReturnAnswer}</p></details>
+            <details><summary>${t.faqWarranty}</summary><p>${copy.faqWarrantyAnswer}</p></details>
+            <details><summary>${t.accountTitle}</summary><p>${copy.faqAccountAnswer}</p></details>
+            <details><summary>${t.contactTitle}</summary><p>${copy.faqContactAnswer}</p></details>
+          </div>
+        </section>
+
+        <section class="support-section support-policy-grid">
+          <article id="delivery"><span class="support-policy-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span><h2>${t.deliveryTitle}</h2><p>${shippingNote()}</p><p>${copy.deliveryBody}</p></article>
+          <article id="payment"><span class="support-policy-icon"><i data-lucide="wallet-cards" aria-hidden="true"></i></span><h2>${t.paymentsTitle}</h2><p>${copy.paymentBody}</p></article>
+          <article id="returns"><span class="support-policy-icon"><i data-lucide="package-check" aria-hidden="true"></i></span><h2>${t.returnsTitle}</h2><p>${copy.returnsBody}</p></article>
+          <article id="account-help"><span class="support-policy-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span><h2>${t.accountTitle}</h2><p>${copy.accountBody}</p></article>
+        </section>
+
+        <section class="support-section contact-layout" id="contact">
+          <div class="support-contact-form">
+            <span class="commerce-eyebrow">${t.support}</span><h2>${t.contactTitle}</h2><p>${copy.contactIntro}</p>
+            <form class="commerce-form" data-contact-form>
+              <label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" minlength="2" maxlength="120" required /></label>
+              <label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" maxlength="254" required /></label>
+              <label class="commerce-field">${t.message}<textarea name="message" minlength="8" maxlength="3000" required></textarea></label>
+              <p class="support-form-note">${copy.contactPrivacy}</p>
+              <div class="form-feedback" data-contact-feedback aria-live="polite"></div>
+              <button class="commerce-button" type="submit"><i data-lucide="send" aria-hidden="true"></i>${t.sendMessage}</button>
+            </form>
+          </div>
+          <aside class="support-contact-aside">
+            <span class="support-policy-icon"><i data-lucide="headset" aria-hidden="true"></i></span>
+            <h3>${t.support}</h3>
+            <p>${copy.contactPrivacy}</p>
+            <div class="contact-details">${contacts || `<p>${copy.noContactChannels}</p>`}</div>
+          </aside>
+        </section>
+
+        <section class="support-section support-legal" id="terms"><span class="commerce-eyebrow">${t.terms}</span><h2>${t.termsTitle}</h2><p>${copy.termsBody}</p></section>
+        <section class="support-section support-legal" id="privacy"><span class="commerce-eyebrow">${t.privacy}</span><h2>${t.privacyTitle}</h2><p>${copy.privacyBody}</p></section>
+      </div>`;
+    window.lucide?.createIcons();
   }
 
   function renderAbout() {
@@ -2080,7 +2301,8 @@
     else renderSupport();
     if (page === "support") {
       root.querySelector("#delivery > p").textContent = shippingNote();
-      root.querySelector(".faq-list details:first-child p").textContent = shippingNote();
+      root.querySelector(".faq-list details:first-child p").textContent =
+        getSupportCopy().faqDeliveryAnswer;
       const contactForm = root.querySelector("[data-contact-form]");
       contactForm.elements.name.minLength = 2;
       contactForm.elements.name.maxLength = 120;
