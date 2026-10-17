@@ -1390,6 +1390,7 @@
     const values = productOptionValues(product);
     for (const group of ["size", "storage", "material"]) {
       $(`[data-option-values="${group}"]`).value = (values[group] || []).join("\n");
+      renderProductOptionChips(group);
     }
     const selectedColors = new Set(values.color || []);
     productColorPaletteElement.replaceChildren(...productColorPalette.map(([value, label, hex]) => {
@@ -1414,6 +1415,58 @@
       createProductCombinationRow(optionValuesForVariant(variant), variant, basePrice),
     ));
     productCombinationRows.dataset.optionSignature = JSON.stringify(readProductOptionValues());
+  }
+
+  function productOptionEntries(group) {
+    return $(`[data-option-values="${group}"]`).value
+      .split("\n")
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  function renderProductOptionChips(group) {
+    const container = $(`[data-option-chips="${group}"]`);
+    if (!container) return;
+    const values = productOptionEntries(group);
+    container.replaceChildren(...values.map((value) => {
+      const chip = document.createElement("span");
+      chip.className = "product-option-chip";
+      const text = document.createElement("span");
+      text.textContent = value;
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "product-option-chip-remove";
+      remove.setAttribute("aria-label", `Remove ${value} ${group}`);
+      remove.title = `Remove ${value}`;
+      remove.innerHTML = '<i data-lucide="x" aria-hidden="true"></i>';
+      remove.addEventListener("click", () => {
+        setProductOptionEntries(group, productOptionEntries(group).filter((entry) => entry !== value));
+      });
+      chip.append(text, remove);
+      return chip;
+    }));
+    window.lucide?.createIcons();
+  }
+
+  function setProductOptionEntries(group, values) {
+    const uniqueValues = [...new Map(values
+      .map((value) => String(value).trim())
+      .filter(Boolean)
+      .map((value) => [value.toLocaleLowerCase(), value])).values()];
+    $(`[data-option-values="${group}"]`).value = uniqueValues.join("\n");
+    renderProductOptionChips(group);
+  }
+
+  function addProductOptionValue(group) {
+    const input = $(`[data-option-entry="${group}"]`);
+    const value = input.value.trim().replace(/,+$/, "").trim();
+    if (!value) return;
+    const currentValues = productOptionEntries(group);
+    if (!currentValues.some((entry) => entry.toLocaleLowerCase() === value.toLocaleLowerCase())) {
+      setProductOptionEntries(group, [...currentValues, value]);
+    }
+    input.value = "";
+    input.focus();
   }
 
   function readProductOptionValues() {
@@ -1608,6 +1661,57 @@
     });
   }
 
+  function bindProductEditorNavigation() {
+    const content = $("#product-editor-content");
+    const buttons = $$('[data-product-editor-target]');
+    const sections = buttons.map((button) => document.getElementById(button.dataset.productEditorTarget)).filter(Boolean);
+    const setActive = (sectionId) => {
+      buttons.forEach((button) => {
+        const active = button.dataset.productEditorTarget === sectionId;
+        button.classList.toggle("is-active", active);
+        if (active) button.setAttribute("aria-current", "location");
+        else button.removeAttribute("aria-current");
+      });
+    };
+    const updateActive = () => {
+      if (!content || !sections.length) return;
+      const top = content.getBoundingClientRect().top + 112;
+      let activeSection = sections[0];
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= top) activeSection = section;
+      }
+      if (content.scrollTop + content.clientHeight >= content.scrollHeight - 2) {
+        activeSection = sections[sections.length - 1];
+      }
+      setActive(activeSection.id);
+    };
+    buttons.forEach((button) => button.addEventListener("click", () => {
+      const section = document.getElementById(button.dataset.productEditorTarget);
+      if (!section || !content) return;
+      const top = section.getBoundingClientRect().top - content.getBoundingClientRect().top + content.scrollTop - 18;
+      content.scrollTo({
+        top: Math.max(0, top),
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      });
+      setActive(section.id);
+    }));
+    content?.addEventListener("scroll", updateActive, { passive: true });
+    updateActive();
+  }
+
+  function resetProductEditorNavigation() {
+    const content = $("#product-editor-content");
+    if (content) content.scrollTop = 0;
+    const firstSection = $$("[data-product-editor-target]")[0]?.dataset.productEditorTarget;
+    if (!firstSection) return;
+    $$('[data-product-editor-target]').forEach((button) => {
+      const active = button.dataset.productEditorTarget === firstSection;
+      button.classList.toggle("is-active", active);
+      if (active) button.setAttribute("aria-current", "location");
+      else button.removeAttribute("aria-current");
+    });
+  }
+
   function openNewCategory() {
     editingCategorySlug = null;
     categoryForm.reset();
@@ -1709,6 +1813,7 @@
     setProductTranslations(null);
     updateProductCurrencyLabels();
     setLocale("en");
+    resetProductEditorNavigation();
     productDialog.showModal();
   }
 
@@ -1756,6 +1861,7 @@
     updateProductCurrencyLabels();
     window.lucide?.createIcons();
     setLocale("en");
+    resetProductEditorNavigation();
     productDialog.showModal();
   }
 
@@ -2477,7 +2583,19 @@
     );
     $("#generate-product-combinations").addEventListener("click", generateProductCombinations);
     productForm.elements.currency.addEventListener("change", updateProductCurrencyLabels);
+    $$('[data-add-option-value]').forEach((button) => {
+      button.addEventListener("click", () => addProductOptionValue(button.dataset.addOptionValue));
+    });
+    $$('[data-option-entry]').forEach((input) => {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === ",") {
+          event.preventDefault();
+          addProductOptionValue(input.dataset.optionEntry);
+        }
+      });
+    });
     productForm.addEventListener("submit", saveProduct);
+    bindProductEditorNavigation();
     promotionForm.addEventListener("submit", savePromotion);
     bannerForm.addEventListener("submit", saveBanner);
     $("#delete-product").addEventListener("click", deleteProduct);
