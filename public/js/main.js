@@ -690,6 +690,10 @@ function formatShowcasePrice(amount) {
   }).format(Number(amount) * rates[currency]);
 }
 
+function getHomepagePriceLabel() {
+  return { ar: "السعر", en: "Price", fr: "Prix", es: "Precio", zh: "价格" }[currentLang] || "Price";
+}
+
 function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
   if (!spotlights.length) return false;
@@ -711,6 +715,8 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   }[currentLang] || { sale: "Limited offer", featured: "Featured product", begins: "Offer starts in", ends: "Offer ends in", days: "d", hours: "h", minutes: "m", seconds: "s", brand: "Brand", rating: "Customer rating", description: "Product detail", feature: "Key feature" };
 
   const image = card.querySelector(".featured-product-image");
+  const showcasePrice = card.querySelector(".hero-showcase-price-value");
+  const showcasePriceLabel = card.querySelector(".hero-showcase-price-label");
   const saleActive = Boolean(product.timedSaleActive);
   const saleConfigured = product.salePrice !== null && product.salePrice !== undefined && product.saleEndsAt;
   const regularPrice = Number(product.regularPrice ?? product.price);
@@ -767,6 +773,8 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
 
   image.src = product.image;
   image.alt = localized.name;
+  showcasePrice.dataset.priceSar = product.price;
+  showcasePriceLabel.textContent = getHomepagePriceLabel();
   productBadge.textContent = saleActive
     ? `${discountPercent}% OFF`
     : translations[currentLang]?.[`tags.${product.badge === "new" ? "new" : "featured"}`] || copy.featured;
@@ -894,11 +902,14 @@ function renderFeaturedProduct() {
   const product = featuredProducts[featuredProductIndex];
   const content = product[currentLang] || product.en;
   const image = card.querySelector(".featured-product-image");
+  const showcasePrice = card.querySelector(".hero-showcase-price-value");
 
   card.classList.add("is-changing");
   window.setTimeout(() => {
     image.src = product.image;
     image.alt = content.alt;
+    showcasePrice.dataset.priceSar = product.price.replaceAll(",", "");
+    card.querySelector(".hero-showcase-price-label").textContent = getHomepagePriceLabel();
     card.querySelector(".product-badge").textContent = content.badge;
     formatHomepagePrices();
     card.classList.remove("is-changing");

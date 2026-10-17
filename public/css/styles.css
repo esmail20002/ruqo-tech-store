@@ -51,34 +51,26 @@ html {
 body {
   margin: 0;
   font-family: "Cairo", sans-serif;
-  background:
-    radial-gradient(
-      circle at 100% 0%,
-      rgba(147, 83, 225, 0.12),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 4% 34%,
-      rgba(242, 114, 140, 0.09),
-      transparent 25%
-    ),
-    radial-gradient(
-      circle at 92% 74%,
-      rgba(255, 160, 91, 0.1),
-      transparent 30%
-    ),
-    linear-gradient(180deg, #fffefd 0%, #fbf8ff 42%, #fff8f4 100%);
+  background-color: #fff;
+  background-image:
+    linear-gradient(90deg, rgba(69, 196, 181, 0.15), transparent 22%),
+    linear-gradient(270deg, rgba(239, 119, 110, 0.13), transparent 20%),
+    linear-gradient(0deg, rgba(190, 139, 235, 0.12), transparent 30%);
+  background-attachment: fixed;
+  background-size: 150% 150%, 150% 150%, 150% 150%;
+  background-position: 0% 46%, 100% 54%, 54% 100%;
+  animation: ambient-color-wash 36s ease-in-out infinite alternate;
   color: var(--text);
 }
 
+@keyframes ambient-color-wash {
+  to {
+    background-position: 8% 54%, 92% 46%, 46% 94%;
+  }
+}
+
 .page-shell {
-  background:
-    radial-gradient(
-      circle at top center,
-      rgba(255, 255, 255, 0.75),
-      transparent 30%
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0));
+  background: transparent;
 }
 
 a {
@@ -1089,6 +1081,10 @@ html[dir="rtl"] .topbar-marquee-track {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+
   .hero-visual::before,
   .card-one,
   .card-two {
@@ -1245,6 +1241,25 @@ html[dir="rtl"] .mobile-ad-arrow {
   );
   border-radius: 30px;
   overflow: hidden;
+}
+
+.hero-showcase-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 2px 0;
+  padding: 12px 6px 2px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.hero-showcase-price-value {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 .featured-product-image {
