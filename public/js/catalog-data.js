@@ -430,6 +430,7 @@
       },
     },
   ];
+  const bundledFeatures = new Map(products.map((product) => [product.id, product.features]));
   const localizedProductCopy = {
     fr: {
       "macbook-pro": { description: "Écran Liquid Retina XDR · mémoire unifiée 16 Go", features: ["Écran Liquid Retina XDR de 14 pouces", "Puce Apple M4", "Mémoire unifiée de 16 Go", "Autonomie pour toute la journée"] },
@@ -524,16 +525,20 @@
     if (!productRows?.length) return false;
 
     const slugs = productRows.map((product) => product.slug);
-    const [featureResult, specificationResult, variantResult, imageResult, categoryResult] = await Promise.all([
+    const [featureResult, specificationResult, variantResult, imageResult, detailImageResult, categoryResult] = await Promise.all([
       client.from("product_features").select("product_slug, language_code, position, content").in("product_slug", slugs).order("position"),
       client.from("product_specifications").select("product_slug, language_code, position, title, description").in("product_slug", slugs).order("position"),
       client.from("product_variants").select("id, variant_key, product_slug, option_group, option_value, option_values, option_label_translations, price_adjustment, final_price, stock_quantity, sort_order").eq("is_active", true).in("product_slug", slugs).order("sort_order"),
       client.from("product_images").select("product_slug, image_url, storage_path, alt_translations, is_primary, sort_order").in("product_slug", slugs).order("sort_order"),
+      client.from("product_detail_images").select("product_slug, image_url, storage_path, sort_order").in("product_slug", slugs).order("sort_order"),
       client.from("categories").select("slug, name_translations, description_translations, sort_order").eq("is_active", true).order("sort_order"),
     ]);
+    const detailImagesTableMissing = detailImageResult.error?.code === "PGRST205"
+      || /could not find the table.*product_detail_images.*schema cache/i.test(detailImageResult.error?.message || "");
     for (const result of [featureResult, specificationResult, variantResult, imageResult, categoryResult]) {
       if (result.error) throw result.error;
     }
+    if (detailImageResult.error && !detailImagesTableMissing) throw detailImageResult.error;
     window.RUQO_CATEGORIES = categoryResult.data || [];
     const productCurrencies = new Map(productRows.map((product) => [product.slug, product.currency || "SAR"]));
     const productPrices = new Map(productRows.map((product) => [product.slug, Number(product.price) || 0]));
@@ -573,6 +578,14 @@
       if (!imagesMap.has(image.product_slug)) imagesMap.set(image.product_slug, []);
       imagesMap.get(image.product_slug).push(image);
     }
+    const detailImagesMap = new Map();
+    for (const image of detailImageResult.data || []) {
+      if (!detailImagesMap.has(image.product_slug)) detailImagesMap.set(image.product_slug, []);
+      detailImagesMap.get(image.product_slug).push(image.storage_path
+        ? client.storage.from("product-images").getPublicUrl(image.storage_path).data.publicUrl
+        : image.image_url,
+      );
+    }
 
     const now = Date.now();
     const syncedProducts = productRows.map((row) => {
@@ -603,6 +616,8 @@
           entries.sort((left, right) => left.position - right.position).map((entry) => entry.content),
         ]),
       );
+      const fallbackFeatures = bundledFeatures.get(row.slug) || {};
+      const productFeatures = { ...fallbackFeatures, ...localizedFeatures };
       const localizedSpecifications = Object.fromEntries(
         Object.entries(specificationMap.get(row.slug) || {}).map(([language, entries]) => [
           language,
@@ -623,7 +638,7 @@
         description_translations: row.description_translations || {},
         product_benefits: Array.isArray(row.product_benefits) ? row.product_benefits : [],
         product_option_values: row.product_option_values || {},
-        features: localizedFeatures,
+        features: productFeatures,
         localized_features: localizedFeatures,
         specifications: localizedSpecifications,
         variants: variantsMap.get(row.slug) || [],
@@ -640,6 +655,7 @@
         reviews: Number(row.review_count) || 0,
         image,
         images: productImages.length ? productImages : image ? [image] : [],
+        detailImages: detailImagesMap.get(row.slug) || [],
         regularBadge: row.badge,
         badge: timedSaleActive ? "sale" : timedSaleExpired && row.badge === "sale" ? null : row.badge,
         stock: row.in_stock,

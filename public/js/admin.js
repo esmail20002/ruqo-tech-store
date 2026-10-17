@@ -79,6 +79,8 @@
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
   const productBenefitRows = $("#product-benefit-rows");
+  const productDetailImageRows = $("#product-detail-image-rows");
+  const productGalleryImageRows = $("#product-gallery-image-rows");
   const productColorPaletteElement = $("[data-product-color-palette]");
   const productCombinationRows = $("#product-combination-rows");
   const productsEmpty = $("#products-empty");
@@ -96,6 +98,7 @@
   let homepageSpotlights = [];
   let brandSettings = {};
   let editingSlug = null;
+  let originalProductGalleryImages = [];
   let editingCategorySlug = null;
   let editingSpotlightSlug = null;
   let editingPromotionId = null;
@@ -381,23 +384,39 @@
       { data: categoryRows, error: categoryError },
       { data: productRows, error: productError },
       { data: variantRows, error: variantError },
+      { data: detailImageRows, error: detailImageError },
     ] = await Promise.all([
         client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
         client.from("products").select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, product_option_values, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
         client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_values, option_label_translations, sku, price_adjustment, final_price, stock_quantity, is_active, sort_order").order("sort_order"),
+        client.from("product_detail_images").select("id, product_slug, image_url, storage_path, sort_order").order("sort_order"),
     ]);
     if (categoryError) throw categoryError;
     if (productError) throw productError;
     if (variantError) throw variantError;
+    const detailImagesTableMissing = detailImageError?.code === "PGRST205"
+      || /could not find the table.*product_detail_images.*schema cache/i.test(detailImageError?.message || "");
+    if (detailImageError && !detailImagesTableMissing) throw detailImageError;
     categories = categoryRows || [];
     const variantsByProduct = new Map();
     for (const variant of variantRows || []) {
       if (!variantsByProduct.has(variant.product_slug)) variantsByProduct.set(variant.product_slug, []);
       variantsByProduct.get(variant.product_slug).push(variant);
     }
+    const detailImagesByProduct = new Map();
+    for (const image of detailImageRows || []) {
+      if (!detailImagesByProduct.has(image.product_slug)) detailImagesByProduct.set(image.product_slug, []);
+      detailImagesByProduct.get(image.product_slug).push({
+        ...image,
+        public_url: image.storage_path
+          ? client.storage.from("product-images").getPublicUrl(image.storage_path).data.publicUrl
+          : image.image_url,
+      });
+    }
     products = (productRows || []).map((product) => ({
       ...product,
       variants: variantsByProduct.get(product.slug) || [],
+      detail_images: detailImagesByProduct.get(product.slug) || [],
     }));
     renderCatalog();
     renderCategories();
@@ -1285,6 +1304,266 @@
     window.lucide?.createIcons();
   }
 
+  function updateProductDetailImageOrder() {
+    const rows = [...productDetailImageRows.querySelectorAll(".product-detail-image-row")];
+    const addButton = $("#add-product-detail-image");
+    addButton.disabled = rows.length >= 10;
+    addButton.title = rows.length >= 10 ? "Maximum 10 images" : "Add image";
+    $("#product-detail-image-count").textContent = `${rows.length} / 10 images`;
+    rows.forEach((row, index) => {
+      row.querySelector("legend").textContent = `Detail image ${index + 1}`;
+      row.querySelector('[data-detail-image-move="-1"]').disabled = index === 0;
+      row.querySelector('[data-detail-image-move="1"]').disabled = index === rows.length - 1;
+    });
+  }
+
+  function createProductDetailImageRow(image = {}) {
+    const row = document.createElement("fieldset");
+    row.className = "product-detail-image-row";
+    row.dataset.imageId = image.id || "";
+    row.dataset.storagePath = image.storage_path || "";
+    row.dataset.originalStoragePath = image.storage_path || "";
+    const legend = document.createElement("legend");
+    const preview = document.createElement("div");
+    preview.className = "product-detail-image-preview";
+    const previewImage = document.createElement("img");
+    previewImage.alt = "";
+    previewImage.hidden = true;
+    preview.append(previewImage);
+    const previewUrl = image.public_url || (image.storage_path
+      ? client.storage.from("product-images").getPublicUrl(image.storage_path).data.publicUrl
+      : image.image_url || "");
+    if (previewUrl) {
+      previewImage.src = previewUrl;
+      previewImage.hidden = false;
+    }
+
+    const fields = document.createElement("div");
+    fields.className = "product-detail-image-fields";
+    const urlLabel = document.createElement("label");
+    urlLabel.textContent = "Image URL";
+    const urlInput = document.createElement("input");
+    urlInput.type = "url";
+    urlInput.placeholder = "https://…";
+    urlInput.dataset.detailImageUrl = "";
+    urlInput.value = image.image_url || "";
+    urlLabel.append(urlInput);
+    const fileLabel = document.createElement("label");
+    fileLabel.textContent = "Or upload image";
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/png,image/jpeg,image/webp";
+    fileInput.dataset.detailImageFile = "";
+    fileLabel.append(fileInput);
+    fields.append(urlLabel, fileLabel);
+
+    const actions = document.createElement("div");
+    actions.className = "product-detail-image-actions";
+    for (const [direction, iconName, label] of [
+      ["-1", "arrow-up", "Move image up"],
+      ["1", "arrow-down", "Move image down"],
+    ]) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.detailImageMove = direction;
+      button.setAttribute("aria-label", label);
+      button.title = label;
+      button.innerHTML = `<i data-lucide="${iconName}" aria-hidden="true"></i>`;
+      button.addEventListener("click", () => {
+        const neighbor = direction === "-1" ? row.previousElementSibling : row.nextElementSibling;
+        if (!neighbor) return;
+        if (direction === "-1") neighbor.before(row);
+        else neighbor.after(row);
+        updateProductDetailImageOrder();
+      });
+      actions.append(button);
+    }
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "admin-danger-button";
+    remove.setAttribute("aria-label", "Remove detail image");
+    remove.title = "Remove image";
+    remove.innerHTML = '<i data-lucide="trash-2" aria-hidden="true"></i>';
+    remove.addEventListener("click", () => {
+      if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+      row.remove();
+      updateProductDetailImageOrder();
+    });
+    actions.append(remove);
+
+    const showPreview = (source, objectUrl = false) => {
+      if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+      delete preview.dataset.objectUrl;
+      previewImage.hidden = !source;
+      if (!source) {
+        previewImage.removeAttribute("src");
+        return;
+      }
+      previewImage.src = source;
+      if (objectUrl) preview.dataset.objectUrl = source;
+    };
+    urlInput.addEventListener("input", () => {
+      row.dataset.storagePath = "";
+      fileInput.value = "";
+      showPreview(urlInput.value.trim());
+    });
+    fileInput.addEventListener("change", () => {
+      row.dataset.storagePath = "";
+      urlInput.value = "";
+      const file = fileInput.files?.[0];
+      showPreview(file ? URL.createObjectURL(file) : "", Boolean(file));
+    });
+
+    row.append(legend, preview, fields, actions);
+    return row;
+  }
+
+  function renderProductDetailImages(images = []) {
+    productDetailImageRows.replaceChildren(...images.map(createProductDetailImageRow));
+    updateProductDetailImageOrder();
+    window.lucide?.createIcons();
+  }
+
+  function addProductDetailImageRow() {
+    if (productDetailImageRows.querySelectorAll(".product-detail-image-row").length >= 10) {
+      showProductError("A product can have up to 10 detail images.");
+      return;
+    }
+    const row = createProductDetailImageRow();
+    productDetailImageRows.append(row);
+    updateProductDetailImageOrder();
+    window.lucide?.createIcons();
+    row.querySelector("[data-detail-image-url]").focus();
+  }
+
+  function readProductDetailImages() {
+    return [...productDetailImageRows.querySelectorAll(".product-detail-image-row")]
+      .map((row) => ({
+        id: row.dataset.imageId || null,
+        imageUrl: row.querySelector("[data-detail-image-url]").value.trim(),
+        file: row.querySelector("[data-detail-image-file]").files?.[0] || null,
+        storagePath: row.dataset.storagePath || null,
+      }))
+      .filter((image) => image.imageUrl || image.file || image.storagePath);
+  }
+
+  function updateProductGalleryImageOrder() {
+    const rows = [...productGalleryImageRows.querySelectorAll(".product-gallery-image-row")];
+    $("#product-gallery-image-count").textContent = `${rows.length} additional image${rows.length === 1 ? "" : "s"}`;
+    rows.forEach((row, index) => {
+      row.querySelector("legend").textContent = `Gallery image ${index + 1}`;
+    });
+  }
+
+  function createProductGalleryImageRow(image = {}) {
+    const row = document.createElement("fieldset");
+    row.className = "product-detail-image-row product-gallery-image-row";
+    row.dataset.imageId = image.id || "";
+    row.dataset.storagePath = image.storage_path || "";
+    row.dataset.sortOrder = image.sort_order === undefined ? "" : String(image.sort_order);
+    const legend = document.createElement("legend");
+    const preview = document.createElement("div");
+    preview.className = "product-detail-image-preview";
+    const previewImage = document.createElement("img");
+    previewImage.alt = "";
+    previewImage.hidden = true;
+    preview.append(previewImage);
+    const previewUrl = image.storage_path
+      ? client.storage.from("product-images").getPublicUrl(image.storage_path).data.publicUrl
+      : image.image_url || "";
+    if (previewUrl) {
+      previewImage.src = previewUrl;
+      previewImage.hidden = false;
+    }
+
+    const fields = document.createElement("div");
+    fields.className = "product-detail-image-fields";
+    const urlLabel = document.createElement("label");
+    urlLabel.textContent = "Image URL";
+    const urlInput = document.createElement("input");
+    urlInput.type = "url";
+    urlInput.placeholder = "https://…";
+    urlInput.dataset.galleryImageUrl = "";
+    urlInput.value = image.image_url || "";
+    urlLabel.append(urlInput);
+    const fileLabel = document.createElement("label");
+    fileLabel.textContent = "Or upload image";
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/png,image/jpeg,image/webp";
+    fileInput.dataset.galleryImageFile = "";
+    fileLabel.append(fileInput);
+    fields.append(urlLabel, fileLabel);
+
+    const actions = document.createElement("div");
+    actions.className = "product-detail-image-actions";
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "admin-danger-button";
+    remove.setAttribute("aria-label", "Remove gallery image");
+    remove.title = "Remove image";
+    remove.innerHTML = '<i data-lucide="trash-2" aria-hidden="true"></i>';
+    remove.addEventListener("click", () => {
+      if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+      row.remove();
+      updateProductGalleryImageOrder();
+    });
+    actions.append(remove);
+
+    const showPreview = (source, objectUrl = false) => {
+      if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+      delete preview.dataset.objectUrl;
+      previewImage.hidden = !source;
+      if (!source) {
+        previewImage.removeAttribute("src");
+        return;
+      }
+      previewImage.src = source;
+      if (objectUrl) preview.dataset.objectUrl = source;
+    };
+    urlInput.addEventListener("input", () => {
+      row.dataset.storagePath = "";
+      fileInput.value = "";
+      showPreview(urlInput.value.trim());
+    });
+    fileInput.addEventListener("change", () => {
+      row.dataset.storagePath = "";
+      urlInput.value = "";
+      const file = fileInput.files?.[0];
+      showPreview(file ? URL.createObjectURL(file) : "", Boolean(file));
+    });
+
+    row.append(legend, preview, fields, actions);
+    return row;
+  }
+
+  function renderProductGalleryImages(images = []) {
+    const orderedImages = images.slice().sort((left, right) => Number(left.sort_order) - Number(right.sort_order));
+    productGalleryImageRows.replaceChildren(...orderedImages.map(createProductGalleryImageRow));
+    updateProductGalleryImageOrder();
+    window.lucide?.createIcons();
+  }
+
+  function addProductGalleryImageRow() {
+    const row = createProductGalleryImageRow();
+    productGalleryImageRows.append(row);
+    updateProductGalleryImageOrder();
+    window.lucide?.createIcons();
+    row.querySelector("[data-gallery-image-url]").focus();
+  }
+
+  function readProductGalleryImages() {
+    return [...productGalleryImageRows.querySelectorAll(".product-gallery-image-row")]
+      .map((row) => ({
+        id: row.dataset.imageId || null,
+        imageUrl: row.querySelector("[data-gallery-image-url]").value.trim(),
+        file: row.querySelector("[data-gallery-image-file]").files?.[0] || null,
+        storagePath: row.dataset.storagePath || null,
+        sortOrder: row.dataset.sortOrder ? Number(row.dataset.sortOrder) : null,
+      }))
+      .filter((image) => image.imageUrl || image.file || image.storagePath);
+  }
+
   function canonicalOptionValue(group, value) {
     const normalized = String(value ?? "").trim();
     if (group !== "color") return normalized;
@@ -1811,6 +2090,9 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(categories[0]?.slug || "");
     setProductTranslations(null);
+    renderProductDetailImages([]);
+    originalProductGalleryImages = [];
+    renderProductGalleryImages([]);
     updateProductCurrencyLabels();
     setLocale("en");
     resetProductEditorNavigation();
@@ -1838,6 +2120,16 @@
       showToast("Could not load product specifications.");
       return;
     }
+    const { data: galleryImages, error: galleryImagesError } = await client
+      .from("product_images")
+      .select("id, image_url, storage_path, sort_order")
+      .eq("product_slug", slug)
+      .eq("is_primary", false)
+      .order("sort_order");
+    if (galleryImagesError) {
+      showToast("Could not load product gallery images.");
+      return;
+    }
     editingSlug = slug;
     productForm.reset();
     productForm.elements.slug.value = product.slug;
@@ -1851,6 +2143,9 @@
     productForm.elements.is_active.checked = product.is_active;
     productForm.elements.in_stock.checked = product.in_stock;
     productForm.elements.is_featured.checked = product.is_featured;
+    renderProductDetailImages(product.detail_images || []);
+    originalProductGalleryImages = galleryImages || [];
+    renderProductGalleryImages(originalProductGalleryImages);
     $("#product-dialog-title").textContent = "Edit product";
     $("#save-product").textContent = "Save changes";
     $("#delete-product").hidden = false;
@@ -2280,10 +2575,50 @@
       ).focus();
       return;
     }
+    const productDetailImages = readProductDetailImages();
+    if (productDetailImages.length > 10) {
+      showProductError("A product can have up to 10 detail images.");
+      return;
+    }
+    for (const image of productDetailImages) {
+      if (image.file && (image.file.size > 10 * 1024 * 1024 || !/^image\/(jpeg|png|webp)$/.test(image.file.type))) {
+        showProductError("Detail images must be PNG, JPEG, or WebP and 10 MB or smaller.");
+        return;
+      }
+      if (!image.file && !image.storagePath && image.imageUrl) {
+        try {
+          if (!["http:", "https:"].includes(new URL(image.imageUrl).protocol)) throw new Error();
+        } catch {
+          showProductError("Enter a valid HTTP or HTTPS URL for each detail image.");
+          return;
+        }
+      }
+    }
+    const productGalleryImages = readProductGalleryImages();
+    for (const image of productGalleryImages) {
+      if (image.file && (image.file.size > 10 * 1024 * 1024 || !/^image\/(jpeg|png|webp)$/.test(image.file.type))) {
+        showProductError("Gallery images must be PNG, JPEG, or WebP and 10 MB or smaller.");
+        return;
+      }
+      if (!image.file && !image.storagePath && image.imageUrl) {
+        try {
+          if (!["http:", "https:"].includes(new URL(image.imageUrl).protocol)) throw new Error();
+        } catch {
+          showProductError("Enter a valid HTTP or HTTPS URL for each gallery image.");
+          return;
+        }
+      }
+    }
 
     const saveButton = $("#save-product");
     saveButton.disabled = true;
     saveButton.textContent = "Saving…";
+    const previousDetailImages = products.find((product) => product.slug === slug)?.detail_images || [];
+    const uploadedDetailPaths = [];
+    let detailImagesSaved = false;
+    const previousGalleryImages = originalProductGalleryImages;
+    const uploadedGalleryPaths = [];
+    let galleryImagesSaved = false;
     try {
       const nameTranslations = {};
       const descriptionNameTranslations = {};
@@ -2388,11 +2723,137 @@
         if (imageError) throw imageError;
       }
 
+      const galleryImageRecords = [];
+      let nextGallerySortOrder = Math.max(0, ...previousGalleryImages.map((image) => Number(image.sort_order) || 0)) + 1;
+      for (const image of productGalleryImages) {
+        let galleryImageUrl = image.imageUrl || null;
+        let galleryStoragePath = image.storagePath;
+        if (image.file) {
+          const safeName = image.file.name.toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
+          galleryStoragePath = `products/${slug}/gallery/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+          const { error: uploadError } = await client.storage
+            .from("product-images")
+            .upload(galleryStoragePath, image.file, { cacheControl: "3600", upsert: false, contentType: image.file.type });
+          if (uploadError) throw uploadError;
+          uploadedGalleryPaths.push(galleryStoragePath);
+          galleryImageUrl = null;
+        }
+        const sortOrder = image.sortOrder > 0 ? image.sortOrder : nextGallerySortOrder++;
+        galleryImageRecords.push({
+          ...(image.id ? { id: image.id } : {}),
+          product_slug: slug,
+          image_url: galleryStoragePath ? null : galleryImageUrl,
+          storage_path: galleryStoragePath,
+          alt_translations: Object.fromEntries(["en", "fr", "es", "zh", "ar"].map((language) => [language, `${brandFor(slug, formData)} ${nameTranslations[language]}`.trim()])),
+          is_primary: false,
+          sort_order: sortOrder,
+        });
+      }
+      const existingGalleryImageRecords = galleryImageRecords.filter((image) => image.id);
+      const newGalleryImageRecords = galleryImageRecords.filter((image) => !image.id);
+      if (existingGalleryImageRecords.length) {
+        const { error: galleryImageError } = await client
+          .from("product_images")
+          .upsert(existingGalleryImageRecords, { onConflict: "id" });
+        if (galleryImageError) throw galleryImageError;
+      }
+      if (newGalleryImageRecords.length) {
+        const { error: galleryImageError } = await client
+          .from("product_images")
+          .insert(newGalleryImageRecords);
+        if (galleryImageError) throw galleryImageError;
+      }
+      galleryImagesSaved = true;
+      const retainedGalleryIds = new Set(galleryImageRecords.map((image) => image.id).filter(Boolean));
+      const removedGalleryIds = previousGalleryImages
+        .filter((image) => !retainedGalleryIds.has(image.id))
+        .map((image) => image.id);
+      if (removedGalleryIds.length) {
+        const { error: removeGalleryError } = await client
+          .from("product_images")
+          .delete()
+          .eq("product_slug", slug)
+          .in("id", removedGalleryIds);
+        if (removeGalleryError) throw removeGalleryError;
+      }
+      const retainedGalleryPaths = new Set(galleryImageRecords.map((image) => image.storage_path).filter(Boolean));
+      const obsoleteGalleryPaths = previousGalleryImages
+        .map((image) => image.storage_path)
+        .filter((path) => path && !retainedGalleryPaths.has(path));
+      if (obsoleteGalleryPaths.length) {
+        const { error: cleanupError } = await client.storage.from("product-images").remove(obsoleteGalleryPaths);
+        if (cleanupError) console.warn("Could not remove deleted product gallery images.", cleanupError);
+      }
+
+      const detailImageRecords = [];
+      for (const [sortOrder, image] of productDetailImages.entries()) {
+        let detailImageUrl = image.imageUrl || null;
+        let detailStoragePath = image.storagePath;
+        if (image.file) {
+          const safeName = image.file.name.toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
+          detailStoragePath = `products/${slug}/details/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+          const { error: uploadError } = await client.storage
+            .from("product-images")
+            .upload(detailStoragePath, image.file, { cacheControl: "3600", upsert: false, contentType: image.file.type });
+          if (uploadError) throw uploadError;
+          uploadedDetailPaths.push(detailStoragePath);
+          detailImageUrl = null;
+        }
+        detailImageRecords.push({
+          ...(image.id ? { id: image.id } : {}),
+          product_slug: slug,
+          image_url: detailStoragePath ? null : detailImageUrl,
+          storage_path: detailStoragePath,
+          sort_order: sortOrder,
+        });
+      }
+      const existingDetailImageRecords = detailImageRecords.filter((image) => image.id);
+      const newDetailImageRecords = detailImageRecords.filter((image) => !image.id);
+      if (existingDetailImageRecords.length) {
+        const { error: detailImageError } = await client
+          .from("product_detail_images")
+          .upsert(existingDetailImageRecords, { onConflict: "id" });
+        if (detailImageError) throw detailImageError;
+      }
+      if (newDetailImageRecords.length) {
+        const { error: detailImageError } = await client
+          .from("product_detail_images")
+          .insert(newDetailImageRecords);
+        if (detailImageError) throw detailImageError;
+      }
+      detailImagesSaved = true;
+      const retainedIds = new Set(detailImageRecords.map((image) => image.id).filter(Boolean));
+      const removedIds = previousDetailImages
+        .filter((image) => !retainedIds.has(image.id))
+        .map((image) => image.id);
+      if (removedIds.length) {
+        const { error: removeRowsError } = await client
+          .from("product_detail_images")
+          .delete()
+          .eq("product_slug", slug)
+          .in("id", removedIds);
+        if (removeRowsError) throw removeRowsError;
+      }
+      const retainedPaths = new Set(detailImageRecords.map((image) => image.storage_path).filter(Boolean));
+      const obsoletePaths = previousDetailImages
+        .map((image) => image.storage_path)
+        .filter((path) => path && !retainedPaths.has(path));
+      if (obsoletePaths.length) {
+        const { error: cleanupError } = await client.storage.from("product-images").remove(obsoletePaths);
+        if (cleanupError) console.warn("Could not remove replaced detail images.", cleanupError);
+      }
+
       productDialog.close();
       await loadCatalog();
       showToast(editingSlug ? "Product changes saved." : "Product added to catalog.");
       editingSlug = slug;
     } catch (error) {
+      if (!galleryImagesSaved && uploadedGalleryPaths.length) {
+        await client.storage.from("product-images").remove(uploadedGalleryPaths);
+      }
+      if (!detailImagesSaved && uploadedDetailPaths.length) {
+        await client.storage.from("product-images").remove(uploadedDetailPaths);
+      }
       showProductError(error.message || "Could not save this product.");
     } finally {
       saveButton.disabled = false;
@@ -2538,7 +2999,8 @@
     categoryForm.addEventListener("submit", saveCategory);
     $("#delete-category").addEventListener("click", deleteCategory);
     $$('[data-open-product]').forEach((button) => button.addEventListener("click", openNewProduct));
-    $("#add-product-specification").addEventListener("click", addProductSpecification);
+    $("#add-product-detail-image").addEventListener("click", addProductDetailImageRow);
+    $("#add-product-gallery-image").addEventListener("click", addProductGalleryImageRow);
     $("#refresh-products").addEventListener("click", loadCatalog);
     $("#refresh-orders").addEventListener("click", loadOrders);
     $("#refresh-messages").addEventListener("click", loadContactMessages);

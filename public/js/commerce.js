@@ -420,7 +420,14 @@
     zh: { navLabel: "主导航", openMenu: "打开菜单", closeMenu: "关闭菜单", decreaseQuantity: "减少数量", increaseQuantity: "增加数量", ratingLabel: "评分", productReference: "商品编号", aboutStoryTitle: "选择更清晰，购物更安心。", aboutValuesTitle: "我们的价值观", aboutContactEyebrow: "随时为你提供帮助", productDetailStory: "精心打造，带来可靠性能与平衡的日常体验，并注重品质与细节。" },
     ar: { navLabel: "التنقل الرئيسي", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", decreaseQuantity: "تقليل الكمية", increaseQuantity: "زيادة الكمية", ratingLabel: "التقييم", productReference: "رقم المنتج", aboutStoryTitle: "اختيارات أوضح، وتجربة يمكن الوثوق بها.", aboutValuesTitle: "ما نؤمن به", aboutContactEyebrow: "نحن هنا لمساعدتك", productDetailStory: "صُمم ليقدم أداءً موثوقًا وتجربة يومية متوازنة، مع جودة تصنيع وعناية بالتفاصيل." },
   };
-  const t = { ...(text[language] || text.en), ...supplementalText[language] };
+  const footerText = {
+    en: { footerCopy: "A premium electronics store combining performance, design, and trust in every order.", footerLinks: "Quick links", footerNew: "New arrivals", footerCategories: "Categories", footerOffers: "Offers", footerSupport: "Support", footerPayment: "Secure payment", footerFastShipping: "Fast shipping", footerContactUs: "Contact us", footerContact: "Contact", footerLegal: "Legal information", footerReturns: "Returns", footerLocation: "Riyadh - Saudi Arabia" },
+    ar: { footerCopy: "متجر إلكترونيات فاخر يجمع بين الأداء، التصميم، والثقة في كل طلب.", footerLinks: "روابط سريعة", footerNew: "منتجات جديدة", footerCategories: "التصنيفات", footerOffers: "العروض", footerSupport: "الدعم", footerPayment: "الدفع الآمن", footerFastShipping: "شحن سريع", footerContactUs: "تواصل معنا", footerContact: "التواصل", footerLegal: "معلومات قانونية", footerReturns: "الاسترجاع", footerLocation: "الرياض - المملكة العربية السعودية" },
+    fr: { footerCopy: "Une boutique d’électronique haut de gamme qui allie performance, design et confiance.", footerLinks: "Liens rapides", footerNew: "Nouveautés", footerCategories: "Catégories", footerOffers: "Offres", footerSupport: "Assistance", footerPayment: "Paiement sécurisé", footerFastShipping: "Livraison rapide", footerContactUs: "Nous contacter", footerContact: "Contact", footerLegal: "Informations légales", footerReturns: "Retours", footerLocation: "Riyad - Arabie saoudite" },
+    es: { footerCopy: "Una tienda de electrónica premium que combina rendimiento, diseño y confianza.", footerLinks: "Enlaces rápidos", footerNew: "Novedades", footerCategories: "Categorías", footerOffers: "Ofertas", footerSupport: "Ayuda", footerPayment: "Pago seguro", footerFastShipping: "Envío rápido", footerContactUs: "Contáctanos", footerContact: "Contacto", footerLegal: "Información legal", footerReturns: "Devoluciones", footerLocation: "Riad - Arabia Saudí" },
+    zh: { footerCopy: "臻选电子产品，兼顾性能、设计与安心服务。", footerLinks: "快捷链接", footerNew: "新品上架", footerCategories: "商品分类", footerOffers: "优惠活动", footerSupport: "客户支持", footerPayment: "安全支付", footerFastShipping: "快速配送", footerContactUs: "联系我们", footerContact: "联系方式", footerLegal: "法律信息", footerReturns: "退货政策", footerLocation: "沙特阿拉伯利雅得" },
+  };
+  const t = { ...(text[language] || text.en), ...supplementalText[language], ...footerText[language] };
   const reviewPhotoMessages = {
     en: { photoTooLarge: "Choose an image smaller than 8 MB.", photoType: "Please choose an image file." },
     ar: { photoTooLarge: "اختر صورة أقل من 8 ميغابايت.", photoType: "اختر ملف صورة." },
@@ -606,7 +613,55 @@
   function renderShell() {
     const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
     header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="${escapeHtml(storeName)}"><img class="brand-logo" src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-currency currency-select" data-currency-select aria-label="${t.currencyLabel || "Currency"}" title="${t.currencyLabel || "Currency"}"><option value="USD">USD dollar</option><option value="SAR">SAR</option><option value="EUR">EUR</option></select><select class="commerce-lang language-select" data-language-select aria-label="Language" title="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="zh">ZH</option><option value="ar">عربي</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
-    footer.innerHTML = `<footer class="commerce-footer"><div class="container commerce-footer-inner"><a class="brand footer-brand" href="/" aria-label="${escapeHtml(storeName)}"><img class="brand-logo" src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" /></a><span>${t.rights.replace("RUQO TECH", escapeHtml(storeName))}</span><nav class="commerce-footer-links"><a href="/about.html">${t.about}</a><a href="/support.html#delivery">${t.shippingInfo}</a><a href="/support.html#terms">${t.terms}</a><a href="/support.html#privacy">${t.privacy}</a><a href="/support.html">${t.support}</a></nav></div></footer>`;
+    footer.innerHTML = `
+      <footer id="support" class="site-footer">
+        <div class="container footer-grid">
+          <div>
+            <a href="/" class="brand footer-brand" aria-label="${escapeHtml(storeName)}">
+              <img class="brand-logo" src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" />
+            </a>
+            <p class="footer-copy">${escapeHtml(t.footerCopy)}</p>
+          </div>
+          <div>
+            <h4>${escapeHtml(t.footerLinks)}</h4>
+            <ul>
+              <li><a href="/#new">${escapeHtml(t.footerNew)}</a></li>
+              <li><a href="/#categories">${escapeHtml(t.footerCategories)}</a></li>
+              <li><a href="/#deals">${escapeHtml(t.footerOffers)}</a></li>
+              <li><a href="/about.html">${escapeHtml(t.about)}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>${escapeHtml(t.footerSupport)}</h4>
+            <ul>
+              <li><a href="/support.html#payment">${escapeHtml(t.footerPayment)}</a></li>
+              <li><a href="/support.html#delivery">${escapeHtml(t.footerFastShipping)}</a></li>
+              <li><a href="/support.html#contact">${escapeHtml(t.footerContactUs)}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>${escapeHtml(t.footerContact)}</h4>
+            <ul>
+              <li><a href="tel:+966500000000">+966 50 000 0000</a></li>
+              <li><a href="mailto:hello@noursstore.com">hello@noursstore.com</a></li>
+              <li>${escapeHtml(t.footerLocation)}</li>
+            </ul>
+          </div>
+          <div>
+            <h4>${escapeHtml(t.footerLegal)}</h4>
+            <ul class="footer-policies">
+              <li><a href="/support.html#terms">${escapeHtml(t.terms)}</a></li>
+              <li><a href="/support.html#returns">${escapeHtml(t.footerReturns)}</a></li>
+              <li><a href="/support.html#privacy">${escapeHtml(t.privacy)}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="container footer-bottom-inner">
+            <span>${t.rights.replace("RUQO TECH", escapeHtml(storeName))}</span>
+          </div>
+        </div>
+      </footer>`;
     const nav = header.querySelector(".commerce-links");
     nav.id = "commerce-navigation";
     nav.setAttribute("aria-label", t.navLabel);
@@ -841,23 +896,6 @@
           `<button class="product-gallery-thumb${index === 0 ? " is-active" : ""}" type="button" data-gallery-image="${item.image}" data-gallery-position="${item.position || "center"}" data-gallery-alt="${escapeHtml(item.name)}" aria-label="${detail.view} ${index + 1}" aria-pressed="${index === 0}"><img src="${item.image}" alt="" style="object-position:${item.position || "center"}" loading="lazy" /></button>`,
       )
       .join("");
-    const labels = detail.labels[product.category];
-    const localizedSpecifications = product.specifications?.[language];
-    const customSpecifications = localizedSpecifications?.length
-      ? localizedSpecifications
-      : product.specifications?.en || [];
-    const specs = customSpecifications.length
-      ? customSpecifications
-        .map((specification) =>
-          `<div class="product-spec-row"><span>${escapeHtml(specification.title)}</span><strong>${escapeHtml(specification.description)}</strong></div>`,
-        )
-        .join("")
-      : (product.features?.[language] || product.features?.en || [])
-        .map(
-          (feature, index) =>
-            `<div class="product-spec-row"><span>${labels[index] || detail.specs}</span><strong>${escapeHtml(feature)}</strong></div>`,
-        )
-        .join("");
     const discount = product.oldPrice
       ? Math.round((1 - product.price / product.oldPrice) * 100)
       : 0;
@@ -875,6 +913,22 @@
         product.rating * product.reviews,
       ) / reviewTotal;
     const ratingPercent = Math.round((reviewScore / 5) * 100);
+    const labels = detail.labels[product.category];
+    const localizedSpecifications = product.specifications?.[language];
+    const customSpecifications = localizedSpecifications?.length
+      ? localizedSpecifications
+      : product.specifications?.en || [];
+    const specs = customSpecifications.length
+      ? customSpecifications
+        .map((specification) =>
+          `<div class="product-spec-row"><span>${escapeHtml(specification.title)}</span><strong>${escapeHtml(specification.description)}</strong></div>`,
+        )
+        .join("")
+      : (product.features?.[language] || product.features?.en || [])
+        .map((feature, index) =>
+          `<div class="product-spec-row"><span>${labels[index] || detail.specs}</span><strong>${escapeHtml(feature)}</strong></div>`,
+        )
+        .join("");
     const recommendations = (
       related.length
         ? related
@@ -900,6 +954,68 @@
             .join("")}`
         : `<div class="review-empty">${icon("message-circle")}<p>${detail.noReviews}</p></div>`
     }</div><form class="product-review-form" id="review-form" data-product-review><h3>${detail.reviewForm}</h3><label class="commerce-field">${detail.reviewName}<input name="name" maxlength="60" required /></label><label class="commerce-field">${language === "ar" ? "التقييم" : "Rating"}<select name="rating"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select></label><label class="commerce-field">${detail.reviewText}<textarea name="text" minlength="8" maxlength="600" required></textarea></label><div class="form-feedback" data-review-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${detail.reviewSubmit}</button></form></div></section><section class="related-products-section detail-scroll-reveal"><div class="product-section-heading"><div><span class="commerce-eyebrow">${escapeHtml(product.brand)}</span><h2>${detail.related}</h2></div><a href="/products.html?category=${product.category}" class="section-link">${detail.keepBrowsing} ${icon("arrow-up-left")}</a></div><div class="commerce-product-grid">${recommendations}</div></section><dialog class="product-lightbox" data-product-lightbox><button type="button" data-close-lightbox aria-label="${detail.close}">${icon("x")}</button><img src="${product.image}" alt="${escapeHtml(product.name)}" /></dialog>`;
+    const detailImageCopy = {
+      en: { title: "More Image Details", previous: "Previous detail image", next: "Next detail image" },
+      ar: { title: "تفاصيل إضافية", previous: "الصورة السابقة", next: "الصورة التالية" },
+      fr: { title: "Plus de détails", previous: "Image précédente", next: "Image suivante" },
+      es: { title: "Más detalles", previous: "Imagen anterior", next: "Imagen siguiente" },
+      zh: { title: "更多详情", previous: "上一张详情图片", next: "下一张详情图片" },
+    }[language] || { title: "More Image Details", previous: "Previous detail image", next: "Next detail image" };
+    const detailImages = (product.detailImages || []).filter(Boolean);
+    if (detailImages.length) {
+      const detailSection = document.createElement("section");
+      detailSection.className = "product-detail-lower product-detail-images-section";
+      const previousIcon = language === "ar" ? "chevron-right" : "chevron-left";
+      const nextIcon = language === "ar" ? "chevron-left" : "chevron-right";
+      detailSection.innerHTML = `<div class="product-section-heading"><h2 id="product-details-title">${detailImageCopy.title} (${detailImages.length})</h2></div><div class="product-detail-carousel" data-detail-carousel><div class="product-detail-carousel-track" data-detail-track role="region" aria-label="${detailImageCopy.title}" tabindex="0">${detailImages.map((image, index) => `<figure class="product-detail-carousel-slide"><img src="${escapeHtml(image)}" alt="${escapeHtml(`${product.name} ${index + 1}`)}" loading="${index ? "lazy" : "eager"}" /></figure>`).join("")}</div>${detailImages.length > 1 ? `<button class="product-detail-carousel-button is-previous" type="button" data-detail-step="-1" aria-label="${detailImageCopy.previous}" title="${detailImageCopy.previous}">${icon(previousIcon)}</button><button class="product-detail-carousel-button is-next" type="button" data-detail-step="1" aria-label="${detailImageCopy.next}" title="${detailImageCopy.next}">${icon(nextIcon)}</button><span class="product-detail-carousel-count" data-detail-count aria-live="polite">1 / ${detailImages.length}</span>` : ""}</div>`;
+      root.querySelector(".product-detail-page").insertAdjacentElement("afterend", detailSection);
+      if (detailImages.length > 1) {
+        const track = detailSection.querySelector("[data-detail-track]");
+        const slides = [...track.querySelectorAll(".product-detail-carousel-slide")];
+        const count = detailSection.querySelector("[data-detail-count]");
+        let activeSlide = 0;
+        let settleTimer;
+        const updateCount = () => {
+          count.textContent = `${activeSlide + 1} / ${slides.length}`;
+        };
+        const loadSlide = (index) => {
+          const image = slides[index].querySelector("img");
+          if (image.loading === "lazy") image.loading = "eager";
+        };
+        const showSlide = (index) => {
+          activeSlide = (index + slides.length) % slides.length;
+          loadSlide(activeSlide);
+          track.scrollTo({
+            left: slides[activeSlide].offsetLeft - slides[0].offsetLeft,
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          });
+          updateCount();
+        };
+        detailSection.querySelectorAll("[data-detail-step]").forEach((button) => {
+          button.addEventListener("click", () => showSlide(activeSlide + Number(button.dataset.detailStep)));
+        });
+        track.addEventListener("scroll", () => {
+          window.clearTimeout(settleTimer);
+          settleTimer = window.setTimeout(() => {
+            const trackRect = track.getBoundingClientRect();
+            const rtl = getComputedStyle(track).direction === "rtl";
+            activeSlide = slides.reduce((closest, slide, index) => {
+              const rect = slide.getBoundingClientRect();
+              const distance = rtl ? Math.abs(trackRect.right - rect.right) : Math.abs(rect.left - trackRect.left);
+              const closestRect = slides[closest].getBoundingClientRect();
+              const closestDistance = rtl ? Math.abs(trackRect.right - closestRect.right) : Math.abs(closestRect.left - trackRect.left);
+              return distance < closestDistance ? index : closest;
+            }, 0);
+            loadSlide(activeSlide);
+            updateCount();
+          }, 90);
+        });
+        track.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowRight") showSlide(activeSlide + (language === "ar" ? -1 : 1));
+          if (event.key === "ArrowLeft") showSlide(activeSlide + (language === "ar" ? 1 : -1));
+        });
+      }
+    }
     const upperDescription = root.querySelector(".detail-description");
     if (upperDescription) upperDescription.textContent = product.descriptionName[language];
 
@@ -1059,8 +1175,6 @@
     });
     window.lucide?.createIcons();
 
-    root.querySelector(".product-long-description").textContent =
-      `${product.description[language]} ${t.productDetailStory}`;
     root.querySelector(
       ".product-review-form .commerce-field:nth-of-type(2)",
     ).childNodes[0].textContent = `${t.ratingLabel} `;
@@ -1107,13 +1221,28 @@
     const optionGroupNames = optionConfig.groups.map(({ label }) => label);
     const optionGroupNamesText = optionGroupNames.join(" / ");
     const purchaseControlCopy = {
-      en: { quantity: "Choose quantity", option: `Choose ${optionGroupNamesText.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" },
-      ar: { quantity: "اختر الكمية", option: `اختر ${optionGroupNamesText}`, inStock: "متوفر · الشحن خلال يوم إلى يومي عمل" },
-      fr: { quantity: "Choisir la quantité", option: `Choisir : ${optionGroupNamesText.toLowerCase()}`, inStock: "En stock · expédition sous 1 à 2 jours ouvrés" },
-      es: { quantity: "Elige la cantidad", option: `Elige ${optionGroupNamesText.toLowerCase()}`, inStock: "Disponible · envío en 1–2 días laborables" },
-      zh: { quantity: "选择数量", option: `选择${optionGroupNamesText}`, inStock: "有货 · 1–2 个工作日内发货" },
-    }[language] || { quantity: "Choose quantity", option: `Choose ${optionGroupNamesText.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" };
-    quantityBlock.querySelector(":scope > span").textContent = purchaseControlCopy.quantity;
+      en: { quantity: "Choose quantity", remaining: "left", option: `Choose ${optionGroupNamesText.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" },
+      ar: { quantity: "اختر الكمية", remaining: "متبقي", option: `اختر ${optionGroupNamesText}`, inStock: "متوفر · الشحن خلال يوم إلى يومي عمل" },
+      fr: { quantity: "Choisir la quantité", remaining: "restants", option: `Choisir : ${optionGroupNamesText.toLowerCase()}`, inStock: "En stock · expédition sous 1 à 2 jours ouvrés" },
+      es: { quantity: "Elige la cantidad", remaining: "disponibles", option: `Elige ${optionGroupNamesText.toLowerCase()}`, inStock: "Disponible · envío en 1–2 días laborables" },
+      zh: { quantity: "选择数量", remaining: "件剩余", option: `选择${optionGroupNamesText}`, inStock: "有货 · 1–2 个工作日内发货" },
+    }[language] || { quantity: "Choose quantity", remaining: "left", option: `Choose ${optionGroupNamesText.toLowerCase()}`, inStock: "In stock · dispatches in 1–2 business days" };
+    const quantityLabel = quantityBlock.querySelector(":scope > span");
+    quantityLabel.textContent = purchaseControlCopy.quantity;
+    const quantityHeading = document.createElement("div");
+    quantityHeading.className = "product-quantity-heading";
+    const stockCountBadge = document.createElement("span");
+    stockCountBadge.className = "product-stock-count";
+    stockCountBadge.hidden = !hasInventoryCount;
+    if (hasInventoryCount) {
+      const count = document.createElement("strong");
+      count.textContent = String(inventoryCount);
+      const remaining = document.createElement("span");
+      remaining.textContent = purchaseControlCopy.remaining;
+      stockCountBadge.append(count, remaining);
+    }
+    quantityLabel.replaceWith(quantityHeading);
+    quantityHeading.append(quantityLabel, stockCountBadge);
     if (optionConfig.groups.length) optionPickers.setAttribute("aria-label", purchaseControlCopy.option);
     if (product.stock && !currentOption.unavailable && inventoryCount !== 0) {
       stockStatus.lastChild.textContent = purchaseControlCopy.inStock;
@@ -1183,6 +1312,17 @@
     const galleryDeliveryDetails = deliveryDetails.cloneNode(true);
     galleryDeliveryDetails.classList.add("detail-delivery-gallery");
     root.querySelector(".product-detail-gallery").append(galleryDeliveryDetails);
+    const ratingPanel = root.querySelector(".product-rating-panel");
+    const galleryDeliveryLayout = window.matchMedia("(min-width: 1200px)");
+    const placeRatingPanel = () => {
+      const visibleBenefits = galleryDeliveryLayout.matches
+        ? galleryDeliveryDetails
+        : deliveryDetails;
+      visibleBenefits.insertAdjacentElement("afterend", ratingPanel);
+    };
+    placeRatingPanel();
+    galleryDeliveryLayout.addEventListener("change", placeRatingPanel);
+    root.querySelector(".product-detail-lower:not(.product-detail-images-section)")?.remove();
     const finalPrice = product.price + currentOption.adjustment;
     root.querySelector(".product-detail-price > strong").textContent = money(finalPrice);
     const oldPrice = root.querySelector(".product-detail-price del");
@@ -1227,7 +1367,8 @@
       featureHeading.textContent = t.features;
       featureList = document.createElement("ul");
       featureList.className = "product-feature-list";
-      featureList.innerHTML = product.features[language]
+      const productFeatures = product.features?.[language] || product.features?.en || [];
+      featureList.innerHTML = productFeatures
         .map(
           (feature) =>
             `<li>${icon("circle-check")}<span>${escapeHtml(feature)}</span></li>`,
@@ -1241,15 +1382,10 @@
 
     const detailsDisclosure = document.createElement("details");
     detailsDisclosure.className = "product-spec-disclosure";
-    detailsDisclosure.innerHTML = `<summary>${icon("chevron-down")}<span>${detail.detailedSpecs}</span></summary><div class="product-spec-expanded"><h3>${detail.detailsTitle}</h3><p>${escapeHtml(product.description[language])}</p><div class="product-spec-table">${specs}<div class="product-spec-row"><span>${t.category}</span><strong>${t.categoryNames[product.category]}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "رقم المنتج" : "Product reference"}</span><strong>${product.id.toUpperCase()}</strong></div><div class="product-spec-row"><span>${t.warranty}</span><strong>${t.returns}</strong></div><div class="product-spec-row"><span>${optionConfig.label}</span><strong>${escapeHtml(currentOption.label)}</strong></div></div></div>`;
+    detailsDisclosure.innerHTML = `<summary>${icon("chevron-down")}<span>${detail.detailedSpecs}</span></summary><div class="product-spec-expanded"><h3>${detail.detailsTitle}</h3><p>${escapeHtml(product.description[language] || product.description.en || "")}</p><div class="product-spec-table">${specs}<div class="product-spec-row"><span>${t.category}</span><strong>${t.categoryNames[product.category]}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "رقم المنتج" : "Product reference"}</span><strong>${product.id.toUpperCase()}</strong></div><div class="product-spec-row"><span>${t.warranty}</span><strong>${t.returns}</strong></div><div class="product-spec-row"><span>${optionGroupNamesText || (language === "ar" ? "الخيارات" : "Options")}</span><strong>${escapeHtml(currentOption.label)}</strong></div></div></div>`;
     featureList.after(detailsDisclosure);
-    detailsDisclosure.querySelector(
-      ".product-spec-row:nth-last-child(3) > span",
-    ).textContent = t.productReference;
-    const selectedOptionsRow = detailsDisclosure.querySelector(".product-spec-row:last-child");
-    selectedOptionsRow.querySelector("span").textContent = optionGroupNamesText;
-    selectedOptionsRow.querySelector("strong").textContent = currentOption.label;
-    selectedOptionsRow.hidden = optionConfig.groups.length === 0;
+    detailsDisclosure.querySelector(".product-spec-row:last-child").hidden =
+      optionConfig.groups.length === 0;
 
     const mainImage = root.querySelector("[data-detail-image]");
     const lightbox = root.querySelector("[data-product-lightbox]");

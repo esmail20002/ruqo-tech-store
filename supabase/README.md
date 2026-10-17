@@ -12,7 +12,7 @@ This folder is the database source of truth for the store. The existing `carfix`
 
 ## Main tables
 
-- Catalog: `categories`, `products`, `product_features`, `product_variants`, `product_images`.
+- Catalog: `categories`, `products`, `product_features`, `product_variants`, `product_images`, `product_detail_images`.
 - Merchandising: `promotions`, `banners`.
 - Customers and staff: `profiles`, `staff_roles`.
 - Sales: `orders`, `order_items`, `order_events`.
@@ -28,7 +28,7 @@ The new `RUQO` cloud project is created in the existing Supabase organization, l
 supabase db push
 ```
 
-The applied migrations create the schema, RLS policies, `product-images` bucket, four categories, and public storefront defaults. Run `supabase migration list` to compare local and remote migration versions.
+The applied migrations create the schema, RLS policies, `product-images` bucket, four categories, and public storefront defaults. The latest migration adds ordered product-detail images, separate from the primary gallery. Run `supabase migration list` to compare local and remote migration versions.
 
 ## Import the current storefront catalog
 

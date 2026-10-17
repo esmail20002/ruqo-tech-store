@@ -208,9 +208,11 @@
           <nav class="product-editor-nav" aria-label="Product sections">
             <span class="product-editor-nav-label">EDITOR SECTIONS</span>
             <button class="is-active" type="button" data-product-editor-target="product-identity" aria-current="location"><i data-lucide="panel-top" aria-hidden="true"></i><span>Product</span></button>
+            <button type="button" data-product-editor-target="product-gallery-images"><i data-lucide="images" aria-hidden="true"></i><span>Gallery images</span></button>
             <button type="button" data-product-editor-target="product-options"><i data-lucide="layers-2" aria-hidden="true"></i><span>Options</span></button>
             <button type="button" data-product-editor-target="product-copy"><i data-lucide="languages" aria-hidden="true"></i><span>Content</span></button>
             <button type="button" data-product-editor-target="product-benefits"><i data-lucide="badge-check" aria-hidden="true"></i><span>Benefits</span></button>
+            <button type="button" data-product-editor-target="product-detail-images"><i data-lucide="images" aria-hidden="true"></i><span>Detail images</span></button>
             <button type="button" data-product-editor-target="product-specifications"><i data-lucide="list-checks" aria-hidden="true"></i><span>Specifications</span></button>
           </nav>
           <div class="product-editor-content" id="product-editor-content">
@@ -227,6 +229,10 @@
             <label class="form-field-wide admin-upload">Upload a replacement image<input name="image_file" type="file" accept="image/png,image/jpeg,image/webp" /><small>PNG, JPEG, or WebP. Maximum 10 MB.</small></label>
           </div>
           <div class="admin-switch-row"><label><input name="is_active" type="checkbox" checked /><span><strong>Published</strong><small>Visible to customers</small></span></label><label><input name="in_stock" type="checkbox" checked /><span><strong>In stock</strong><small>Available to purchase</small></span></label><label><input name="is_featured" type="checkbox" /><span><strong>Featured</strong><small>Highlight in the store</small></span></label></div>
+          </section>
+          <section class="product-editor-section" id="product-gallery-images">
+            <div class="variant-editor-heading"><div><h3>Gallery images</h3><p>Add extra product photos shown below the main image. These are separate from More Details images.</p><span id="product-gallery-image-count" class="admin-muted-copy">0 additional images</span></div><button id="add-product-gallery-image" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add image</button></div>
+            <div id="product-gallery-image-rows" class="product-gallery-image-rows"></div>
           </section>
           <section class="product-options-editor product-editor-section" id="product-options">
             <div class="variant-editor-heading"><div><h3>Product options</h3><p>Select values for size, storage, color, and material. Combinations are generated from selected values.</p></div></div>
@@ -249,6 +255,10 @@
           <section class="benefit-editor product-editor-section" id="product-benefits">
             <div class="variant-editor-heading"><div><h3>Product benefits</h3><p>Customize the three delivery, warranty, and returns cards for this product.</p></div></div>
             <div id="product-benefit-rows" class="product-benefit-rows"></div>
+          </section>
+          <section class="product-detail-images-editor product-editor-section" id="product-detail-images">
+            <div class="variant-editor-heading"><div><h3>More details images</h3><p>Add up to 10 ordered detail images. Use a URL or upload an image for each row.</p><span id="product-detail-image-count" class="admin-muted-copy">0 / 10 images</span></div><button id="add-product-detail-image" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add image</button></div>
+            <div id="product-detail-image-rows" class="product-detail-image-rows"></div>
           </section>
           <section class="specification-editor product-editor-section" id="product-specifications">
             <div class="variant-editor-heading"><div><h3>Detailed specifications</h3><p>Add a detail title with its description. Use the language tabs above to translate each row.</p></div><button id="add-product-specification" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add detail</button></div>

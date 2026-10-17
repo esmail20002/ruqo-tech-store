@@ -727,9 +727,6 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   const transitionElements = [
     image,
     !productBadge.hidden && productBadge,
-    card.querySelector(".product-summary p"),
-    card.querySelector(".product-summary h3"),
-    card.querySelector(".price-block"),
   ].filter(Boolean);
   const shouldAnimateTransition = previousSpotlightSlug !== null
     && previousSpotlightSlug !== spotlightSlug
@@ -773,10 +770,6 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   productBadge.textContent = saleActive
     ? `${discountPercent}% OFF`
     : translations[currentLang]?.[`tags.${product.badge === "new" ? "new" : "featured"}`] || copy.featured;
-  card.querySelector(".product-summary p").textContent = product.brand;
-  card.querySelector(".product-summary h3").textContent = localized.name;
-  const price = card.querySelector(".price-block span");
-  price.dataset.priceSar = String(product.price);
   formatHomepagePrices();
 
   topCard.querySelector("span").textContent = saleActive ? copy.sale : copy.featured;
@@ -840,10 +833,7 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
       ],
       { duration: 1450, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "none" },
     );
-    revealText(card.querySelector(".product-summary p"), 80, 1050);
-    revealText(card.querySelector(".product-summary h3"), 150, 1250);
     revealText(card.querySelector(".product-badge"), 40, 1000);
-    revealText(card.querySelector(".price-block"), 180, 1200);
   }
 
   window.clearInterval(featuredCountdownTimer);
@@ -910,10 +900,6 @@ function renderFeaturedProduct() {
     image.src = product.image;
     image.alt = content.alt;
     card.querySelector(".product-badge").textContent = content.badge;
-    card.querySelector(".product-summary p").textContent = content.brand;
-    card.querySelector(".product-summary h3").textContent = content.model;
-    const price = card.querySelector(".price-block span");
-    price.dataset.priceSar = product.price.replace(/,/g, "");
     formatHomepagePrices();
     card.classList.remove("is-changing");
   }, 180);
