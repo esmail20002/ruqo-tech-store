@@ -969,52 +969,64 @@
       const nextIcon = language === "ar" ? "chevron-left" : "chevron-right";
       detailSection.innerHTML = `<div class="product-section-heading"><h2 id="product-details-title">${detailImageCopy.title} (${detailImages.length})</h2></div><div class="product-detail-carousel" data-detail-carousel><div class="product-detail-carousel-track" data-detail-track role="region" aria-label="${detailImageCopy.title}" tabindex="0">${detailImages.map((image, index) => `<figure class="product-detail-carousel-slide"><img src="${escapeHtml(image)}" alt="${escapeHtml(`${product.name} ${index + 1}`)}" loading="${index ? "lazy" : "eager"}" /></figure>`).join("")}</div>${detailImages.length > 1 ? `<button class="product-detail-carousel-button is-previous" type="button" data-detail-step="-1" aria-label="${detailImageCopy.previous}" title="${detailImageCopy.previous}">${icon(previousIcon)}</button><button class="product-detail-carousel-button is-next" type="button" data-detail-step="1" aria-label="${detailImageCopy.next}" title="${detailImageCopy.next}">${icon(nextIcon)}</button><span class="product-detail-carousel-count" data-detail-count aria-live="polite">1 / ${detailImages.length}</span>` : ""}</div>`;
       root.querySelector(".product-detail-page").insertAdjacentElement("afterend", detailSection);
-      if (detailImages.length > 1) {
-        const track = detailSection.querySelector("[data-detail-track]");
-        const slides = [...track.querySelectorAll(".product-detail-carousel-slide")];
-        const count = detailSection.querySelector("[data-detail-count]");
-        let activeSlide = 0;
-        let settleTimer;
-        const updateCount = () => {
-          count.textContent = `${activeSlide + 1} / ${slides.length}`;
-        };
-        const loadSlide = (index) => {
-          const image = slides[index].querySelector("img");
-          if (image.loading === "lazy") image.loading = "eager";
-        };
-        const showSlide = (index) => {
-          activeSlide = (index + slides.length) % slides.length;
+      const track = detailSection.querySelector("[data-detail-track]");
+      const slides = [...track.querySelectorAll(".product-detail-carousel-slide")];
+      const count = detailSection.querySelector("[data-detail-count]");
+      let activeSlide = 0;
+      let settleTimer;
+      const updateCount = () => {
+        if (count) count.textContent = `${activeSlide + 1} / ${slides.length}`;
+      };
+      const updateSlideHeight = () => {
+        const image = slides[activeSlide].querySelector("img");
+        if (!image.naturalWidth || !track.clientWidth) return;
+        track.style.height = `${track.clientWidth * image.naturalHeight / image.naturalWidth}px`;
+      };
+      const loadSlide = (index) => {
+        const image = slides[index].querySelector("img");
+        if (image.loading === "lazy") image.loading = "eager";
+      };
+      slides.forEach((slide, index) => {
+        slide.querySelector("img").addEventListener("load", () => {
+          if (index === activeSlide) updateSlideHeight();
+        });
+      });
+      updateSlideHeight();
+      window.addEventListener("resize", updateSlideHeight, { passive: true });
+      const showSlide = (index) => {
+        activeSlide = (index + slides.length) % slides.length;
+        loadSlide(activeSlide);
+        updateSlideHeight();
+        track.scrollTo({
+          left: slides[activeSlide].offsetLeft - slides[0].offsetLeft,
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        });
+        updateCount();
+      };
+      detailSection.querySelectorAll("[data-detail-step]").forEach((button) => {
+        button.addEventListener("click", () => showSlide(activeSlide + Number(button.dataset.detailStep)));
+      });
+      track.addEventListener("scroll", () => {
+        window.clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(() => {
+          const trackRect = track.getBoundingClientRect();
+          const rtl = getComputedStyle(track).direction === "rtl";
+          activeSlide = slides.reduce((closest, slide, index) => {
+            const rect = slide.getBoundingClientRect();
+            const distance = rtl ? Math.abs(trackRect.right - rect.right) : Math.abs(rect.left - trackRect.left);
+            const closestRect = slides[closest].getBoundingClientRect();
+            const closestDistance = rtl ? Math.abs(trackRect.right - closestRect.right) : Math.abs(closestRect.left - trackRect.left);
+            return distance < closestDistance ? index : closest;
+          }, 0);
           loadSlide(activeSlide);
-          track.scrollTo({
-            left: slides[activeSlide].offsetLeft - slides[0].offsetLeft,
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-          });
+          updateSlideHeight();
           updateCount();
-        };
-        detailSection.querySelectorAll("[data-detail-step]").forEach((button) => {
-          button.addEventListener("click", () => showSlide(activeSlide + Number(button.dataset.detailStep)));
-        });
-        track.addEventListener("scroll", () => {
-          window.clearTimeout(settleTimer);
-          settleTimer = window.setTimeout(() => {
-            const trackRect = track.getBoundingClientRect();
-            const rtl = getComputedStyle(track).direction === "rtl";
-            activeSlide = slides.reduce((closest, slide, index) => {
-              const rect = slide.getBoundingClientRect();
-              const distance = rtl ? Math.abs(trackRect.right - rect.right) : Math.abs(rect.left - trackRect.left);
-              const closestRect = slides[closest].getBoundingClientRect();
-              const closestDistance = rtl ? Math.abs(trackRect.right - closestRect.right) : Math.abs(closestRect.left - trackRect.left);
-              return distance < closestDistance ? index : closest;
-            }, 0);
-            loadSlide(activeSlide);
-            updateCount();
-          }, 90);
-        });
-        track.addEventListener("keydown", (event) => {
-          if (event.key === "ArrowRight") showSlide(activeSlide + (language === "ar" ? -1 : 1));
-          if (event.key === "ArrowLeft") showSlide(activeSlide + (language === "ar" ? 1 : -1));
-        });
-      }
+        }, 90);
+      });
+      track.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight") showSlide(activeSlide + (language === "ar" ? -1 : 1));
+        if (event.key === "ArrowLeft") showSlide(activeSlide + (language === "ar" ? 1 : -1));
+      });
     }
     const upperDescription = root.querySelector(".detail-description");
     if (upperDescription) upperDescription.textContent = product.descriptionName[language];

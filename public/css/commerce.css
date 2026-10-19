@@ -3563,6 +3563,7 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
 }
 .product-detail-carousel-track {
   display: flex;
+  align-items: stretch;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scroll-snap-type: x mandatory;
@@ -3576,7 +3577,8 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   display: grid;
   flex: 0 0 100%;
   min-width: 0;
-  aspect-ratio: 16 / 7.2;
+  height: 100%;
+  margin: 0;
   place-items: center;
   overflow: hidden;
   scroll-snap-align: start;
@@ -4299,9 +4301,6 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   }
   .product-detail-images-section .product-section-heading h2 {
     font-size: 1.35rem;
-  }
-  .product-detail-carousel-slide {
-    aspect-ratio: 4 / 3;
   }
   .product-detail-carousel-button {
     width: 38px;
