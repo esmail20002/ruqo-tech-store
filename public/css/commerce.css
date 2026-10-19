@@ -4443,6 +4443,94 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   .related-products-section {
     padding: 30px 0;
   }
+  .product-reviews-section {
+    padding: 22px 0;
+  }
+  .product-review-layout {
+    gap: 15px;
+  }
+  .review-toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 10px;
+  }
+  .review-tool {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 5px;
+    font-size: 0.64rem;
+  }
+  .review-tool + .review-tool {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+  .review-tool:last-child {
+    grid-column: 1 / -1;
+  }
+  .review-tool select {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    min-height: 32px;
+    padding: 3px 6px;
+    font-size: 0.68rem;
+  }
+  .review-entries {
+    grid-auto-columns: calc((100% - 8px) / 2);
+    gap: 8px;
+  }
+  .review-entries > .product-review {
+    height: auto;
+    align-self: start;
+    padding: 10px 11px;
+    border-radius: 10px;
+  }
+  .product-review .review-author {
+    gap: 5px;
+    font-size: 0.66rem;
+  }
+  .product-review .review-author strong {
+    font-size: 0.7rem;
+    overflow-wrap: anywhere;
+  }
+  .product-review .review-author .review-source-label {
+    padding: 2px 5px;
+    font-size: 0.56rem;
+  }
+  .product-review .review-date {
+    font-size: 0.58rem;
+  }
+  .product-review > p {
+    margin-top: 6px;
+    font-size: 0.7rem;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+  .review-photo-link {
+    margin-top: 8px;
+  }
+  .review-photo-thumb {
+    width: auto;
+    max-width: 82px;
+    max-height: 68px;
+    object-fit: contain;
+  }
+  .review-carousel-controls {
+    gap: 7px;
+    margin-top: 9px;
+  }
+  .review-carousel-arrow {
+    width: 34px;
+    height: 34px;
+  }
+  .product-review-form {
+    gap: 10px;
+    padding: 13px;
+  }
   .product-gallery-thumbs {
     gap: 7px;
   }
