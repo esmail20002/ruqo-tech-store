@@ -1491,6 +1491,16 @@
     const mainImage = root.querySelector("[data-detail-image]");
     const lightbox = root.querySelector("[data-product-lightbox]");
     const lightboxImage = lightbox.querySelector("img");
+    const imageStage = root.querySelector(".product-detail-image");
+    const zoomPane = document.createElement("div");
+    zoomPane.className = "product-image-zoom-pane";
+    zoomPane.setAttribute("aria-hidden", "true");
+    const zoomPaneImage = document.createElement("img");
+    zoomPaneImage.alt = "";
+    zoomPaneImage.draggable = false;
+    zoomPane.append(zoomPaneImage);
+    imageStage.append(zoomPane);
+    zoomPaneImage.src = mainImage.currentSrc || mainImage.src;
     const galleryButtons = [...root.querySelectorAll("[data-gallery-image]")];
     let galleryIndex = 0;
     const showGalleryImage = (nextIndex) => {
@@ -1501,6 +1511,7 @@
         mainImage.src = selectedImage.image;
         mainImage.alt = selectedImage.name;
         mainImage.style.objectPosition = selectedImage.position || "center";
+        zoomPaneImage.src = selectedImage.image;
         root.querySelector(".detail-image-label").textContent =
           selectedImage.name;
         lightboxImage.src = selectedImage.image;
@@ -1556,18 +1567,60 @@
       }
       lightbox.showModal();
     });
-    const imageStage = root.querySelector(".product-detail-image");
-    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    if (window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 800px)").matches) {
+      const zoomFactor = 2.25;
+      let lastZoomPointer = null;
+      const positionFactor = (value, axis) => {
+        const token = value.split(" ")[axis] || "50%";
+        if (token === "left" || token === "top") return 0;
+        if (token === "right" || token === "bottom") return 1;
+        if (token === "center") return 0.5;
+        return Number.parseFloat(token) / 100 || 0.5;
+      };
+      const updateZoomPane = (point) => {
+        lastZoomPointer = point;
+        if (!mainImage.naturalWidth || !mainImage.naturalHeight) return;
+        const stageBounds = imageStage.getBoundingClientRect();
+        const directionIsRtl = getComputedStyle(imageStage).direction === "rtl";
+        const availableWidth = directionIsRtl
+          ? stageBounds.left - 24
+          : window.innerWidth - stageBounds.right - 24;
+        const paneWidth = Math.min(stageBounds.width, availableWidth - 44);
+        if (paneWidth < 220) {
+          imageStage.classList.remove("is-zoom-active");
+          imageStage.parentElement.classList.remove("is-zoom-active");
+          return;
+        }
+        zoomPane.style.width = `${paneWidth}px`;
+        const paneBounds = zoomPane.getBoundingClientRect();
+        if (!paneBounds.width || !paneBounds.height) return;
+        const imageScale = Math.max(
+          stageBounds.width / mainImage.naturalWidth,
+          stageBounds.height / mainImage.naturalHeight,
+        );
+        const renderedWidth = mainImage.naturalWidth * imageScale;
+        const renderedHeight = mainImage.naturalHeight * imageScale;
+        const objectPosition = getComputedStyle(mainImage).objectPosition;
+        const cropLeft = (renderedWidth - stageBounds.width) * positionFactor(objectPosition, 0);
+        const cropTop = (renderedHeight - stageBounds.height) * positionFactor(objectPosition, 1);
+        const pointerX = Math.max(0, Math.min(stageBounds.width, point.clientX - stageBounds.left));
+        const pointerY = Math.max(0, Math.min(stageBounds.height, point.clientY - stageBounds.top));
+        zoomPaneImage.style.width = `${renderedWidth * zoomFactor}px`;
+        zoomPaneImage.style.height = `${renderedHeight * zoomFactor}px`;
+        zoomPaneImage.style.left = `${paneBounds.width / 2 - (pointerX + cropLeft) * zoomFactor}px`;
+        zoomPaneImage.style.top = `${paneBounds.height / 2 - (pointerY + cropTop) * zoomFactor}px`;
+      };
+      zoomPaneImage.addEventListener("load", () => {
+        if (lastZoomPointer) updateZoomPane(lastZoomPointer);
+      });
       imageStage.addEventListener("pointermove", (event) => {
-        const bounds = imageStage.getBoundingClientRect();
-        const x = Math.max(0, Math.min(100, ((event.clientX - bounds.left) / bounds.width) * 100));
-        const y = Math.max(0, Math.min(100, ((event.clientY - bounds.top) / bounds.height) * 100));
-        mainImage.style.setProperty("--hover-x", `${x}%`);
-        mainImage.style.setProperty("--hover-y", `${y}%`);
-        imageStage.classList.add("is-hover-zoom");
+        imageStage.classList.add("is-zoom-active");
+        imageStage.parentElement.classList.add("is-zoom-active");
+        updateZoomPane(event);
       });
       imageStage.addEventListener("pointerleave", () => {
-        imageStage.classList.remove("is-hover-zoom");
+        imageStage.classList.remove("is-zoom-active");
+        imageStage.parentElement.classList.remove("is-zoom-active");
       });
     }
     const enableSwipe = (element) => {
