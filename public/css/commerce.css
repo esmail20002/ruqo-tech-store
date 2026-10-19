@@ -3823,7 +3823,7 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   flex-wrap: wrap;
   font-size: 0.75rem;
 }
-.review-author > span:nth-child(2) {
+.review-author > span:nth-child(2):not(.review-stars) {
   color: var(--muted);
   font-size: 0.68rem;
 }
