@@ -3603,7 +3603,6 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   overscroll-behavior-inline: contain;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  touch-action: pan-x;
 }
 .product-detail-carousel-track::-webkit-scrollbar {
   display: none;
@@ -3952,7 +3951,6 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   overscroll-behavior-inline: contain;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  touch-action: pan-x;
 }
 
 .review-entries::-webkit-scrollbar {
