@@ -1277,6 +1277,7 @@ function applyTranslations(lang) {
   syncHomepageCatalog();
   renderManagedHomeBanners();
   window.NoursStore?.syncDropdowns();
+  window.RUQO_APPLY_FOOTER_SETTINGS?.(document.querySelector(".site-footer"), lang);
 }
 
 if (languageSelect) {
@@ -1285,6 +1286,9 @@ if (languageSelect) {
     applyTranslations(currentLang);
   });
 }
+window.addEventListener("ruqo:store-settings-updated", () => {
+  window.RUQO_APPLY_FOOTER_SETTINGS?.(document.querySelector(".site-footer"), currentLang);
+});
 
 const mainCurrencySelect = document.querySelector("[data-currency-select]");
 if (mainCurrencySelect) {

@@ -78,6 +78,7 @@
           <button class="admin-nav-item" type="button" data-admin-view="audience"><i data-lucide="users-round" aria-hidden="true"></i><span>Audience</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="homepage-showcase"><i data-lucide="gallery-horizontal-end" aria-hidden="true"></i><span>Homepage spotlight</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="settings"><i data-lucide="settings-2" aria-hidden="true"></i><span>Store settings</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="footer"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>Footer content</span></button>
         </nav>
         <div class="sidebar-footer">
           <span class="connection-indicator"><i></i> Supabase connected</span>
@@ -168,6 +169,28 @@
                 <div class="brand-logo-preview-row"><img id="brand-logo-preview" src="/images/new/li.png" alt="Current store logo" /><button id="reset-brand-logo" class="admin-secondary-button" type="button">Use default logo</button></div>
                 <p id="brand-settings-error" class="admin-feedback" role="alert" hidden></p>
                 <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save store settings</button></div>
+              </form>
+            </section>
+          </section>
+          <section class="admin-view" data-admin-panel="footer" hidden>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">STOREFRONT CONTENT</span><h1>Footer content</h1><p>Edit footer headings, link labels, destinations, and the store description in each language. Phone and email are managed in Store settings.</p></div></div>
+            <section class="admin-section">
+              <form id="footer-settings-form" class="admin-settings-form">
+                <label class="footer-language-field">Editing language
+                  <select id="footer-language">
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                    <option value="fr">Français</option>
+                    <option value="es">Español</option>
+                    <option value="zh">中文</option>
+                  </select>
+                </label>
+                <div class="admin-section-heading"><div><h2>Footer text</h2><p>Leave a field blank to use its built-in translation.</p></div></div>
+                <div id="footer-text-fields" class="admin-form-grid"></div>
+                <div class="admin-section-heading"><div><h2>Footer link destinations</h2><p>Use a site path such as /support.html#payment or a secure https:// URL.</p></div></div>
+                <div id="footer-link-fields" class="admin-form-grid"></div>
+                <p id="footer-settings-error" class="admin-feedback" role="alert" hidden></p>
+                <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save footer content</button></div>
               </form>
             </section>
           </section>

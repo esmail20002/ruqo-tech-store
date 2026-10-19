@@ -10,6 +10,77 @@
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
   const languages = ["en", "fr", "es", "zh", "ar"];
+  const footerTextFields = [
+    { key: "footer.copy", label: "Store description", multiline: true },
+    { key: "footer.linksTitle", label: "Quick links heading" },
+    { key: "footer.link1", label: "New products link label" },
+    { key: "footer.link2", label: "Categories link label" },
+    { key: "footer.link3", label: "Offers link label" },
+    { key: "footer.about", label: "About us link label" },
+    { key: "footer.supportTitle", label: "Support heading" },
+    { key: "footer.support1", label: "Secure payment link label" },
+    { key: "footer.support2", label: "Shipping link label" },
+    { key: "footer.support3", label: "Contact link label" },
+    { key: "footer.contactTitle", label: "Contact details heading" },
+    { key: "footer.location", label: "Store location" },
+    { key: "footer.legalTitle", label: "Legal information heading" },
+    { key: "footer.policy1", label: "Terms link label" },
+    { key: "footer.policy2", label: "Returns link label" },
+    { key: "footer.policy3", label: "Privacy link label" },
+    { key: "footer.rights", label: "Copyright notice", multiline: true },
+  ];
+  const defaultFooterTexts = {
+    en: {
+      "footer.copy": "A premium electronics store combining performance, design, and trust in every order.",
+      "footer.linksTitle": "Quick links",
+      "footer.link1": "New arrivals",
+      "footer.link2": "Categories",
+      "footer.link3": "Offers",
+      "footer.about": "About us",
+      "footer.supportTitle": "Support",
+      "footer.support1": "Secure payment",
+      "footer.support2": "Fast shipping",
+      "footer.support3": "Contact us",
+      "footer.contactTitle": "Contact",
+      "footer.location": "Riyadh - Kingdom of Saudi Arabia",
+      "footer.legalTitle": "Legal information",
+      "footer.policy1": "Terms",
+      "footer.policy2": "Returns",
+      "footer.policy3": "Privacy",
+      "footer.rights": "© 2026 RUQO TECH. All rights reserved.",
+    },
+    ar: {
+      "footer.copy": "متجر إلكترونيات فاخر يجمع بين الأداء، التصميم، والثقة في كل طلب.",
+      "footer.linksTitle": "روابط سريعة",
+      "footer.link1": "منتجات جديدة",
+      "footer.link2": "التصنيفات",
+      "footer.link3": "العروض",
+      "footer.about": "من نحن",
+      "footer.supportTitle": "الدعم",
+      "footer.support1": "الدفع الآمن",
+      "footer.support2": "شحن سريع",
+      "footer.support3": "تواصل معنا",
+      "footer.contactTitle": "التواصل",
+      "footer.location": "الرياض - المملكة العربية السعودية",
+      "footer.legalTitle": "معلومات قانونية",
+      "footer.policy1": "الشروط",
+      "footer.policy2": "الاسترجاع",
+      "footer.policy3": "الخصوصية",
+      "footer.rights": "© 2026 RUQO TECH. جميع الحقوق محفوظة.",
+    },
+  };
+  const footerLinkFields = [
+    { key: "new", label: "New products", href: "/#new" },
+    { key: "categories", label: "Categories", href: "/#categories" },
+    { key: "deals", label: "Offers", href: "/#deals" },
+    { key: "about", label: "About us", href: "/about.html" },
+    { key: "payment", label: "Secure payment", href: "/support.html#payment" },
+    { key: "shipping", label: "Shipping", href: "/support.html#delivery" },
+    { key: "contact", label: "Contact", href: "/support.html#contact" },
+    { key: "terms", label: "Terms", href: "/support.html#terms" },
+    { key: "returns", label: "Returns", href: "/support.html#returns" },
+    { key: "privacy", label: "Privacy", href: "/support.html#privacy" },
+  ];
   const productOptionGroups = window.RUQO_PRODUCT_OPTION_GROUPS;
   const productOptionGroupLabels = window.RUQO_PRODUCT_OPTION_GROUP_LABELS;
   const productBenefitIconOptions = [
@@ -71,6 +142,11 @@
   const bannerDialog = $("#banner-dialog");
   const brandSettingsForm = $("#brand-settings-form");
   const brandSettingsError = $("#brand-settings-error");
+  const footerSettingsForm = $("#footer-settings-form");
+  const footerSettingsError = $("#footer-settings-error");
+  const footerLanguageSelect = $("#footer-language");
+  const footerTextFieldsContainer = $("#footer-text-fields");
+  const footerLinkFieldsContainer = $("#footer-link-fields");
   const homepageShowcaseForm = $("#homepage-showcase-form");
   const homepageShowcaseError = $("#home-showcase-error");
   const homepageShowcaseDialog = $("#homepage-showcase-dialog");
@@ -97,6 +173,9 @@
   let newsletterSubscribers = [];
   let homepageSpotlights = [];
   let brandSettings = {};
+  let footerDraft = {};
+  let footerLinksDraft = {};
+  let footerLanguage = "en";
   let editingSlug = null;
   let originalProductGalleryImages = [];
   let editingCategorySlug = null;
@@ -188,6 +267,7 @@
     }
     if (currentRoles.some((role) => ["owner", "admin"].includes(role))) {
       allowedViews.add("settings");
+      allowedViews.add("footer");
       allowedViews.add("homepage-showcase");
     }
     const selectedView = allowedViews.has(view) ? view : "overview";
@@ -210,6 +290,7 @@
       banners: "Banners",
       audience: "Newsletter audience",
       settings: "Store settings",
+      footer: "Footer content",
       "homepage-showcase": "Homepage spotlight",
     }[selectedView];
   }
@@ -650,6 +731,125 @@
       image.alt = brandSettings.store_name || "RUQO TECH";
     });
     brandSettingsForm.dataset.resetLogo = "false";
+    const savedFooter = brandSettings.footer || {};
+    footerDraft = Object.fromEntries(languages.map((language) => [
+      language,
+      {
+        ...(defaultFooterTexts[language] || {}),
+        ...(savedFooter.translations?.[language] || {}),
+      },
+    ]));
+    footerLinksDraft = { ...savedFooter.links };
+    renderFooterSettings();
+  }
+
+  function renderFooterSettings() {
+    const localeValues = footerDraft[footerLanguage] || {};
+    const textFields = footerTextFields.map(({ key, label, multiline }) => {
+      const field = document.createElement(multiline ? "textarea" : "input");
+      field.dataset.footerField = key;
+      field.maxLength = multiline ? 500 : 120;
+      if (multiline) field.rows = 3;
+      field.value = localeValues[key] || "";
+      field.placeholder = "Built-in translation";
+      const wrapper = document.createElement("label");
+      wrapper.textContent = label;
+      wrapper.append(field);
+      return wrapper;
+    });
+    footerTextFieldsContainer.replaceChildren(...textFields);
+    const linkFields = footerLinkFields.map(({ key, label, href }) => {
+      const field = document.createElement("input");
+      field.type = "text";
+      field.maxLength = 500;
+      field.dataset.footerLink = key;
+      field.value = footerLinksDraft[key] ?? href;
+      const wrapper = document.createElement("label");
+      wrapper.textContent = `${label} URL`;
+      wrapper.append(field);
+      return wrapper;
+    });
+    footerLinkFieldsContainer.replaceChildren(...linkFields);
+  }
+
+  function captureFooterSettings() {
+    const localeValues = footerDraft[footerLanguage] || {};
+    footerTextFieldsContainer.querySelectorAll("[data-footer-field]").forEach((field) => {
+      localeValues[field.dataset.footerField] = field.value;
+    });
+    footerDraft[footerLanguage] = localeValues;
+    footerLinkFieldsContainer.querySelectorAll("[data-footer-link]").forEach((field) => {
+      footerLinksDraft[field.dataset.footerLink] = field.value.trim();
+    });
+  }
+
+  function isValidFooterHref(value) {
+    if (value.startsWith("//")) return false;
+    if (!/^[a-z][a-z\d+.-]*:/i.test(value)) return true;
+    try {
+      const url = new URL(value);
+      return ["https:", "mailto:", "tel:"].includes(url.protocol)
+        && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  }
+
+  async function saveFooterSettings(event) {
+    event.preventDefault();
+    footerSettingsError.hidden = true;
+    captureFooterSettings();
+    for (const { key, label } of footerLinkFields) {
+      const value = footerLinksDraft[key] || "";
+      if (value && !isValidFooterHref(value)) {
+        footerSettingsError.textContent = `Enter a valid secure URL for ${label}.`;
+        footerSettingsError.hidden = false;
+        return;
+      }
+    }
+
+    const submit = footerSettingsForm.querySelector('[type="submit"]');
+    submit.disabled = true;
+    submit.textContent = "Saving…";
+    try {
+      const translationsByLanguage = {};
+      for (const language of languages) {
+        const values = {};
+        for (const { key } of footerTextFields) {
+          const value = String(footerDraft[language]?.[key] || "").trim();
+          if (value) values[key] = value;
+        }
+        if (Object.keys(values).length) translationsByLanguage[language] = values;
+      }
+      const links = Object.fromEntries(footerLinkFields
+        .filter(({ key }) => footerLinksDraft[key] && footerLinksDraft[key] !== footerLinkFields.find((item) => item.key === key).href)
+        .map(({ key }) => [key, footerLinksDraft[key]]));
+      const footer = {
+        ...brandSettings.footer,
+        translations: translationsByLanguage,
+        links,
+      };
+      const settings = { ...brandSettings, footer };
+      const { error } = await client.from("store_settings").upsert({
+        setting_key: "storefront",
+        setting_value: settings,
+        description: "Public storefront identity, contact, delivery, appearance, and footer settings",
+        is_public: true,
+        updated_by: currentUser.id,
+      }, { onConflict: "setting_key" });
+      if (error) throw error;
+
+      brandSettings = settings;
+      window.RUQO_STORE_SETTINGS = settings;
+      window.dispatchEvent(new CustomEvent("ruqo:store-settings-updated", { detail: settings }));
+      showToast("Footer content saved.");
+    } catch (error) {
+      footerSettingsError.textContent = error.message || "Could not save footer content.";
+      footerSettingsError.hidden = false;
+    } finally {
+      submit.disabled = false;
+      submit.textContent = "Save footer content";
+    }
   }
 
   function populateHomepageSpotlightOptions(selectedSlug = "") {
@@ -771,7 +971,7 @@
       const { error } = await client.from("store_settings").upsert({
         setting_key: "storefront",
         setting_value: settings,
-        description: "Public storefront identity, contact, delivery, and appearance settings",
+        description: "Public storefront identity, contact, delivery, appearance, and footer settings",
         is_public: true,
         updated_by: currentUser.id,
       }, { onConflict: "setting_key" });
@@ -2995,6 +3195,11 @@
     $$('[data-admin-view]').forEach((button) =>
       button.addEventListener("click", () => setView(button.dataset.adminView)),
     );
+    footerLanguageSelect.addEventListener("change", () => {
+      captureFooterSettings();
+      footerLanguage = footerLanguageSelect.value;
+      renderFooterSettings();
+    });
     $("#add-category").addEventListener("click", openNewCategory);
     categoryForm.addEventListener("submit", saveCategory);
     $("#delete-category").addEventListener("click", deleteCategory);
@@ -3009,6 +3214,7 @@
     $("#add-promotion").addEventListener("click", openNewPromotion);
     $("#add-banner").addEventListener("click", openNewBanner);
     brandSettingsForm.addEventListener("submit", saveBrandSettings);
+    footerSettingsForm.addEventListener("submit", saveFooterSettings);
     homepageShowcaseForm.addEventListener("submit", saveHomepageShowcase);
     $("#delete-home-showcase-item").addEventListener("click", () => deleteHomepageSpotlight());
     homepageShowcaseForm.elements.product_slug.addEventListener("change", updateHomepageShowcasePreview);

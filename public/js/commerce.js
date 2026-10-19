@@ -634,48 +634,49 @@
             <a href="/" class="brand footer-brand" aria-label="${escapeHtml(storeName)}">
               <img class="brand-logo" src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" />
             </a>
-            <p class="footer-copy">${escapeHtml(t.footerCopy)}</p>
+            <p class="footer-copy" data-footer-label="footer.copy">${escapeHtml(t.footerCopy)}</p>
           </div>
           <div>
-            <h4>${escapeHtml(t.footerLinks)}</h4>
+            <h4 data-footer-label="footer.linksTitle">${escapeHtml(t.footerLinks)}</h4>
             <ul>
-              <li><a href="/#new">${escapeHtml(t.footerNew)}</a></li>
-              <li><a href="/#categories">${escapeHtml(t.footerCategories)}</a></li>
-              <li><a href="/#deals">${escapeHtml(t.footerOffers)}</a></li>
-              <li><a href="/about.html">${escapeHtml(t.about)}</a></li>
+              <li><a href="/#new" data-footer-label="footer.link1" data-footer-link="new">${escapeHtml(t.footerNew)}</a></li>
+              <li><a href="/#categories" data-footer-label="footer.link2" data-footer-link="categories">${escapeHtml(t.footerCategories)}</a></li>
+              <li><a href="/#deals" data-footer-label="footer.link3" data-footer-link="deals">${escapeHtml(t.footerOffers)}</a></li>
+              <li><a href="/about.html" data-footer-label="footer.about" data-footer-link="about">${escapeHtml(t.about)}</a></li>
             </ul>
           </div>
           <div>
-            <h4>${escapeHtml(t.footerSupport)}</h4>
+            <h4 data-footer-label="footer.supportTitle">${escapeHtml(t.footerSupport)}</h4>
             <ul>
-              <li><a href="/support.html#payment">${escapeHtml(t.footerPayment)}</a></li>
-              <li><a href="/support.html#delivery">${escapeHtml(t.footerFastShipping)}</a></li>
-              <li><a href="/support.html#contact">${escapeHtml(t.footerContactUs)}</a></li>
+              <li><a href="/support.html#payment" data-footer-label="footer.support1" data-footer-link="payment">${escapeHtml(t.footerPayment)}</a></li>
+              <li><a href="/support.html#delivery" data-footer-label="footer.support2" data-footer-link="shipping">${escapeHtml(t.footerFastShipping)}</a></li>
+              <li><a href="/support.html#contact" data-footer-label="footer.support3" data-footer-link="contact">${escapeHtml(t.footerContactUs)}</a></li>
             </ul>
           </div>
           <div>
-            <h4>${escapeHtml(t.footerContact)}</h4>
+            <h4 data-footer-label="footer.contactTitle">${escapeHtml(t.footerContact)}</h4>
             <ul>
               <li><a href="tel:+966500000000">+966 50 000 0000</a></li>
               <li><a href="mailto:hello@noursstore.com">hello@noursstore.com</a></li>
-              <li>${escapeHtml(t.footerLocation)}</li>
+              <li data-footer-label="footer.location">${escapeHtml(t.footerLocation)}</li>
             </ul>
           </div>
           <div>
-            <h4>${escapeHtml(t.footerLegal)}</h4>
+            <h4 data-footer-label="footer.legalTitle">${escapeHtml(t.footerLegal)}</h4>
             <ul class="footer-policies">
-              <li><a href="/support.html#terms">${escapeHtml(t.terms)}</a></li>
-              <li><a href="/support.html#returns">${escapeHtml(t.footerReturns)}</a></li>
-              <li><a href="/support.html#privacy">${escapeHtml(t.privacy)}</a></li>
+              <li><a href="/support.html#terms" data-footer-label="footer.policy1" data-footer-link="terms">${escapeHtml(t.terms)}</a></li>
+              <li><a href="/support.html#returns" data-footer-label="footer.policy2" data-footer-link="returns">${escapeHtml(t.footerReturns)}</a></li>
+              <li><a href="/support.html#privacy" data-footer-label="footer.policy3" data-footer-link="privacy">${escapeHtml(t.privacy)}</a></li>
             </ul>
           </div>
         </div>
         <div class="footer-bottom">
           <div class="container footer-bottom-inner">
-            <span>${t.rights.replace("RUQO TECH", escapeHtml(storeName))}</span>
+            <span data-footer-label="footer.rights">${t.rights.replace("RUQO TECH", escapeHtml(storeName))}</span>
           </div>
         </div>
       </footer>`;
+    window.RUQO_APPLY_FOOTER_SETTINGS?.(footer, language);
     const nav = header.querySelector(".commerce-links");
     nav.id = "commerce-navigation";
     nav.setAttribute("aria-label", t.navLabel);

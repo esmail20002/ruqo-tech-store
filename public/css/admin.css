@@ -48,8 +48,8 @@ html[data-theme="dark"] .local-dev-notice { color: #f0ce8c; }
 .login-copy p, .admin-page-heading p, .admin-section-heading p { margin: 0; color: var(--admin-muted); font-size: 0.88rem; line-height: 1.65; }
 .admin-login-form { display: grid; gap: 16px; }
 .admin-login-form label, .admin-form-grid label, .locale-panel label { display: grid; gap: 7px; color: var(--admin-text); font-size: 0.76rem; font-weight: 700; }
-.admin-login-form input, .admin-form-grid input, .admin-form-grid select, .locale-panel input, .locale-panel textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--admin-border); border-radius: 8px; outline: 0; background: var(--admin-surface); color: var(--admin-text); font-size: 0.84rem; }
-.admin-login-form input:focus, .admin-form-grid input:focus, .admin-form-grid select:focus, .locale-panel input:focus, .locale-panel textarea:focus { border-color: var(--admin-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-accent) 15%, transparent); }
+.admin-login-form input, .admin-form-grid input, .admin-form-grid select, .admin-form-grid textarea, .footer-language-field select, .locale-panel input, .locale-panel textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--admin-border); border-radius: 8px; outline: 0; background: var(--admin-surface); color: var(--admin-text); font-size: 0.84rem; }
+.admin-login-form input:focus, .admin-form-grid input:focus, .admin-form-grid select:focus, .admin-form-grid textarea:focus, .footer-language-field select:focus, .locale-panel input:focus, .locale-panel textarea:focus { border-color: var(--admin-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-accent) 15%, transparent); }
 .admin-primary-button, .admin-secondary-button, .admin-danger-button, .admin-icon-button, .admin-text-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; font-size: 0.78rem; font-weight: 800; transition: background 0.16s, border-color 0.16s, transform 0.16s, box-shadow 0.16s; }
 .admin-primary-button { min-height: 42px; padding: 0 15px; background: var(--admin-accent-strong); color: #fff; }
 .admin-primary-button:hover { background: var(--admin-accent); box-shadow: 0 6px 18px color-mix(in srgb, var(--admin-accent) 22%, transparent); transform: translateY(-1px); }
@@ -318,6 +318,8 @@ html[data-theme="dark"] .admin-nav-item.is-active { color: var(--admin-accent-st
 .variant-remove-button svg { width: 16px; height: 16px; }
 .admin-settings-form { display: grid; gap: 20px; padding: 18px; }
 .admin-settings-form input[type="color"] { min-height: 44px; padding: 5px; cursor: pointer; }
+.footer-language-field { display: grid; max-width: 320px; gap: 7px; color: var(--admin-text); font-size: 0.76rem; font-weight: 700; }
+.admin-form-grid textarea { resize: vertical; }
 .brand-logo-preview-row { display: flex; min-height: 76px; align-items: center; gap: 14px; flex-wrap: wrap; }
 .brand-logo-preview-row img { width: min(240px, 100%); height: 72px; padding: 8px; border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-surface-soft); object-fit: contain; }
 .showcase-sale-field.is-hidden { display: none; }

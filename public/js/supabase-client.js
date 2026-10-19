@@ -65,6 +65,41 @@
     });
     const favicon = document.querySelector('link[rel="icon"]');
     if (favicon) favicon.href = displayLogoUrl;
+    window.RUQO_APPLY_FOOTER_SETTINGS?.(
+      document.querySelector(".site-footer"),
+      (document.documentElement.lang || "en").split("-")[0],
+    );
+  };
+  window.RUQO_APPLY_FOOTER_SETTINGS = (footerRoot, language) => {
+    if (!footerRoot) return;
+    const footerSettings = window.RUQO_STORE_SETTINGS?.footer || {};
+    const localizedText = footerSettings.translations?.[language] || {};
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    footerRoot.querySelectorAll("[data-footer-label]").forEach((node) => {
+      const text = localizedText[node.dataset.footerLabel];
+      if (typeof text === "string" && text.trim()) {
+        node.textContent = text.replaceAll("RUQO TECH", storeName);
+      }
+    });
+    footerRoot.querySelectorAll("[data-footer-link]").forEach((node) => {
+      const href = String(footerSettings.links?.[node.dataset.footerLink] || "").trim();
+      if (!href) return;
+      if (href.startsWith("//")) {
+        console.warn("Ignoring an invalid protocol-relative footer URL.");
+        return;
+      }
+      if (!/^[a-z][a-z\d+.-]*:/i.test(href)) {
+        node.href = href;
+        return;
+      }
+      try {
+        const url = new URL(href);
+        if (["https:", "mailto:", "tel:"].includes(url.protocol)) node.href = href;
+        else console.warn("Ignoring an unsupported footer URL protocol.");
+      } catch (error) {
+        console.warn("Ignoring an invalid footer URL.", error.message);
+      }
+    });
   };
   window.addEventListener("ruqo:language-updated", applyPublicStoreSettings);
   window.addEventListener("ruqo:store-settings-updated", applyPublicStoreSettings);
