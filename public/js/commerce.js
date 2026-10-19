@@ -1593,8 +1593,56 @@
     zoomPane.append(zoomPaneImage);
     imageStage.append(zoomPane);
     zoomPaneImage.src = mainImage.currentSrc || mainImage.src;
+    const galleryThumbTrack = root.querySelector(".product-gallery-thumbs");
+    const galleryThumbCarousel = document.createElement("div");
+    galleryThumbCarousel.className = "product-gallery-thumb-carousel";
+    const makeGalleryThumbArrow = (step) => {
+      const button = document.createElement("button");
+      const isRtl = language === "ar";
+      const isPrevious = step < 0;
+      button.type = "button";
+      button.className = `product-gallery-thumb-arrow is-${isPrevious ? "previous" : "next"}`;
+      button.setAttribute("aria-label", isPrevious ? detail.previousImage : detail.nextImage);
+      button.title = isPrevious ? detail.previousImage : detail.nextImage;
+      button.innerHTML = icon(isPrevious === isRtl ? "chevron-right" : "chevron-left");
+      button.hidden = true;
+      button.addEventListener("click", () => {
+        const rtl = getComputedStyle(galleryThumbTrack).direction === "rtl";
+        const direction = step * (rtl ? -1 : 1);
+        const gap = parseFloat(getComputedStyle(galleryThumbTrack).columnGap) || 0;
+        const thumbWidth = galleryThumbTrack.firstElementChild?.getBoundingClientRect().width || 0;
+        galleryThumbTrack.scrollBy({
+          left: direction * (thumbWidth + gap),
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        });
+      });
+      return button;
+    };
+    const previousGalleryThumbs = makeGalleryThumbArrow(-1);
+    const nextGalleryThumbs = makeGalleryThumbArrow(1);
+    galleryThumbTrack.before(galleryThumbCarousel);
+    galleryThumbCarousel.append(previousGalleryThumbs, galleryThumbTrack, nextGalleryThumbs);
     const galleryButtons = [...root.querySelectorAll("[data-gallery-image]")];
     let galleryIndex = 0;
+    const updateGalleryThumbControls = () => {
+      const hasOverflow = galleryThumbTrack.scrollWidth > galleryThumbTrack.clientWidth + 3;
+      galleryThumbCarousel.classList.toggle("has-overflow", hasOverflow);
+      previousGalleryThumbs.hidden = !hasOverflow;
+      nextGalleryThumbs.hidden = !hasOverflow;
+      if (!hasOverflow) return;
+      const rtl = getComputedStyle(galleryThumbTrack).direction === "rtl";
+      const trackRect = galleryThumbTrack.getBoundingClientRect();
+      const firstRect = galleryThumbTrack.firstElementChild.getBoundingClientRect();
+      const lastRect = galleryThumbTrack.lastElementChild.getBoundingClientRect();
+      previousGalleryThumbs.disabled = rtl
+        ? Math.abs(trackRect.right - firstRect.right) < 2
+        : Math.abs(firstRect.left - trackRect.left) < 2;
+      nextGalleryThumbs.disabled = rtl
+        ? Math.abs(lastRect.left - trackRect.left) < 2
+        : Math.abs(trackRect.right - lastRect.right) < 2;
+    };
+    galleryThumbTrack.addEventListener("scroll", updateGalleryThumbControls, { passive: true });
+    window.addEventListener("resize", updateGalleryThumbControls);
     const showGalleryImage = (nextIndex) => {
       galleryIndex = (nextIndex + gallery.length) % gallery.length;
       const selectedImage = gallery[galleryIndex];
@@ -1614,6 +1662,11 @@
       galleryButtons.forEach((button, index) => {
         button.classList.toggle("is-active", index === galleryIndex);
         button.setAttribute("aria-pressed", String(index === galleryIndex));
+      });
+      galleryButtons[galleryIndex].scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
       });
     };
     const addGalleryArrow = (container, step, className) => {
@@ -1652,6 +1705,7 @@
         showGalleryImage(index);
       }),
     );
+    updateGalleryThumbControls();
     mainImage.addEventListener("click", () => {
       if (mainImage.dataset.suppressClick === "true") {
         mainImage.dataset.suppressClick = "false";
