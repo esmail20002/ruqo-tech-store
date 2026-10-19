@@ -1060,6 +1060,27 @@
     reviewEntries.setAttribute("role", "region");
     reviewEntries.setAttribute("aria-label", reviewUi.written);
     reviewEntries.tabIndex = 0;
+    const reviewPhotoLightbox = document.createElement("dialog");
+    reviewPhotoLightbox.className = "review-photo-lightbox";
+    reviewPhotoLightbox.dir = "ltr";
+    reviewPhotoLightbox.setAttribute("aria-label", language === "ar" ? "صورة المراجعة" : "Review photo");
+    reviewPhotoLightbox.innerHTML = `<button class="review-photo-lightbox-close" type="button" aria-label="${detail.close}">${icon("x")}</button><img class="review-photo-lightbox-image" alt="" /><section class="review-photo-lightbox-copy"><div class="review-photo-lightbox-author"><strong></strong><time></time></div><span class="review-photo-lightbox-stars" aria-label=""></span><p></p></section>`;
+    root.append(reviewPhotoLightbox);
+    const reviewPhotoLightboxImage = reviewPhotoLightbox.querySelector(".review-photo-lightbox-image");
+    const reviewPhotoLightboxAuthor = reviewPhotoLightbox.querySelector(".review-photo-lightbox-author strong");
+    const reviewPhotoLightboxDate = reviewPhotoLightbox.querySelector(".review-photo-lightbox-author time");
+    const reviewPhotoLightboxStars = reviewPhotoLightbox.querySelector(".review-photo-lightbox-stars");
+    const reviewPhotoLightboxText = reviewPhotoLightbox.querySelector(".review-photo-lightbox-copy p");
+    reviewPhotoLightbox.querySelector(".review-photo-lightbox-close").addEventListener("click", () => reviewPhotoLightbox.close());
+    reviewPhotoLightbox.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        reviewPhotoLightbox.close();
+      }
+    });
+    reviewPhotoLightbox.addEventListener("click", (event) => {
+      if (event.target === reviewPhotoLightbox) reviewPhotoLightbox.close();
+    });
     const reviewControls = document.createElement("div");
     reviewControls.className = "review-carousel-controls";
     const makeReviewArrow = (step) => {
@@ -1148,19 +1169,18 @@
         const date = document.createElement("time");
         date.className = "review-date";
         date.dateTime = review.date || "";
-        date.textContent = review.date
+        const formattedReviewDate = review.date
           ? new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, { dateStyle: "medium" }).format(new Date(review.date))
           : "";
+        date.textContent = formattedReviewDate;
         head.append(author, stars, source, date);
         const body = document.createElement("p");
         body.textContent = review.text;
         card.append(head, body);
         if (review.photo) {
-          const photoLink = document.createElement("a");
+          const photoLink = document.createElement("button");
           photoLink.className = "review-photo-link";
-          photoLink.href = review.photo;
-          photoLink.target = "_blank";
-          photoLink.rel = "noreferrer";
+          photoLink.type = "button";
           photoLink.setAttribute("aria-label", language === "ar" ? "عرض صورة المراجعة" : "View review photo");
           const photo = document.createElement("img");
           photo.className = "review-photo-thumb";
@@ -1168,6 +1188,22 @@
           photo.alt = language === "ar" ? "صورة مرفقة بالمراجعة" : "Photo attached to review";
           photo.loading = "lazy";
           photoLink.append(photo);
+          photoLink.addEventListener("click", () => {
+            reviewPhotoLightboxImage.src = review.photo;
+            reviewPhotoLightboxImage.alt = photo.alt;
+            reviewPhotoLightboxAuthor.textContent = review.name;
+            reviewPhotoLightboxDate.dateTime = review.date || "";
+            reviewPhotoLightboxDate.textContent = formattedReviewDate;
+            reviewPhotoLightboxDate.hidden = !formattedReviewDate;
+            reviewPhotoLightboxStars.textContent = `${"★".repeat(Number(review.rating))}${"☆".repeat(5 - Number(review.rating))}`;
+            reviewPhotoLightboxStars.setAttribute(
+              "aria-label",
+              language === "ar" ? `${review.rating} من 5 نجوم` : `${review.rating} out of 5 stars`,
+            );
+            reviewPhotoLightboxText.textContent = review.text;
+            reviewPhotoLightbox.querySelector(".review-photo-lightbox-copy").dir = language === "ar" ? "rtl" : "ltr";
+            reviewPhotoLightbox.showModal();
+          });
           card.append(photoLink);
         }
         reviewEntries.append(card);
