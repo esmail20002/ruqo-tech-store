@@ -442,6 +442,13 @@
     es: { localNote: "Reseñas compartidas con todos los clientes", loading: "Cargando reseñas…", unavailable: "Las reseñas compartidas no están disponibles temporalmente.", thanks: "Gracias. Tu reseña ya está publicada.", failed: "No se pudo publicar tu reseña. Inténtalo de nuevo." },
     zh: { localNote: "所有顾客均可查看的评价", loading: "正在加载客户评价…", unavailable: "共享评价暂时不可用。", thanks: "谢谢，你的评价已公开发布。", failed: "评价发布失败，请重试。" },
   }[language] || { localNote: "Reviews shared with all customers", loading: "Loading customer reviews…", unavailable: "Shared reviews are temporarily unavailable.", thanks: "Thank you. Your review is now public.", failed: "We couldn't publish your review. Please try again." };
+  const reviewCarouselLabels = {
+    en: { previous: "Previous reviews", next: "Next reviews" },
+    ar: { previous: "المراجعات السابقة", next: "المراجعات التالية" },
+    fr: { previous: "Avis précédents", next: "Avis suivants" },
+    es: { previous: "Reseñas anteriores", next: "Reseñas siguientes" },
+    zh: { previous: "上一组评价", next: "下一组评价" },
+  }[language] || { previous: "Previous reviews", next: "Next reviews" };
   const currencyRates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
   const localeByLanguage = {
     en: "en-SA",
@@ -1050,7 +1057,50 @@
     reviewTools.innerHTML = `<label class="review-tool"><span>${reviewUi.filter}</span><select data-review-filter aria-label="${reviewUi.filter}"><option value="all">${reviewUi.all}</option>${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${value} ★</option>`).join("")}</select></label><label class="review-tool"><span>${reviewUi.sort}</span><select data-review-sort aria-label="${reviewUi.sort}"><option value="newest">${reviewUi.newest}</option><option value="highest">${reviewUi.highest}</option><option value="lowest">${reviewUi.lowest}</option></select></label><label class="review-tool"><span>${reviewUi.photoFilter}</span><select data-review-photo-filter aria-label="${reviewUi.photoFilter}"><option value="all">${reviewUi.all}</option><option value="with-photo">${reviewUi.withPhoto}</option><option value="without-photo">${reviewUi.withoutPhoto}</option></select></label>`;
     const reviewEntries = document.createElement("div");
     reviewEntries.className = "review-entries";
-    reviewList.replaceChildren(reviewHeader, reviewTools, reviewEntries);
+    reviewEntries.setAttribute("role", "region");
+    reviewEntries.setAttribute("aria-label", reviewUi.written);
+    reviewEntries.tabIndex = 0;
+    const reviewControls = document.createElement("div");
+    reviewControls.className = "review-carousel-controls";
+    const makeReviewArrow = (step) => {
+      const button = document.createElement("button");
+      const directionIsRtl = language === "ar";
+      const isNext = step > 0;
+      const label = isNext ? reviewCarouselLabels.next : reviewCarouselLabels.previous;
+      const iconName = isNext === directionIsRtl ? "chevron-left" : "chevron-right";
+      button.className = `review-carousel-arrow is-${isNext ? "next" : "previous"}`;
+      button.type = "button";
+      button.setAttribute("aria-label", label);
+      button.title = label;
+      button.innerHTML = icon(iconName);
+      button.addEventListener("click", () => {
+        const logicalDirection = step * (directionIsRtl ? -1 : 1);
+        reviewEntries.scrollBy({
+          left: logicalDirection * reviewEntries.clientWidth,
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        });
+      });
+      return button;
+    };
+    const previousReviewsButton = makeReviewArrow(-1);
+    const nextReviewsButton = makeReviewArrow(1);
+    reviewControls.append(previousReviewsButton, nextReviewsButton);
+    reviewControls.hidden = true;
+    reviewList.replaceChildren(reviewHeader, reviewTools, reviewEntries, reviewControls);
+    const updateReviewControls = () => {
+      const hasMultiplePages = reviewEntries.scrollWidth > reviewEntries.clientWidth + 2;
+      reviewControls.hidden = !hasMultiplePages;
+      if (!hasMultiplePages) return;
+      const rtl = getComputedStyle(reviewEntries).direction === "rtl";
+      const scrollPosition = Math.abs(reviewEntries.scrollLeft);
+      const maxScroll = reviewEntries.scrollWidth - reviewEntries.clientWidth;
+      const atStart = rtl ? scrollPosition >= maxScroll - 2 : scrollPosition < 2;
+      const atEnd = rtl ? scrollPosition < 2 : scrollPosition >= maxScroll - 2;
+      previousReviewsButton.disabled = rtl ? atEnd : atStart;
+      nextReviewsButton.disabled = rtl ? atStart : atEnd;
+    };
+    reviewEntries.addEventListener("scroll", updateReviewControls, { passive: true });
+    window.addEventListener("resize", updateReviewControls, { passive: true });
     const renderLocalReviews = () => {
       const selectedRating = reviewTools.querySelector("[data-review-filter]").value;
       const sortOrder = reviewTools.querySelector("[data-review-sort]").value;
@@ -1066,6 +1116,7 @@
         });
       reviewEntries.replaceChildren();
       if (!visibleReviews.length) {
+        reviewEntries.classList.add("is-empty");
         const empty = document.createElement("div");
         empty.className = "review-empty";
         const emptyIcon = document.createElement("span");
@@ -1075,9 +1126,12 @@
         message.textContent = reviewsLoading ? reviewMessages.loading : reviews.length ? reviewUi.emptyFiltered : reviewUi.empty;
         empty.append(message);
         reviewEntries.append(empty);
+        updateReviewControls();
         window.lucide?.createIcons();
         return;
       }
+      reviewEntries.classList.toggle("is-single", visibleReviews.length === 1);
+      reviewEntries.classList.remove("is-empty");
       for (const review of visibleReviews) {
         const card = document.createElement("article");
         card.className = "product-review";
@@ -1118,6 +1172,8 @@
         }
         reviewEntries.append(card);
       }
+      reviewEntries.scrollTo({ left: 0, behavior: "auto" });
+      updateReviewControls();
     };
     reviewTools.querySelectorAll("select").forEach((select) => select.addEventListener("change", renderLocalReviews));
     renderLocalReviews();
