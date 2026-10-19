@@ -435,6 +435,13 @@
     es: { photoTooLarge: "Elige una imagen de menos de 8 MB.", photoType: "Elige un archivo de imagen." },
     zh: { photoTooLarge: "请选择小于 8 MB 的图片。", photoType: "请选择图片文件。" },
   }[language] || { photoTooLarge: "Choose an image smaller than 8 MB.", photoType: "Please choose an image file." };
+  const reviewMessages = {
+    en: { localNote: "Reviews shared with all customers", loading: "Loading customer reviews…", unavailable: "Shared reviews are temporarily unavailable.", thanks: "Thank you. Your review is now public.", failed: "We couldn't publish your review. Please try again." },
+    ar: { localNote: "مراجعات منشورة لجميع العملاء", loading: "جارٍ تحميل مراجعات العملاء…", unavailable: "التقييمات المشتركة غير متاحة مؤقتاً.", thanks: "شكرًا لك، أصبح تقييمك منشورًا للجميع.", failed: "تعذر نشر تقييمك. حاول مرة أخرى." },
+    fr: { localNote: "Avis visibles par tous les clients", loading: "Chargement des avis…", unavailable: "Les avis partagés sont temporairement indisponibles.", thanks: "Merci. Votre avis est maintenant publié.", failed: "Impossible de publier votre avis. Réessayez." },
+    es: { localNote: "Reseñas compartidas con todos los clientes", loading: "Cargando reseñas…", unavailable: "Las reseñas compartidas no están disponibles temporalmente.", thanks: "Gracias. Tu reseña ya está publicada.", failed: "No se pudo publicar tu reseña. Inténtalo de nuevo." },
+    zh: { localNote: "所有顾客均可查看的评价", loading: "正在加载客户评价…", unavailable: "共享评价暂时不可用。", thanks: "谢谢，你的评价已公开发布。", failed: "评价发布失败，请重试。" },
+  }[language] || { localNote: "Reviews shared with all customers", loading: "Loading customer reviews…", unavailable: "Shared reviews are temporarily unavailable.", thanks: "Thank you. Your review is now public.", failed: "We couldn't publish your review. Please try again." };
   const currencyRates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
   const localeByLanguage = {
     en: "en-SA",
@@ -881,6 +888,7 @@
       zh: { written: "文字评价", localNote: "从此浏览器提交的评价", all: "全部评分", newest: "最新", highest: "评分最高", lowest: "评分最低", filter: "筛选", sort: "排序", rating: "你的评分", ratingHint: "请选择星级", chars: "字", emptyFiltered: "没有符合这些筛选条件的评价。", empty: "暂无文字评价，欢迎分享你的使用体验。", photoFilter: "图片", withPhoto: "有图片", withoutPhoto: "无图片", attachPhoto: "添加商品图片（可选）", photoTooLarge: "请选择小于 8 MB 的图片。", photoType: "请选择图片文件。", lowStock: "仅剩 {count} 件 · 尽快下单", availableNow: "有货 · 可立即发货" },
     }[language] || { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match these filters.", empty: "No written reviews yet. Be the first to share your experience.", photoFilter: "Photos", withPhoto: "With photos", withoutPhoto: "Without photos", attachPhoto: "Add a product photo (optional)", photoTooLarge: "Choose an image under 8 MB.", photoType: "Choose an image file.", lowStock: "Only {count} left · order soon", availableNow: "In stock · ready to ship" };
 
+    reviewUi.localNote = reviewMessages.localNote;
     const productImages = product.images?.filter(Boolean) || [product.image];
     const gallery = productImages.length > 1
       ? productImages.map((image) => ({ ...product, image, position: "center" }))
@@ -905,7 +913,9 @@
       )
       .slice(0, 3)
       .map(localizeProduct);
-    const reviews = store.read(`nours-reviews-${product.id}`, []);
+    const reviewKey = `nours-reviews-${product.id}`;
+    const reviews = store.read(reviewKey, []);
+    let reviewsLoading = Boolean(window.RUQO_SUPABASE);
     const reviewTotal = product.reviews + reviews.length;
     const reviewScore =
       reviews.reduce(
@@ -1062,7 +1072,7 @@
         emptyIcon.innerHTML = icon("message-circle");
         empty.append(emptyIcon.firstElementChild);
         const message = document.createElement("p");
-        message.textContent = reviews.length ? reviewUi.emptyFiltered : reviewUi.empty;
+        message.textContent = reviewsLoading ? reviewMessages.loading : reviews.length ? reviewUi.emptyFiltered : reviewUi.empty;
         empty.append(message);
         reviewEntries.append(empty);
         window.lucide?.createIcons();
@@ -1111,6 +1121,85 @@
     };
     reviewTools.querySelectorAll("select").forEach((select) => select.addEventListener("change", renderLocalReviews));
     renderLocalReviews();
+    const client = window.RUQO_SUPABASE;
+    if (!client) {
+      reviewsLoading = false;
+      reviewHeader.querySelector("p").textContent = language === "ar" ? "المراجعات المحفوظة على هذا الجهاز" : "Reviews saved on this device";
+      renderLocalReviews();
+    } else {
+      const fetchSharedReviews = () => client
+        .from("product_reviews")
+        .select("id, reviewer_name, rating, review_text, photo_url, created_at")
+        .eq("product_slug", product.id)
+        .order("created_at", { ascending: false });
+      void (async () => {
+        const localReviews = store.read(reviewKey, []);
+        localReviews.forEach((review) => {
+          if (!review.id) review.id = crypto.randomUUID();
+        });
+        store.write(reviewKey, localReviews);
+        try {
+          let { data, error } = await fetchSharedReviews();
+          if (error) throw error;
+          const publishedIds = new Set((data || []).map((review) => review.id));
+          for (const review of localReviews) {
+            if (review.published || publishedIds.has(review.id)) {
+              review.published = true;
+              continue;
+            }
+            let photoUrl = null;
+            try {
+              if (review.photo) {
+                photoUrl = review.photo.startsWith("http")
+                  ? review.photo
+                  : await uploadReviewPhoto(review.photo, product.id, review.id);
+              }
+            } catch (photoError) {
+              console.warn("Could not migrate a review photo.", photoError.message);
+            }
+            const { error: insertError } = await client.from("product_reviews").insert({
+              id: review.id,
+              product_slug: product.id,
+              reviewer_name: review.name,
+              rating: Number(review.rating),
+              review_text: review.text,
+              photo_url: photoUrl,
+              ...(review.date ? { created_at: review.date } : {}),
+            });
+            if (!insertError || insertError.code === "23505") {
+              review.published = true;
+              publishedIds.add(review.id);
+            } else {
+              console.warn("Could not publish a saved review.", insertError.message);
+            }
+          }
+          store.write(reviewKey, localReviews);
+          ({ data, error } = await fetchSharedReviews());
+          if (error) throw error;
+          const merged = new Map();
+          localReviews.filter((review) => !review.published).forEach((review) => merged.set(review.id, review));
+          (data || []).forEach((review) => merged.set(review.id, {
+            id: review.id,
+            name: review.reviewer_name,
+            rating: Number(review.rating),
+            text: review.review_text,
+            photo: review.photo_url,
+            date: review.created_at,
+            published: true,
+          }));
+          reviews.splice(0, reviews.length, ...[...merged.values()].sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))));
+        } catch (error) {
+          console.warn("Could not load shared product reviews.", error.message);
+          reviewHeader.querySelector("p").textContent = reviewMessages.unavailable;
+        } finally {
+          reviewsLoading = false;
+          reviewHeader.querySelector(".review-written-count").textContent = String(reviews.length);
+          const countLabel = root.querySelector(".detail-rating-link > span:nth-child(2)");
+          if (countLabel) countLabel.textContent = `${product.reviews + reviews.length} ${t.rating}`;
+          renderLocalReviews();
+        }
+      })();
+    }
 
     const reviewForm = root.querySelector("[data-product-review]");
     const nativeRating = reviewForm.elements.rating;
@@ -2585,37 +2674,70 @@
     });
   }
 
+  async function uploadReviewPhoto(dataUrl, productSlug, reviewId) {
+    const bucket = window.RUQO_SUPABASE.storage.from("product-review-photos");
+    const blob = await fetch(dataUrl).then((response) => response.blob());
+    const path = `reviews/${productSlug}/${reviewId}.jpg`;
+    const { error } = await bucket.upload(path, blob, { contentType: "image/jpeg", upsert: true });
+    if (error) throw error;
+    return bucket.getPublicUrl(path).data.publicUrl;
+  }
+
   root.addEventListener("submit", async (event) => {
     if (event.target.matches("[data-product-review]")) {
       event.preventDefault();
       const form = event.target;
       if (!form.reportValidity()) return;
       const review = Object.fromEntries(new FormData(form));
-      const key = `nours-reviews-${new URLSearchParams(location.search).get("id")}`;
+      const productSlug = new URLSearchParams(location.search).get("id");
+      const reviewId = crypto.randomUUID();
+      const feedback = form.querySelector("[data-review-feedback]");
+      const submitButton = form.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+      feedback.textContent = "";
       let photo = null;
       if (review.photo instanceof File && review.photo.size > 0) {
         try {
           photo = await compressReviewImage(review.photo, reviewPhotoMessages);
         } catch (error) {
-          root.querySelector("[data-review-feedback]").textContent = error.message || reviewPhotoMessages.photoTooLarge;
+          feedback.textContent = error.message || reviewPhotoMessages.photoTooLarge;
+          submitButton.disabled = false;
           return;
         }
       }
-      store.write(key, [
-        ...store.read(key, []),
-        {
-          name: review.name.trim(),
-          text: review.text.trim(),
+      try {
+        const client = window.RUQO_SUPABASE;
+        if (!client) throw new Error("Shared reviews are unavailable.");
+        const photoUrl = photo ? await uploadReviewPhoto(photo, productSlug, reviewId) : null;
+        const newReview = {
+          id: reviewId,
+          product_slug: productSlug,
+          reviewer_name: review.name.trim(),
           rating: Number(review.rating),
-          photo,
+          review_text: review.text.trim(),
+          photo_url: photoUrl,
+        };
+        const { error } = await client.from("product_reviews").insert(newReview);
+        if (error) throw error;
+        const publishedReview = {
+          id: reviewId,
+          name: newReview.reviewer_name,
+          text: newReview.review_text,
+          rating: newReview.rating,
+          photo: photoUrl,
           date: new Date().toISOString(),
-        },
-      ]);
-      renderProduct();
-      root
-        .querySelector("#product-reviews")
-        ?.scrollIntoView({ behavior: "smooth" });
-      toast(t.reviewThanks);
+          published: true,
+        };
+        store.write(`nours-reviews-${productSlug}`, [publishedReview, ...store.read(`nours-reviews-${productSlug}`, [])]);
+        renderProduct();
+        root.querySelector("#product-reviews")?.scrollIntoView({ behavior: "smooth" });
+        toast(reviewMessages.thanks);
+      } catch (error) {
+        console.warn("Could not submit shared product review.", error.message);
+        feedback.textContent = reviewMessages.failed;
+      } finally {
+        submitButton.disabled = false;
+      }
     }
     if (event.target.matches("[data-checkout-form]")) {
       event.preventDefault();
