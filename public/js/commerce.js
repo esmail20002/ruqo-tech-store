@@ -11,6 +11,23 @@
   let checkoutCouponCode = "";
   let checkoutCouponMessage = "";
   let checkoutCouponMessageIsError = false;
+  let selectedReviewPhotos = [];
+  function parseReviewPhotos(raw) {
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw.filter(Boolean);
+    if (typeof raw === "string") {
+      const trimmed = raw.trim();
+      if (!trimmed) return [];
+      if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) return parsed.filter(Boolean);
+        } catch (_) {}
+      }
+      return [trimmed];
+    }
+    return [];
+  }
   const text = {
     en: {
       home: "Home",
@@ -715,7 +732,13 @@
     menuButton.setAttribute("aria-controls", nav.id);
     menuButton.setAttribute("aria-expanded", "false");
     menuButton.innerHTML = `${icon("menu")}${icon("x")}`;
+    if (page === "product") {
+      menuButton.classList.add("commerce-menu--product-page");
+    }
     header.querySelector(".commerce-actions").prepend(menuButton);
+    if (page === "product") {
+      setupProductSideMenu(menuButton);
+    }
     const setMenuOpen = (isOpen) => {
       nav.classList.toggle("is-open", isOpen);
       menuButton.setAttribute("aria-expanded", String(isOpen));
@@ -889,12 +912,12 @@
       gallery: "Product gallery", galleryNote: "Select a thumbnail to explore a closer crop of the product image.", previousImage: "Previous image", nextImage: "Next image", view: "View", zoom: "View larger image", specs: "Specifications", detailedSpecs: "View detailed specifications", detailsTitle: "Detailed specifications", labels: { phones: ["Camera / platform", "Storage / display", "Core technology", "Design / experience"], laptops: ["Display", "Processor", "Memory / design", "Power / connectivity"], audio: ["Sound", "Noise control", "Connectivity", "Comfort"], wearables: ["Health", "Tracking", "Connectivity", "Design"] }, arrival: "Estimated delivery", arrivalValue: "1–2 business days", secure: "Secure checkout", returnsInfo: "7-day return window", reviewTitle: "Ratings & reviews", basedOn: "Based on customer ratings", reviewForm: "Share your experience", reviewName: "Your name", reviewText: "Your review", reviewSubmit: "Submit review", reviewThanks: "Thanks. Your review is saved on this device.", recentReviews: "Recent reviews", verified: "Customer review", related: "You may also like", keepBrowsing: "View all products", quantity: "Quantity", close: "Close image", noReviews: "Written review excerpts are not available yet. Share your experience below.",
     };
     const reviewUi = {
-      en: { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match these filters.", empty: "No written reviews yet. Be the first to share your experience.", photoFilter: "Photos", withPhoto: "With photos", withoutPhoto: "Without photos", attachPhoto: "Add a product photo (optional)", photoTooLarge: "Choose an image under 8 MB.", photoType: "Choose an image file.", lowStock: "Only {count} left · order soon", availableNow: "In stock · ready to ship" },
-      ar: { written: "المراجعات المكتوبة", localNote: "المراجعات المرسلة من هذا المتصفح", all: "كل التقييمات", newest: "الأحدث", highest: "الأعلى تقييماً", lowest: "الأقل تقييماً", filter: "تصفية", sort: "ترتيب", rating: "تقييمك", ratingHint: "اختر عدد النجوم", chars: "حرفاً", emptyFiltered: "لا توجد مراجعات تطابق هذه الفلاتر.", empty: "لا توجد مراجعات مكتوبة بعد. كن أول من يشارك تجربته.", photoFilter: "الصور", withPhoto: "مع صور", withoutPhoto: "بدون صور", attachPhoto: "أضف صورة للمنتج (اختياري)", photoTooLarge: "اختر صورة أقل من 8 ميغابايت.", photoType: "اختر ملف صورة.", lowStock: "متبقي {count} فقط · اطلبه الآن", availableNow: "متوفر · جاهز للشحن" },
-      fr: { written: "Avis écrits", localNote: "Avis envoyés depuis ce navigateur", all: "Toutes les notes", newest: "Plus récents", highest: "Mieux notés", lowest: "Moins bien notés", filter: "Filtrer", sort: "Trier", rating: "Votre note", ratingHint: "Choisissez une note", chars: "caractères", emptyFiltered: "Aucun avis ne correspond à ces filtres.", empty: "Aucun avis écrit pour le moment. Soyez le premier à partager votre expérience.", photoFilter: "Photos", withPhoto: "Avec photos", withoutPhoto: "Sans photos", attachPhoto: "Ajouter une photo du produit (facultatif)", photoTooLarge: "Choisissez une image de moins de 8 Mo.", photoType: "Choisissez un fichier image.", lowStock: "Plus que {count} · commandez vite", availableNow: "En stock · prêt à expédier" },
-      es: { written: "Reseñas escritas", localNote: "Reseñas enviadas desde este navegador", all: "Todas las valoraciones", newest: "Más recientes", highest: "Mejor valoradas", lowest: "Peor valoradas", filter: "Filtrar", sort: "Ordenar", rating: "Tu valoración", ratingHint: "Elige una valoración", chars: "caracteres", emptyFiltered: "No hay reseñas que coincidan con estos filtros.", empty: "Todavía no hay reseñas escritas. Sé la primera persona en compartir su experiencia.", photoFilter: "Fotos", withPhoto: "Con fotos", withoutPhoto: "Sin fotos", attachPhoto: "Añadir foto del producto (opcional)", photoTooLarge: "Elige una imagen de menos de 8 MB.", photoType: "Elige un archivo de imagen.", lowStock: "Solo quedan {count} · pide pronto", availableNow: "Disponible · listo para enviar" },
-      zh: { written: "文字评价", localNote: "从此浏览器提交的评价", all: "全部评分", newest: "最新", highest: "评分最高", lowest: "评分最低", filter: "筛选", sort: "排序", rating: "你的评分", ratingHint: "请选择星级", chars: "字", emptyFiltered: "没有符合这些筛选条件的评价。", empty: "暂无文字评价，欢迎分享你的使用体验。", photoFilter: "图片", withPhoto: "有图片", withoutPhoto: "无图片", attachPhoto: "添加商品图片（可选）", photoTooLarge: "请选择小于 8 MB 的图片。", photoType: "请选择图片文件。", lowStock: "仅剩 {count} 件 · 尽快下单", availableNow: "有货 · 可立即发货" },
-    }[language] || { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match these filters.", empty: "No written reviews yet. Be the first to share your experience.", photoFilter: "Photos", withPhoto: "With photos", withoutPhoto: "Without photos", attachPhoto: "Add a product photo (optional)", photoTooLarge: "Choose an image under 8 MB.", photoType: "Choose an image file.", lowStock: "Only {count} left · order soon", availableNow: "In stock · ready to ship" };
+      en: { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match these filters.", empty: "No written reviews yet. Be the first to share your experience.", photoFilter: "Photos", withPhoto: "With photos", withoutPhoto: "Without photos", attachPhoto: "Add product photos (up to 6 photos - optional)", addMorePhotos: "Add more photos", maxPhotosReached: "Maximum of 6 photos reached", photosCount: "{count} / 6 photos", removePhoto: "Remove photo", photoTooLarge: "Choose an image under 8 MB.", photoType: "Choose an image file.", lowStock: "Only {count} left · order soon", availableNow: "In stock · ready to ship" },
+      ar: { written: "المراجعات المكتوبة", localNote: "المراجعات المرسلة من هذا المتصفح", all: "كل التقييمات", newest: "الأحدث", highest: "الأعلى تقييماً", lowest: "الأقل تقييماً", filter: "تصفية", sort: "ترتيب", rating: "تقييمك", ratingHint: "اختر عدد النجوم", chars: "حرفاً", emptyFiltered: "لا توجد مراجعات تطابق هذه الفلاتر.", empty: "لا توجد مراجعات مكتوبة بعد. كن أول من يشارك تجربته.", photoFilter: "الصور", withPhoto: "مع صور", withoutPhoto: "بدون صور", attachPhoto: "أضف صوراً للمنتج (حتى 6 صور - اختياري)", addMorePhotos: "أضف المزيد من الصور", maxPhotosReached: "تم بلوغ الحد الأقصى (6 صور)", photosCount: "{count} / 6 صور", removePhoto: "حذف الصورة", photoTooLarge: "اختر صورة أقل من 8 ميغابايت.", photoType: "اختر ملف صورة.", lowStock: "متبقي {count} فقط · اطلبه الآن", availableNow: "متوفر · جاهز للشحن" },
+      fr: { written: "Avis écrits", localNote: "Avis envoyés depuis ce navigateur", all: "Toutes les notes", newest: "Plus récents", highest: "Mieux notés", lowest: "Moins bien notés", filter: "Filtrer", sort: "Trier", rating: "Votre note", ratingHint: "Choisissez une note", chars: "caractères", emptyFiltered: "Aucun avis ne correspond à ces filtres.", empty: "Aucun avis écrit pour le moment. Soyez le premier à partager votre expérience.", photoFilter: "Photos", withPhoto: "Avec photos", withoutPhoto: "Sans photos", attachPhoto: "Ajouter des photos (jusqu'à 6 photos - facultatif)", addMorePhotos: "Ajouter d'autres photos", maxPhotosReached: "Limite maximale atteinte (6 photos)", photosCount: "{count} / 6 photos", removePhoto: "Supprimer la photo", photoTooLarge: "Choisissez une image de moins de 8 Mo.", photoType: "Choisissez un fichier image.", lowStock: "Plus que {count} · commandez vite", availableNow: "En stock · prêt à expédier" },
+      es: { written: "Reseñas escritas", localNote: "Reseñas enviadas desde este navegador", all: "Todas las valoraciones", newest: "Más recientes", highest: "Mejor valoradas", lowest: "Peor valoradas", filter: "Filtrar", sort: "Ordenar", rating: "Tu valoración", ratingHint: "Elige una valoración", chars: "caracteres", emptyFiltered: "No hay reseñas que coincidan con estos filtros.", empty: "Todavía no hay reseñas escritas. Sé la primera persona en compartir su experiencia.", photoFilter: "Fotos", withPhoto: "Con fotos", withoutPhoto: "Sin fotos", attachPhoto: "Añadir fotos del producto (hasta 6 fotos - opcional)", addMorePhotos: "Añadir más fotos", maxPhotosReached: "Límite máximo alcanzado (6 fotos)", photosCount: "{count} / 6 fotos", removePhoto: "Eliminar foto", photoTooLarge: "Elige una imagen de menos de 8 MB.", photoType: "Elige un archivo de imagen.", lowStock: "Solo quedan {count} · pide pronto", availableNow: "Disponible · listo para enviar" },
+      zh: { written: "文字评价", localNote: "从此浏览器提交的评价", all: "全部评分", newest: "最新", highest: "评分最高", lowest: "评分最低", filter: "筛选", sort: "排序", rating: "你的评分", ratingHint: "请选择星级", chars: "字", emptyFiltered: "没有符合这些筛选条件的评价。", empty: "暂无文字评价，欢迎分享你的使用体验。", photoFilter: "图片", withPhoto: "有图片", withoutPhoto: "无图片", attachPhoto: "添加商品图片（最多 6 张 - 可选）", addMorePhotos: "添加更多图片", maxPhotosReached: "已达上限（最多 6 张）", photosCount: "{count} / 6 张图片", removePhoto: "删除图片", photoTooLarge: "请选择小于 8 MB 的图片。", photoType: "请选择图片文件。", lowStock: "仅剩 {count} 件 · 尽快下单", availableNow: "有货 · 可立即发货" },
+    }[language] || { written: "Written reviews", localNote: "Reviews submitted from this browser", all: "All ratings", newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", filter: "Filter", sort: "Sort", rating: "Your rating", ratingHint: "Select a star rating", chars: "characters", emptyFiltered: "No written reviews match these filters.", empty: "No written reviews yet. Be the first to share your experience.", photoFilter: "Photos", withPhoto: "With photos", withoutPhoto: "Without photos", attachPhoto: "Add product photos (up to 6 photos - optional)", addMorePhotos: "Add more photos", maxPhotosReached: "Maximum of 6 photos reached", photosCount: "{count} / 6 photos", removePhoto: "Remove photo", photoTooLarge: "Choose an image under 8 MB.", photoType: "Choose an image file.", lowStock: "Only {count} left · order soon", availableNow: "In stock · ready to ship" };
 
     reviewUi.localNote = reviewMessages.localNote;
     const productImages = product.images?.filter(Boolean) || [product.image];
@@ -1064,24 +1087,90 @@
     const reviewPhotoLightbox = document.createElement("dialog");
     reviewPhotoLightbox.className = "review-photo-lightbox";
     reviewPhotoLightbox.dir = "ltr";
-    reviewPhotoLightbox.setAttribute("aria-label", language === "ar" ? "صورة المراجعة" : "Review photo");
-    reviewPhotoLightbox.innerHTML = `<button class="review-photo-lightbox-close" type="button" aria-label="${detail.close}">${icon("x")}</button><img class="review-photo-lightbox-image" alt="" /><section class="review-photo-lightbox-copy"><div class="review-photo-lightbox-author"><strong></strong><time></time></div><span class="review-photo-lightbox-stars" aria-label=""></span><p></p></section>`;
+    reviewPhotoLightbox.setAttribute("aria-label", language === "ar" ? "معرض صور المراجعة" : "Review photo gallery");
+    reviewPhotoLightbox.innerHTML = `<button class="review-photo-lightbox-close" type="button" aria-label="${detail.close}">${icon("x")}</button><div class="review-photo-lightbox-media"><div class="review-photo-lightbox-stage"><img class="review-photo-lightbox-image" alt="" /><button type="button" class="review-photo-nav is-prev" aria-label="${detail.previousImage}">${icon(language === "ar" ? "chevron-right" : "chevron-left")}</button><button type="button" class="review-photo-nav is-next" aria-label="${detail.nextImage}">${icon(language === "ar" ? "chevron-left" : "chevron-right")}</button><span class="review-photo-counter" aria-live="polite"></span></div><div class="review-photo-lightbox-strip" role="tablist" aria-label="Review photo thumbnails"></div></div><section class="review-photo-lightbox-copy"><div class="review-photo-lightbox-author"><strong></strong><time></time></div><span class="review-photo-lightbox-stars" aria-label=""></span><p></p></section>`;
     root.append(reviewPhotoLightbox);
+    let currentLightboxPhotos = [];
+    let currentLightboxIndex = 0;
     const reviewPhotoLightboxImage = reviewPhotoLightbox.querySelector(".review-photo-lightbox-image");
     const reviewPhotoLightboxAuthor = reviewPhotoLightbox.querySelector(".review-photo-lightbox-author strong");
     const reviewPhotoLightboxDate = reviewPhotoLightbox.querySelector(".review-photo-lightbox-author time");
     const reviewPhotoLightboxStars = reviewPhotoLightbox.querySelector(".review-photo-lightbox-stars");
     const reviewPhotoLightboxText = reviewPhotoLightbox.querySelector(".review-photo-lightbox-copy p");
+    const lightboxPrev = reviewPhotoLightbox.querySelector(".review-photo-nav.is-prev");
+    const lightboxNext = reviewPhotoLightbox.querySelector(".review-photo-nav.is-next");
+    const lightboxCounter = reviewPhotoLightbox.querySelector(".review-photo-counter");
+    const lightboxStrip = reviewPhotoLightbox.querySelector(".review-photo-lightbox-strip");
+
+    const updateLightboxPhoto = (nextIndex) => {
+      if (!currentLightboxPhotos.length) return;
+      currentLightboxIndex = (nextIndex + currentLightboxPhotos.length) % currentLightboxPhotos.length;
+      reviewPhotoLightboxImage.src = currentLightboxPhotos[currentLightboxIndex];
+      lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxPhotos.length}`;
+      lightboxStrip.querySelectorAll(".review-strip-thumb").forEach((thumb, i) => {
+        thumb.classList.toggle("is-active", i === currentLightboxIndex);
+        thumb.setAttribute("aria-selected", String(i === currentLightboxIndex));
+      });
+    };
+
+    lightboxPrev.addEventListener("click", () => updateLightboxPhoto(currentLightboxIndex - 1));
+    lightboxNext.addEventListener("click", () => updateLightboxPhoto(currentLightboxIndex + 1));
     reviewPhotoLightbox.querySelector(".review-photo-lightbox-close").addEventListener("click", () => reviewPhotoLightbox.close());
     reviewPhotoLightbox.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
         reviewPhotoLightbox.close();
+      } else if (event.key === "ArrowLeft") {
+        updateLightboxPhoto(currentLightboxIndex + (language === "ar" ? 1 : -1));
+      } else if (event.key === "ArrowRight") {
+        updateLightboxPhoto(currentLightboxIndex + (language === "ar" ? -1 : 1));
       }
     });
     reviewPhotoLightbox.addEventListener("click", (event) => {
       if (event.target === reviewPhotoLightbox) reviewPhotoLightbox.close();
     });
+
+    const openReviewLightbox = (review, initialIndex, formattedDate) => {
+      currentLightboxPhotos = parseReviewPhotos(review.photos || review.photo);
+      currentLightboxIndex = initialIndex || 0;
+      reviewPhotoLightboxAuthor.textContent = review.name;
+      reviewPhotoLightboxDate.dateTime = review.date || "";
+      reviewPhotoLightboxDate.textContent = formattedDate;
+      reviewPhotoLightboxDate.hidden = !formattedDate;
+      reviewPhotoLightboxStars.textContent = `${"★".repeat(Number(review.rating))}${"☆".repeat(5 - Number(review.rating))}`;
+      reviewPhotoLightboxStars.setAttribute(
+        "aria-label",
+        language === "ar" ? `${review.rating} من 5 نجوم` : `${review.rating} out of 5 stars`,
+      );
+      reviewPhotoLightboxText.textContent = review.text;
+      reviewPhotoLightbox.querySelector(".review-photo-lightbox-copy").dir = language === "ar" ? "rtl" : "ltr";
+
+      const hasMultiple = currentLightboxPhotos.length > 1;
+      lightboxPrev.hidden = !hasMultiple;
+      lightboxNext.hidden = !hasMultiple;
+      lightboxCounter.hidden = !hasMultiple;
+      lightboxStrip.hidden = !hasMultiple;
+      lightboxStrip.replaceChildren();
+
+      if (hasMultiple) {
+        currentLightboxPhotos.forEach((src, idx) => {
+          const thumbBtn = document.createElement("button");
+          thumbBtn.type = "button";
+          thumbBtn.className = `review-strip-thumb${idx === currentLightboxIndex ? " is-active" : ""}`;
+          thumbBtn.setAttribute("role", "tab");
+          thumbBtn.setAttribute("aria-label", language === "ar" ? `صورة ${idx + 1}` : `Photo ${idx + 1}`);
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = "";
+          thumbBtn.append(img);
+          thumbBtn.addEventListener("click", () => updateLightboxPhoto(idx));
+          lightboxStrip.append(thumbBtn);
+        });
+      }
+
+      updateLightboxPhoto(currentLightboxIndex);
+      reviewPhotoLightbox.showModal();
+    };
     const reviewControls = document.createElement("div");
     reviewControls.className = "review-carousel-controls";
     const makeReviewArrow = (step) => {
@@ -1129,7 +1218,10 @@
       const photoFilter = reviewTools.querySelector("[data-review-photo-filter]").value;
       const visibleReviews = reviews
         .filter((review) => selectedRating === "all" || Number(review.rating) === Number(selectedRating))
-        .filter((review) => photoFilter === "all" || (photoFilter === "with-photo" ? Boolean(review.photo) : !review.photo))
+        .filter((review) => {
+          const count = parseReviewPhotos(review.photos || review.photo).length;
+          return photoFilter === "all" || (photoFilter === "with-photo" ? count > 0 : count === 0);
+        })
         .slice()
         .sort((left, right) => {
           if (sortOrder === "highest") return Number(right.rating) - Number(left.rating);
@@ -1178,34 +1270,33 @@
         const body = document.createElement("p");
         body.textContent = review.text;
         card.append(head, body);
-        if (review.photo) {
-          const photoLink = document.createElement("button");
-          photoLink.className = "review-photo-link";
-          photoLink.type = "button";
-          photoLink.setAttribute("aria-label", language === "ar" ? "عرض صورة المراجعة" : "View review photo");
-          const photo = document.createElement("img");
-          photo.className = "review-photo-thumb";
-          photo.src = review.photo;
-          photo.alt = language === "ar" ? "صورة مرفقة بالمراجعة" : "Photo attached to review";
-          photo.loading = "lazy";
-          photoLink.append(photo);
-          photoLink.addEventListener("click", () => {
-            reviewPhotoLightboxImage.src = review.photo;
-            reviewPhotoLightboxImage.alt = photo.alt;
-            reviewPhotoLightboxAuthor.textContent = review.name;
-            reviewPhotoLightboxDate.dateTime = review.date || "";
-            reviewPhotoLightboxDate.textContent = formattedReviewDate;
-            reviewPhotoLightboxDate.hidden = !formattedReviewDate;
-            reviewPhotoLightboxStars.textContent = `${"★".repeat(Number(review.rating))}${"☆".repeat(5 - Number(review.rating))}`;
-            reviewPhotoLightboxStars.setAttribute(
+        const reviewPhotos = parseReviewPhotos(review.photos || review.photo);
+        if (reviewPhotos.length > 0) {
+          const gallery = document.createElement("div");
+          gallery.className = "review-photos-grid";
+          gallery.dataset.photoCount = String(reviewPhotos.length);
+          reviewPhotos.forEach((photoUrl, photoIndex) => {
+            const photoLink = document.createElement("button");
+            photoLink.className = "review-photo-link";
+            photoLink.type = "button";
+            photoLink.setAttribute(
               "aria-label",
-              language === "ar" ? `${review.rating} من 5 نجوم` : `${review.rating} out of 5 stars`,
+              language === "ar"
+                ? `عرض الصورة ${photoIndex + 1} من ${reviewPhotos.length}`
+                : `View photo ${photoIndex + 1} of ${reviewPhotos.length}`,
             );
-            reviewPhotoLightboxText.textContent = review.text;
-            reviewPhotoLightbox.querySelector(".review-photo-lightbox-copy").dir = language === "ar" ? "rtl" : "ltr";
-            reviewPhotoLightbox.showModal();
+            const photo = document.createElement("img");
+            photo.className = "review-photo-thumb";
+            photo.src = photoUrl;
+            photo.alt = language === "ar" ? `صورة مرفقة ${photoIndex + 1}` : `Photo attached to review ${photoIndex + 1}`;
+            photo.loading = "lazy";
+            photoLink.append(photo);
+            photoLink.addEventListener("click", () => {
+              openReviewLightbox(review, photoIndex, formattedReviewDate);
+            });
+            gallery.append(photoLink);
           });
-          card.append(photoLink);
+          card.append(gallery);
         }
         reviewEntries.append(card);
       }
@@ -1242,13 +1333,22 @@
             }
             let photoUrl = null;
             try {
-              if (review.photo) {
-                photoUrl = review.photo.startsWith("http")
-                  ? review.photo
-                  : await uploadReviewPhoto(review.photo, product.id, review.id);
+              const reviewPhotos = parseReviewPhotos(review.photos || review.photo);
+              if (reviewPhotos.length > 0) {
+                const uploaded = [];
+                for (const p of reviewPhotos) {
+                  if (p.startsWith("http")) {
+                    uploaded.push(p);
+                  } else {
+                    const pId = crypto.randomUUID();
+                    const up = await uploadReviewPhoto(p, product.id, pId);
+                    uploaded.push(up);
+                  }
+                }
+                photoUrl = uploaded.length === 1 ? uploaded[0] : JSON.stringify(uploaded);
               }
             } catch (photoError) {
-              console.warn("Could not migrate a review photo.", photoError.message);
+              console.warn("Could not migrate review photos.", photoError.message);
             }
             const { error: insertError } = await client.from("product_reviews").insert({
               id: review.id,
@@ -1270,16 +1370,27 @@
           ({ data, error } = await fetchSharedReviews());
           if (error) throw error;
           const merged = new Map();
-          localReviews.filter((review) => !review.published).forEach((review) => merged.set(review.id, review));
-          (data || []).forEach((review) => merged.set(review.id, {
-            id: review.id,
-            name: review.reviewer_name,
-            rating: Number(review.rating),
-            text: review.review_text,
-            photo: review.photo_url,
-            date: review.created_at,
-            published: true,
-          }));
+          localReviews.filter((review) => !review.published).forEach((review) => {
+            const photos = parseReviewPhotos(review.photos || review.photo);
+            merged.set(review.id, {
+              ...review,
+              photo: photos[0] || null,
+              photos: photos,
+            });
+          });
+          (data || []).forEach((review) => {
+            const photos = parseReviewPhotos(review.photo_url);
+            merged.set(review.id, {
+              id: review.id,
+              name: review.reviewer_name,
+              rating: Number(review.rating),
+              text: review.review_text,
+              photo: photos[0] || null,
+              photos: photos,
+              date: review.created_at,
+              published: true,
+            });
+          });
           reviews.splice(0, reviews.length, ...[...merged.values()].sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))));
         } catch (error) {
           console.warn("Could not load shared product reviews.", error.message);
@@ -1336,37 +1447,111 @@
     reviewTextarea.addEventListener("input", updateCharacterCount);
     updateCharacterCount();
 
-    const photoField = document.createElement("label");
+    const photoField = document.createElement("div");
     photoField.className = "commerce-field review-photo-field";
-    photoField.innerHTML = `<span>${reviewUi.attachPhoto}</span><span class="review-photo-picker"><i data-lucide="image-plus" aria-hidden="true"></i><span>${reviewUi.attachPhoto}</span><input type="file" name="photo" accept="image/*" data-review-photo /></span><span class="review-photo-preview" data-review-photo-preview hidden></span>`;
+    photoField.innerHTML = `
+      <span class="review-photo-label">${reviewUi.attachPhoto}</span>
+      <div class="review-photo-picker-row">
+        <label class="review-photo-picker">
+          <i data-lucide="image-plus" aria-hidden="true"></i>
+          <span data-review-picker-text>${reviewUi.attachPhoto}</span>
+          <input type="file" name="photos" accept="image/*" multiple data-review-photo />
+        </label>
+        <span class="review-photo-limit-badge" data-review-limit-badge hidden>0 / 6</span>
+      </div>
+      <div class="review-photo-preview" data-review-photo-preview hidden></div>
+    `;
     reviewTextarea.closest(".commerce-field").after(photoField);
     const photoInput = photoField.querySelector("[data-review-photo]");
     const photoPreview = photoField.querySelector("[data-review-photo-preview]");
-    photoInput.addEventListener("change", () => {
+    const photoPicker = photoField.querySelector(".review-photo-picker");
+    const photoPickerText = photoField.querySelector("[data-review-picker-text]");
+    const photoLimitBadge = photoField.querySelector("[data-review-limit-badge]");
+    const reviewFeedback = root.querySelector("[data-review-feedback]");
+
+    const renderPhotoPreviews = () => {
       photoPreview.replaceChildren();
-      const file = photoInput.files?.[0];
-      if (!file) {
-        photoPreview.hidden = true;
-        return;
+      const count = selectedReviewPhotos.length;
+      photoLimitBadge.hidden = count === 0;
+      photoLimitBadge.textContent = reviewUi.photosCount.replace("{count}", String(count));
+      photoPreview.hidden = count === 0;
+
+      if (count >= 6) {
+        photoPicker.classList.add("is-max");
+        photoPickerText.textContent = reviewUi.maxPhotosReached;
+        photoInput.disabled = true;
+      } else {
+        photoPicker.classList.remove("is-max");
+        photoInput.disabled = false;
+        photoPickerText.textContent = count > 0 ? `${reviewUi.addMorePhotos} (${count}/6)` : reviewUi.attachPhoto;
       }
-      if (!file.type.startsWith("image/")) {
-        photoInput.value = "";
-        root.querySelector("[data-review-feedback]").textContent = reviewUi.photoType;
-        photoPreview.hidden = true;
-        return;
+
+      selectedReviewPhotos.forEach((item, index) => {
+        const itemBox = document.createElement("div");
+        itemBox.className = "review-photo-preview-item";
+
+        const img = document.createElement("img");
+        img.src = item.previewUrl;
+        img.alt = "";
+
+        const numBadge = document.createElement("span");
+        numBadge.className = "review-photo-num-badge";
+        numBadge.textContent = String(index + 1);
+
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "review-photo-remove-btn";
+        removeBtn.title = reviewUi.removePhoto;
+        removeBtn.setAttribute("aria-label", `${reviewUi.removePhoto} ${index + 1}`);
+        removeBtn.innerHTML = "×";
+        removeBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          selectedReviewPhotos.splice(index, 1);
+          reviewFeedback.textContent = "";
+          renderPhotoPreviews();
+        });
+
+        itemBox.append(img, numBadge, removeBtn);
+        photoPreview.append(itemBox);
+      });
+      window.lucide?.createIcons();
+    };
+
+    photoInput.addEventListener("change", () => {
+      reviewFeedback.textContent = "";
+      const files = Array.from(photoInput.files || []);
+      if (!files.length) return;
+
+      let limitHit = false;
+      for (const file of files) {
+        if (selectedReviewPhotos.length >= 6) {
+          limitHit = true;
+          break;
+        }
+        if (!file.type.startsWith("image/")) {
+          reviewFeedback.textContent = reviewUi.photoType;
+          continue;
+        }
+        if (file.size > 8 * 1024 * 1024) {
+          reviewFeedback.textContent = reviewUi.photoTooLarge;
+          continue;
+        }
+        selectedReviewPhotos.push({
+          file,
+          previewUrl: URL.createObjectURL(file),
+          id: crypto.randomUUID(),
+        });
       }
-      if (file.size > 8 * 1024 * 1024) {
-        photoInput.value = "";
-        root.querySelector("[data-review-feedback]").textContent = reviewUi.photoTooLarge;
-        photoPreview.hidden = true;
-        return;
+
+      if (limitHit) {
+        reviewFeedback.textContent = reviewUi.maxPhotosReached;
       }
-      const preview = document.createElement("img");
-      preview.alt = "";
-      preview.src = URL.createObjectURL(file);
-      photoPreview.append(preview);
-      photoPreview.hidden = false;
+
+      photoInput.value = "";
+      renderPhotoPreviews();
     });
+    renderPhotoPreviews();
     window.lucide?.createIcons();
 
     root.querySelector(
@@ -1832,6 +2017,319 @@
     root
       .querySelectorAll(".detail-scroll-reveal")
       .forEach((element) => revealObserver.observe(element));
+    setupProductSideMenu(document.querySelector(".commerce-menu--product-page"));
+  }
+
+  function setupProductSideMenu(headerMenuButton) {
+    if (page !== "product") return;
+    document.querySelector(".product-side-menu-trigger")?.remove();
+    document.querySelector(".product-side-drawer")?.remove();
+    document.querySelector(".product-side-drawer-backdrop")?.remove();
+
+    const menuTexts = {
+      ar: {
+        menuLabel: "القائمة",
+        sectionsTitle: "أقسام الموقع",
+        supportTitle: "الدعم والمساعدة",
+        supportNote: "خدمة عملاء ودعم فني على مدار الساعة",
+        supportHours: "متاح 24/7",
+        home: "الرئيسية",
+        products: "كل المنتجات",
+        laptops: "اللابتوبات",
+        phones: "الهواتف الذكية",
+        audio: "الصوتيات",
+        wearables: "الساعات الذكية",
+        newArrivals: "جديد المتجر",
+        deals: "العروض والتخفيضات",
+        wishlist: "المفضلة",
+        cart: "سلة المشتريات",
+        account: "حسابي",
+        help: "مركز المساعدة والأسئلة الشائعة",
+        shipping: "الشحن والتوصيل السريع",
+        warranty: "الضمان والاسترجاع خلال 7 أيام",
+        contact: "تواصل مع خدمة العملاء",
+        close: "إغلاق القائمة",
+      },
+      en: {
+        menuLabel: "Menu",
+        sectionsTitle: "Site Sections",
+        supportTitle: "Help & Support",
+        supportNote: "24/7 dedicated customer care and assistance",
+        supportHours: "Available 24/7",
+        home: "Home",
+        products: "All Products",
+        laptops: "Laptops",
+        phones: "Smartphones",
+        audio: "Audio",
+        wearables: "Wearables",
+        newArrivals: "New Arrivals",
+        deals: "Exclusive Deals",
+        wishlist: "Wishlist",
+        cart: "Shopping Bag",
+        account: "My Account",
+        help: "Help Center & FAQ",
+        shipping: "Fast Shipping & Delivery",
+        warranty: "2-Year Warranty & 7-Day Returns",
+        contact: "Contact Customer Care",
+        close: "Close menu",
+      },
+      fr: {
+        menuLabel: "Menu",
+        sectionsTitle: "Rubriques du site",
+        supportTitle: "Aide & Support",
+        supportNote: "Assistance client disponible 24h/24 et 7j/7",
+        supportHours: "Disponible 24/7",
+        home: "Accueil",
+        products: "Tous les produits",
+        laptops: "Ordinateurs portables",
+        phones: "Smartphones",
+        audio: "Audio",
+        wearables: "Montres connectées",
+        newArrivals: "Nouveautés",
+        deals: "Offres exclusives",
+        wishlist: "Favoris",
+        cart: "Panier",
+        account: "Mon compte",
+        help: "Centre d'aide et FAQ",
+        shipping: "Livraison rapide",
+        warranty: "Garantie & Retours",
+        contact: "Nous contacter",
+        close: "Fermer le menu",
+      },
+      es: {
+        menuLabel: "Menú",
+        sectionsTitle: "Secciones del sitio",
+        supportTitle: "Ayuda y Soporte",
+        supportNote: "Atención al cliente disponible las 24 horas",
+        supportHours: "Disponible 24/7",
+        home: "Inicio",
+        products: "Todos los productos",
+        laptops: "Portátiles",
+        phones: "Smartphones",
+        audio: "Audio",
+        wearables: "Relojes inteligentes",
+        newArrivals: "Novedades",
+        deals: "Ofertas exclusivas",
+        wishlist: "Favoritos",
+        cart: "Carrito",
+        account: "Mi cuenta",
+        help: "Centro de ayuda y FAQ",
+        shipping: "Envío rápido",
+        warranty: "Garantía y devoluciones",
+        contact: "Contactar soporte",
+        close: "Cerrar menú",
+      },
+      zh: {
+        menuLabel: "菜单",
+        sectionsTitle: "网站导航",
+        supportTitle: "帮助与支持",
+        supportNote: "全天候 24/7 贴心客户服务与支持",
+        supportHours: "24/7 在线",
+        home: "首页",
+        products: "所有商品",
+        laptops: "笔记本电脑",
+        phones: "智能手机",
+        audio: "音频设备",
+        wearables: "智能穿戴",
+        newArrivals: "新品上市",
+        deals: "热销优惠",
+        wishlist: "心愿单",
+        cart: "购物袋",
+        account: "我的账户",
+        help: "帮助中心与常见问题",
+        shipping: "快速配送",
+        warranty: "质保与退换",
+        contact: "联系客户支持",
+        close: "关闭菜单",
+      },
+    };
+
+    const mt = menuTexts[language] || menuTexts.en;
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    const arrowSymbol = language === "ar" ? "←" : "→";
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "product-side-drawer-backdrop";
+    backdrop.setAttribute("aria-hidden", "true");
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "product-side-menu-trigger";
+    trigger.setAttribute("aria-label", mt.menuLabel);
+    trigger.setAttribute("aria-haspopup", "dialog");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.innerHTML = `
+      <span class="side-trigger-handle"></span>
+      <span class="side-trigger-icon">${icon("compass")}</span>
+      <span class="side-trigger-label">${mt.menuLabel}</span>
+      <span class="side-trigger-arrow">‹</span>
+    `;
+
+    const drawer = document.createElement("aside");
+    drawer.className = "product-side-drawer";
+    drawer.setAttribute("role", "dialog");
+    drawer.setAttribute("aria-modal", "true");
+    drawer.setAttribute("aria-label", mt.sectionsTitle);
+    drawer.setAttribute("aria-hidden", "true");
+    drawer.dir = language === "ar" ? "rtl" : "ltr";
+
+    drawer.innerHTML = `
+      <header class="product-side-drawer-header">
+        <a href="/" class="product-side-drawer-brand">
+          <img src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" />
+          <div>
+            <strong>${escapeHtml(storeName)}</strong>
+            <small>${language === "ar" ? "متجر إلكترونيات فاخر" : "Premium Electronics"}</small>
+          </div>
+        </a>
+        <button type="button" class="product-side-drawer-close" aria-label="${mt.close}">
+          ${icon("x")}
+        </button>
+      </header>
+
+      <div class="product-side-drawer-body">
+        <div class="product-side-nav-group">
+          <span class="product-side-nav-title">
+            <span class="nav-title-icon">${icon("layers")}</span>
+            <span>${mt.sectionsTitle}</span>
+          </span>
+          <nav class="product-side-nav-links">
+            <a href="/" class="product-side-link">
+              <span class="side-link-icon">${icon("home")}</span>
+              <span class="side-link-text">${mt.home}</span>
+              <span class="side-link-arrow">${arrowSymbol}</span>
+            </a>
+            <a href="/products.html" class="product-side-link">
+              <span class="side-link-icon">${icon("grid")}</span>
+              <span class="side-link-text">${mt.products}</span>
+              <span class="side-link-arrow">${arrowSymbol}</span>
+            </a>
+            <div class="product-side-category-pills">
+              <a href="/products.html?category=laptops" class="side-cat-pill">
+                ${icon("laptop")}<span>${mt.laptops}</span>
+              </a>
+              <a href="/products.html?category=phones" class="side-cat-pill">
+                ${icon("smartphone")}<span>${mt.phones}</span>
+              </a>
+              <a href="/products.html?category=audio" class="side-cat-pill">
+                ${icon("headphones")}<span>${mt.audio}</span>
+              </a>
+              <a href="/products.html?category=wearables" class="side-cat-pill">
+                ${icon("watch")}<span>${mt.wearables}</span>
+              </a>
+            </div>
+            <a href="/#new" class="product-side-link">
+              <span class="side-link-icon">${icon("sparkles")}</span>
+              <span class="side-link-text">${mt.newArrivals}</span>
+              <span class="side-link-badge is-new">${language === "ar" ? "جديد" : "New"}</span>
+            </a>
+            <a href="/#deals" class="product-side-link">
+              <span class="side-link-icon">${icon("tag")}</span>
+              <span class="side-link-text">${mt.deals}</span>
+              <span class="side-link-badge is-sale">${language === "ar" ? "خصم" : "Sale"}</span>
+            </a>
+            <a href="/wishlist.html" class="product-side-link">
+              <span class="side-link-icon">${icon("heart")}</span>
+              <span class="side-link-text">${mt.wishlist}</span>
+              <span class="side-link-arrow">${arrowSymbol}</span>
+            </a>
+            <a href="/cart.html" class="product-side-link is-cart">
+              <span class="side-link-icon">${icon("shopping-bag")}</span>
+              <span class="side-link-text">${mt.cart}</span>
+              <span class="side-link-badge is-cart" data-cart-count>${store.cartCount()}</span>
+            </a>
+            <a href="/account.html" class="product-side-link">
+              <span class="side-link-icon">${icon("user")}</span>
+              <span class="side-link-text">${mt.account}</span>
+              <span class="side-link-arrow">${arrowSymbol}</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <footer class="product-side-drawer-footer">
+        <div class="product-side-support-head">
+          <span class="support-title-icon">${icon("life-buoy")}</span>
+          <div>
+            <h4>${mt.supportTitle}</h4>
+            <small>${mt.supportNote}</small>
+          </div>
+        </div>
+        <div class="product-side-support-links">
+          <a href="/support.html" class="support-mini-link">
+            ${icon("help-circle")}<span>${mt.help}</span>
+          </a>
+          <a href="/support.html#delivery" class="support-mini-link">
+            ${icon("truck")}<span>${mt.shipping}</span>
+          </a>
+          <a href="/support.html#warranty" class="support-mini-link">
+            ${icon("shield-check")}<span>${mt.warranty}</span>
+          </a>
+          <a href="/support.html#contact" class="support-mini-link">
+            ${icon("phone-call")}<span>${mt.contact}</span>
+          </a>
+        </div>
+        <div class="product-side-support-contact">
+          <a href="tel:+966500000000" class="support-contact-chip">
+            ${icon("phone")}<span>+966 50 000 0000</span>
+          </a>
+          <span class="support-hours-badge">
+            <span class="pulse-dot"></span>
+            <span>${mt.supportHours}</span>
+          </span>
+        </div>
+      </footer>
+    `;
+
+    document.body.append(backdrop, trigger, drawer);
+
+    const openDrawer = () => {
+      drawer.classList.add("is-open");
+      backdrop.classList.add("is-open");
+      trigger.setAttribute("aria-expanded", "true");
+      drawer.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      store.syncCartCount?.();
+    };
+
+    const closeDrawer = () => {
+      drawer.classList.remove("is-open");
+      backdrop.classList.remove("is-open");
+      trigger.setAttribute("aria-expanded", "false");
+      drawer.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    };
+
+    trigger.addEventListener("click", () => {
+      if (drawer.classList.contains("is-open")) closeDrawer();
+      else openDrawer();
+    });
+
+    /* Wire the header menu button (mobile) to open the side drawer */
+    if (headerMenuButton) {
+      headerMenuButton.addEventListener("click", (e) => {
+        if (window.innerWidth <= 650) {
+          e.stopImmediatePropagation();
+          if (drawer.classList.contains("is-open")) closeDrawer();
+          else openDrawer();
+        }
+      });
+    }
+
+    drawer.querySelector(".product-side-drawer-close").addEventListener("click", closeDrawer);
+    backdrop.addEventListener("click", closeDrawer);
+
+    drawer.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", closeDrawer);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && drawer.classList.contains("is-open")) {
+        closeDrawer();
+      }
+    });
+
+    window.lucide?.createIcons();
   }
 
   function renderWishlist() {
@@ -2895,10 +3393,11 @@
       const submitButton = form.querySelector('[type="submit"]');
       submitButton.disabled = true;
       feedback.textContent = "";
-      let photo = null;
-      if (review.photo instanceof File && review.photo.size > 0) {
+      const compressedPhotos = [];
+      for (const item of selectedReviewPhotos) {
         try {
-          photo = await compressReviewImage(review.photo, reviewPhotoMessages);
+          const compressed = await compressReviewImage(item.file, reviewPhotoMessages);
+          compressedPhotos.push(compressed);
         } catch (error) {
           feedback.textContent = error.message || reviewPhotoMessages.photoTooLarge;
           submitButton.disabled = false;
@@ -2907,28 +3406,46 @@
       }
       try {
         const client = window.RUQO_SUPABASE;
-        if (!client) throw new Error("Shared reviews are unavailable.");
-        const photoUrl = photo ? await uploadReviewPhoto(photo, productSlug, reviewId) : null;
+        let photoUrls = [];
+        if (client) {
+          for (const dataUrl of compressedPhotos) {
+            const photoId = crypto.randomUUID();
+            const uploadedUrl = await uploadReviewPhoto(dataUrl, productSlug, photoId);
+            photoUrls.push(uploadedUrl);
+          }
+        } else {
+          photoUrls = compressedPhotos;
+        }
+        const photoPayload = photoUrls.length === 0
+          ? null
+          : photoUrls.length === 1
+            ? photoUrls[0]
+            : JSON.stringify(photoUrls);
+
         const newReview = {
           id: reviewId,
           product_slug: productSlug,
           reviewer_name: review.name.trim(),
           rating: Number(review.rating),
           review_text: review.text.trim(),
-          photo_url: photoUrl,
+          photo_url: photoPayload,
         };
-        const { error } = await client.from("product_reviews").insert(newReview);
-        if (error) throw error;
+        if (client) {
+          const { error } = await client.from("product_reviews").insert(newReview);
+          if (error) throw error;
+        }
         const publishedReview = {
           id: reviewId,
           name: newReview.reviewer_name,
           text: newReview.review_text,
           rating: newReview.rating,
-          photo: photoUrl,
+          photo: photoUrls[0] || null,
+          photos: photoUrls,
           date: new Date().toISOString(),
           published: true,
         };
         store.write(`nours-reviews-${productSlug}`, [publishedReview, ...store.read(`nours-reviews-${productSlug}`, [])]);
+        selectedReviewPhotos = [];
         renderProduct();
         root.querySelector("#product-reviews")?.scrollIntoView({ behavior: "smooth" });
         toast(reviewMessages.thanks);
