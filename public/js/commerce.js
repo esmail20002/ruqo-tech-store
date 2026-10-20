@@ -1088,7 +1088,7 @@
     reviewPhotoLightbox.className = "review-photo-lightbox";
     reviewPhotoLightbox.dir = "ltr";
     reviewPhotoLightbox.setAttribute("aria-label", language === "ar" ? "معرض صور المراجعة" : "Review photo gallery");
-    reviewPhotoLightbox.innerHTML = `<button class="review-photo-lightbox-close" type="button" aria-label="${detail.close}">${icon("x")}</button><div class="review-photo-lightbox-media"><div class="review-photo-lightbox-stage"><img class="review-photo-lightbox-image" alt="" /><button type="button" class="review-photo-nav is-prev" aria-label="${detail.previousImage}">${icon(language === "ar" ? "chevron-right" : "chevron-left")}</button><button type="button" class="review-photo-nav is-next" aria-label="${detail.nextImage}">${icon(language === "ar" ? "chevron-left" : "chevron-right")}</button><span class="review-photo-counter" aria-live="polite"></span></div><div class="review-photo-lightbox-strip" role="tablist" aria-label="Review photo thumbnails"></div></div><section class="review-photo-lightbox-copy"><div class="review-photo-lightbox-author"><strong></strong><time></time></div><span class="review-photo-lightbox-stars" aria-label=""></span><p></p></section>`;
+    reviewPhotoLightbox.innerHTML = `<button class="review-photo-lightbox-close" type="button" aria-label="${detail.close}">${icon("x")}</button><div class="review-photo-lightbox-media"><div class="review-photo-lightbox-stage"><img class="review-photo-lightbox-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="" /><button type="button" class="review-photo-nav is-prev" aria-label="${detail.previousImage}">${icon(language === "ar" ? "chevron-right" : "chevron-left")}</button><button type="button" class="review-photo-nav is-next" aria-label="${detail.nextImage}">${icon(language === "ar" ? "chevron-left" : "chevron-right")}</button><span class="review-photo-counter" aria-live="polite"></span></div><div class="review-photo-lightbox-strip" role="tablist" aria-label="Review photo thumbnails"></div></div><section class="review-photo-lightbox-copy"><div class="review-photo-lightbox-author"><strong></strong><time></time></div><span class="review-photo-lightbox-stars" aria-label=""></span><p></p></section>`;
     root.append(reviewPhotoLightbox);
     let currentLightboxPhotos = [];
     let currentLightboxIndex = 0;
@@ -2176,7 +2176,7 @@
     drawer.innerHTML = `
       <header class="product-side-drawer-header">
         <a href="/" class="product-side-drawer-brand">
-          <img src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" />
+          <img class="brand-logo" src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" />
           <div>
             <strong>${escapeHtml(storeName)}</strong>
             <small>${language === "ar" ? "متجر إلكترونيات فاخر" : "Premium Electronics"}</small>
@@ -3627,6 +3627,9 @@
       if (product) {
         document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH"}`;
       }
+      renderShell();
+      setupProductSideMenu(document.querySelector(".commerce-menu--product-page"));
+      window.RUQO_APPLY_STORE_SETTINGS?.();
       return;
     }
     render();
