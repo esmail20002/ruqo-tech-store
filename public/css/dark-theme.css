@@ -1212,7 +1212,23 @@ html[data-theme="dark"] .product-review > p {
 html[data-theme="dark"] .product-detail-stock,
 html[data-theme="dark"] .order-status,
 html[data-theme="dark"] .form-feedback {
-  color: #83dfad;
+  color: #9de8d4;
+}
+
+html[data-theme="dark"] .detail-rating-arrow,
+html[data-theme="dark"] .detail-delivery > span > svg,
+html[data-theme="dark"] .product-detail-gallery .detail-delivery-gallery > span > svg,
+html[data-theme="dark"] .product-detail-page .product-feature-list svg {
+  color: #9de8d4;
+}
+
+html[data-theme="dark"] .product-detail-stock .stock-pulse {
+  background: #63dda9;
+  box-shadow: 0 0 0 0 rgba(99, 221, 169, 0.48);
+}
+
+html[data-theme="dark"] .product-detail-stock.is-out .stock-pulse {
+  background: #ff9da8;
 }
 
 html[data-theme="dark"] .product-detail-stock.is-out {
