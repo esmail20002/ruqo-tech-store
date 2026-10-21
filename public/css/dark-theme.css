@@ -549,6 +549,13 @@ html[data-theme="dark"] .contact-details a {
   color: var(--primary-deep);
 }
 
+html[data-theme="dark"] .related-products-section .commerce-price,
+html[data-theme="dark"] .related-products-section .section-link,
+html[data-theme="dark"] .commerce-breadcrumb a,
+html[data-theme="dark"] .product-spec-disclosure summary {
+  color: #9de8d4;
+}
+
 html[data-theme="dark"] .footer-bottom {
   border-color: var(--line);
 }
