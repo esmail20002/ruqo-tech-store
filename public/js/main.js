@@ -1308,7 +1308,7 @@ window.addEventListener("ruqo:currency-updated", (event) => {
 const menuToggle = document.querySelector(".menu-toggle");
 const mainNav = document.querySelector(".main-nav");
 
-if (menuToggle && mainNav) {
+if (menuToggle && mainNav && !window.NoursStore?.setupProductSideMenu) {
   const setMenuOpen = (isOpen) => {
     mainNav.classList.toggle("open", isOpen);
     menuToggle.classList.toggle("is-open", isOpen);

@@ -950,9 +950,11 @@ const setCatalogMenuOpen = (open) => {
       : { en: "Open menu", fr: "Ouvrir le menu", es: "Abrir menú", zh: "打开菜单", ar: "فتح القائمة" }[language],
   );
 };
-catalogMenuButton.addEventListener("click", () =>
-  setCatalogMenuOpen(catalogMenuButton.getAttribute("aria-expanded") !== "true"),
-);
+if (!window.NoursStore?.setupProductSideMenu) {
+  catalogMenuButton.addEventListener("click", () =>
+    setCatalogMenuOpen(catalogMenuButton.getAttribute("aria-expanded") !== "true"),
+  );
+}
 document.addEventListener("click", (event) => {
   if (
     catalogMenu.classList.contains("open") &&
