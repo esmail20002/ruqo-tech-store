@@ -3272,18 +3272,122 @@ section {
   overscroll-behavior: contain;
 }
 html[data-theme="dark"] .site-search-panel { background: var(--surface-strong); }
-@media (max-width: 480px) {
+.product-side-drawer-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+body.has-store-menu .product-side-drawer .store-menu-theme { display: none; }
+@media (max-width: 650px) {
   .site-header .nav-wrap,
   .commerce-header .commerce-nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: minmax(48px, 1fr) auto;
+    align-items: center;
+    min-height: 56px;
+    gap: 6px;
     padding-block: 8px;
+  }
+  .site-header .nav-wrap > .brand,
+  .commerce-header .commerce-nav > .brand {
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    align-self: center;
+    justify-self: start;
+  }
+  .site-header .nav-wrap > .brand .brand-logo,
+  .commerce-header .commerce-nav > .brand .brand-logo {
+    display: block;
+    width: 96px;
+    max-width: 100%;
+    height: 36px;
+    margin: 0;
+    transform: none;
+    object-fit: contain;
+    object-position: left center;
+  }
+  html[dir="rtl"] .site-header .nav-wrap > .brand .brand-logo,
+  html[dir="rtl"] .commerce-header .commerce-nav > .brand .brand-logo {
+    object-position: right center;
   }
   .site-header .nav-actions,
   .commerce-header .commerce-actions {
-    width: 100%;
-    justify-content: space-between;
+    display: flex;
+    flex-wrap: nowrap;
+    width: auto;
+    gap: 2px;
+    align-items: center;
+  }
+  .site-header .nav-actions > .ruqo-dropdown-container,
+  .commerce-header .commerce-actions > .ruqo-dropdown-container {
+    height: 32px;
+    width: 32px;
+    min-height: 0;
+    flex-shrink: 0;
+  }
+  .site-header .nav-actions > [data-site-search],
+  .commerce-header .commerce-actions > [data-site-search] {
+    order: 1;
+  }
+  .site-header .nav-actions > a[href*="wishlist.html"] {
+    order: 2;
+  }
+  .site-header .nav-actions > .cart-button,
+  .commerce-header .commerce-actions > a[href*="cart.html"] {
+    order: 3;
+  }
+  .site-header .nav-actions > .menu-toggle,
+  .commerce-header .commerce-actions > .commerce-menu {
+    order: 6;
+  }
+  .site-header .nav-actions > .theme-toggle,
+  .commerce-header .commerce-actions > .theme-toggle {
+    display: none;
+  }
+  .site-header .nav-actions > .ruqo-currency-dropdown,
+  .commerce-header .commerce-actions > .ruqo-currency-dropdown {
+    order: 4;
+  }
+  .site-header .nav-actions > .ruqo-lang-dropdown,
+  .commerce-header .commerce-actions > .ruqo-lang-dropdown {
+    order: 5;
+  }
+  .site-header .nav-actions > .icon-button,
+  .site-header .nav-actions > .cart-button,
+  .site-header .nav-actions > .menu-toggle,
+  .commerce-header .commerce-actions > .commerce-icon-button {
+    width: 32px;
+    height: 32px;
+    min-width: 0;
+    flex-shrink: 0;
+  }
+  .site-header .nav-actions .ruqo-dropdown-trigger,
+  .commerce-header .commerce-actions .ruqo-dropdown-trigger {
+    width: 32px;
+    min-width: 0;
+    height: 32px;
+    padding: 0;
+    box-shadow: none;
+  }
+  .site-header .nav-actions > .icon-button svg,
+  .site-header .nav-actions > .cart-button svg,
+  .site-header .nav-actions > .menu-toggle svg,
+  .commerce-header .commerce-actions > .commerce-icon-button svg {
+    width: 16px;
+    height: 16px;
+  }
+  .site-header .nav-actions .ruqo-symbol-badge,
+  .site-header .nav-actions .ruqo-lang-badge,
+  .commerce-header .commerce-actions .ruqo-symbol-badge,
+  .commerce-header .commerce-actions .ruqo-lang-badge {
+    font-size: 0.7rem;
+  }
+  body.has-store-menu .product-side-drawer .store-menu-theme {
+    display: inline-grid;
+    width: 36px;
+    height: 36px;
   }
 }
 .site-search-panel[hidden],

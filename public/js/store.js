@@ -933,6 +933,15 @@
     `;
 
     document.body.append(backdrop, trigger, drawer);
+    const drawerTools = document.createElement("div");
+    drawerTools.className = "product-side-drawer-tools";
+    const themeButton = document.createElement("button");
+    themeButton.type = "button";
+    themeButton.className = "theme-toggle store-menu-theme";
+    themeButton.dataset.themeToggle = "";
+    const closeButton = drawer.querySelector(".product-side-drawer-close");
+    closeButton.before(drawerTools);
+    drawerTools.append(themeButton, closeButton);
     const buttons = () => [trigger, ...document.querySelectorAll(".menu-toggle, .commerce-menu")];
     const shell = document.querySelector(".page-shell");
     const previousInert = shell?.inert || false;
