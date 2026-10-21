@@ -4028,6 +4028,71 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   overflow: visible;
 }
 
+.review-entries.review-preview,
+.review-entries.review-dialog-entries {
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.review-list-open {
+  margin-bottom: 12px;
+  max-width: 100%;
+}
+
+.review-list-dialog {
+  width: min(860px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--text);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.review-list-dialog::backdrop {
+  background: rgba(10, 16, 26, 0.7);
+  backdrop-filter: blur(5px);
+}
+
+.review-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.review-dialog-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.review-dialog-header button {
+  flex-shrink: 0;
+}
+
+.review-list-dialog .review-toolbar {
+  flex-wrap: wrap;
+}
+
+.review-entries.review-preview > .product-review,
+.review-entries.review-dialog-entries > .product-review {
+  min-height: 0;
+  height: auto;
+  overflow-wrap: anywhere;
+}
+
+body:has(.review-list-dialog[open]),
+body:has(.review-photo-lightbox[open]) {
+  overflow: hidden;
+}
+
 .review-carousel-controls {
   display: flex;
   justify-content: flex-end;
@@ -4364,17 +4429,20 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   gap: 8px;
   margin-top: 12px;
 }
-.review-photos-grid[data-photo-count="1"] .review-photo-thumb {
-  width: min(100%, 220px);
-  max-height: 180px;
-  border-radius: 10px;
+.review-photos-grid .review-photo-thumb {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
   object-fit: cover;
 }
-.review-photos-grid:not([data-photo-count="1"]) .review-photo-thumb {
+.review-photos-grid .review-photo-link {
   width: 78px;
-  height: 78px;
-  border-radius: 10px;
-  object-fit: cover;
+  max-width: 100%;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  margin: 0;
+  border-radius: 8px;
 }
 .review-photo-link {
   display: block;
@@ -4452,7 +4520,9 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
 }
 .review-photo-lightbox-image {
   display: block;
-  width: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
   max-height: calc(88dvh - 120px);
   object-fit: contain;
   border-radius: 10px;

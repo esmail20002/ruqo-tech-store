@@ -859,6 +859,10 @@ html[data-theme="dark"] .detail-price-block {
   background: linear-gradient(120deg, rgba(37, 142, 134, 0.12), rgba(120, 56, 211, 0.1));
 }
 
+html[data-theme="dark"] .product-detail-price > strong {
+  color: #eef2f7;
+}
+
 html[data-theme="dark"] .detail-discount {
   background: rgba(37, 142, 134, 0.2);
   color: #72dbcf;

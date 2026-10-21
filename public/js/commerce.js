@@ -459,13 +459,13 @@
     es: { localNote: "Reseñas compartidas con todos los clientes", loading: "Cargando reseñas…", unavailable: "Las reseñas compartidas no están disponibles temporalmente.", thanks: "Gracias. Tu reseña ya está publicada.", failed: "No se pudo publicar tu reseña. Inténtalo de nuevo." },
     zh: { localNote: "所有顾客均可查看的评价", loading: "正在加载客户评价…", unavailable: "共享评价暂时不可用。", thanks: "谢谢，你的评价已公开发布。", failed: "评价发布失败，请重试。" },
   }[language] || { localNote: "Reviews shared with all customers", loading: "Loading customer reviews…", unavailable: "Shared reviews are temporarily unavailable.", thanks: "Thank you. Your review is now public.", failed: "We couldn't publish your review. Please try again." };
-  const reviewCarouselLabels = {
-    en: { previous: "Previous reviews", next: "Next reviews" },
-    ar: { previous: "المراجعات السابقة", next: "المراجعات التالية" },
-    fr: { previous: "Avis précédents", next: "Avis suivants" },
-    es: { previous: "Reseñas anteriores", next: "Reseñas siguientes" },
-    zh: { previous: "上一组评价", next: "下一组评价" },
-  }[language] || { previous: "Previous reviews", next: "Next reviews" };
+  const reviewDialogLabels = {
+    en: { open: "View all reviews", close: "Close reviews" },
+    ar: { open: "عرض قائمة التعليقات", close: "إغلاق التعليقات" },
+    fr: { open: "Voir tous les avis", close: "Fermer les avis" },
+    es: { open: "Ver todas las reseñas", close: "Cerrar reseñas" },
+    zh: { open: "查看全部评价", close: "关闭评价" },
+  }[language] || { open: "View all reviews", close: "Close reviews" };
   const currencyRates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
   const localeByLanguage = {
     en: "en-SA",
@@ -1171,51 +1171,41 @@
       updateLightboxPhoto(currentLightboxIndex);
       reviewPhotoLightbox.showModal();
     };
-    const reviewControls = document.createElement("div");
-    reviewControls.className = "review-carousel-controls";
-    const makeReviewArrow = (step) => {
-      const button = document.createElement("button");
-      const directionIsRtl = language === "ar";
-      const isNext = step > 0;
-      const label = isNext ? reviewCarouselLabels.next : reviewCarouselLabels.previous;
-      const iconName = isNext === directionIsRtl ? "chevron-left" : "chevron-right";
-      button.className = `review-carousel-arrow is-${isNext ? "next" : "previous"}`;
-      button.type = "button";
-      button.setAttribute("aria-label", label);
-      button.title = label;
-      button.innerHTML = icon(iconName);
-      button.addEventListener("click", () => {
-        const logicalDirection = step * (directionIsRtl ? -1 : 1);
-        reviewEntries.scrollBy({
-          left: logicalDirection * reviewEntries.clientWidth,
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-        });
-      });
-      return button;
-    };
-    const previousReviewsButton = makeReviewArrow(-1);
-    const nextReviewsButton = makeReviewArrow(1);
-    reviewControls.append(previousReviewsButton, nextReviewsButton);
-    reviewControls.hidden = true;
-    reviewList.replaceChildren(reviewHeader, reviewTools, reviewEntries, reviewControls);
-    const updateReviewControls = () => {
-      const hasMultiplePages = reviewEntries.scrollWidth > reviewEntries.clientWidth + 2;
-      reviewControls.hidden = !hasMultiplePages;
-      if (!hasMultiplePages) return;
-      const rtl = getComputedStyle(reviewEntries).direction === "rtl";
-      const scrollPosition = Math.abs(reviewEntries.scrollLeft);
-      const maxScroll = reviewEntries.scrollWidth - reviewEntries.clientWidth;
-      const atStart = rtl ? scrollPosition >= maxScroll - 2 : scrollPosition < 2;
-      const atEnd = rtl ? scrollPosition < 2 : scrollPosition >= maxScroll - 2;
-      previousReviewsButton.disabled = rtl ? atEnd : atStart;
-      nextReviewsButton.disabled = rtl ? atStart : atEnd;
-    };
-    reviewEntries.addEventListener("scroll", updateReviewControls, { passive: true });
-    window.addEventListener("resize", updateReviewControls, { passive: true });
-    const renderLocalReviews = () => {
-      const selectedRating = reviewTools.querySelector("[data-review-filter]").value;
-      const sortOrder = reviewTools.querySelector("[data-review-sort]").value;
-      const photoFilter = reviewTools.querySelector("[data-review-photo-filter]").value;
+    reviewEntries.classList.add("review-preview");
+    const openReviewsButton = document.createElement("button");
+    openReviewsButton.type = "button";
+    openReviewsButton.className = "commerce-button-secondary review-list-open";
+    openReviewsButton.setAttribute("aria-haspopup", "dialog");
+    openReviewsButton.setAttribute("aria-controls", "all-product-reviews");
+    openReviewsButton.innerHTML = `${icon("messages-square")}<span>${reviewDialogLabels.open}</span>`;
+    const reviewsDialog = document.createElement("dialog");
+    reviewsDialog.id = "all-product-reviews";
+    reviewsDialog.className = "review-list-dialog";
+    reviewsDialog.setAttribute("aria-labelledby", "all-product-reviews-title");
+    reviewsDialog.innerHTML = `<header class="review-dialog-header"><h2 id="all-product-reviews-title">${reviewUi.written}</h2><button type="button" class="commerce-icon-button" data-close-reviews aria-label="${reviewDialogLabels.close}" title="${reviewDialogLabels.close}">${icon("x")}</button></header>`;
+    const dialogEntries = document.createElement("div");
+    dialogEntries.className = "review-entries review-dialog-entries";
+    reviewsDialog.append(reviewTools, dialogEntries);
+    root.append(reviewsDialog);
+    reviewList.replaceChildren(reviewHeader, openReviewsButton, reviewEntries);
+    openReviewsButton.addEventListener("click", () => reviewsDialog.showModal());
+    reviewsDialog.querySelector("[data-close-reviews]").addEventListener("click", () => reviewsDialog.close());
+    reviewsDialog.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        reviewsDialog.close();
+      }
+    });
+    reviewsDialog.addEventListener("click", (event) => {
+      if (event.target === reviewsDialog) {
+        const bounds = reviewsDialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) reviewsDialog.close();
+      }
+    });
+    const renderReviewEntries = (reviewEntries, preview = false) => {
+      const selectedRating = preview ? "all" : reviewTools.querySelector("[data-review-filter]").value;
+      const sortOrder = preview ? "newest" : reviewTools.querySelector("[data-review-sort]").value;
+      const photoFilter = preview ? "all" : reviewTools.querySelector("[data-review-photo-filter]").value;
       const visibleReviews = reviews
         .filter((review) => selectedRating === "all" || Number(review.rating) === Number(selectedRating))
         .filter((review) => {
@@ -1227,7 +1217,8 @@
           if (sortOrder === "highest") return Number(right.rating) - Number(left.rating);
           if (sortOrder === "lowest") return Number(left.rating) - Number(right.rating);
           return String(right.date || "").localeCompare(String(left.date || ""));
-        });
+        })
+        .slice(0, preview ? 3 : undefined);
       reviewEntries.replaceChildren();
       if (!visibleReviews.length) {
         reviewEntries.classList.add("is-empty");
@@ -1240,7 +1231,6 @@
         message.textContent = reviewsLoading ? reviewMessages.loading : reviews.length ? reviewUi.emptyFiltered : reviewUi.empty;
         empty.append(message);
         reviewEntries.append(empty);
-        updateReviewControls();
         window.lucide?.createIcons();
         return;
       }
@@ -1301,7 +1291,10 @@
         reviewEntries.append(card);
       }
       reviewEntries.scrollTo({ left: 0, behavior: "auto" });
-      updateReviewControls();
+    };
+    const renderLocalReviews = () => {
+      renderReviewEntries(reviewEntries, true);
+      renderReviewEntries(dialogEntries);
     };
     reviewTools.querySelectorAll("select").forEach((select) => select.addEventListener("change", renderLocalReviews));
     renderLocalReviews();
@@ -1758,6 +1751,8 @@
       productDescription.after(productRating);
       productRating.after(detailPriceBlock, featureHeading, featureList);
     }
+
+    detailPriceBlock.after(root.querySelector(".product-purchase-row"));
 
     const detailsDisclosure = document.createElement("details");
     detailsDisclosure.className = "product-spec-disclosure";
