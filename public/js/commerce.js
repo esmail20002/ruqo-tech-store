@@ -725,6 +725,15 @@
       location.reload();
     });
     store.syncDropdowns();
+    const searchButton = document.createElement("button");
+    searchButton.type = "button";
+    searchButton.className = "commerce-icon-button";
+    searchButton.dataset.siteSearch = "";
+    const searchLabel = { ar: "البحث عن منتجات", en: "Search products", fr: "Rechercher des produits", es: "Buscar productos", zh: "搜索商品" }[language] || "Search products";
+    searchButton.setAttribute("aria-label", searchLabel);
+    searchButton.title = searchLabel;
+    searchButton.innerHTML = icon("search");
+    header.querySelector(".commerce-actions").prepend(searchButton);
     const menuButton = document.createElement("button");
     menuButton.className = "commerce-icon-button commerce-menu";
     menuButton.type = "button";
@@ -1557,6 +1566,11 @@
     const inventoryCount = hasInventoryCount ? Number(variantStock) : null;
     const addToBagButton = root.querySelector(".product-purchase-row [data-add]");
     const stockStatus = root.querySelector(".product-detail-stock");
+    const ratingLink = root.querySelector(".detail-rating-link");
+    const metaRow = document.createElement("div");
+    metaRow.className = "product-detail-meta-row";
+    ratingLink.before(metaRow);
+    metaRow.append(ratingLink, stockStatus);
     if (product.stock && (currentOption.unavailable || inventoryCount === 0)) {
       stockStatus.classList.add("is-out");
       stockStatus.lastChild.textContent = t.outStock;
@@ -1661,7 +1675,7 @@
       .querySelector(".product-detail-price")
       .append(currencyEdit, currencySelect);
     const detailPriceBlock = root.querySelector(".detail-price-block");
-    root.querySelector(".detail-rating-link").after(detailPriceBlock);
+    metaRow.after(detailPriceBlock);
     const deliveryDetails = root.querySelector(".detail-delivery");
     const defaultBenefits = [
       { icon: "truck", title: detail.arrival, description: detail.arrivalValue },
@@ -1747,9 +1761,8 @@
         )
         .join("");
       const productDescription = root.querySelector(".detail-description");
-      const productRating = root.querySelector(".detail-rating-link");
-      productDescription.after(productRating);
-      productRating.after(detailPriceBlock, featureHeading, featureList);
+      productDescription.after(metaRow);
+      metaRow.after(detailPriceBlock, featureHeading, featureList);
     }
 
     detailPriceBlock.after(root.querySelector(".product-purchase-row"));

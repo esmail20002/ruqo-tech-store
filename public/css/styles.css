@@ -2522,8 +2522,8 @@ section {
     height: 34px;
   }
 
-  .nav-actions > .icon-button:first-child {
-    display: none;
+  .nav-actions > .icon-button[data-site-search] {
+    display: grid;
   }
 
   .icon-button,
@@ -3258,6 +3258,81 @@ section {
     font-size: 0.75rem;
   }
 }
+
+.site-search-panel {
+  position: fixed;
+  z-index: 1201;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+html[data-theme="dark"] .site-search-panel { background: var(--surface-strong); }
+@media (max-width: 480px) {
+  .site-header .nav-wrap,
+  .commerce-header .commerce-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding-block: 8px;
+  }
+  .site-header .nav-actions,
+  .commerce-header .commerce-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+.site-search-panel[hidden],
+.site-search-status[hidden] { display: none; }
+.site-search-panel input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+}
+.site-search-panel input:focus-visible,
+.site-search-result:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.site-search-result {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+.site-search-result:last-child { border-bottom: 0; }
+.site-search-result:hover { background: var(--surface); }
+.site-search-result img {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: var(--surface);
+}
+.site-search-result > span { min-width: 0; }
+.site-search-result strong,
+.site-search-result span > span {
+  display: block;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+.site-search-result span > span,
+.site-search-status { color: var(--muted); font-size: 0.78rem; }
 
 @media (max-width: 640px) {
   main {

@@ -518,6 +518,134 @@
     }
   });
 
+  let searchPanel;
+  let searchTrigger;
+  const searchCopy = () => ({
+    en: { label: "Search products", empty: "No matching products", loading: "Loading products...", results: "Search results" },
+    ar: { label: "البحث عن منتجات", empty: "لا توجد منتجات مطابقة", loading: "جار تحميل المنتجات...", results: "نتائج البحث" },
+    fr: { label: "Rechercher des produits", empty: "Aucun produit correspondant", loading: "Chargement des produits...", results: "Résultats" },
+    es: { label: "Buscar productos", empty: "No hay productos coincidentes", loading: "Cargando productos...", results: "Resultados" },
+    zh: { label: "搜索商品", empty: "没有匹配的商品", loading: "正在加载商品...", results: "搜索结果" },
+  }[getLanguage()]);
+  const closeSearch = (restoreFocus = false) => {
+    if (!searchPanel || searchPanel.hidden) return;
+    searchPanel.hidden = true;
+    searchTrigger?.setAttribute("aria-expanded", "false");
+    if (restoreFocus && searchTrigger?.isConnected) searchTrigger.focus({ preventScroll: true });
+  };
+  const positionSearch = () => {
+    if (!searchPanel || searchPanel.hidden) return;
+    if (!searchTrigger?.isConnected) return closeSearch();
+    const bounds = searchTrigger.getBoundingClientRect();
+    const width = Math.min(360, document.documentElement.clientWidth - 24);
+    searchPanel.style.width = `${width}px`;
+    searchPanel.style.left = `${Math.max(12, Math.min(bounds.left, document.documentElement.clientWidth - width - 12))}px`;
+    searchPanel.style.top = `${bounds.bottom + 8}px`;
+    searchPanel.style.maxHeight = `${Math.max(100, window.innerHeight - bounds.bottom - 20)}px`;
+  };
+  const renderSearch = () => {
+    if (!searchPanel || searchPanel.hidden) return;
+    const input = searchPanel.querySelector("input");
+    const results = searchPanel.querySelector(".site-search-results");
+    const status = searchPanel.querySelector(".site-search-status");
+    const copy = searchCopy();
+    const language = getLanguage();
+    const normalize = (value) => String(value || "").normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().trim();
+    const terms = normalize(input.value).split(/\s+/).filter(Boolean);
+    results.replaceChildren();
+    status.textContent = "";
+    status.hidden = true;
+    if (!terms.length) return;
+    const catalog = window.NoursData;
+    if (!catalog) {
+      status.hidden = false;
+      status.textContent = copy.loading;
+      return;
+    }
+    const matches = catalog.products.filter((product) => {
+      const localized = catalog.localizeProduct(product, language);
+      const haystack = normalize([localized.name, product.name, product.brand, product.id, localized.category].join(" "));
+      return terms.every((term) => haystack.includes(term));
+    }).slice(0, 5);
+    if (!matches.length) {
+      status.hidden = false;
+      status.textContent = copy.empty;
+    }
+    for (const product of matches) {
+      const localized = catalog.localizeProduct(product, language);
+      const link = document.createElement("a");
+      link.className = "site-search-result";
+      link.href = `/product.html?id=${encodeURIComponent(product.id)}`;
+      const image = document.createElement("img");
+      image.src = product.image;
+      image.alt = "";
+      const name = document.createElement("strong");
+      name.textContent = localized.name;
+      const price = document.createElement("span");
+      const currency = getCurrency();
+      price.textContent = new Intl.NumberFormat(language === "zh" ? "zh-CN" : language, {
+        style: "currency", currency, maximumFractionDigits: currency === "SAR" ? 0 : 2,
+      }).format(convertCurrency(product.price, "SAR", currency));
+      const copyNode = document.createElement("span");
+      copyNode.append(name, price);
+      link.append(image, copyNode);
+      results.append(link);
+    }
+    positionSearch();
+  };
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-site-search]");
+    if (!button) {
+      if (!searchPanel?.contains(event.target) || event.target.closest(".site-search-result")) closeSearch();
+      return;
+    }
+    event.preventDefault();
+    if (button === searchTrigger && searchPanel && !searchPanel.hidden) return closeSearch(true);
+    closeSearch();
+    closeAllMenus();
+    searchTrigger = button;
+    const copy = searchCopy();
+    if (!searchPanel) {
+      searchPanel = document.createElement("section");
+      searchPanel.id = "site-search-panel";
+      searchPanel.className = "site-search-panel";
+      searchPanel.setAttribute("role", "search");
+      searchPanel.innerHTML = '<input type="search" autocomplete="off" maxlength="160" /><p class="site-search-status" role="status" hidden></p><nav class="site-search-results"></nav>';
+      searchPanel.querySelector("input").addEventListener("input", renderSearch);
+      document.body.append(searchPanel);
+    }
+    const input = searchPanel.querySelector("input");
+    searchPanel.hidden = false;
+    searchPanel.dir = getLanguage() === "ar" ? "rtl" : "ltr";
+    input.placeholder = copy.label;
+    input.setAttribute("aria-label", copy.label);
+    searchPanel.querySelector("nav").setAttribute("aria-label", copy.results);
+    button.setAttribute("aria-controls", searchPanel.id);
+    button.setAttribute("aria-expanded", "true");
+    positionSearch();
+    renderSearch();
+    input.focus({ preventScroll: true });
+  });
+  document.addEventListener("keydown", (event) => {
+    if (!searchPanel || searchPanel.hidden) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeSearch(true);
+    } else if (searchPanel.contains(event.target) && ["ArrowDown", "ArrowUp"].includes(event.key)) {
+      event.preventDefault();
+      const items = [...searchPanel.querySelectorAll("input, a")];
+      const index = items.indexOf(document.activeElement);
+      items[(index + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus();
+    }
+  });
+  document.addEventListener("focusin", (event) => {
+    if (searchPanel && !searchPanel.hidden && event.target !== searchTrigger && !searchPanel.contains(event.target)) closeSearch();
+  });
+  window.addEventListener("resize", positionSearch);
+  document.addEventListener("scroll", positionSearch, true);
+  ["ruqo:catalog-updated", "ruqo:currency-updated"].forEach((name) => window.addEventListener(name, renderSearch));
+  window.addEventListener("ruqo:language-updated", () => closeSearch());
+
   window.NoursStore = {
     keys,
     supportedLanguages,

@@ -934,10 +934,6 @@ $$("[data-view]").forEach((button) =>
     });
   }),
 );
-$("[data-search-focus]").addEventListener("click", () => {
-  ui.search.focus();
-  $("#catalog").scrollIntoView({ behavior: "smooth" });
-});
 $("[data-language-select]").addEventListener("change", (event) =>
   setLanguage(event.currentTarget.value),
 );
