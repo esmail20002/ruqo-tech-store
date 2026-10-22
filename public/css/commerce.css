@@ -929,33 +929,70 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   margin: 0;
   line-height: 1.5;
 }
-.checkout-coupon-panel {
+.checkout-coupon-entry {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
   gap: 10px;
-  margin-top: 16px;
-  padding-top: 15px;
-  border-top: 1px solid var(--line);
+  margin-top: 8px;
 }
-.checkout-coupon-panel .commerce-field {
+.checkout-coupon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #67d8bd;
+  font-size: 0.75rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.checkout-coupon-label svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: #67d8bd;
+}
+.checkout-coupon-input {
+  width: 100%;
   min-width: 0;
-  margin: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
 }
-.checkout-coupon-panel .commerce-button-secondary {
-  min-height: 42px;
+.checkout-coupon-input:focus-visible {
+  outline: 2px solid #67d8bd;
+  outline-offset: 2px;
 }
-.checkout-coupon-panel .form-feedback {
+.checkout-coupon-entry .commerce-button-secondary {
+  min-height: 40px;
+  padding-inline: 12px;
+  border-color: rgba(103, 216, 189, 0.45);
+  background: rgba(103, 216, 189, 0.12);
+  color: #67d8bd;
+}
+.checkout-coupon-entry .form-feedback {
   grid-column: 1 / -1;
   margin: 0;
-  color: var(--primary-deep);
+  color: #67d8bd;
   font-size: 0.72rem;
 }
-.checkout-coupon-panel .form-feedback.is-error {
+.checkout-coupon-entry .form-feedback.is-error {
   color: var(--danger, #b53746);
 }
 .checkout-discount-row strong {
-  color: var(--primary-deep);
+  color: #67d8bd;
+}
+@media (max-width: 520px) {
+  .checkout-coupon-entry {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .checkout-coupon-label {
+    grid-column: 1 / -1;
+  }
 }
 
 .checkout-submit-btn {

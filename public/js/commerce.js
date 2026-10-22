@@ -2086,6 +2086,13 @@
       es: { coupon: "Código de descuento", apply: "Aplicar código", discount: "Promoción", applied: "Código aplicado. El descuento se verificará al confirmar.", invalid: "Código inválido, caducado o pedido mínimo no alcanzado.", applyFirst: "Aplica el código antes de confirmar el pedido." },
       zh: { coupon: "优惠码", apply: "应用优惠码", discount: "优惠", applied: "已应用代码，结账时将再次验证折扣。", invalid: "优惠码无效、已过期或未达到最低订单金额。", applyFirst: "请先应用优惠码再提交订单。" },
     }[language] || { coupon: "Discount code", apply: "Apply code", discount: "Promotion", applied: "Code applied. Discount will be verified at checkout.", invalid: "This code is invalid, expired, or does not meet the minimum order.", applyFirst: "Apply this code before placing the order." };
+    const paymentPerks = {
+      en: { cards: "Mada / Visa / Mastercard", cash: "Cash", fees: "No additional fees" },
+      ar: { cards: "مدى / فيزا / ماستركارد", cash: "نقدًا", fees: "بدون أي رسوم إضافية" },
+      fr: { cards: "Mada / Visa / Mastercard", cash: "Espèces", fees: "Aucun frais supplémentaire" },
+      es: { cards: "Mada / Visa / Mastercard", cash: "Efectivo", fees: "Sin cargos adicionales" },
+      zh: { cards: "Mada / Visa / Mastercard", cash: "现金", fees: "不收取额外费用" },
+    }[language] || { cards: "Mada / Visa / Mastercard", cash: "Cash", fees: "No additional fees" };
     const couponDiscount = checkoutPromotion
       ? checkoutPromotion.discount_type === "percentage"
         ? Math.round(orderTotal.subtotal * Number(checkoutPromotion.discount_value)) / 100
@@ -2215,9 +2222,9 @@
                     <span class="payment-check-circle"><i data-lucide="check" aria-hidden="true"></i></span>
                   </div>
                   <div class="payment-perks">
-                    <span><i data-lucide="credit-card" aria-hidden="true"></i> مدى / فيزا / ماستركارد</span>
-                    <span><i data-lucide="coins" aria-hidden="true"></i> نقدًا (Cash)</span>
-                    <span><i data-lucide="shield" aria-hidden="true"></i> بدون أي رسوم إضافية</span>
+                    <span><i data-lucide="credit-card" aria-hidden="true"></i> ${paymentPerks.cards}</span>
+                    <span><i data-lucide="coins" aria-hidden="true"></i> ${paymentPerks.cash}</span>
+                    <span><i data-lucide="shield" aria-hidden="true"></i> ${paymentPerks.fees}</span>
                   </div>
                 </div>
               </label>
@@ -2226,11 +2233,6 @@
             <div class="checkout-security-notice">
               <i data-lucide="lock" aria-hidden="true"></i>
               <p>${t.codNotice || t.noPayment}</p>
-            </div>
-            <div class="checkout-coupon-panel">
-              <label class="commerce-field"><span>${checkoutCopy.coupon}</span><input name="coupon_code" maxlength="60" autocomplete="off" value="${escapeHtml(checkoutCouponCode)}" /></label>
-              <button class="commerce-button-secondary" type="button" data-apply-coupon>${checkoutCopy.apply}</button>
-              <p class="form-feedback${checkoutCouponMessageIsError ? " is-error" : ""}" data-coupon-feedback aria-live="polite">${escapeHtml(checkoutCouponMessage)}</p>
             </div>
           </section>
 
@@ -2272,6 +2274,15 @@
                 <small class="tax-included-tag">${language === "ar" ? "شامل ضريبة القيمة المضافة" : "VAT included"}</small>
               </div>
               <strong class="total-amount">${money(displayedTotal)}</strong>
+            </div>
+            <div class="checkout-coupon-entry">
+              <span class="checkout-coupon-label">
+                <i data-lucide="ticket-percent" aria-hidden="true"></i>
+                <span>${checkoutCopy.coupon}</span>
+              </span>
+              <input class="checkout-coupon-input" name="coupon_code" aria-label="${checkoutCopy.coupon}" maxlength="60" autocomplete="off" value="${escapeHtml(checkoutCouponCode)}" />
+              <button class="commerce-button-secondary" type="button" data-apply-coupon>${checkoutCopy.apply}</button>
+              <p class="form-feedback${checkoutCouponMessageIsError ? " is-error" : ""}" data-coupon-feedback aria-live="polite">${escapeHtml(checkoutCouponMessage)}</p>
             </div>
           </div>
 
