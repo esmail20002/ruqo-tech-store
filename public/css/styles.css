@@ -3601,8 +3601,9 @@ body.has-store-menu .product-side-drawer .store-menu-theme { display: none; }
   .commerce-header .commerce-actions > [data-site-search] {
     order: 1;
   }
-  .site-header .nav-actions > a[href*="wishlist.html"] {
-    order: 2;
+  .site-header .nav-actions > a[href*="wishlist.html"],
+  .commerce-header .commerce-actions > a[href*="wishlist.html"] {
+    order: 4;
   }
   .site-header .nav-actions > .cart-button,
   .commerce-header .commerce-actions > a[href*="cart.html"] {
@@ -3610,7 +3611,7 @@ body.has-store-menu .product-side-drawer .store-menu-theme { display: none; }
   }
   .site-header .nav-actions > .menu-toggle,
   .commerce-header .commerce-actions > .commerce-menu {
-    order: 6;
+    order: 8;
   }
   .site-header .nav-actions > .shop-ai-trigger,
   .commerce-header .commerce-actions > .shop-ai-trigger {
@@ -3636,11 +3637,11 @@ body.has-store-menu .product-side-drawer .store-menu-theme { display: none; }
   }
   .site-header .nav-actions > .ruqo-currency-dropdown,
   .commerce-header .commerce-actions > .ruqo-currency-dropdown {
-    order: 4;
+    order: 5;
   }
   .site-header .nav-actions > .ruqo-lang-dropdown,
   .commerce-header .commerce-actions > .ruqo-lang-dropdown {
-    order: 5;
+    order: 6;
   }
   .site-header .nav-actions > .icon-button,
   .site-header .nav-actions > .cart-button,

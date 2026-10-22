@@ -1250,10 +1250,19 @@
         currencyDropdownPositions.set(currencyDropdown, placeholder);
       }
     }
-    const searchButton = headerActions.querySelector("[data-site-search]");
-    if (searchButton) searchButton.after(assistantTrigger);
-    else if (currencyDropdown) currencyDropdown.after(assistantTrigger);
-    else headerActions.append(assistantTrigger);
+    const currencyPlaceholder = currencyDropdown && currencyDropdownPositions.get(currencyDropdown);
+    const headerControls = [
+      headerActions.querySelector("[data-site-search]"),
+      assistantTrigger,
+      headerActions.querySelector('.cart-button, a[href*="cart.html"]'),
+      headerActions.querySelector('a[href*="wishlist.html"]'),
+      currencyPlaceholder,
+      currencyDropdown,
+      headerActions.querySelector(".ruqo-lang-dropdown"),
+      headerActions.querySelector(".theme-toggle:not(.store-menu-theme)"),
+      headerActions.querySelector(".menu-toggle, .commerce-menu"),
+    ].filter(Boolean);
+    headerControls.forEach((control) => headerActions.append(control));
     const drawerTools = document.createElement("div");
     drawerTools.className = "product-side-drawer-tools";
     const themeButton = document.createElement("button");
@@ -1263,11 +1272,10 @@
     const closeButton = drawer.querySelector(".product-side-drawer-close");
     closeButton.before(drawerTools);
     drawerTools.append(themeButton, closeButton);
-    const currencyPlaceholder = currencyDropdown && currencyDropdownPositions.get(currencyDropdown);
     const syncCurrencyPlacement = () => {
       if (!currencyDropdown) return;
       if (window.matchMedia("(max-width: 650px)").matches) {
-        if (currencyDropdown.parentElement !== drawerTools) drawerTools.prepend(currencyDropdown);
+        if (currencyDropdown.parentElement !== drawerTools) drawerTools.insertBefore(currencyDropdown, themeButton);
       } else if (currencyPlaceholder?.isConnected && currencyDropdown.parentNode !== currencyPlaceholder.parentNode) {
         currencyPlaceholder.after(currencyDropdown);
       }
