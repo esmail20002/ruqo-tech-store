@@ -1641,3 +1641,38 @@ html[data-theme="dark"] .product-detail-page .detail-wish-button:hover {
   color: #ff9bc6;
   box-shadow: 0 7px 18px rgba(180, 61, 126, 0.2);
 }
+
+html[data-theme="dark"] .shop-ai-trigger {
+  background:
+    linear-gradient(var(--surface-strong), var(--surface-strong)) padding-box,
+    linear-gradient(115deg, #9ae9cf, #67e8f9 52%, var(--accent)) border-box;
+}
+
+html[data-theme="dark"] .shop-ai-trigger svg,
+html[data-theme="dark"] .shop-ai-mark,
+html[data-theme="dark"] .shop-ai-mark svg,
+html[data-theme="dark"] .shop-ai-product-price,
+html[data-theme="dark"] .shop-ai-suggestion {
+  color: #9ae9cf;
+}
+
+html[data-theme="dark"] .shop-ai-message.is-user {
+  border-color: #9ae9cf;
+  background: linear-gradient(120deg, #72d9b7, #a0ecd2);
+  color: #15372e;
+}
+
+html[data-theme="dark"] .shop-ai-suggestion {
+  border-color: rgba(154, 233, 207, 0.44);
+  background: rgba(154, 233, 207, 0.08);
+}
+
+html[data-theme="dark"] .shop-ai-send {
+  border-color: #9ae9cf;
+  background: linear-gradient(135deg, #82e5c3, #a7f1d5);
+  color: #15372e;
+}
+
+html[data-theme="dark"] .shop-ai-overlay :focus-visible {
+  outline-color: #9ae9cf;
+}
