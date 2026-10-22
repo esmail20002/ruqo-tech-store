@@ -658,6 +658,16 @@
   window.addEventListener("ruqo:language-updated", () => closeSearch());
 
   const currencyDropdownPositions = new WeakMap();
+  const drawerMovedControls = new Set();
+  const restoreDrawerMovedControls = () => {
+    const headerActions = document.querySelector(".site-header .nav-actions, .commerce-header .commerce-actions");
+    drawerMovedControls.forEach((control) => {
+      if (!control.isConnected || !headerActions) return;
+      control.classList.remove("store-menu-theme");
+      headerActions.append(control);
+    });
+    drawerMovedControls.clear();
+  };
   const restoreCurrencyDropdowns = () => {
     document.querySelectorAll(".ruqo-currency-dropdown").forEach((dropdown) => {
       const placeholder = currencyDropdownPositions.get(dropdown);
@@ -942,6 +952,7 @@
   let disposeSideMenu;
   function setupProductSideMenu() {
     if (location.pathname.includes('/admin/')) return;
+    restoreDrawerMovedControls();
     restoreCurrencyDropdowns();
     const language = getLanguage();
     const store = window.NoursStore;
@@ -1251,37 +1262,54 @@
       }
     }
     const currencyPlaceholder = currencyDropdown && currencyDropdownPositions.get(currencyDropdown);
+    const searchButton = headerActions.querySelector("[data-site-search]");
+    const cartLink = headerActions.querySelector('.cart-button, a[href*="cart.html"]');
+    const wishlistLink = headerActions.querySelector('a[href*="wishlist.html"]');
+    const languageDropdown = headerActions.querySelector(".ruqo-lang-dropdown");
+    const themeButton = headerActions.querySelector(".theme-toggle:not(.store-menu-theme)");
     const headerControls = [
-      headerActions.querySelector("[data-site-search]"),
+      searchButton,
       assistantTrigger,
-      headerActions.querySelector('.cart-button, a[href*="cart.html"]'),
-      headerActions.querySelector('a[href*="wishlist.html"]'),
+      cartLink,
+      wishlistLink,
       currencyPlaceholder,
       currencyDropdown,
-      headerActions.querySelector(".ruqo-lang-dropdown"),
-      headerActions.querySelector(".theme-toggle:not(.store-menu-theme)"),
+      languageDropdown,
+      themeButton,
       headerActions.querySelector(".menu-toggle, .commerce-menu"),
     ].filter(Boolean);
     headerControls.forEach((control) => headerActions.append(control));
     const drawerTools = document.createElement("div");
     drawerTools.className = "product-side-drawer-tools";
-    const themeButton = document.createElement("button");
-    themeButton.type = "button";
-    themeButton.className = "theme-toggle store-menu-theme";
-    themeButton.dataset.themeToggle = "";
-    const closeButton = drawer.querySelector(".product-side-drawer-close");
-    closeButton.before(drawerTools);
-    drawerTools.append(themeButton, closeButton);
-    const syncCurrencyPlacement = () => {
-      if (!currencyDropdown) return;
-      if (window.matchMedia("(max-width: 650px)").matches) {
-        if (currencyDropdown.parentElement !== drawerTools) drawerTools.insertBefore(currencyDropdown, themeButton);
-      } else if (currencyPlaceholder?.isConnected && currencyDropdown.parentNode !== currencyPlaceholder.parentNode) {
-        currencyPlaceholder.after(currencyDropdown);
-      }
-    };
-    syncCurrencyPlacement();
-    listen(window, "resize", syncCurrencyPlacement);
+    const drawerThemeButton = themeButton.cloneNode(false);
+    drawerThemeButton.classList.add("store-menu-theme");
+    const drawerLanguageSelect = languageDropdown?.querySelector("select[data-language-select]")?.cloneNode(true);
+    const drawerCurrencySelect = currencyDropdown?.querySelector("select[data-currency-select]")?.cloneNode(true);
+    [drawerLanguageSelect, drawerCurrencySelect].filter(Boolean).forEach((select) => {
+      select.removeAttribute("style");
+    });
+    if (drawerLanguageSelect) drawerLanguageSelect.value = store.getLanguage();
+    if (drawerCurrencySelect) drawerCurrencySelect.value = store.getCurrency();
+    const drawerWishlist = wishlistLink?.cloneNode(true);
+    const drawerCart = cartLink?.cloneNode(true);
+    const drawerAssistant = assistantTrigger.cloneNode(false);
+    drawerAssistant.innerHTML = icon("sparkles");
+    const drawerSearch = searchButton?.cloneNode(false);
+    if (drawerSearch) {
+      drawerSearch.removeAttribute("data-site-search");
+      drawerSearch.innerHTML = icon("search");
+    }
+    drawer.querySelector(".product-side-drawer-body").prepend(drawerTools);
+    drawerTools.append(...[
+      drawerThemeButton,
+      drawerLanguageSelect,
+      drawerCurrencySelect,
+      drawerWishlist,
+      drawerCart,
+      drawerAssistant,
+      drawerSearch,
+    ].filter(Boolean));
+    store.syncDropdowns();
     setupShopAssistant(assistantTrigger, language, listen, store);
     window.lucide?.createIcons();
     const buttons = () => [trigger, ...document.querySelectorAll(".menu-toggle, .commerce-menu")];
@@ -1340,6 +1368,24 @@
       drawer.inert = true;
       document.body.style.overflow = previousOverflow;
     };
+
+    listen(drawerSearch, "click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeDrawer(false);
+      searchButton?.click();
+    });
+    listen(drawerAssistant, "click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeDrawer(false);
+      assistantTrigger.click();
+    });
+    const syncAssistantExpanded = new MutationObserver(() => {
+      drawerAssistant.setAttribute("aria-expanded", assistantTrigger.getAttribute("aria-expanded") || "false");
+    });
+    syncAssistantExpanded.observe(assistantTrigger, { attributes: true, attributeFilter: ["aria-expanded"] });
+    controller.signal.addEventListener("abort", () => syncAssistantExpanded.disconnect(), { once: true });
 
     listen(document, "click", (event) => {
       const button = event.target.closest(".product-side-menu-trigger, .menu-toggle, .commerce-menu");
