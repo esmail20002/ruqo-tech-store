@@ -28,6 +28,7 @@ const copy = {
     sortRating: "Top rated",
     refine: "Refine your search",
     category: "Category",
+    brand: "Brand",
     phones: "Phones",
     laptops: "Laptops",
     audio: "Audio",
@@ -39,6 +40,8 @@ const copy = {
     anyRating: "Any rating",
     andUp: "& up",
     inStock: "In stock only",
+    saleOnly: "On sale",
+    newArrivals: "New arrivals",
     clearFilters: "Clear all filters",
     productsFound: "products",
     curated: "Curated for you",
@@ -102,6 +105,7 @@ const copy = {
     sortRating: "الأعلى تقييمًا",
     refine: "خصص نتائجك",
     category: "الفئة",
+    brand: "العلامة التجارية",
     phones: "الهواتف",
     laptops: "اللابتوبات",
     audio: "الصوتيات",
@@ -113,6 +117,8 @@ const copy = {
     anyRating: "كل التقييمات",
     andUp: "فأعلى",
     inStock: "المتوفر فقط",
+    saleOnly: "عروض",
+    newArrivals: "وصل حديثًا",
     clearFilters: "مسح الفلاتر",
     productsFound: "منتجات",
     curated: "مختارة لك",
@@ -176,6 +182,7 @@ const copy = {
     sortRating: "Mieux notés",
     refine: "Affiner votre recherche",
     category: "Catégorie",
+    brand: "Marque",
     phones: "Téléphones",
     laptops: "Ordinateurs portables",
     audio: "Audio",
@@ -187,6 +194,8 @@ const copy = {
     anyRating: "Toutes les notes",
     andUp: "et plus",
     inStock: "Disponibles uniquement",
+    saleOnly: "En promotion",
+    newArrivals: "Nouveautés",
     clearFilters: "Effacer les filtres",
     productsFound: "produits",
     curated: "Sélectionnés pour vous",
@@ -250,6 +259,7 @@ const copy = {
     sortRating: "Mejor valorados",
     refine: "Afina tu búsqueda",
     category: "Categoría",
+    brand: "Marca",
     phones: "Móviles",
     laptops: "Portátiles",
     audio: "Audio",
@@ -261,6 +271,8 @@ const copy = {
     anyRating: "Cualquier valoración",
     andUp: "o más",
     inStock: "Solo disponibles",
+    saleOnly: "En oferta",
+    newArrivals: "Novedades",
     clearFilters: "Borrar filtros",
     productsFound: "productos",
     curated: "Elegidos para ti",
@@ -324,6 +336,7 @@ const copy = {
     sortRating: "评分最高",
     refine: "筛选商品",
     category: "分类",
+    brand: "品牌",
     phones: "手机",
     laptops: "笔记本电脑",
     audio: "音频",
@@ -335,6 +348,8 @@ const copy = {
     anyRating: "全部评分",
     andUp: "及以上",
     inStock: "仅显示有货商品",
+    saleOnly: "促销商品",
+    newArrivals: "新品",
     clearFilters: "清除筛选",
     productsFound: "件商品",
     curated: "为你精选",
@@ -388,6 +403,13 @@ const ui = {
   min: $("[data-price-min]"),
   max: $("[data-price-max]"),
   range: $("[data-price-range]"),
+  priceCurrencies: $$("[data-price-currency]"),
+  rangeMin: $("[data-price-range-min]"),
+  rangeMax: $("[data-price-range-max]"),
+  brandOptions: $("[data-brand-options]"),
+  brandToggle: $("[data-brand-toggle]"),
+  sale: $("[data-sale-filter]"),
+  newArrivals: $("[data-new-arrivals-filter]"),
   sort: $("[data-sort-select]"),
   stock: $("[data-stock-filter]"),
   panel: $(".filter-panel"),
@@ -397,6 +419,9 @@ const ui = {
   cart: $("[data-cart-count]"),
 };
 let language = window.NoursStore?.getLanguage() || "en";
+let priceFilterCurrency = "SAR";
+const PRICE_FILTER_MAX_SAR = 10000;
+const PRICE_FILTER_STEP_SAR = 100;
 let cartCount = window.NoursStore?.cartCount() || 0;
 const localeByLanguage = {
   en: "en-US",
@@ -413,8 +438,12 @@ const localizeProduct = (product) =>
       [language]: product.description[language] || product.description.en,
     },
   };
-const dealsOnly =
+let dealsOnly =
   new URLSearchParams(location.search).get("filter") === "deals";
+ui.sale.checked = dealsOnly;
+const BRAND_FILTERS_STORAGE_KEY = "nours-catalog-brands";
+let brandFiltersInitialized = false;
+let brandFilterExpanded = false;
 let toastTimer;
 let wishlist = new Set();
 try {
@@ -441,6 +470,48 @@ function formatPrice(value, sourceCurrency = "SAR") {
     currency,
     maximumFractionDigits: currency === "SAR" ? 0 : 2,
   }).format(converted);
+}
+function convertPrice(value, fromCurrency, toCurrency) {
+  const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
+  return window.NoursStore?.convertCurrency(value, fromCurrency, toCurrency)
+    ?? value * (rates[toCurrency] || 1) / (rates[fromCurrency] || 1);
+}
+function priceFilterMaximum(currency = priceFilterCurrency) {
+  return convertPrice(PRICE_FILTER_MAX_SAR, "SAR", currency);
+}
+function updatePriceFilterDisplay() {
+  const maximum = priceFilterMaximum();
+  [ui.min, ui.max].forEach((input) => {
+    input.max = String(maximum);
+    input.step = "any";
+  });
+  ui.range.max = String(maximum);
+  ui.range.step = String(Math.max(1, convertPrice(PRICE_FILTER_STEP_SAR, "SAR", priceFilterCurrency)));
+  ui.priceCurrencies.forEach((node) => (node.textContent = priceFilterCurrency));
+  ui.rangeMin.textContent = formatPrice(0, priceFilterCurrency);
+  ui.rangeMax.textContent = formatPrice(maximum, priceFilterCurrency);
+}
+function setPriceFilterCurrency(nextCurrency) {
+  const currency = ["SAR", "USD", "EUR"].includes(nextCurrency) ? nextCurrency : "USD";
+  const previousCurrency = priceFilterCurrency;
+  const previousMaximum = priceFilterMaximum(previousCurrency);
+  const minimum = Number(ui.min.value) || 0;
+  const maximum = Number(ui.max.value);
+  const maximumIsDefault = !Number.isFinite(maximum) || maximum >= previousMaximum - 0.01;
+  priceFilterCurrency = currency;
+  updatePriceFilterDisplay();
+  if (currency === previousCurrency) return;
+  ui.min.value = String(convertPrice(minimum, previousCurrency, currency));
+  ui.max.value = String(maximumIsDefault
+    ? priceFilterMaximum(currency)
+    : convertPrice(maximum, previousCurrency, currency));
+  ui.range.value = ui.max.value;
+}
+function resetPriceRange() {
+  const maximum = priceFilterMaximum();
+  ui.min.value = "0";
+  ui.max.value = String(maximum);
+  ui.range.value = String(maximum);
 }
 function icon(name) {
   const item = document.createElement("i");
@@ -470,6 +541,7 @@ function setLanguage(next) {
   ui.search.setAttribute("aria-label", copy[language].searchPlaceholder);
   ui.sort.setAttribute("aria-label", copy[language].sortLabel);
   ui.filterButton.setAttribute("aria-label", copy[language].filterLabel);
+  updatePriceFilterDisplay();
   $(".cart-button").setAttribute(
     "aria-label",
     {
@@ -527,11 +599,11 @@ function renderManagedCategoryBanner() {
 function filteredProducts() {
   const query = ui.search.value.trim().toLocaleLowerCase();
   const cats = $$("[data-category-filter]:checked").map((input) => input.value);
+  const brands = $$("[data-brand-filter]:checked").map((input) => input.value);
   const min = Number(ui.min.value) || 0;
-  const max = Number(ui.max.value) || 10000;
-  const currency = window.NoursStore?.getCurrency() || "USD";
-  const minInSar = window.NoursStore?.convertCurrency(min, currency, "SAR") ?? min;
-  const maxInSar = window.NoursStore?.convertCurrency(max, currency, "SAR") ?? max;
+  const max = Number(ui.max.value) || priceFilterMaximum();
+  const minInSar = convertPrice(min, priceFilterCurrency, "SAR");
+  const maxInSar = convertPrice(max, priceFilterCurrency, "SAR");
   const rating = Number($("[data-rating-filter]:checked").value);
   const results = products.filter((product) => {
     const localized = localizeProduct(product);
@@ -540,11 +612,12 @@ function filteredProducts() {
     return (
       (!query || searchText.includes(query)) &&
       (!cats.length || cats.includes(product.category)) &&
-      product.price >= min &&
+      (!brands.length || brands.includes(product.brand)) &&
       product.price >= minInSar &&
       product.price <= maxInSar &&
       product.rating >= rating &&
       (!dealsOnly || (product.oldPrice && product.oldPrice > product.price)) &&
+      (!ui.newArrivals.checked || product.badge === "new") &&
       (!ui.stock.checked || product.stock)
     );
   });
@@ -728,20 +801,80 @@ function syncCategoryFilters() {
   fieldset.replaceChildren(legend, ...labels);
   requestedCategoryApplied = true;
 }
+function syncBrandFilters() {
+  const brands = [...new Set(products.map((product) => product.brand).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const selectedBrands = brandFiltersInitialized
+    ? $$('[data-brand-filter]:checked').map((input) => input.value)
+    : (() => {
+        try {
+          const saved = JSON.parse(localStorage.getItem(BRAND_FILTERS_STORAGE_KEY) || "[]");
+          return Array.isArray(saved) ? saved.filter((brand) => brands.includes(brand)) : [];
+        } catch {
+          return [];
+        }
+      })();
+  const selected = new Set(selectedBrands);
+  if (!brandFiltersInitialized) {
+    brandFilterExpanded = selected.size > 0;
+    brandFiltersInitialized = true;
+  }
+  const options = brands.map((brand) => {
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = brand;
+    input.dataset.brandFilter = "";
+    input.checked = selected.has(brand);
+    input.addEventListener("change", () => {
+      brandFilterExpanded = true;
+      saveSelectedBrandFilters();
+      render();
+    });
+    const name = document.createElement("span");
+    name.textContent = brand;
+    const count = document.createElement("small");
+    count.textContent = String(products.filter((product) => product.brand === brand).length);
+    label.append(input, name, count);
+    return label;
+  });
+  ui.brandOptions.replaceChildren(...options);
+  ui.brandOptions.hidden = !brandFilterExpanded;
+  ui.brandToggle.setAttribute("aria-expanded", String(brandFilterExpanded));
+}
+function saveSelectedBrandFilters() {
+  try {
+    localStorage.setItem(
+      BRAND_FILTERS_STORAGE_KEY,
+      JSON.stringify($$('[data-brand-filter]:checked').map((input) => input.value)),
+    );
+  } catch {}
+}
+function setDealsFilter(enabled) {
+  dealsOnly = enabled;
+  ui.sale.checked = enabled;
+  const nextUrl = new URL(location.href);
+  if (enabled) nextUrl.searchParams.set("filter", "deals");
+  else nextUrl.searchParams.delete("filter");
+  history.replaceState(null, "", `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
+}
 
 function activeFilters() {
   const chips = [];
   const query = ui.search.value.trim();
   if (query)
     chips.push({ text: `“${query}”`, clear: () => (ui.search.value = "") });
+  $$('[data-brand-filter]:checked').forEach((input) =>
+    chips.push({ text: input.value, clear: () => (input.checked = false) }),
+  );
   if (dealsOnly)
     chips.push({
-      text: copy[language].badgeSale,
-      clear: () => {
-        const nextUrl = new URL(location.href);
-        nextUrl.searchParams.delete("filter");
-        location.href = nextUrl;
-      },
+      text: copy[language].saleOnly,
+      clear: () => setDealsFilter(false),
+    });
+  if (ui.newArrivals.checked)
+    chips.push({
+      text: copy[language].newArrivals,
+      clear: () => (ui.newArrivals.checked = false),
     });
   $$("[data-category-filter]:checked").forEach((input) =>
     chips.push({
@@ -750,15 +883,11 @@ function activeFilters() {
     }),
   );
   const min = Number(ui.min.value) || 0,
-    max = Number(ui.max.value) || 10000;
-  if (min > 0 || max < 10000)
+    max = Number(ui.max.value) || priceFilterMaximum();
+  if (min > 0 || max < priceFilterMaximum() - 0.01)
     chips.push({
-      text: `${formatPrice(min, window.NoursStore?.getCurrency() || "USD")} – ${formatPrice(max, window.NoursStore?.getCurrency() || "USD")}`,
-      clear: () => {
-        ui.min.value = 0;
-        ui.max.value = 10000;
-        ui.range.value = 10000;
-      },
+      text: `${formatPrice(min, priceFilterCurrency)} – ${formatPrice(max, priceFilterCurrency)}`,
+      clear: resetPriceRange,
     });
   const selected = $("[data-rating-filter]:checked");
   if (Number(selected.value) > 0)
@@ -779,6 +908,7 @@ function activeFilters() {
       button.append(document.createTextNode(chip.text), icon("x"));
       button.addEventListener("click", () => {
         chip.clear();
+        saveSelectedBrandFilters();
         render();
       });
       return button;
@@ -828,6 +958,7 @@ function createDesktopAdCard() {
 
 function render() {
   syncCategoryFilters();
+  syncBrandFilters();
   const results = filteredProducts();
   const cards = results.map(productCard);
   if (results.length >= 3) {
@@ -867,9 +998,12 @@ function closeFilters(returnFocus = true) {
 }
 function resetFilters() {
   ui.search.value = "";
-  ui.min.value = 0;
-  ui.max.value = 10000;
-  ui.range.value = 10000;
+  setDealsFilter(false);
+  ui.newArrivals.checked = false;
+  resetPriceRange();
+  $$('[data-brand-filter]').forEach((input) => (input.checked = false));
+  saveSelectedBrandFilters();
+  brandFilterExpanded = false;
   ui.stock.checked = false;
   ui.sort.value = "featured";
   $$("[data-category-filter]").forEach((input) => (input.checked = false));
@@ -880,6 +1014,16 @@ function resetFilters() {
 ui.search.addEventListener("input", render);
 ui.sort.addEventListener("change", render);
 ui.stock.addEventListener("change", render);
+ui.sale.addEventListener("change", () => {
+  setDealsFilter(ui.sale.checked);
+  render();
+});
+ui.newArrivals.addEventListener("change", render);
+ui.brandToggle.addEventListener("click", () => {
+  brandFilterExpanded = !brandFilterExpanded;
+  ui.brandOptions.hidden = !brandFilterExpanded;
+  ui.brandToggle.setAttribute("aria-expanded", String(brandFilterExpanded));
+});
 $$("[data-category-filter],[data-rating-filter]").forEach((input) =>
   input.addEventListener("change", render),
 );
@@ -893,7 +1037,7 @@ ui.min.addEventListener("change", () => {
 ui.max.addEventListener("change", () => {
   ui.max.value = Math.max(
     Number(ui.min.value) || 0,
-    Math.min(10000, Number(ui.max.value) || 10000),
+    Math.min(priceFilterMaximum(), Number(ui.max.value) || priceFilterMaximum()),
   );
   ui.range.value = ui.max.value;
   render();
@@ -997,16 +1141,20 @@ if (
 document.querySelectorAll("[data-filter-laptop]").forEach((button) => {
   button.addEventListener("click", filterByLaptops);
 });
-setLanguage(language);
 const productsCurrencySelect = document.querySelector("[data-currency-select]");
 if (productsCurrencySelect) {
   productsCurrencySelect.value = window.NoursStore?.getCurrency() || "USD";
+}
+setPriceFilterCurrency(window.NoursStore?.getCurrency() || "USD");
+setLanguage(language);
+if (productsCurrencySelect) {
   productsCurrencySelect.addEventListener("change", (event) => {
     window.NoursStore?.setCurrency(event.currentTarget.value);
     render();
   });
 }
 window.addEventListener("ruqo:currency-updated", (event) => {
+  setPriceFilterCurrency(event.detail?.currency || window.NoursStore?.getCurrency() || "USD");
   if (productsCurrencySelect) {
     productsCurrencySelect.value = event.detail?.currency || window.NoursStore?.getCurrency() || "USD";
   }

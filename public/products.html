@@ -283,6 +283,26 @@
                   ><small>3</small></label
                 >
               </fieldset>
+              <fieldset class="filter-group filter-brands">
+                <legend>
+                  <button
+                    class="filter-accordion-toggle"
+                    type="button"
+                    data-brand-toggle
+                    aria-expanded="false"
+                    aria-controls="brand-filter-options"
+                  >
+                    <span data-copy="brand">Brand</span>
+                    <i data-lucide="chevron-down" aria-hidden="true"></i>
+                  </button>
+                </legend>
+                <div
+                  class="brand-options"
+                  id="brand-filter-options"
+                  data-brand-options
+                  hidden
+                ></div>
+              </fieldset>
               <fieldset class="filter-group">
                 <legend data-copy="priceRange">Price range</legend>
                 <div class="price-inputs">
@@ -297,7 +317,7 @@
                         value="0"
                         data-price-min
                         aria-label="Minimum price"
-                      /><b>SAR</b></span
+                      /><b data-price-currency>SAR</b></span
                     ></label
                   ><span class="price-dash" aria-hidden="true"></span
                   ><label
@@ -311,7 +331,7 @@
                         value="10000"
                         data-price-max
                         aria-label="Maximum price"
-                      /><b>SAR</b></span
+                      /><b data-price-currency>SAR</b></span
                     ></label
                   >
                 </div>
@@ -326,7 +346,7 @@
                   aria-label="Maximum price slider"
                 />
                 <div class="range-labels">
-                  <span>0 SAR</span><span>10,000 SAR</span>
+                  <span data-price-range-min>0 SAR</span><span data-price-range-max>10,000 SAR</span>
                 </div>
               </fieldset>
               <fieldset class="filter-group">
@@ -366,6 +386,22 @@
                 ></span
                 ><span data-copy="inStock">In stock only</span></label
               >
+              <div class="filter-quick-options">
+                <label class="stock-filter"
+                  ><input type="checkbox" data-sale-filter /><span
+                    class="stock-toggle"
+                    aria-hidden="true"
+                  ></span
+                  ><span data-copy="saleOnly">On sale</span></label
+                >
+                <label class="stock-filter"
+                  ><input type="checkbox" data-new-arrivals-filter /><span
+                    class="stock-toggle"
+                    aria-hidden="true"
+                  ></span
+                  ><span data-copy="newArrivals">New arrivals</span></label
+                >
+              </div>
               <button class="filter-reset" type="button" data-reset-filters>
                 <i data-lucide="rotate-ccw" aria-hidden="true"></i
                 ><span data-copy="clearFilters">Clear all filters</span>

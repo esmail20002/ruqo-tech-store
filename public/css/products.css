@@ -263,6 +263,30 @@ html[dir="rtl"] .catalog-breadcrumb svg {
   font-size: 0.82rem;
   font-weight: 800;
 }
+.filter-brands legend {
+  margin-bottom: 0;
+}
+.filter-accordion-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.filter-accordion-toggle svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.18s ease;
+}
+.filter-accordion-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
 .filter-group > label:not(.rating-option) {
   display: grid;
   grid-template-columns: 17px 1fr auto;
@@ -283,6 +307,22 @@ html[dir="rtl"] .catalog-breadcrumb svg {
 .filter-group label small {
   color: #9592a0;
   font-size: 0.68rem;
+}
+.brand-options {
+  display: grid;
+  gap: 11px;
+}
+.brand-options[hidden] {
+  display: none;
+}
+.brand-options label {
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  color: #4e5361;
+  font-size: 0.78rem;
+  cursor: pointer;
 }
 .price-inputs {
   display: grid;
@@ -361,6 +401,14 @@ html[dir="rtl"] .catalog-breadcrumb svg {
   font-size: 0.76rem;
   font-weight: 700;
   cursor: pointer;
+}
+.filter-quick-options {
+  display: grid;
+  border-top: 1px solid rgba(91, 61, 133, 0.1);
+}
+.filter-quick-options .stock-filter {
+  padding: 10px 0;
+  border-top: 0;
 }
 .stock-filter input {
   position: absolute;

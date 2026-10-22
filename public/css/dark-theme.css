@@ -740,6 +740,23 @@ html[data-theme="dark"] .commerce-main {
   color: var(--text);
 }
 
+html[data-theme="dark"] .catalog-page {
+  --primary-deep: #9de8d4;
+}
+
+html[data-theme="dark"] .catalog-assurances svg,
+html[data-theme="dark"] .catalog-page .empty-icon,
+html[data-theme="dark"] .catalog-page .ad-perk svg,
+html[data-theme="dark"] .catalog-page .filter-accordion-toggle {
+  color: #9de8d4;
+}
+
+html[data-theme="dark"] .catalog-page input[type="checkbox"],
+html[data-theme="dark"] .catalog-page input[type="radio"],
+html[data-theme="dark"] .catalog-page .price-range {
+  accent-color: #9de8d4;
+}
+
 html[data-theme="dark"] .catalog-assurances,
 html[data-theme="dark"] .filter-group > label:not(.rating-option),
 html[data-theme="dark"] .stock-filter,
