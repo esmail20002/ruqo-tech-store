@@ -757,13 +757,6 @@ html[dir="rtl"] .catalog-breadcrumb svg {
   color: var(--muted);
   font-size: 0.82rem;
 }
-.catalog-footer {
-  padding: 20px 0;
-}
-.catalog-footer .footer-bottom-inner {
-  color: var(--muted);
-  font-size: 0.75rem;
-}
 .catalog-page button:focus-visible,
 .catalog-page input:focus-visible,
 .catalog-page select:focus-visible {
