@@ -3714,6 +3714,7 @@ body.has-store-menu .product-side-drawer .store-menu-theme {
   .site-header .nav-actions > .ruqo-currency-dropdown,
   .commerce-header .commerce-actions > .ruqo-currency-dropdown {
     order: 5;
+    display: none;
   }
   .site-header .nav-actions > .ruqo-lang-dropdown,
   .commerce-header .commerce-actions > .ruqo-lang-dropdown {
