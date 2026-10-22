@@ -1249,10 +1249,11 @@
         currencyDropdown.before(placeholder);
         currencyDropdownPositions.set(currencyDropdown, placeholder);
       }
-      currencyDropdown.after(assistantTrigger);
-    } else {
-      headerActions.append(assistantTrigger);
     }
+    const searchButton = headerActions.querySelector("[data-site-search]");
+    if (searchButton) searchButton.after(assistantTrigger);
+    else if (currencyDropdown) currencyDropdown.after(assistantTrigger);
+    else headerActions.append(assistantTrigger);
     const drawerTools = document.createElement("div");
     drawerTools.className = "product-side-drawer-tools";
     const themeButton = document.createElement("button");
