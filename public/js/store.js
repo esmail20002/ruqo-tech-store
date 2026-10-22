@@ -313,16 +313,16 @@
 
   const currencyMeta = {
     USD: { symbol: "$", label: "USD dollar", subtitle: "الدولار الأمريكي" },
-    SAR: { symbol: "ر.س", label: "SAR", subtitle: "الريال السعودي" },
     EUR: { symbol: "€", label: "EUR", subtitle: "اليورو الأوروبي" },
+    SAR: { symbol: "ر.س", label: "SAR", subtitle: "الريال السعودي" },
   };
 
   const languageMeta = {
     en: { code: "EN", flag: "🇺🇸", label: "English", subtitle: "United States" },
-    ar: { code: "عربي", flag: "🇸🇦", label: "العربية", subtitle: "المملكة العربية السعودية" },
     fr: { code: "FR", flag: "🇫🇷", label: "Français", subtitle: "France" },
     es: { code: "ES", flag: "🇪🇸", label: "Español", subtitle: "España" },
     zh: { code: "ZH", flag: "🇨🇳", label: "中文", subtitle: "简体中文" },
+    ar: { code: "عربي", flag: "🇸🇦", label: "العربية", subtitle: "المملكة العربية السعودية" },
   };
 
   const closeAllMenus = () => {
@@ -336,9 +336,19 @@
   const syncDropdowns = () => {
     const currentCurrency = getCurrency();
     const currentLanguage = getLanguage();
+    const orderSelectOptions = (select, values) => {
+      const selectedValue = select.value;
+      const order = new Map(values.map((value, index) => [value, index]));
+      const options = [...select.options].sort(
+        (a, b) => (order.get(a.value) ?? Infinity) - (order.get(b.value) ?? Infinity),
+      );
+      select.replaceChildren(...options);
+      select.value = selectedValue;
+    };
 
     // 1. Currency selects
     document.querySelectorAll("select[data-currency-select]").forEach((select) => {
+      orderSelectOptions(select, ["USD", "EUR", "SAR"]);
       let wrapper = select.parentElement?.classList.contains("ruqo-currency-dropdown")
         ? select.parentElement
         : null;
@@ -423,6 +433,7 @@
 
     // 2. Language selects
     document.querySelectorAll("select[data-language-select]").forEach((select) => {
+      orderSelectOptions(select, ["en", "fr", "es", "zh", "ar"]);
       let wrapper = select.parentElement?.classList.contains("ruqo-lang-dropdown")
         ? select.parentElement
         : null;
@@ -646,9 +657,292 @@
   ["ruqo:catalog-updated", "ruqo:currency-updated"].forEach((name) => window.addEventListener(name, renderSearch));
   window.addEventListener("ruqo:language-updated", () => closeSearch());
 
+  const currencyDropdownPositions = new WeakMap();
+  const restoreCurrencyDropdowns = () => {
+    document.querySelectorAll(".ruqo-currency-dropdown").forEach((dropdown) => {
+      const placeholder = currencyDropdownPositions.get(dropdown);
+      if (placeholder?.isConnected && dropdown.parentNode !== placeholder.parentNode) {
+        placeholder.after(dropdown);
+      }
+    });
+  };
+
+  const shopAssistantCopy = {
+    en: {
+      trigger: "Shop with AI",
+      title: "Your shopping assistant",
+      subtitle: "Tell me what you need and I’ll find a match in our catalog.",
+      welcome: "What are you shopping for? Share a product type, feature, or budget and I’ll suggest a few options.",
+      placeholder: "Describe what you need...",
+      send: "Send message",
+      matches: "Here are a few options that match:",
+      noMatches: "I couldn’t find a close match. Try another product type, feature, or budget.",
+      view: "View product",
+      suggestions: ["A phone with a great camera", "A laptop for work", "Noise-cancelling headphones"],
+      close: "Close shopping assistant",
+    },
+    ar: {
+      trigger: "تسوّق مع AI",
+      title: "مساعد التسوق الذكي",
+      subtitle: "أخبرني بما تحتاجه وسأبحث لك في منتجات المتجر.",
+      welcome: "ما المنتج الذي تبحث عنه؟ اذكر نوعه أو ميزة تهمك أو ميزانيتك لأقترح خيارات مناسبة.",
+      placeholder: "صف ما تبحث عنه...",
+      send: "إرسال الرسالة",
+      matches: "هذه بعض الخيارات المناسبة:",
+      noMatches: "لم أجد تطابقاً قريباً. جرّب وصف نوع المنتج أو ميزته أو ميزانيتك.",
+      view: "عرض المنتج",
+      suggestions: ["هاتف بكاميرا ممتازة", "لابتوب للعمل", "سماعة بعزل الضوضاء"],
+      close: "إغلاق مساعد التسوق",
+    },
+    fr: {
+      trigger: "Shop with AI",
+      title: "Votre assistant shopping",
+      subtitle: "Dites-moi ce qu’il vous faut et je chercherai dans notre catalogue.",
+      welcome: "Que recherchez-vous ? Indiquez un type de produit, une caractéristique ou un budget.",
+      placeholder: "Décrivez votre besoin...",
+      send: "Envoyer",
+      matches: "Voici quelques options correspondantes :",
+      noMatches: "Aucun résultat proche. Essayez un autre produit, une caractéristique ou un budget.",
+      view: "Voir le produit",
+      suggestions: ["Un téléphone avec un bon appareil photo", "Un ordinateur pour travailler", "Un casque antibruit"],
+      close: "Fermer l’assistant shopping",
+    },
+    es: {
+      trigger: "Shop with AI",
+      title: "Tu asistente de compras",
+      subtitle: "Cuéntame qué necesitas y buscaré opciones en nuestro catálogo.",
+      welcome: "¿Qué estás buscando? Dime el tipo de producto, una característica o tu presupuesto.",
+      placeholder: "Describe lo que necesitas...",
+      send: "Enviar mensaje",
+      matches: "Estas opciones podrían encajarte:",
+      noMatches: "No encontré una coincidencia cercana. Prueba con otro producto, característica o presupuesto.",
+      view: "Ver producto",
+      suggestions: ["Un móvil con buena cámara", "Un portátil para trabajar", "Auriculares con cancelación de ruido"],
+      close: "Cerrar asistente de compras",
+    },
+    zh: {
+      trigger: "AI 选购",
+      title: "智能购物助手",
+      subtitle: "告诉我你的需求，我会在商店目录中为你查找。",
+      welcome: "你想选购什么？请描述商品类型、功能或预算。",
+      placeholder: "描述你的需求...",
+      send: "发送消息",
+      matches: "这些商品可能适合你：",
+      noMatches: "没有找到相近商品。试试描述其他类型、功能或预算。",
+      view: "查看商品",
+      suggestions: ["拍照效果好的手机", "适合办公的笔记本电脑", "降噪耳机"],
+      close: "关闭购物助手",
+    },
+  };
+
+  const normalizeAssistantText = (value) =>
+    String(value || "")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+      .replace(/[أإآ]/g, "ا")
+      .replace(/ى/g, "ي")
+      .toLocaleLowerCase();
+
+  function setupShopAssistant(trigger, language, listen, store) {
+    const existingOverlay = document.querySelector(".shop-ai-overlay");
+    existingOverlay?.closeAssistant?.(false);
+    existingOverlay?.remove();
+    const copy = shopAssistantCopy[language] || shopAssistantCopy.en;
+    const overlay = document.createElement("div");
+    overlay.className = "shop-ai-overlay";
+    overlay.hidden = true;
+    overlay.dir = language === "ar" ? "rtl" : "ltr";
+    overlay.innerHTML = `
+      <section class="shop-ai-dialog" role="dialog" aria-modal="true" aria-labelledby="shop-ai-title">
+        <header class="shop-ai-header">
+          <div class="shop-ai-heading">
+            <span class="shop-ai-mark"><i data-lucide="sparkles" aria-hidden="true"></i></span>
+            <div><h2 id="shop-ai-title">${copy.title}</h2><p>${copy.subtitle}</p></div>
+          </div>
+          <button class="shop-ai-close" type="button" aria-label="${copy.close}"><i data-lucide="x" aria-hidden="true"></i></button>
+        </header>
+        <div class="shop-ai-thread" aria-live="polite" aria-relevant="additions text"></div>
+        <div class="shop-ai-suggestions"></div>
+        <form class="shop-ai-form">
+          <label class="shop-ai-input-wrap"><span class="sr-only">${copy.placeholder}</span><input name="message" autocomplete="off" placeholder="${copy.placeholder}" required /></label>
+          <button class="shop-ai-send" type="submit" aria-label="${copy.send}"><i data-lucide="arrow-up" aria-hidden="true"></i></button>
+        </form>
+      </section>
+    `;
+    document.body.append(overlay);
+
+    const dialog = overlay.querySelector(".shop-ai-dialog");
+    const thread = overlay.querySelector(".shop-ai-thread");
+    const form = overlay.querySelector(".shop-ai-form");
+    const input = form.elements.message;
+    const shell = document.querySelector(".page-shell");
+    let previousInert = false;
+    let previousOverflow = "";
+
+    const addMessage = (text, role, products = []) => {
+      const message = document.createElement("article");
+      message.className = `shop-ai-message is-${role}`;
+      const paragraph = document.createElement("p");
+      paragraph.textContent = text;
+      message.append(paragraph);
+      if (products.length) {
+        const results = document.createElement("div");
+        results.className = "shop-ai-results";
+        products.forEach((product) => {
+          const localized = window.NoursData?.localizeProduct?.(product, language) || product;
+          const link = document.createElement("a");
+          link.className = "shop-ai-product";
+          link.href = `/product.html?id=${encodeURIComponent(product.id)}`;
+          const image = document.createElement("img");
+          image.src = product.image;
+          image.alt = "";
+          const details = document.createElement("span");
+          details.className = "shop-ai-product-details";
+          const name = document.createElement("strong");
+          name.textContent = localized.name || product.name;
+          const description = document.createElement("small");
+          description.textContent = product.brand;
+          const price = document.createElement("span");
+          price.className = "shop-ai-product-price";
+          const currency = store.getCurrency();
+          price.textContent = new Intl.NumberFormat(
+            language === "zh" ? "zh-CN" : ({ ar: "ar-SA", fr: "fr-FR", es: "es-ES" }[language] || "en-US"),
+            { style: "currency", currency, maximumFractionDigits: currency === "SAR" ? 0 : 2 },
+          ).format(store.convertCurrency(product.price, "SAR", currency));
+          details.append(name, description);
+          link.append(image, details, price);
+          results.append(link);
+        });
+        message.append(results);
+      }
+      thread.append(message);
+      thread.scrollTop = thread.scrollHeight;
+      window.lucide?.createIcons();
+    };
+
+    const recommend = (message) => {
+      const products = window.NoursData?.products || [];
+      const query = normalizeAssistantText(message);
+      const categories = [
+        { value: "phones", terms: ["phone", "mobile", "smartphone", "هاتف", "جوال", "موبايل", "téléphone", "telefono", "móvil", "手机"] },
+        { value: "laptops", terms: ["laptop", "notebook", "computer", "لابتوب", "حاسب", "كمبيوتر", "ordinateur", "portátil", "ordenador", "笔记本", "电脑"] },
+        { value: "audio", terms: ["audio", "headphone", "headset", "earbuds", "سماعة", "سماعات", "صوت", "casque", "écouteur", "auricular", "auriculares", "耳机"] },
+        { value: "wearables", terms: ["watch", "wearable", "ساعة", "ساعات", "ذكية", "montre", "reloj", "relojes", "手表", "穿戴"] },
+      ];
+      const category = categories.find((group) => group.terms.some((term) => query.includes(normalizeAssistantText(term))))?.value;
+      const budgetMatch = query.match(/(?:under|below|less than|up to|budget(?: of)?|أقل من|اقل من|ميزانية|ميزانيتي|تحت|حتى|moins de|moins|menos de|hasta|低于|预算)\s*[$€]?\s*(\d[\d,.]*)/);
+      const currency = store.getCurrency();
+      const maxPrice = budgetMatch
+        ? store.convertCurrency(Number(budgetMatch[1].replace(/[,.]/g, "")), currency, "SAR")
+        : Infinity;
+      const terms = query.split(/[^\p{L}\p{N}]+/u).filter((term) => term.length > 1);
+      const stopWords = new Set(["the", "and", "for", "with", "under", "from", "need", "want", "looking", "من", "في", "على", "الى", "إلى", "مع", "اريد", "أريد", "ابحث", "عن", "لدي"]);
+      const keywords = terms.filter((term) => !stopWords.has(term));
+
+      return products
+        .map((product) => {
+          if (product.price > maxPrice || (category && product.category !== category)) return null;
+          const localized = window.NoursData?.localizeProduct?.(product, language) || product;
+          const searchable = normalizeAssistantText([
+            localized.name,
+            product.name,
+            product.brand,
+            localized.description?.[language],
+            product.description?.en,
+            product.description?.ar,
+            ...(localized.features?.[language] || []),
+          ].join(" "));
+          let score = category ? 8 : 0;
+          keywords.forEach((term) => {
+            if (searchable.includes(term)) score += term.length > 3 ? 2 : 1;
+          });
+          if (product.stock) score += 0.5;
+          score += product.rating / 10;
+          return { product, score };
+        })
+        .filter((item) => item && (category || keywords.length === 0 || item.score > 1))
+        .sort((a, b) => b.score - a.score || b.product.rating - a.product.rating)
+        .slice(0, 3)
+        .map((item) => item.product);
+    };
+
+    const submitMessage = (text) => {
+      const message = text.trim();
+      if (!message) return;
+      addMessage(message, "user");
+      const matches = recommend(message);
+      addMessage(matches.length ? copy.matches : copy.noMatches, "assistant", matches);
+      form.reset();
+      input.focus();
+    };
+
+    addMessage(copy.welcome, "assistant");
+    const suggestions = overlay.querySelector(".shop-ai-suggestions");
+    copy.suggestions.forEach((suggestion) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "shop-ai-suggestion";
+      button.textContent = suggestion;
+      button.addEventListener("click", () => submitMessage(suggestion));
+      suggestions.append(button);
+    });
+
+    const close = (restoreFocus = true) => {
+      if (overlay.hidden) return;
+      overlay.hidden = true;
+      trigger.setAttribute("aria-expanded", "false");
+      if (shell) shell.inert = previousInert;
+      document.body.style.overflow = previousOverflow;
+      if (restoreFocus && trigger.isConnected) trigger.focus({ preventScroll: true });
+    };
+    overlay.closeAssistant = close;
+    const open = () => {
+      if (!overlay.hidden) return;
+      closeAllMenus();
+      closeSearch();
+      previousInert = shell?.inert || false;
+      previousOverflow = document.body.style.overflow;
+      if (shell) shell.inert = true;
+      document.body.style.overflow = "hidden";
+      overlay.hidden = false;
+      trigger.setAttribute("aria-expanded", "true");
+      input.focus({ preventScroll: true });
+      window.lucide?.createIcons();
+    };
+
+    listen(trigger, "click", open);
+    listen(overlay.querySelector(".shop-ai-close"), "click", () => close());
+    listen(overlay, "click", (event) => {
+      if (event.target === overlay) close();
+    });
+    listen(form, "submit", (event) => {
+      event.preventDefault();
+      submitMessage(input.value);
+    });
+    listen(overlay, "keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        close();
+      } else if (event.key === "Tab") {
+        const items = [...dialog.querySelectorAll("button, input, a[href]")].filter((item) => item.getClientRects().length);
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+
   let disposeSideMenu;
   function setupProductSideMenu() {
     if (location.pathname.includes('/admin/')) return;
+    restoreCurrencyDropdowns();
     const language = getLanguage();
     const store = window.NoursStore;
     const defaultLightLogoUrl = new URL('new/li.png', imageDirectory).href;
@@ -933,6 +1227,32 @@
     `;
 
     document.body.append(backdrop, trigger, drawer);
+    const headerActions = document.querySelector(".site-header .nav-actions, .commerce-header .commerce-actions");
+    if (!headerActions) return;
+    let assistantTrigger = headerActions.querySelector(".shop-ai-trigger");
+    if (!assistantTrigger) {
+      assistantTrigger = document.createElement("button");
+      assistantTrigger.type = "button";
+      assistantTrigger.className = "shop-ai-trigger";
+    }
+    const assistantLabel = (shopAssistantCopy[language] || shopAssistantCopy.en).trigger;
+    assistantTrigger.setAttribute("aria-label", assistantLabel);
+    assistantTrigger.setAttribute("aria-expanded", "false");
+    assistantTrigger.setAttribute("aria-haspopup", "dialog");
+    assistantTrigger.title = assistantLabel;
+    assistantTrigger.innerHTML = `${icon("sparkles")}<span class="shop-ai-label">${escapeHtml(assistantLabel)}</span>`;
+    const currencyDropdown = headerActions.querySelector(".ruqo-currency-dropdown");
+    if (currencyDropdown) {
+      let placeholder = currencyDropdownPositions.get(currencyDropdown);
+      if (!placeholder?.isConnected) {
+        placeholder = document.createComment("currency-dropdown-position");
+        currencyDropdown.before(placeholder);
+        currencyDropdownPositions.set(currencyDropdown, placeholder);
+      }
+      currencyDropdown.after(assistantTrigger);
+    } else {
+      headerActions.append(assistantTrigger);
+    }
     const drawerTools = document.createElement("div");
     drawerTools.className = "product-side-drawer-tools";
     const themeButton = document.createElement("button");
@@ -942,6 +1262,19 @@
     const closeButton = drawer.querySelector(".product-side-drawer-close");
     closeButton.before(drawerTools);
     drawerTools.append(themeButton, closeButton);
+    const currencyPlaceholder = currencyDropdown && currencyDropdownPositions.get(currencyDropdown);
+    const syncCurrencyPlacement = () => {
+      if (!currencyDropdown) return;
+      if (window.matchMedia("(max-width: 650px)").matches) {
+        if (currencyDropdown.parentElement !== drawerTools) drawerTools.prepend(currencyDropdown);
+      } else if (currencyPlaceholder?.isConnected && currencyDropdown.parentNode !== currencyPlaceholder.parentNode) {
+        currencyPlaceholder.after(currencyDropdown);
+      }
+    };
+    syncCurrencyPlacement();
+    listen(window, "resize", syncCurrencyPlacement);
+    setupShopAssistant(assistantTrigger, language, listen, store);
+    window.lucide?.createIcons();
     const buttons = () => [trigger, ...document.querySelectorAll(".menu-toggle, .commerce-menu")];
     const shell = document.querySelector(".page-shell");
     const previousInert = shell?.inert || false;
