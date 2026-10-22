@@ -6,6 +6,36 @@
   background: rgba(250, 248, 255, 0.92);
   backdrop-filter: blur(18px);
 }
+body[data-page="checkout"] .commerce-header {
+  position: relative;
+  top: auto;
+  z-index: auto;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+body[data-page="checkout"] > .page-shell > [data-site-header] {
+  position: sticky;
+  top: 0;
+  z-index: 55;
+}
+html[data-theme="light"] body[data-page="checkout"] .commerce-header.is-scrolled {
+  border-bottom-color: rgba(104, 78, 156, 0.16);
+  background: rgba(250, 248, 255, 0.68);
+  backdrop-filter: blur(20px) saturate(145%);
+  -webkit-backdrop-filter: blur(20px) saturate(145%);
+  box-shadow: 0 6px 24px rgba(18, 24, 38, 0.08);
+}
+html[data-theme="dark"] body[data-page="checkout"] .commerce-header.is-scrolled {
+  border-bottom-color: rgba(224, 238, 250, 0.14);
+  background: rgba(13, 21, 32, 0.68);
+  backdrop-filter: blur(20px) saturate(145%);
+  -webkit-backdrop-filter: blur(20px) saturate(145%);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-page="checkout"] .commerce-header {
+    transition: none;
+  }
+}
 .commerce-nav {
   position: relative;
   display: flex;

@@ -640,10 +640,22 @@
   };
   const header = document.querySelector("[data-site-header]");
   const footer = document.querySelector("[data-site-footer]");
+  const syncCheckoutHeaderScroll = () => {
+    header
+      .querySelector(".commerce-header")
+      ?.classList.toggle("is-scrolled", window.scrollY > 12);
+  };
 
   function renderShell() {
     const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
     header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="${escapeHtml(storeName)}"><img class="brand-logo" src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-currency currency-select" data-currency-select aria-label="${t.currencyLabel || "Currency"}" title="${t.currencyLabel || "Currency"}"><option value="USD">USD dollar</option><option value="SAR">SAR</option><option value="EUR">EUR</option></select><select class="commerce-lang language-select" data-language-select aria-label="Language" title="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="zh">ZH</option><option value="ar">عربي</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
+    if (page === "checkout") {
+      syncCheckoutHeaderScroll();
+      if (header.dataset.checkoutScrollListener !== "true") {
+        window.addEventListener("scroll", syncCheckoutHeaderScroll, { passive: true });
+        header.dataset.checkoutScrollListener = "true";
+      }
+    }
     footer.innerHTML = `
       <footer id="support" class="site-footer">
         <div class="container footer-grid">
