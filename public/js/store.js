@@ -1,5 +1,12 @@
 (() => {
   const supportedLanguages = ["en", "fr", "es", "zh", "ar"];
+  const isLocalDevelopment = ["localhost", "127.0.0.1", "::1"].includes(
+    window.location.hostname,
+  );
+  document.documentElement.classList.toggle(
+    "is-local-development",
+    isLocalDevelopment,
+  );
   const imageDirectory = new URL(
     "../images/",
     document.currentScript?.src || document.baseURI,
@@ -1092,6 +1099,13 @@
 
     const mt = menuTexts[language] || menuTexts.en;
     mt.about = { ar: "من نحن", en: "About us", fr: "À propos", es: "Quiénes somos", zh: "关于我们" }[language];
+    mt.experiments = {
+      ar: "مساحة تجارب",
+      en: "Experiment space",
+      fr: "Espace d’expérimentation",
+      es: "Espacio de experimentación",
+      zh: "实验空间",
+    }[language] || "Experiment space";
     const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
     const arrowSymbol = language === "ar" ? "←" : "→";
 
@@ -1199,6 +1213,11 @@
               <span class="side-link-text">${mt.about}</span>
               <span class="side-link-arrow">${arrowSymbol}</span>
             </a>
+            ${store.isLocalDevelopment ? `<a href="/experiments.html" class="product-side-link">
+              <span class="side-link-icon">${icon("flask-conical")}</span>
+              <span class="side-link-text">${mt.experiments}</span>
+              <span class="side-link-arrow">${arrowSymbol}</span>
+            </a>` : ""}
           </nav>
         </div>
       </div>
@@ -1240,6 +1259,20 @@
     document.body.append(backdrop, trigger, drawer);
     const headerActions = document.querySelector(".site-header .nav-actions, .commerce-header .commerce-actions");
     if (!headerActions) return;
+    let experimentsLink = headerActions.querySelector(".dev-experiments-header-link");
+    if (store.isLocalDevelopment) {
+      if (!experimentsLink) {
+        experimentsLink = document.createElement("a");
+        experimentsLink.className = "dev-experiments-header-link";
+        experimentsLink.href = "/experiments.html";
+        headerActions.append(experimentsLink);
+      }
+      experimentsLink.setAttribute("aria-label", mt.experiments);
+      experimentsLink.title = mt.experiments;
+      experimentsLink.innerHTML = `${icon("flask-conical")}<span>${mt.experiments}</span>`;
+    } else {
+      experimentsLink?.remove();
+    }
     let assistantTrigger = headerActions.querySelector(".shop-ai-trigger");
     if (!assistantTrigger) {
       assistantTrigger = document.createElement("button");
@@ -1276,6 +1309,7 @@
       currencyDropdown,
       languageDropdown,
       themeButton,
+      experimentsLink,
       headerActions.querySelector(".menu-toggle, .commerce-menu"),
     ].filter(Boolean);
     headerControls.forEach((control) => headerActions.append(control));
@@ -1428,6 +1462,7 @@
 
   window.NoursStore = {
     setupProductSideMenu,
+    isLocalDevelopment,
     keys,
     supportedLanguages,
     read,
@@ -1552,4 +1587,3 @@
   document.addEventListener("pointerover", handleLinkHover, { passive: true });
   document.addEventListener("touchstart", handleLinkHover, { passive: true });
 })();
-

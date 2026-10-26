@@ -1,0 +1,60 @@
+body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: min(calc(100% - 32px), 1120px);
+  margin: 14px auto 22px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: 0 12px 32px rgba(46, 25, 70, 0.08);
+}
+
+body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a {
+  display: inline-flex;
+  min-height: 42px;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  max-width: 240px;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a:hover {
+  color: var(--primary);
+  background: rgba(115, 56, 198, 0.08);
+}
+
+body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a[aria-current="page"] {
+  color: #fff;
+  background: linear-gradient(120deg, var(--primary), var(--accent));
+  box-shadow: 0 8px 20px rgba(115, 56, 198, 0.22);
+}
+
+body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher {
+    width: calc(100% - 24px);
+    margin: 10px auto 16px;
+    gap: 4px;
+  }
+
+  body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a {
+    min-height: 40px;
+    padding-inline: 10px;
+    font-size: 0.8rem;
+  }
+}

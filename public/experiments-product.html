@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      if (!["localhost", "127.0.0.1", "::1"].includes(location.hostname)) {
+        location.replace("/");
+      }
+    </script>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("nours-theme");
+          if (!saved) {
+            var m = document.cookie.match(/(?:^|; )nours-theme=([^;]*)/);
+            if (m) saved = decodeURIComponent(m[1]);
+          }
+          var theme = saved === "dark" || saved === '"dark"' ? "dark" : "light";
+          document.documentElement.dataset.theme = theme;
+        } catch (_) {}
+      })();
+    </script>
+    <script>
+      if (!new URLSearchParams(location.search).get("id")) {
+        const url = new URL(location.href);
+        url.searchParams.set("id", "macbook-pro");
+        history.replaceState(null, "", url);
+      }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Local-only product page experiment for RUQO TECH."
+    />
+    <title>Product experiment | RUQO TECH</title>
+    <link rel="icon" type="image/png" href="/images/new/li.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/commerce.css" />
+    <link rel="stylesheet" href="/css/store-motion.css?v=1" />
+    <link rel="stylesheet" href="/css/experiments.css?v=19" />
+  </head>
+  <body data-page="product" data-experiment-product="true" data-product-design="premium">
+    <nav class="experiment-switcher" aria-label="Experiment pages">
+      <a href="/experiments.html" data-experiment-label="home"></a>
+      <a
+        href="/experiments-product.html?id=macbook-pro"
+        data-experiment-label="product"
+        aria-current="page"
+      ></a>
+    </nav>
+    <div class="page-shell">
+      <div data-site-header></div>
+      <main class="commerce-main container" data-page-root></main>
+      <div data-site-footer></div>
+    </div>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/store.js"></script>
+    <script src="/js/product-options.js"></script>
+    <script src="/js/catalog-data.js"></script>
+    <script src="/js/supabase-client.js"></script>
+    <script src="/js/commerce.js"></script>
+    <script src="/js/store-motion.js?v=1"></script>
+    <script src="/js/product-design.js?v=1"></script>
+    <script src="/js/experiments.js?v=1"></script>
+  </body>
+</html>

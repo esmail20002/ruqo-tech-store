@@ -22,13 +22,13 @@ html {
   --surface: rgba(255, 255, 255, 0.76);
   --surface-strong: rgba(255, 255, 255, 0.92);
   --surface-2: rgba(250, 245, 255, 0.82);
-  --line: rgba(104, 78, 156, 0.12);
-  --text: #121826;
-  --muted: #5d6475;
-  --primary: #7838d3;
-  --primary-deep: #4b247f;
-  --accent: #f4728c;
-  --accent-2: #ffe1d2;
+  --line: rgba(79, 43, 116, 0.12);
+  --text: #1d1728;
+  --muted: #6d6479;
+  --primary: #7338c6;
+  --primary-deep: #3d1b62;
+  --accent: #d848a0;
+  --accent-2: #f9e7f3;
   --shadow: rgba(15, 23, 42, 0.08);
   --success: #14b86d;
   --warning: #f59e0b;
@@ -53,9 +53,9 @@ body {
   font-family: "Cairo", sans-serif;
   background-color: #fff;
   background-image:
-    linear-gradient(90deg, rgba(69, 196, 181, 0.15), transparent 22%),
-    linear-gradient(270deg, rgba(239, 119, 110, 0.13), transparent 20%),
-    linear-gradient(0deg, rgba(190, 139, 235, 0.12), transparent 30%);
+    linear-gradient(90deg, rgba(127, 73, 205, 0.12), transparent 22%),
+    linear-gradient(270deg, rgba(221, 72, 160, 0.09), transparent 20%),
+    linear-gradient(0deg, rgba(190, 139, 235, 0.1), transparent 30%);
   background-attachment: fixed;
   background-size: 150% 150%, 150% 150%, 150% 150%;
   background-position: 0% 46%, 100% 54%, 54% 100%;
@@ -797,6 +797,52 @@ html[dir="rtl"] .topbar-marquee-track {
 
 .main-nav a:hover::after {
   transform: scaleX(1);
+}
+
+.dev-experiments-header-link {
+  display: none !important;
+}
+
+html.is-local-development .dev-experiments-header-link {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--primary-deep);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+html.is-local-development .dev-experiments-header-link svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 850px) {
+  html.is-local-development .dev-experiments-header-link {
+    width: 40px;
+    padding: 0;
+  }
+  html.is-local-development .dev-experiments-header-link span {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
+html[data-theme="dark"].is-local-development .dev-experiments-header-link {
+  border-color: var(--line);
+  background: var(--surface);
+  color: #a8e5d7;
 }
 
 .nav-actions {

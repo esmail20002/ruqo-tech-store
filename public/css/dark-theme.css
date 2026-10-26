@@ -588,8 +588,7 @@ html[data-theme="dark"] .faq-list details {
 }
 
 html[data-theme="dark"] .catalog-product-art,
-html[data-theme="dark"] .commerce-product-card img,
-html[data-theme="dark"] .product-detail-image {
+html[data-theme="dark"] .commerce-product-card img {
   background: linear-gradient(145deg, #202f41, #172433 58%, #263345);
 }
 
@@ -760,7 +759,6 @@ html[data-theme="dark"] .catalog-page .price-range {
 html[data-theme="dark"] .catalog-assurances,
 html[data-theme="dark"] .filter-group > label:not(.rating-option),
 html[data-theme="dark"] .stock-filter,
-html[data-theme="dark"] .product-feature-list li,
 html[data-theme="dark"] .commerce-field,
 html[data-theme="dark"] .about-page-hero,
 html[data-theme="dark"] .about-story,
@@ -821,7 +819,6 @@ html[data-theme="dark"] .ad-card-btn:hover {
 html[data-theme="dark"] .commerce-eyebrow,
 html[data-theme="dark"] .product-detail-copy .detail-description,
 html[data-theme="dark"] .detail-tax-note,
-html[data-theme="dark"] .detail-delivery,
 html[data-theme="dark"] .commerce-assurance-row,
 html[data-theme="dark"] .support-section > p,
 html[data-theme="dark"] .faq-list details p,
@@ -861,53 +858,6 @@ html[data-theme="dark"] .support-hero-actions .commerce-button {
 
 html[data-theme="dark"] .support-hero-actions .support-text-link {
   color: #d8e0e7;
-}
-
-html[data-theme="dark"] .product-detail-gallery .product-detail-image {
-  border-color: rgba(177, 197, 218, 0.14);
-  background:
-    linear-gradient(rgba(177, 197, 218, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(177, 197, 218, 0.035) 1px, transparent 1px),
-    linear-gradient(145deg, #172435, #111b29 58%, #1a2838);
-  box-shadow: 0 26px 68px rgba(0, 0, 0, 0.32);
-}
-
-html[data-theme="dark"] .product-feature-list li {
-  border-color: rgba(177, 197, 218, 0.14);
-  background: rgba(22, 33, 49, 0.85);
-  color: #d4dee8;
-}
-
-html[data-theme="dark"] .detail-price-block {
-  border-color: rgba(177, 197, 218, 0.14);
-  background: linear-gradient(120deg, rgba(37, 142, 134, 0.12), rgba(120, 56, 211, 0.1));
-}
-
-html[data-theme="dark"] .product-detail-price > strong {
-  color: #eef2f7;
-}
-
-html[data-theme="dark"] .detail-discount {
-  background: rgba(37, 142, 134, 0.2);
-  color: #72dbcf;
-}
-
-html[data-theme="dark"] .product-detail-stock {
-  background: rgba(37, 142, 134, 0.17);
-  color: #72dbcf;
-}
-
-html[data-theme="dark"] .detail-delivery > span {
-  background: rgba(26, 40, 56, 0.7);
-}
-
-html[data-theme="dark"] .product-detail-gallery .detail-delivery-gallery {
-  border-color: rgba(103, 200, 184, 0.24);
-  background: linear-gradient(120deg, rgba(37, 142, 134, 0.12), rgba(120, 56, 211, 0.08));
-}
-
-html[data-theme="dark"] .product-detail-gallery .detail-delivery-gallery > span {
-  background: rgba(26, 40, 56, 0.78);
 }
 
 html[data-theme="dark"] .detail-discount,
@@ -999,6 +949,104 @@ html[data-theme="dark"] .highlight-card:focus-within {
       0 0 22px rgba(103, 216, 196, 0.18),
       0 0 18px rgba(229, 138, 177, 0.1);
   }
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .site-header .brand-logo,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-header .brand-logo {
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .dev-experiments-header-link {
+  border-color: rgba(195, 154, 244, 0.22);
+  background: rgba(35, 27, 43, 0.9);
+  color: #e0c7ff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-trigger {
+  background:
+    linear-gradient(var(--surface-strong), var(--surface-strong)) padding-box,
+    linear-gradient(115deg, #a978d8, #bb70c6 52%, #df70ac) border-box;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-trigger svg,
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-mark,
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-mark svg,
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-product-price,
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-suggestion {
+  color: #e0c7ff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-message.is-user {
+  border-color: rgba(195, 154, 244, 0.45);
+  background: linear-gradient(120deg, #7147a0, #9257b7);
+  color: #fff8ff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-suggestion {
+  border-color: rgba(195, 154, 244, 0.35);
+  background: rgba(169, 112, 208, 0.08);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-send {
+  border-color: #c39af4;
+  background: linear-gradient(135deg, #8652b7, #b476d6);
+  color: #fff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .shop-ai-overlay :focus-visible {
+  outline-color: #d7b4fa;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-page {
+  --primary: #c39af4;
+  --primary-deep: #e0c7ff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-assurances svg,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-page .empty-icon,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-page .ad-perk svg,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-page .filter-accordion-toggle,
+html[data-theme="dark"] body:not([data-page="experiments"]) .detail-rating-arrow {
+  color: #d7b4fa;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-page input[type="checkbox"],
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-page input[type="radio"],
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-page .price-range {
+  accent-color: #c39af4;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-side-menu-trigger {
+  border-color: rgba(195, 154, 244, 0.3);
+  background: rgba(28, 22, 35, 0.92);
+  color: var(--text);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-side-menu-trigger:hover,
+html[data-theme="dark"] body:not([data-page="experiments"]) .support-mini-link:hover {
+  border-color: var(--primary);
+  background: rgba(169, 112, 208, 0.14);
+  color: var(--primary-deep);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .side-trigger-icon,
+html[data-theme="dark"] body:not([data-page="experiments"]) .support-mini-link {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--primary-deep);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-gallery-thumb.is-active {
+  border-color: #c39af4;
+  box-shadow: 0 0 0 1px rgba(195, 154, 244, 0.3), 0 0 18px rgba(169, 112, 208, 0.18);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .review-written-count,
+html[data-theme="dark"] body:not([data-page="experiments"]) .review-source-label,
+html[data-theme="dark"] body:not([data-page="experiments"]) .review-photo-limit-badge {
+  border-color: rgba(195, 154, 244, 0.28);
+  background: rgba(120, 56, 211, 0.16);
+  color: #d7b4fa;
 }
 
 html[data-theme="dark"] .primary-btn:focus-visible,
@@ -1239,10 +1287,7 @@ html[data-theme="dark"] .form-feedback {
   color: #9de8d4;
 }
 
-html[data-theme="dark"] .detail-rating-arrow,
-html[data-theme="dark"] .detail-delivery > span > svg,
-html[data-theme="dark"] .product-detail-gallery .detail-delivery-gallery > span > svg,
-html[data-theme="dark"] .product-detail-page .product-feature-list svg {
+html[data-theme="dark"] .detail-rating-arrow {
   color: #9de8d4;
 }
 
@@ -1585,63 +1630,6 @@ html[data-theme="dark"] .commerce-panel {
   }
 }
 
-html[data-theme="dark"] .product-detail-page .product-quantity .quantity-control,
-html[data-theme="dark"] .product-detail-page .product-variant-picker {
-  border-color: rgba(103, 200, 184, 0.24);
-  background: linear-gradient(145deg, rgba(22, 33, 49, 0.96), rgba(16, 34, 42, 0.9));
-  box-shadow: inset 0 1px rgba(220, 245, 255, 0.04), 0 6px 18px rgba(0, 0, 0, 0.2);
-}
-
-html[data-theme="dark"] .product-detail-page .product-quantity .quantity-control button {
-  color: #d4dee8;
-}
-
-html[data-theme="dark"] .product-detail-page .product-quantity .quantity-control button:hover {
-  background: rgba(37, 142, 134, 0.2);
-  color: #8be1d4;
-}
-
-html[data-theme="dark"] .product-detail-page .product-variant-option {
-  border-color: rgba(177, 197, 218, 0.17);
-  background: rgba(21, 33, 48, 0.9);
-  color: #d4dee8;
-}
-
-html[data-theme="dark"] .product-detail-page .product-variant-option:hover {
-  border-color: rgba(103, 200, 184, 0.55);
-  box-shadow: 0 5px 16px rgba(37, 142, 134, 0.18);
-}
-
-html[data-theme="dark"] .product-detail-page .product-variant-option.is-selected {
-  border-color: #4ed8ca;
-  background: linear-gradient(135deg, rgba(37, 142, 134, 0.24), rgba(120, 56, 211, 0.15));
-  color: #8be1d4;
-  box-shadow: 0 0 0 2px rgba(78, 216, 202, 0.13), 0 0 18px rgba(37, 142, 134, 0.16);
-}
-
-html[data-theme="dark"] .product-detail-page .detail-add-button {
-  border-color: rgba(103, 232, 249, 0.55);
-  background: linear-gradient(105deg, #087f8c 0%, #137f91 46%, #5a38a6 100%);
-  box-shadow: 0 8px 24px rgba(8, 127, 140, 0.3), 0 0 18px rgba(37, 142, 134, 0.13);
-}
-
-html[data-theme="dark"] .product-detail-page .detail-add-button:hover:not(:disabled) {
-  border-color: #9bf4e8;
-  box-shadow: 0 12px 30px rgba(8, 127, 140, 0.42), 0 0 24px rgba(37, 142, 134, 0.24);
-}
-
-html[data-theme="dark"] .product-detail-page .detail-wish-button {
-  border-color: rgba(177, 197, 218, 0.18);
-  background: #172435;
-  color: #d4dee8;
-}
-
-html[data-theme="dark"] .product-detail-page .detail-wish-button:hover {
-  border-color: rgba(240, 112, 172, 0.5);
-  color: #ff9bc6;
-  box-shadow: 0 7px 18px rgba(180, 61, 126, 0.2);
-}
-
 html[data-theme="dark"] .shop-ai-trigger {
   background:
     linear-gradient(var(--surface-strong), var(--surface-strong)) padding-box,
@@ -1675,4 +1663,491 @@ html[data-theme="dark"] .shop-ai-send {
 
 html[data-theme="dark"] .shop-ai-overlay :focus-visible {
   outline-color: #9ae9cf;
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) {
+  --text: #1d1728;
+  --muted: #6d6479;
+  --primary: #7338c6;
+  --primary-deep: #3d1b62;
+  --accent: #d848a0;
+  --accent-2: #f9e7f3;
+  --line: rgba(79, 43, 116, 0.12);
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: #fff;
+  color: var(--text);
+  background-color: #fff;
+  background-image:
+    radial-gradient(ellipse at 5% 10%, rgba(127, 73, 205, 0.12), transparent 30%),
+    radial-gradient(ellipse at 96% 24%, rgba(221, 72, 160, 0.09), transparent 27%),
+    linear-gradient(180deg, #fff 0%, #fbf8ff 48%, #fff 100%);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .topbar {
+  background: linear-gradient(100deg, #32134f 0%, #7138bd 52%, #d848a0 100%);
+  color: rgba(255, 255, 255, 0.94);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .topbar-marquee-group span + span::before {
+  color: #f6c4e3;
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .site-header,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-header {
+  border-color: rgba(73, 40, 105, 0.08);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 12px 34px rgba(46, 25, 70, 0.045);
+  backdrop-filter: blur(22px) saturate(1.3);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .main-nav a:hover,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-links a:hover {
+  color: var(--primary);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .main-nav a::after {
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .icon-button,
+html[data-theme="light"] body:not([data-page="experiments"]) .cart-button,
+html[data-theme="light"] body:not([data-page="experiments"]) .menu-toggle,
+html[data-theme="light"] body:not([data-page="experiments"]) .currency-select,
+html[data-theme="light"] body:not([data-page="experiments"]) .language-select,
+html[data-theme="light"] body:not([data-page="experiments"]) .theme-toggle {
+  border-color: rgba(85, 49, 122, 0.12);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 4px 14px rgba(54, 31, 79, 0.045);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .cart-button strong,
+html[data-theme="light"] body:not([data-page="experiments"]) .primary-btn,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-button,
+html[data-theme="light"] body:not([data-page="experiments"]) .detail-add-button,
+html[data-theme="light"] body:not([data-page="experiments"]) .catalog-add {
+  background: linear-gradient(115deg, #54229b 0%, #873bd0 48%, #db489d 100%);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .primary-btn,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-button,
+html[data-theme="light"] body:not([data-page="experiments"]) .detail-add-button,
+html[data-theme="light"] body:not([data-page="experiments"]) .catalog-add {
+  box-shadow: 0 15px 34px rgba(115, 56, 198, 0.22);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .secondary-btn,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-button-secondary {
+  border-color: rgba(82, 47, 116, 0.14);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 8px 20px rgba(46, 25, 70, 0.05);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .hero-meta li,
+html[data-theme="light"] body:not([data-page="experiments"]) .mini-card,
+html[data-theme="light"] body:not([data-page="experiments"]) .feature-card,
+html[data-theme="light"] body:not([data-page="experiments"]) .product-card,
+html[data-theme="light"] body:not([data-page="experiments"]) .testimonial-card,
+html[data-theme="light"] body:not([data-page="experiments"]) .stat-item,
+html[data-theme="light"] body:not([data-page="experiments"]) .partner-row,
+html[data-theme="light"] body:not([data-page="experiments"]) .catalog-product,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-product-card,
+html[data-theme="light"] body:not([data-page="experiments"]) .cart-line,
+html[data-theme="light"] body:not([data-page="experiments"]) .summary-panel,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-panel,
+html[data-theme="light"] body:not([data-page="experiments"]) .faq-list details {
+  border-color: rgba(79, 43, 116, 0.11);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.96), rgba(250, 245, 255, 0.92));
+  box-shadow: 0 18px 42px rgba(46, 25, 70, 0.055);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .feature-box,
+html[data-theme="light"] body:not([data-page="experiments"]) .newsletter-box {
+  border-color: rgba(79, 43, 116, 0.11);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(221, 72, 160, 0.08), transparent 34%),
+    linear-gradient(135deg, #fff 0%, #fbf8ff 58%, #fff7fc 100%);
+  box-shadow: 0 22px 48px rgba(46, 25, 70, 0.07);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .feature-box::before,
+html[data-theme="light"] body:not([data-page="experiments"]) .site-footer::before,
+html[data-theme="light"] body:not([data-page="experiments"]) .site-footer h4::after {
+  background: linear-gradient(90deg, #7338c6, #a14ac4 48%, #d848a0);
+  box-shadow: 0 0 10px rgba(115, 56, 198, 0.2), 0 0 16px rgba(216, 72, 160, 0.12);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .site-footer {
+  --footer-accent: #e7b9ff;
+  background-image:
+    linear-gradient(110deg, rgba(115, 56, 198, 0.13), transparent 43%, transparent 57%, rgba(216, 72, 160, 0.11)),
+    linear-gradient(rgba(226, 240, 240, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(226, 240, 240, 0.018) 1px, transparent 1px);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .promo-banner {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(135deg, #32134f 0%, #54229b 54%, #8e286b 100%) padding-box,
+    linear-gradient(112deg, #a978d8 0%, #bc70c6 52%, #df70ac 100%) border-box;
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .newsletter-box {
+  border: 1px solid transparent;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(221, 72, 160, 0.09), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(249, 242, 255, 0.94)) padding-box,
+    linear-gradient(112deg, #a978d8 0%, #bc70c6 52%, #df70ac 100%) border-box;
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .highlight-card {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(250, 245, 255, 0.92)) padding-box,
+    linear-gradient(130deg, rgba(115, 56, 198, 0.35), rgba(161, 74, 196, 0.22) 55%, rgba(216, 72, 160, 0.3)) border-box;
+  box-shadow: 0 26px 60px rgba(46, 25, 70, 0.11), 0 0 18px rgba(115, 56, 198, 0.08);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]):not([data-page="home"]) .hero-visual::before {
+  background:
+    linear-gradient(132deg, rgba(115, 56, 198, 0.12) 0 27%, transparent 27% 53%, rgba(216, 72, 160, 0.11) 53% 77%, rgba(190, 139, 235, 0.1) 77%),
+    linear-gradient(25deg, rgba(250, 245, 255, 0.92), rgba(255, 247, 252, 0.72));
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .product-art,
+html[data-theme="light"] body:not([data-page="experiments"]) .catalog-product-art {
+  background: linear-gradient(145deg, #f3edfc, #fbf5fa);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .eyebrow,
+html[data-theme="light"] body:not([data-page="experiments"]) .assurance-pill {
+  border-color: rgba(115, 56, 198, 0.14);
+  background: linear-gradient(110deg, #f2eaff, #fff0f8);
+  color: var(--primary-deep);
+}
+
+html[data-theme="light"] body:not([data-page="experiments"]) .brand-wordmark,
+html[data-theme="light"] body:not([data-page="experiments"]) .section-link,
+html[data-theme="light"] body:not([data-page="experiments"]) .price-block,
+html[data-theme="light"] body:not([data-page="experiments"]) .commerce-price,
+html[data-theme="light"] body:not([data-page="experiments"]) .contact-details a {
+  color: var(--primary);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0c0a10;
+  --bg-2: #15101a;
+  --surface: rgba(28, 22, 35, 0.88);
+  --surface-strong: #1b1522;
+  --surface-2: #241b2c;
+  --line: rgba(229, 207, 246, 0.14);
+  --text: #f5effa;
+  --muted: #b8acbf;
+  --primary: #c39af4;
+  --primary-deep: #e0c7ff;
+  --accent: #ed83c2;
+  --accent-2: #342339;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --dark: #08070b;
+  background: #0c0a10;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) {
+  --bg: #0c0a10;
+  --bg-2: #15101a;
+  --surface: rgba(28, 22, 35, 0.88);
+  --surface-strong: #1b1522;
+  --surface-2: #241b2c;
+  --line: rgba(229, 207, 246, 0.14);
+  --text: #f5effa;
+  --muted: #b8acbf;
+  --primary: #c39af4;
+  --primary-deep: #e0c7ff;
+  --accent: #ed83c2;
+  --accent-2: #342339;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --dark: #08070b;
+  background:
+    radial-gradient(ellipse at 4% 5%, rgba(125, 70, 177, 0.22), transparent 34%),
+    radial-gradient(ellipse at 96% 18%, rgba(202, 65, 145, 0.14), transparent 30%),
+    linear-gradient(180deg, #0d0a12 0%, #15101a 46%, #0b0a0f 100%);
+  color: var(--text);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .page-shell {
+  background: linear-gradient(180deg, rgba(17, 13, 22, 0.25), rgba(11, 10, 15, 0.35));
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .site-header,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-header {
+  border-color: rgba(228, 206, 245, 0.1);
+  background: rgba(17, 13, 22, 0.86);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .topbar {
+  background: linear-gradient(100deg, #1a1023 0%, #39204d 52%, #4c1f3d 100%);
+  color: #f5effa;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .topbar-marquee-group span + span::before {
+  color: #dfa9eb;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .main-nav,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-links {
+  color: var(--muted);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .main-nav a:hover,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-links a:hover,
+html[data-theme="dark"] body:not([data-page="experiments"]) .section-link {
+  color: var(--primary-deep);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .main-nav a::after {
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .icon-button,
+html[data-theme="dark"] body:not([data-page="experiments"]) .cart-button,
+html[data-theme="dark"] body:not([data-page="experiments"]) .menu-toggle,
+html[data-theme="dark"] body:not([data-page="experiments"]) .secondary-btn,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-icon-button,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-button-secondary,
+html[data-theme="dark"] body:not([data-page="experiments"]) .currency-select,
+html[data-theme="dark"] body:not([data-page="experiments"]) .language-select,
+html[data-theme="dark"] body:not([data-page="experiments"]) .theme-toggle,
+html[data-theme="dark"] body:not([data-page="experiments"]) .ruqo-dropdown-trigger {
+  border-color: rgba(229, 207, 246, 0.15);
+  background: rgba(35, 27, 43, 0.9);
+  color: var(--text);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .currency-select,
+html[data-theme="dark"] body:not([data-page="experiments"]) .language-select,
+html[data-theme="dark"] body:not([data-page="experiments"]) .ruqo-dropdown-menu,
+html[data-theme="dark"] body:not([data-page="experiments"]) select option {
+  color-scheme: dark;
+  background-color: #1b1522;
+  color: var(--text);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .currency-select,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-currency,
+html[data-theme="dark"] body:not([data-page="experiments"]) .ruqo-dropdown-trigger.currency-trigger {
+  border-color: rgba(216, 72, 160, 0.28);
+  background: linear-gradient(135deg, rgba(216, 72, 160, 0.12), rgba(28, 22, 35, 0.95));
+  color: #f0a6d4;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .language-select,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-lang,
+html[data-theme="dark"] body:not([data-page="experiments"]) .ruqo-dropdown-trigger.language-trigger {
+  border-color: rgba(195, 154, 244, 0.3);
+  background: linear-gradient(135deg, rgba(120, 56, 211, 0.18), rgba(28, 22, 35, 0.95));
+  color: #d8b9fa;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .ruqo-dropdown-menu,
+html[data-theme="dark"] body:not([data-page="experiments"]) .main-nav.open {
+  border-color: rgba(229, 207, 246, 0.14);
+  background: rgba(25, 19, 31, 0.97);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.42);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .main-nav.open a {
+  color: #e8dfee;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .main-nav.open a:hover,
+html[data-theme="dark"] body:not([data-page="experiments"]) .ruqo-menu-item:hover {
+  background: linear-gradient(100deg, rgba(150, 101, 199, 0.2), rgba(203, 78, 151, 0.14));
+  color: var(--primary-deep);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .primary-btn,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-button,
+html[data-theme="dark"] body:not([data-page="experiments"]) .detail-add-button,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-add,
+html[data-theme="dark"] body:not([data-page="experiments"]) .cart-button strong {
+  border-color: rgba(195, 154, 244, 0.2);
+  background: linear-gradient(115deg, #6631a0 0%, #8b50c7 48%, #c14491 100%);
+  color: #fff;
+  box-shadow: 0 15px 36px rgba(111, 56, 164, 0.3);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .hero-meta li,
+html[data-theme="dark"] body:not([data-page="experiments"]) .mini-card,
+html[data-theme="dark"] body:not([data-page="experiments"]) .feature-card,
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-card,
+html[data-theme="dark"] body:not([data-page="experiments"]) .testimonial-card,
+html[data-theme="dark"] body:not([data-page="experiments"]) .stat-item,
+html[data-theme="dark"] body:not([data-page="experiments"]) .partner-row,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-product,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-product-card,
+html[data-theme="dark"] body:not([data-page="experiments"]) .cart-line,
+html[data-theme="dark"] body:not([data-page="experiments"]) .summary-panel,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-panel,
+html[data-theme="dark"] body:not([data-page="experiments"]) .faq-list details,
+html[data-theme="dark"] body:not([data-page="experiments"]) .account-tabs a,
+html[data-theme="dark"] body:not([data-page="experiments"]) .support-anchor-nav a,
+html[data-theme="dark"] body:not([data-page="experiments"]) .payment-option {
+  border-color: rgba(229, 207, 246, 0.12);
+  background: linear-gradient(155deg, rgba(34, 27, 42, 0.96), rgba(24, 20, 31, 0.96));
+  color: var(--text);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .feature-box,
+html[data-theme="dark"] body:not([data-page="experiments"]) .newsletter-box,
+html[data-theme="dark"] body:not([data-page="experiments"]) .checkout-step-panel,
+html[data-theme="dark"] body:not([data-page="experiments"]) .success-hero-panel,
+html[data-theme="dark"] body:not([data-page="experiments"]) .luxury-summary-panel {
+  border-color: rgba(229, 207, 246, 0.12);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(199, 75, 153, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(37, 28, 46, 0.98), rgba(28, 22, 37, 0.96));
+  color: var(--text);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.26);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .newsletter-form,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-search,
+html[data-theme="dark"] body:not([data-page="experiments"]) .filter-open,
+html[data-theme="dark"] body:not([data-page="experiments"]) .sort-control,
+html[data-theme="dark"] body:not([data-page="experiments"]) .view-switch,
+html[data-theme="dark"] body:not([data-page="experiments"]) .filter-chip,
+html[data-theme="dark"] body:not([data-page="experiments"]) .price-field,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-field input,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-field select,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-field textarea {
+  border-color: rgba(229, 207, 246, 0.14);
+  background: rgba(17, 13, 22, 0.8);
+  color: var(--text);
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]):not([data-page="home"]) .hero-visual::before {
+  background:
+    linear-gradient(132deg, rgba(195, 154, 244, 0.14) 0 27%, transparent 27% 53%, rgba(237, 131, 194, 0.12) 53% 77%, rgba(111, 66, 153, 0.14) 77%),
+    linear-gradient(25deg, rgba(59, 38, 75, 0.86), rgba(29, 25, 37, 0.72));
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .glass-panel,
+html[data-theme="dark"] body:not([data-page="experiments"]) .highlight-card {
+  border-color: rgba(229, 207, 246, 0.14);
+  background: linear-gradient(145deg, rgba(34, 27, 42, 0.96), rgba(24, 20, 31, 0.96));
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.34);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-art,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-product-art {
+  background: linear-gradient(145deg, #291f31, #19141e 58%, #302236);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .eyebrow,
+html[data-theme="dark"] body:not([data-page="experiments"]) .assurance-pill {
+  border-color: rgba(195, 154, 244, 0.22);
+  background: linear-gradient(110deg, rgba(111, 66, 153, 0.3), rgba(144, 57, 112, 0.22));
+  color: #e2caff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-badge,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-badge,
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-signal-pill,
+html[data-theme="dark"] body:not([data-page="experiments"]) .detail-discount {
+  border-color: rgba(198, 156, 241, 0.19);
+  background: rgba(113, 70, 145, 0.27);
+  color: #dfc7fa;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-badge.is-sale,
+html[data-theme="dark"] body:not([data-page="experiments"]) .tag-sale,
+html[data-theme="dark"] body:not([data-page="experiments"]) .detail-discount {
+  border-color: rgba(239, 128, 186, 0.22);
+  background: rgba(109, 39, 79, 0.72);
+  color: #ffc2df;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .brand-wordmark,
+html[data-theme="dark"] body:not([data-page="experiments"]) .price-block,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-price,
+html[data-theme="dark"] body:not([data-page="experiments"]) .contact-details a,
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-detail-stock,
+html[data-theme="dark"] body:not([data-page="experiments"]) .order-status {
+  color: #e0c7ff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-eyebrow,
+html[data-theme="dark"] body:not([data-page="experiments"]) .product-detail-copy .detail-description,
+html[data-theme="dark"] body:not([data-page="experiments"]) .detail-tax-note,
+html[data-theme="dark"] body:not([data-page="experiments"]) .detail-delivery,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-assurance-row,
+html[data-theme="dark"] body:not([data-page="experiments"]) .support-section > p,
+html[data-theme="dark"] body:not([data-page="experiments"]) .faq-list details p,
+html[data-theme="dark"] body:not([data-page="experiments"]) .contact-details,
+html[data-theme="dark"] body:not([data-page="experiments"]) .settings-row small,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-heading p {
+  color: #c0b5c8;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .site-footer {
+  --footer-bg: #08070b;
+  --footer-text: #f4edf8;
+  --footer-muted: #b7adbf;
+  --footer-line: rgba(229, 207, 246, 0.13);
+  --footer-accent: #e4b9ff;
+  background-image:
+    linear-gradient(110deg, rgba(115, 56, 198, 0.13), transparent 43%, transparent 57%, rgba(216, 72, 160, 0.11)),
+    linear-gradient(rgba(229, 207, 246, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(229, 207, 246, 0.018) 1px, transparent 1px);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .site-footer::before,
+html[data-theme="dark"] body:not([data-page="experiments"]) .site-footer h4::after {
+  background: linear-gradient(90deg, transparent, #8652b7 22%, #b476d6 52%, #db72b0 82%, transparent);
+  box-shadow: 0 0 9px rgba(169, 112, 208, 0.22), 0 0 15px rgba(219, 114, 176, 0.14);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) .bag-confirmation,
+html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-toast,
+html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-toast {
+  border-color: rgba(229, 207, 246, 0.14);
+  background: linear-gradient(145deg, #241b2c, #18131e);
+  color: var(--text);
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) ::selection {
+  background: rgba(169, 112, 208, 0.36);
+  color: #fff8ff;
+}
+
+html[data-theme="dark"] body:not([data-page="experiments"]) :focus-visible {
+  outline-color: #d7b4fa;
+}
+
+@media (hover: hover) {
+  html[data-theme="light"] body:not([data-page="experiments"]) .feature-box:hover,
+  html[data-theme="light"] body:not([data-page="experiments"]) .product-card:hover,
+  html[data-theme="light"] body:not([data-page="experiments"]) .catalog-product:hover,
+  html[data-theme="light"] body:not([data-page="experiments"]) .commerce-product-card:hover,
+  html[data-theme="dark"] body:not([data-page="experiments"]) .feature-box:hover,
+  html[data-theme="dark"] body:not([data-page="experiments"]) .product-card:hover,
+  html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-product:hover,
+  html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-product-card:hover {
+    border-color: rgba(195, 154, 244, 0.32);
+    box-shadow: 0 0 0 1px rgba(169, 112, 208, 0.22), 0 22px 48px rgba(46, 25, 70, 0.14);
+  }
+
+  html[data-theme="light"] body:not([data-page="experiments"]) .primary-btn:hover,
+  html[data-theme="light"] body:not([data-page="experiments"]) .commerce-button:hover,
+  html[data-theme="light"] body:not([data-page="experiments"]) .catalog-add:hover,
+  html[data-theme="dark"] body:not([data-page="experiments"]) .primary-btn:hover,
+  html[data-theme="dark"] body:not([data-page="experiments"]) .commerce-button:hover,
+  html[data-theme="dark"] body:not([data-page="experiments"]) .catalog-add:hover {
+    box-shadow: 0 18px 42px rgba(157, 82, 203, 0.3), 0 0 22px rgba(219, 114, 176, 0.13);
+  }
 }

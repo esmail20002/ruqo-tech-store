@@ -5,6 +5,13 @@ const basePath = process.env.SITE_BASE_PATH || '/';
 const sourceDirectory = path.resolve('public');
 const outputDirectory = path.resolve('dist');
 const transformExtensions = new Set(['.html', '.js', '.css']);
+const localOnlyPaths = new Set([
+  'experiments.html',
+  'experiments-product.html',
+  path.join('css', 'experiments.css'),
+  path.join('css', 'experiment-switcher.css'),
+  path.join('js', 'experiments.js'),
+]);
 
 async function copyAndRewrite(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -13,6 +20,8 @@ async function copyAndRewrite(directory) {
     const sourcePath = path.join(directory, entry.name);
     const relativePath = path.relative(sourceDirectory, sourcePath);
     const outputPath = path.join(outputDirectory, relativePath);
+
+    if (localOnlyPaths.has(relativePath)) continue;
 
     if (entry.isDirectory()) {
       await fs.mkdir(outputPath, { recursive: true });

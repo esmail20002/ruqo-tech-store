@@ -29,8 +29,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/premium-experience.css?v=1" />
+    <link rel="stylesheet" href="/css/store-motion.css?v=1" />
   </head>
-  <body>
+  <body data-page="home">
     <div class="page-shell">
       <header class="topbar">
         <div class="container topbar-inner">
@@ -190,7 +192,7 @@
             </ul>
           </div>
 
-          <div class="hero-visual" aria-label="عرض المنتجات المميزة">
+          <div class="hero-visual" aria-label="عرض المنتجات المميزة" data-premium-hero>
             <div class="glass-panel highlight-card">
               <div class="hero-offer-strip">
                 <span class="product-badge">أفضل مبيعات</span>
@@ -336,6 +338,33 @@
                 <span data-i18n="cats.audioCount">76 منتج</span>
               </div>
             </a>
+          </div>
+        </section>
+
+        <section class="experiment-editorial container reveal">
+          <div class="experiment-editorial-copy">
+            <span class="eyebrow" data-i18n="sections.whyUs">لماذا نحن</span>
+            <h2 data-i18n="sections.serviceTitle">خدمة تلبي احتياجاتك</h2>
+            <p data-i18n="features.consultingText">
+              اختيار مثالي من خبرائنا حسب احتياجك ومميزتك.
+            </p>
+            <div class="experiment-editorial-points">
+              <span><i data-lucide="badge-check" aria-hidden="true"></i><span data-i18n="features.warranty">ضمان موثوق</span></span>
+              <span><i data-lucide="truck" aria-hidden="true"></i><span data-i18n="features.fastDelivery">توصيل سريع</span></span>
+            </div>
+            <a href="/products.html" class="primary-btn" data-i18n="hero.ctaPrimary">تسوق الآن</a>
+          </div>
+          <div class="experiment-editorial-visual">
+            <img
+              src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1400&q=85"
+              alt=""
+              loading="lazy"
+            />
+            <div class="experiment-editorial-note">
+              <span data-i18n="sections.featured">منتجات مميزة</span>
+              <strong>01 / 04</strong>
+            </div>
+            <span class="experiment-editorial-orbit" aria-hidden="true"></span>
           </div>
         </section>
 
@@ -693,5 +722,6 @@
     <script>
       if (window.lucide) lucide.createIcons();
     </script>
+    <script src="/js/store-motion.js?v=1"></script>
   </body>
 </html>

@@ -12,6 +12,7 @@
   let checkoutCouponMessage = "";
   let checkoutCouponMessageIsError = false;
   let selectedReviewPhotos = [];
+  let aboutRevealObserver = null;
   function parseReviewPhotos(raw) {
     if (!raw) return [];
     if (Array.isArray(raw)) return raw.filter(Boolean);
@@ -781,6 +782,8 @@
   }
 
   function renderProduct() {
+    const isPremiumProduct =
+      document.body.dataset.productDesign === "premium";
     const product = productById(new URLSearchParams(location.search).get("id"));
     if (!product) {
       root.innerHTML = `<section class="commerce-empty">${icon("package-x")}<h1>${t.notFound}</h1><a class="commerce-button" href="/products.html">${t.backShop}</a></section>`;
@@ -954,20 +957,30 @@
           `<div class="product-spec-row"><span>${labels[index] || detail.specs}</span><strong>${escapeHtml(feature)}</strong></div>`,
         )
         .join("");
-    const recommendations = (
-      related.length
+    const recommendationItems = isPremiumProduct
+      ? [
+          ...related,
+          ...products
+            .filter(
+              (item) =>
+                item.id !== product.id && item.category !== product.category,
+            )
+            .slice(0, Math.max(0, 3 - related.length))
+            .map(localizeProduct),
+        ]
+      : related.length
         ? related
         : products
             .filter((item) => item.id !== product.id)
             .slice(0, 3)
-            .map(localizeProduct)
-    )
+            .map(localizeProduct);
+    const recommendations = recommendationItems
       .map(
         (item) =>
           `<article class="commerce-product-card"><a href="${productUrl(item.id)}"><img src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy" /></a><div class="commerce-product-info"><span class="commerce-product-brand">${escapeHtml(item.brand)}</span><h2><a href="${productUrl(item.id)}">${escapeHtml(item.name)}</a></h2><p>${escapeHtml(item.description[language])}</p><div class="commerce-product-actions"><strong class="commerce-price">${money(item.price)}</strong><a class="commerce-button-secondary" href="${productUrl(item.id)}">${detail.view}</a></div></div></article>`,
       )
       .join("");
-    root.innerHTML = `<div class="commerce-breadcrumb"><a href="/">${t.home}</a> / <a href="/products.html">${t.products}</a> / ${escapeHtml(product.name)}</div><section class="product-detail-layout product-detail-page"><div class="product-detail-gallery"><div class="product-detail-image"><img data-detail-image src="${product.image}" alt="${escapeHtml(product.name)}" fetchpriority="high" /><span class="detail-image-label">${escapeHtml(product.brand)}</span><button class="detail-zoom" type="button" data-gallery-zoom aria-label="${detail.zoom}">${icon("expand")}</button></div><div class="product-gallery-thumbs" aria-label="${detail.gallery}">${galleryMarkup}</div><p class="gallery-caption">${detail.galleryNote}</p></div><div class="product-detail-copy"><div class="detail-reveal detail-reveal-1"><span class="commerce-eyebrow">${escapeHtml(product.brand)} · ${t.categoryNames[product.category]}</span><h1>${escapeHtml(product.name)}</h1><p class="detail-description">${escapeHtml(product.description[language])}</p><a class="detail-rating-link" href="#product-reviews"><span class="product-detail-rating">${icon("star")} ${product.rating.toFixed(1)}</span><span>${product.reviews} ${t.rating}</span><span class="detail-rating-arrow">↓</span></a></div><div class="detail-price-block detail-reveal detail-reveal-2"><div class="product-detail-price"><strong>${money(product.price)}</strong>${product.oldPrice ? `<del>${money(product.oldPrice)}</del>` : ""}${discount ? `<span class="detail-discount">-${discount}%</span>` : ""}</div><p class="detail-tax-note">${detail.secure} · ${detail.returnsInfo}</p></div><div class="product-detail-stock detail-reveal detail-reveal-2 ${product.stock ? "" : "is-out"}"><span class="stock-pulse"></span>${product.stock ? t.inStock : t.outStock}</div><div class="product-purchase-row detail-reveal detail-reveal-3"><div class="product-quantity"><span>${detail.quantity}</span><div class="quantity-control"><button type="button" data-detail-quantity="-1" aria-label="Decrease quantity">−</button><output data-detail-quantity-value>1</output><button type="button" data-detail-quantity="1" aria-label="Increase quantity">+</button></div></div><button class="commerce-button detail-add-button" type="button" data-add="${product.id}" ${product.stock ? "" : "disabled"}>${icon("shopping-bag")} ${t.add}</button><button class="commerce-button-secondary detail-wish-button" type="button" data-toggle-wish="${product.id}" aria-label="${isSaved ? t.saved : t.save}">${icon(isSaved ? "heart-off" : "heart")}</button></div><div class="detail-delivery detail-reveal detail-reveal-3"><span>${icon("truck")}<span><strong>${detail.arrival}</strong><small>${detail.arrivalValue}</small></span></span><span>${icon("shield-check")}<span><strong>${t.warranty}</strong><small>${detail.secure}</small></span></span><span>${icon("rotate-ccw")}<span><strong>${detail.returnsInfo}</strong><small>${t.returns}</small></span></span></div></div></section><section class="product-detail-lower"><div class="product-information-block detail-scroll-reveal"><div class="product-section-heading"><span class="commerce-eyebrow">${t.features}</span><h2>${detail.specs}</h2></div><p class="product-long-description">${escapeHtml(product.description[language])} ${language === "ar" ? "صُمم ليقدم أداءً موثوقًا وتجربة يومية متوازنة، مع جودة تصنيع وعناية بالتفاصيل." : "Designed for dependable performance and a balanced everyday experience, with considered materials and attention to detail."}</p><div class="product-spec-table">${specs}<div class="product-spec-row"><span>${language === "ar" ? "العلامة التجارية" : "Brand"}</span><strong>${escapeHtml(product.brand)}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "الفئة" : "Category"}</span><strong>${t.categoryNames[product.category]}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "رقم المنتج" : "Product reference"}</span><strong>${product.id.toUpperCase()}</strong></div></div></div><aside class="product-rating-panel detail-scroll-reveal"><span class="commerce-eyebrow">${detail.basedOn}</span><div class="rating-panel-score"><strong>${product.rating.toFixed(1)}</strong><span>${icon("star")}<span>${product.reviews} ${t.rating}</span></span></div><div class="rating-meter"><span style="--rating-fill:${ratingPercent}%"></span></div><p>${detail.basedOn}</p><a href="#review-form" class="commerce-button-secondary">${detail.reviewForm}</a></aside></section><section class="product-reviews-section detail-scroll-reveal" id="product-reviews"><div class="product-section-heading"><span class="commerce-eyebrow">${product.reviews} ${t.rating}</span><h2>${detail.reviewTitle}</h2></div><div class="product-review-layout"><div class="product-review-list">${
+    root.innerHTML = `<div class="commerce-breadcrumb"><a href="/">${t.home}</a> / <a href="/products.html">${t.products}</a> / ${escapeHtml(product.name)}</div><section class="product-detail-layout product-detail-page"><div class="product-detail-gallery"><div class="product-detail-image"><img data-detail-image src="${product.image}" alt="${escapeHtml(product.name)}" fetchpriority="high" /><span class="detail-image-label">${escapeHtml(product.brand)}</span>${isPremiumProduct ? "" : `<button class="detail-zoom" type="button" data-gallery-zoom aria-label="${detail.zoom}">${icon("expand")}</button>`}</div><div class="product-gallery-thumbs" aria-label="${detail.gallery}">${galleryMarkup}</div><p class="gallery-caption">${detail.galleryNote}</p></div><div class="product-detail-copy"><div class="detail-reveal detail-reveal-1"><span class="commerce-eyebrow">${escapeHtml(product.brand)} · ${t.categoryNames[product.category]}</span><h1>${escapeHtml(product.name)}</h1><p class="detail-description">${escapeHtml(product.description[language])}</p><a class="detail-rating-link" href="#product-reviews"><span class="product-detail-rating">${icon("star")} ${product.rating.toFixed(1)}</span><span>${product.reviews} ${t.rating}</span><span class="detail-rating-arrow">↓</span></a></div><div class="detail-price-block detail-reveal detail-reveal-2"><div class="product-detail-price"><strong>${money(product.price)}</strong>${product.oldPrice ? `<del>${money(product.oldPrice)}</del>` : ""}${discount ? `<span class="detail-discount">-${discount}%</span>` : ""}</div><p class="detail-tax-note">${detail.secure} · ${detail.returnsInfo}</p></div><div class="product-detail-stock detail-reveal detail-reveal-2 ${product.stock ? "" : "is-out"}"><span class="stock-pulse"></span>${product.stock ? t.inStock : t.outStock}</div><div class="product-purchase-row detail-reveal detail-reveal-3"><div class="product-quantity"><span>${detail.quantity}</span><div class="quantity-control"><button type="button" data-detail-quantity="-1" aria-label="Decrease quantity">−</button><output data-detail-quantity-value>1</output><button type="button" data-detail-quantity="1" aria-label="Increase quantity">+</button></div></div><button class="commerce-button detail-add-button" type="button" data-add="${product.id}" ${product.stock ? "" : "disabled"}>${icon("shopping-bag")} ${t.add}</button><button class="commerce-button-secondary detail-wish-button" type="button" data-toggle-wish="${product.id}" aria-label="${isSaved ? t.saved : t.save}">${icon(isSaved ? "heart-off" : "heart")}</button></div><div class="detail-delivery detail-reveal detail-reveal-3"><span>${icon("truck")}<span><strong>${detail.arrival}</strong><small>${detail.arrivalValue}</small></span></span><span>${icon("shield-check")}<span><strong>${t.warranty}</strong><small>${detail.secure}</small></span></span><span>${icon("rotate-ccw")}<span><strong>${detail.returnsInfo}</strong><small>${t.returns}</small></span></span></div></div></section><section class="product-detail-lower"><div class="product-information-block detail-scroll-reveal"><div class="product-section-heading"><span class="commerce-eyebrow">${t.features}</span><h2>${detail.specs}</h2></div><p class="product-long-description">${escapeHtml(product.description[language])} ${language === "ar" ? "صُمم ليقدم أداءً موثوقًا وتجربة يومية متوازنة، مع جودة تصنيع وعناية بالتفاصيل." : "Designed for dependable performance and a balanced everyday experience, with considered materials and attention to detail."}</p><div class="product-spec-table">${specs}<div class="product-spec-row"><span>${language === "ar" ? "العلامة التجارية" : "Brand"}</span><strong>${escapeHtml(product.brand)}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "الفئة" : "Category"}</span><strong>${t.categoryNames[product.category]}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "رقم المنتج" : "Product reference"}</span><strong>${product.id.toUpperCase()}</strong></div></div></div><aside class="product-rating-panel detail-scroll-reveal"><span class="commerce-eyebrow">${detail.basedOn}</span><div class="rating-panel-score"><strong>${product.rating.toFixed(1)}</strong><span>${icon("star")}<span>${product.reviews} ${t.rating}</span></span></div><div class="rating-meter"><span style="--rating-fill:${ratingPercent}%"></span></div><p>${detail.basedOn}</p><a href="#review-form" class="commerce-button-secondary">${detail.reviewForm}</a></aside></section><section class="product-reviews-section detail-scroll-reveal" id="product-reviews"><div class="product-section-heading"><span class="commerce-eyebrow">${product.reviews} ${t.rating}</span><h2>${detail.reviewTitle}</h2></div><div class="product-review-layout"><div class="product-review-list">${
       reviews.length
         ? `<h3>${detail.recentReviews}</h3>${reviews
             .slice()
@@ -992,7 +1005,10 @@
       detailSection.className = "product-detail-lower product-detail-images-section";
       const previousIcon = language === "ar" ? "chevron-right" : "chevron-left";
       const nextIcon = language === "ar" ? "chevron-left" : "chevron-right";
-      detailSection.innerHTML = `<div class="product-section-heading"><h2 id="product-details-title">${detailImageCopy.title} (${detailImages.length})</h2></div><div class="product-detail-carousel" data-detail-carousel><div class="product-detail-carousel-track" data-detail-track role="region" aria-label="${detailImageCopy.title}" tabindex="0">${detailImages.map((image, index) => `<figure class="product-detail-carousel-slide"><img src="${escapeHtml(image)}" alt="${escapeHtml(`${product.name} ${index + 1}`)}" loading="${index ? "lazy" : "eager"}" /></figure>`).join("")}</div>${detailImages.length > 1 ? `<button class="product-detail-carousel-button is-previous" type="button" data-detail-step="-1" aria-label="${detailImageCopy.previous}" title="${detailImageCopy.previous}">${icon(previousIcon)}</button><button class="product-detail-carousel-button is-next" type="button" data-detail-step="1" aria-label="${detailImageCopy.next}" title="${detailImageCopy.next}">${icon(nextIcon)}</button><span class="product-detail-carousel-count" data-detail-count aria-live="polite">1 / ${detailImages.length}</span>` : ""}</div>`;
+      const imageCountMarkup = isPremiumProduct
+        ? `<span class="product-detail-image-count">(${detailImages.length})</span>`
+        : ` (${detailImages.length})`;
+      detailSection.innerHTML = `<div class="product-section-heading"><h2 id="product-details-title">${detailImageCopy.title}${imageCountMarkup}</h2></div><div class="product-detail-carousel" data-detail-carousel><div class="product-detail-carousel-track" data-detail-track role="region" aria-label="${detailImageCopy.title}" tabindex="0">${detailImages.map((image, index) => `<figure class="product-detail-carousel-slide"><img src="${escapeHtml(image)}" alt="${escapeHtml(`${product.name} ${index + 1}`)}" loading="${index ? "lazy" : "eager"}" /></figure>`).join("")}</div>${detailImages.length > 1 ? `<button class="product-detail-carousel-button is-previous" type="button" data-detail-step="-1" aria-label="${detailImageCopy.previous}" title="${detailImageCopy.previous}">${icon(previousIcon)}</button><button class="product-detail-carousel-button is-next" type="button" data-detail-step="1" aria-label="${detailImageCopy.next}" title="${detailImageCopy.next}">${icon(nextIcon)}</button><span class="product-detail-carousel-count" data-detail-count aria-live="polite">1 / ${detailImages.length}</span>` : ""}</div>`;
       root.querySelector(".product-detail-page").insertAdjacentElement("afterend", detailSection);
       const track = detailSection.querySelector("[data-detail-track]");
       const slides = [...track.querySelectorAll(".product-detail-carousel-slide")];
@@ -1749,6 +1765,21 @@
     detailsDisclosure.querySelector(".product-spec-row:last-child").hidden =
       optionConfig.groups.length === 0;
 
+    if (isPremiumProduct) {
+      const productLayout = root.querySelector(".product-detail-page");
+      const featureHeading = root.querySelector(".product-feature-heading");
+      if (!productLayout || !featureHeading) {
+        throw new Error("Unable to center premium product details.");
+      }
+      const centeredDetails = document.createElement("section");
+      centeredDetails.className = "product-design-centered-details";
+      centeredDetails.id = "product-design-centered-details";
+      centeredDetails.setAttribute("aria-labelledby", "product-design-highlights");
+      featureHeading.id = "product-design-highlights";
+      centeredDetails.append(featureHeading, featureList, detailsDisclosure);
+      productLayout.append(centeredDetails);
+    }
+
     const mainImage = root.querySelector("[data-detail-image]");
     const lightbox = root.querySelector("[data-product-lightbox]");
     const lightboxImage = lightbox.querySelector("img");
@@ -1885,6 +1916,7 @@
     if (window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 800px)").matches) {
       const zoomFactor = 2.25;
       let lastZoomPointer = null;
+      const zoomPaneGap = isPremiumProduct ? 80 : 44;
       const positionFactor = (value, axis) => {
         const token = value.split(" ")[axis] || "50%";
         if (token === "left" || token === "top") return 0;
@@ -1900,7 +1932,7 @@
         const availableWidth = directionIsRtl
           ? stageBounds.left - 24
           : window.innerWidth - stageBounds.right - 24;
-        const paneWidth = Math.min(stageBounds.width, availableWidth - 44);
+        const paneWidth = Math.min(stageBounds.width, availableWidth - zoomPaneGap);
         if (paneWidth < 220) {
           imageStage.classList.remove("is-zoom-active");
           imageStage.parentElement.classList.remove("is-zoom-active");
@@ -1963,12 +1995,26 @@
       if (event.key === "ArrowRight") showGalleryImage(galleryIndex + 1);
       if (event.key === "ArrowLeft") showGalleryImage(galleryIndex - 1);
     });
-    root.querySelector("[data-gallery-zoom]").addEventListener("click", () => {
-      lightbox.querySelector("img").src = root.querySelector(
-        "[data-detail-image]",
-      ).src;
-      lightbox.showModal();
-    });
+    if (!isPremiumProduct) {
+      root.querySelector("[data-gallery-zoom]").addEventListener("click", () => {
+        lightbox.querySelector("img").src = root.querySelector(
+          "[data-detail-image]",
+        ).src;
+        lightbox.showModal();
+      });
+    } else {
+      mainImage.setAttribute("role", "button");
+      mainImage.tabIndex = 0;
+      mainImage.setAttribute(
+        "aria-label",
+        `${detail.zoom}: ${mainImage.alt}`,
+      );
+      mainImage.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        mainImage.click();
+      });
+    }
     root
       .querySelector("[data-close-lightbox]")
       .addEventListener("click", () => lightbox.close());
@@ -2898,7 +2944,168 @@
   }
 
   function renderAbout() {
-    root.innerHTML = `<section class="about-page-hero"><span class="commerce-eyebrow">RUQO TECH · ${t.about}</span><h1>${t.aboutTitle}</h1><p>${t.aboutIntro}</p></section><section class="about-story"><div class="about-story-index">01 / RUQO TECH</div><div><h2>${language === "ar" ? "اختيارات أوضح، وتجربة يمكن الوثوق بها." : "Clearer choices. A store you can trust."}</h2><p>${t.aboutStory}</p><a class="commerce-button" href="/products.html">${t.browse}</a></div></section><section class="about-values"><span class="commerce-eyebrow">${language === "ar" ? "ما نؤمن به" : "WHAT WE VALUE"}</span><div>${t.aboutValues.map((value, index) => `<article><span>0${index + 1}</span><h3>${value}</h3></article>`).join("")}</div></section><section class="about-contact"><div><span class="commerce-eyebrow">${language === "ar" ? "نحن هنا لمساعدتك" : "HERE WHEN YOU NEED US"}</span><h2>${t.support}</h2><p>${t.helpIntro}</p></div><a class="commerce-button-secondary" href="/support.html#contact">${t.contactTitle} ${icon("arrow-up-left")}</a></section>`;
+    const isArabic = language === "ar";
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    const serviceCards = isArabic
+      ? [
+          ["sparkles", "تقنية تستحق الاختيار", "أجهزة وعلامات ننتقيها بعناية لتناسب احتياجاتك اليومية."],
+          ["truck", "توصيل واضح وموثوق", "خيارات توصيل واضحة، مع شحن مجاني للطلبات فوق 299 ر.س."],
+          ["shield-check", "راحة بال بعد الشراء", "ضمان لمدة سنتين وإمكانية الإرجاع خلال 7 أيام."],
+        ]
+      : [
+          ["sparkles", "Technology worth choosing", "Devices and brands selected to fit the way you live and work."],
+          ["truck", "Delivery, made clear", "Straightforward delivery, with free shipping on orders over SAR 299."],
+          ["shield-check", "Confidence after checkout", "A two-year warranty and returns within seven days."],
+        ];
+    const reviewCards = isArabic
+      ? [
+          ["خدمة مميزة وسريعة، والتوصيل كان قبل الموعد المحدد، كما أن الجهاز وصل بحالة ممتازة.", "علي النجار", "مصمم جرافيك"],
+          ["التجربة كانت احترافية من أول زيارة إلى موقع المتجر حتى استلام الطلب. أنصح به بشدة.", "سارة الحربي", "مديرة مشاريع"],
+          ["الأدوات المتاحة متنوعة جدًا، والاختيارات كانت دقيقة جدًا مع احتياجاتنا في العمل والراحة.", "محمد الزهراني", "مسوق رقمي"],
+        ]
+      : [
+          ["Thoughtful service and quick delivery. My device arrived ahead of schedule and in excellent condition.", "Ali Al Najjar", "Graphic designer"],
+          ["A polished experience from my first visit to receiving my order. I would gladly recommend it.", "Sarah Al Harbi", "Project manager"],
+          ["A great range of devices, with choices that matched what I needed for work and everyday life.", "Mohammed Al Zahrani", "Digital marketer"],
+        ];
+
+    if (aboutRevealObserver) {
+      aboutRevealObserver.disconnect();
+      aboutRevealObserver = null;
+    }
+
+    root.innerHTML = `<div class="about-page about-premium">
+      <section class="about-premium-hero">
+        <div class="about-premium-copy">
+          <span class="about-premium-kicker"><i></i>${storeName} <span>—</span> ${isArabic ? "تقنية تستحقها" : "A more considered choice"}</span>
+          <h1>${isArabic ? "تقنيةٌ تُشبهك.<br><span>وتجربةٌ تفوق توقّعك.</span>" : "Technology,<br><span>with more thought.</span>"}</h1>
+          <p>${t.aboutIntro}</p>
+          <div class="about-premium-actions">
+            <a class="about-premium-button" href="/products.html">${t.browse} ${icon("arrow-up-left")}</a>
+            <a class="about-premium-link" href="#about-story">${isArabic ? "اكتشف الحكاية" : "Discover our story"} ${icon("arrow-down")}</a>
+          </div>
+          <div class="about-premium-signature"><span></span>${isArabic ? "اختيار أذكى. يوم أفضل." : "Smarter choices. Better days."}</div>
+        </div>
+        <div class="about-premium-stage" data-about-stage>
+          <div class="about-premium-stage-glow"></div>
+          <div class="about-premium-orbit about-premium-orbit-one"></div>
+          <div class="about-premium-orbit about-premium-orbit-two"></div>
+          <div class="about-premium-product-frame">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1400&q=90" alt="${isArabic ? "سماعات عصرية بتصميم أنيق" : "Modern headphones with a considered design"}" fetchpriority="high" />
+          </div>
+          <div class="about-premium-float about-premium-float-top">${icon("sparkles")}<span>${isArabic ? "مختارة بعناية" : "Thoughtfully chosen"}</span></div>
+          <div class="about-premium-float about-premium-float-bottom">${icon("shield-check")}<span><strong>${isArabic ? "راحة بال" : "Peace of mind"}</strong><small>${isArabic ? "تستمر بعد الشراء" : "beyond checkout"}</small></span></div>
+          <div class="about-premium-stage-index">W / 01</div>
+        </div>
+        <a class="about-premium-scroll" href="#about-story" aria-label="${isArabic ? "انتقل إلى قصتنا" : "Scroll to our story"}"><span></span></a>
+      </section>
+
+      <div class="about-premium-marquee" aria-label="${isArabic ? "تقنية مختارة بعناية، خدمة موثوقة، تجربة أفضل" : "Considered technology, trusted service, a better experience"}">
+        <div class="about-premium-marquee-track">
+          <span>${isArabic ? "تقنية مختارة بعناية" : "TECHNOLOGY, THOUGHTFULLY CHOSEN"}</span><i>✳</i>
+          <span>${isArabic ? "خدمة تضعك أولاً" : "SERVICE THAT PUTS YOU FIRST"}</span><i>✳</i>
+          <span>${isArabic ? "تجربة أفضل كل يوم" : "A BETTER EXPERIENCE, EVERY DAY"}</span><i>✳</i>
+          <span aria-hidden="true">${isArabic ? "تقنية مختارة بعناية" : "TECHNOLOGY, THOUGHTFULLY CHOSEN"}</span><i aria-hidden="true">✳</i>
+          <span aria-hidden="true">${isArabic ? "خدمة تضعك أولاً" : "SERVICE THAT PUTS YOU FIRST"}</span><i aria-hidden="true">✳</i>
+          <span aria-hidden="true">${isArabic ? "تجربة أفضل كل يوم" : "A BETTER EXPERIENCE, EVERY DAY"}</span><i aria-hidden="true">✳</i>
+        </div>
+      </div>
+
+      <section class="about-story about-premium-story about-reveal" id="about-story">
+        <div class="about-story-copy about-premium-story-copy">
+          <span class="about-premium-section-index">01 <i></i> ${isArabic ? "حكايتنا" : "OUR STORY"}</span>
+          <h2>${t.aboutStoryTitle}</h2>
+          <p>${t.aboutStory}</p>
+          <div class="about-premium-purpose">
+            <article><span>${isArabic ? "رسالتنا" : "OUR MISSION"}</span><p>${isArabic ? "أن نجعل اختيار التقنية المناسبة أسهل، بتجربة واضحة وخدمة يمكنك الاعتماد عليها." : "Make choosing the right technology easier through a clear experience and dependable service."}</p></article>
+            <article><span>${isArabic ? "رؤيتنا" : "OUR VISION"}</span><p>${isArabic ? "أن تكون كل خطوة في رحلتك مع التقنية أكثر بساطة واطمئنانًا." : "Make every step of your relationship with technology feel simpler and more reassuring."}</p></article>
+          </div>
+          <a class="about-premium-link" href="/products.html">${t.browse} ${icon("arrow-up-left")}</a>
+        </div>
+        <div class="about-story-image about-premium-story-image">
+          <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1300&q=85" alt="${isArabic ? "مجموعة من الأجهزة التقنية العصرية" : "A collection of modern technology devices"}" loading="lazy" />
+          <span>${isArabic ? "التفاصيل تصنع الفرق" : "The details make the difference"}</span>
+          <div class="about-premium-image-label">${storeName}<small>${isArabic ? "منذ البداية، نهتم بالتفاصيل" : "Thoughtful, from the start"}</small></div>
+        </div>
+      </section>
+
+      <section class="about-values about-premium-values about-reveal">
+        <div class="about-premium-section-heading">
+          <span class="commerce-eyebrow">${isArabic ? "كيف نهتم بالتفاصيل" : "THE WEEXEY DIFFERENCE"}</span>
+          <h2>${isArabic ? "الأفضل ليس جهازًا فقط.<br>بل كل ما حوله." : "Great technology deserves<br>a great experience."}</h2>
+          <p>${isArabic ? "نؤمن أن التجربة المميزة تبدأ قبل وصول المنتج، وتستمر بعده." : "The right experience starts before your order arrives—and stays with you after."}</p>
+        </div>
+        <div class="about-premium-service-grid">${serviceCards.map(([glyph, title, description], index) => `<article class="about-service-card about-premium-service-card about-reveal"><span class="about-service-icon">${icon(glyph)}</span><span class="about-service-index">0${index + 1}</span><h3>${title}</h3><p>${description}</p><span class="about-premium-card-line"></span></article>`).join("")}</div>
+      </section>
+
+      <section class="about-stats about-premium-stats about-reveal" aria-label="${isArabic ? "التزاماتنا" : "Our commitments"}">
+        <div class="about-stats-intro"><span class="commerce-eyebrow">${isArabic ? "راحة بالك، وعدنا" : "PEACE OF MIND, PROMISED"}</span><h2>${isArabic ? "التفاصيل الصغيرة.<br>الفرق الكبير." : "Small details.<br>Meaningful difference."}</h2></div>
+        <div class="about-stat"><strong>2<span>${isArabic ? "سنة" : "yr"}</span></strong><p>${isArabic ? "ضمان على المنتجات" : "product warranty"}</p></div>
+        <div class="about-stat"><strong>7<span>${isArabic ? "أيام" : "days"}</span></strong><p>${isArabic ? "لإرجاع المنتجات المؤهلة" : "to return eligible items"}</p></div>
+        <div class="about-stat"><strong>299<span>${isArabic ? "ر.س" : "SAR"}</span></strong><p>${isArabic ? "حد الشحن المجاني" : "free delivery threshold"}</p></div>
+      </section>
+
+      <section class="about-team about-premium-team about-reveal">
+        <div class="about-team-image about-premium-team-image"><img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=85" alt="${isArabic ? "فريق يعمل معًا لتقديم تجربة أفضل" : "A team working together to create a better experience"}" loading="lazy" /><span>${isArabic ? "معك، في كل خطوة" : "Here, at every step"}</span></div>
+        <div class="about-team-copy about-premium-team-copy">
+          <span class="commerce-eyebrow">${isArabic ? "وراء كل تجربة مميزة" : "BEHIND EVERY GREAT EXPERIENCE"}</span>
+          <h2>${isArabic ? "نحن هنا<br>لنجعلها أسهل." : "Here to make<br>it feel effortless."}</h2>
+          <p>${isArabic ? "من مساعدتك في الاختيار إلى الإجابة عن أسئلتك بعد وصول طلبك، نعمل لنقدم لك دعمًا واضحًا وإنسانيًا في كل خطوة." : "From helping you choose to answering questions after your order arrives, we’re here with thoughtful support at every step."}</p>
+          <ul>${t.aboutValues.map((value) => `<li>${icon("check")}<span>${value}</span></li>`).join("")}</ul>
+          <a class="about-premium-link" href="/support.html#contact">${t.contactTitle} ${icon("arrow-up-left")}</a>
+        </div>
+      </section>
+
+      <section class="about-reviews about-premium-reviews about-reveal">
+        <div class="about-premium-section-heading">
+          <span class="commerce-eyebrow">${isArabic ? "كلمات نعتز بها" : "WORDS WE VALUE"}</span>
+          <h2>${isArabic ? "ثقتكم، أجمل ما نسمع." : "Your trust means everything."}</h2>
+          <p>${isArabic ? "نعتز بالتجارب التي يشاركها عملاؤنا معنا." : "We’re grateful for the experiences our customers share with us."}</p>
+        </div>
+        <div class="about-review-grid">${reviewCards.map(([quote, name, role], index) => `<article class="about-review-card about-premium-review-card"><div class="about-review-stars" aria-label="5 out of 5 stars">★★★★★</div><blockquote>“${quote}”</blockquote><div class="about-review-author"><span>0${index + 1}</span><div><strong>${name}</strong><small>${role}</small></div></div></article>`).join("")}</div>
+      </section>
+
+      <section class="about-contact about-premium-contact about-reveal">
+        <div><span class="commerce-eyebrow">${isArabic ? "ابدأ من هنا" : "YOUR NEXT CHAPTER"}</span><h2>${isArabic ? "شيء رائع<br>ينتظرك." : "Something great<br>is waiting."}</h2><p>${isArabic ? "استكشف مجموعتنا، أو تواصل معنا إذا احتجت إلى المساعدة." : "Explore our collection, or talk to us if you need a hand."}</p></div>
+        <div class="about-contact-actions"><a class="about-premium-button" href="/products.html">${t.browse} ${icon("arrow-up-left")}</a><a class="about-premium-link" href="/support.html#contact">${t.contactTitle} ${icon("arrow-up-left")}</a></div>
+        <span class="about-premium-contact-mark" aria-hidden="true">W</span>
+      </section>
+    </div>`;
+
+    const revealItems = root.querySelectorAll(".about-reveal");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!("IntersectionObserver" in window) || prefersReducedMotion) {
+      revealItems.forEach((element) => element.classList.add("is-in-view"));
+    } else {
+      aboutRevealObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-in-view");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12 },
+      );
+      revealItems.forEach((element) => aboutRevealObserver.observe(element));
+    }
+
+    const stage = root.querySelector("[data-about-stage]");
+    if (stage && !prefersReducedMotion) {
+      stage.addEventListener("pointermove", (event) => {
+        if (event.pointerType === "touch") return;
+        const bounds = stage.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+        stage.style.setProperty("--pointer-x", x.toFixed(3));
+        stage.style.setProperty("--pointer-y", y.toFixed(3));
+      });
+      stage.addEventListener("pointerleave", () => {
+        stage.style.setProperty("--pointer-x", "0");
+        stage.style.setProperty("--pointer-y", "0");
+      });
+    }
   }
 
   function render() {
@@ -2914,10 +3121,13 @@
     else if (page === "about") {
       renderAbout();
       root.querySelector(".about-story h2").textContent = t.aboutStoryTitle;
-      root.querySelector(".about-values > .commerce-eyebrow").textContent =
+      root.querySelector(".about-values .commerce-eyebrow").textContent =
         t.aboutValuesTitle;
       root.querySelector(".about-contact .commerce-eyebrow").textContent =
         t.aboutContactEyebrow;
+    }
+    else if (page === "experiments") {
+      root.replaceChildren();
     }
     else renderSupport();
     if (page === "support") {
