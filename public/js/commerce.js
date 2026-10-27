@@ -38,7 +38,7 @@
       account: "Account",
       support: "Help",
       switch: "العربية",
-      rights: "© 2026 RUQO TECH. All rights reserved.",
+      rights: "© 2026 WEEXEY. All rights reserved.",
       terms: "Terms",
       privacy: "Privacy",
       shippingInfo: "Delivery",
@@ -56,15 +56,15 @@
       detailsTitle: "Detailed specifications",
       aboutTitle: "Technology, chosen with care.",
       aboutIntro:
-        "RUQO TECH brings considered technology and thoughtful service together, so every device feels like the right choice.",
+        "WEEXEY brings considered technology and thoughtful service together, so every device feels like the right choice.",
       aboutStory:
-        "We built RUQO TECH around a simple belief: buying technology should feel clear, considered, and dependable. Our collection focuses on useful innovation, trusted brands, and support that continues after delivery.",
+        "We built WEEXEY around a simple belief: buying technology should feel clear, considered, and dependable. Our collection focuses on useful innovation, trusted brands, and support that continues after delivery.",
       aboutValues: [
         "Curated, useful technology",
         "Clear service from checkout to delivery",
         "Support that stays with you",
       ],
-      eyebrow: "RUQO TECH · considered technology",
+      eyebrow: "WEEXEY · considered technology",
       product: "Product details",
       notFound: "We couldn't find that product.",
       backShop: "Back to products",
@@ -110,7 +110,7 @@
       codNotice: "Payment is collected safely at your doorstep via contactless POS terminal or cash.",
       orderConfirmedBadge: "ORDER SECURED & CONFIRMED",
       orderCelebration: "Your order has been placed successfully!",
-      orderSubtitle: "Thank you for shopping with RUQO TECH. Your order has been received and is now being prepared for expedited dispatch.",
+      orderSubtitle: "Thank you for shopping with WEEXEY. Your order has been received and is now being prepared for expedited dispatch.",
       orderNumberLabel: "Official Order Number",
       orderCopyBtn: "Copy",
       orderCopiedBtn: "Copied!",
@@ -118,7 +118,7 @@
       stepConfirmed: "Order Confirmed",
       stepConfirmedDesc: "Payment set to COD",
       stepProcessing: "Quality Check & Packing",
-      stepProcessingDesc: "At RUQO central hub",
+      stepProcessingDesc: "At WEEXEY central hub",
       stepShipping: "Out for Delivery",
       stepShippingDesc: "Direct express courier",
       stepDelivered: "Doorstep Handover",
@@ -199,7 +199,7 @@
       faqWarranty: "What does the warranty cover?",
       faqWarrantyAnswer:
         "The 2-year warranty covers manufacturing defects. Accidental damage and normal wear are not included.",
-      contactTitle: "Contact RUQO TECH",
+      contactTitle: "Contact WEEXEY",
       contactIntro: "Send a message and our support team will get back to you.",
       message: "Your message",
       sendMessage: "Send message",
@@ -235,7 +235,7 @@
       account: "حسابي",
       support: "المساعدة",
       switch: "English",
-      rights: "© 2026 RUQO TECH. جميع الحقوق محفوظة.",
+      rights: "© 2026 WEEXEY. جميع الحقوق محفوظة.",
       terms: "الشروط",
       privacy: "الخصوصية",
       shippingInfo: "التوصيل",
@@ -253,15 +253,15 @@
       detailsTitle: "المواصفات التفصيلية",
       aboutTitle: "تقنية مختارة بعناية.",
       aboutIntro:
-        "يجمع RUQO TECH بين التقنية المدروسة والخدمة الموثوقة لتجد الجهاز الأنسب لك.",
+        "يجمع WEEXEY بين التقنية المدروسة والخدمة الموثوقة لتجد الجهاز الأنسب لك.",
       aboutStory:
-        "أسسنا RUQO TECH على قناعة بسيطة: شراء التقنية يجب أن يكون واضحًا ومدروسًا ويمكن الاعتماد عليه. نختار ابتكارات عملية وعلامات موثوقة، ونقدم دعمًا يستمر حتى بعد التوصيل.",
+        "أسسنا WEEXEY على قناعة بسيطة: شراء التقنية يجب أن يكون واضحًا ومدروسًا ويمكن الاعتماد عليه. نختار ابتكارات عملية وعلامات موثوقة، ونقدم دعمًا يستمر حتى بعد التوصيل.",
       aboutValues: [
         "تقنيات عملية مختارة بعناية",
         "خدمة واضحة من الطلب حتى التوصيل",
         "دعم يستمر معك",
       ],
-      eyebrow: "RUQO TECH · تقنية مختارة بعناية",
+      eyebrow: "WEEXEY · تقنية مختارة بعناية",
       product: "تفاصيل المنتج",
       notFound: "لم نعثر على هذا المنتج.",
       backShop: "العودة للمنتجات",
@@ -306,7 +306,7 @@
       codNotice: "يتم تحصيل المبلغ عند باب منزلك بكل أمان عبر جهاز مدى للبطاقات أو نقداً.",
       orderConfirmedBadge: "تم تأكيد وتسجيل الطلب رسميًا",
       orderCelebration: "تهانينا! تم تأكيد طلبك بنجاح",
-      orderSubtitle: "شكرًا لثقتك في RUQO TECH. تم إدراج طلبك في نظام التجهيز الفوري وجارٍ تحضيره للشحن السريع والمؤمّن.",
+      orderSubtitle: "شكرًا لثقتك في WEEXEY. تم إدراج طلبك في نظام التجهيز الفوري وجارٍ تحضيره للشحن السريع والمؤمّن.",
       orderNumberLabel: "رقم الطلب الرسمي",
       orderCopyBtn: "نسخ",
       orderCopiedBtn: "تم النسخ!",
@@ -314,7 +314,7 @@
       stepConfirmed: "تأكيد الطلب",
       stepConfirmedDesc: "الدفع عند الاستلام",
       stepProcessing: "التجهيز والفحص",
-      stepProcessingDesc: "في مستودعات RUQO",
+      stepProcessingDesc: "في مستودعات WEEXEY",
       stepShipping: "جاري التوصيل",
       stepShippingDesc: "مع مندوب الشحن السريع",
       stepDelivered: "الاستلام والتسليم",
@@ -394,7 +394,7 @@
       faqWarranty: "ما الذي يشمله الضمان؟",
       faqWarrantyAnswer:
         "يغطي الضمان لمدة سنتين عيوب التصنيع. لا يشمل التلف العرضي أو الاستهلاك المعتاد.",
-      contactTitle: "تواصل مع RUQO TECH",
+      contactTitle: "تواصل مع WEEXEY",
       contactIntro: "أرسل رسالتك وسيتواصل معك فريق الدعم.",
       message: "رسالتك",
       sendMessage: "إرسال الرسالة",
@@ -422,13 +422,13 @@
       },
     },
     fr: {
-      home: "Accueil", products: "Boutique", wishlist: "Favoris", cart: "Panier", account: "Compte", support: "Aide", switch: "العربية", rights: "© 2026 RUQO TECH. Tous droits réservés.", terms: "Conditions", privacy: "Confidentialité", shippingInfo: "Livraison", about: "À propos", currencyLabel: "Changer de devise", previousImage: "Image précédente", nextImage: "Image suivante", chooseVariant: "Choisir une option", storage: "Stockage", size: "Taille", color: "Couleur", category: "Catégorie", detailedSpecs: "Voir les caractéristiques détaillées", hideSpecs: "Masquer les caractéristiques", detailsTitle: "Caractéristiques détaillées", aboutTitle: "La technologie, choisie avec soin.", aboutIntro: "RUQO TECH réunit technologie réfléchie et service attentif pour que chaque appareil soit le bon choix.", aboutStory: "Nous avons créé RUQO TECH avec une conviction simple : acheter de la technologie doit être clair, réfléchi et fiable. Notre sélection privilégie l’innovation utile, les marques reconnues et un accompagnement qui continue après la livraison.", aboutValues: ["Technologie utile et soigneusement sélectionnée", "Un service clair de la commande à la livraison", "Une assistance toujours à vos côtés"], eyebrow: "RUQO TECH · la technologie en toute confiance", product: "Détails du produit", notFound: "Ce produit est introuvable.", backShop: "Retour aux produits", inStock: "En stock · prêt à expédier", outStock: "Actuellement indisponible", add: "Ajouter au panier", added: "Ajouté au panier", saved: "Enregistré", save: "Ajouter aux favoris", rating: "avis clients", features: "Points forts", delivery: "Livraison offerte dès 299 SAR", warranty: "Garantie de 2 ans", returns: "Retours sous 7 jours", emptyWishTitle: "Votre liste de favoris vous attend", emptyWish: "Enregistrez vos produits préférés pour les retrouver ici.", browse: "Découvrir les produits", savedCount: "produits enregistrés", moveToBag: "Ajouter au panier", remove: "Supprimer", emptyCartTitle: "Votre panier est vide", emptyCart: "Ajoutez un produit pour commencer.", continue: "Continuer les achats", orderSummary: "Récapitulatif de commande", subtotal: "Sous-total", shippingCost: "Livraison", free: "Offerte", total: "Total", checkout: "Continuer vers le paiement", shippingNote: "Livraison offerte dès 299 SAR. Taxes comprises.", bag: "Panier", bagIntro: "Vérifiez vos articles avant de commander.", checkoutTitle: "Finaliser la commande", checkoutIntro: "Quelques informations et votre commande est prête.", contact: "Coordonnées", fullName: "Nom complet", email: "Adresse e-mail", phone: "Téléphone portable", deliveryAddress: "Adresse de livraison", city: "Ville", address: "Adresse", postal: "Code postal", notes: "Instructions de livraison (facultatif)", payment: "Mode de paiement", cod: "Paiement à la livraison", codNote: "Payez en espèces ou par carte à la réception.", confirmOrder: "Confirmer la commande", noPayment: "Cette démo ne collecte ni ne traite les paiements en ligne.", orderPlaced: "Commande confirmée", thankYou: "Merci. Votre commande a été enregistrée.", orderNumber: "Numéro de commande", viewAccount: "Voir vos commandes", profile: "Profil", settings: "Préférences", orders: "Commandes", saveProfile: "Enregistrer le profil", profileSaved: "Votre profil a été enregistré.", updates: "Suivi des commandes", updatesNote: "Recevez des nouvelles sur la livraison et le statut de vos commandes.", offers: "Offres et nouveautés", offersNote: "Recevez occasionnellement des actualités et des offres.", saveSettings: "Enregistrer les préférences", settingsSaved: "Vos préférences ont été enregistrées.", noOrders: "Aucune commande", noOrdersNote: "Vos commandes terminées apparaîtront ici.", status: "Confirmée", helpTitle: "Comment pouvons-nous vous aider ?", helpIntro: "Des réponses claires sur la livraison, le paiement, les retours et votre compte.", faq: "Questions fréquentes", deliveryTitle: "Livraison", deliveryBody: "Nous livrons dans toute l’Arabie saoudite. La livraison standard prend généralement 1 à 2 jours ouvrés. Elle est offerte dès 299 SAR ; sinon, des frais de 25 SAR s’appliquent.", paymentsTitle: "Paiement", paymentsBody: "Choisissez le paiement en espèces ou par carte à la livraison. Le paiement en ligne n’est pas disponible dans cette démo.", returnsTitle: "Retours et garantie", returnsBody: "Vous pouvez demander le retour des articles éligibles sous 7 jours, dans leur état d’origine. Les produits bénéficient d’une garantie de 2 ans contre les défauts de fabrication.", accountTitle: "Commandes et compte", accountBody: "Votre profil, vos préférences, vos favoris et l’historique de démonstration sont enregistrés dans ce navigateur. Aucun compte ni dossier client n’est créé sur un serveur.", faqDelivery: "Quel est le délai de livraison ?", faqDeliveryAnswer: "La plupart des commandes arrivent sous 1 à 2 jours ouvrés. Les zones éloignées peuvent nécessiter plus de temps.", faqReturn: "Comment demander un retour ?", faqReturnAnswer: "Contactez-nous sous 7 jours après la réception d’un produit éligible et gardez-le avec ses accessoires dans leur état d’origine.", faqWarranty: "Que couvre la garantie ?", faqWarrantyAnswer: "La garantie de 2 ans couvre les défauts de fabrication, mais pas les dommages accidentels ni l’usure normale.", contactTitle: "Contacter RUQO TECH", contactIntro: "Envoyez-nous un message, notre équipe vous répondra.", message: "Votre message", sendMessage: "Envoyer le message", messageSent: "Votre message est prêt. Pour une réponse, écrivez à hello@noursstore.com.", termsTitle: "Conditions d’utilisation", termsBody: "Les disponibilités, prix et délais affichés sont indicatifs et peuvent changer. Les commandes de démonstration restent dans ce navigateur et ne sont pas transmises à un commerçant. Un achat réel nécessite un service de commerce et de paiement connecté.", privacyTitle: "Avis de confidentialité", privacyBody: "Cette démo conserve favoris, panier, profil, préférences et commandes dans le stockage local du navigateur. Le formulaire de contact n’envoie pas de messages. Effacer les données du navigateur supprimera ces informations.", helpLink: "Aide et politiques du magasin", qty: "Quantité", item: "article", items: "articles", cityDefault: "Riyad", supportPhone: "+966 50 000 0000", supportEmail: "hello@noursstore.com", lowStock: "Plus qu’un exemplaire", languageSaved: "La langue a été enregistrée dans ce navigateur.", categoryNames: { phones: "Téléphones", laptops: "Ordinateurs portables", audio: "Audio", wearables: "Objets connectés" },
+      home: "Accueil", products: "Boutique", wishlist: "Favoris", cart: "Panier", account: "Compte", support: "Aide", switch: "العربية", rights: "© 2026 WEEXEY. Tous droits réservés.", terms: "Conditions", privacy: "Confidentialité", shippingInfo: "Livraison", about: "À propos", currencyLabel: "Changer de devise", previousImage: "Image précédente", nextImage: "Image suivante", chooseVariant: "Choisir une option", storage: "Stockage", size: "Taille", color: "Couleur", category: "Catégorie", detailedSpecs: "Voir les caractéristiques détaillées", hideSpecs: "Masquer les caractéristiques", detailsTitle: "Caractéristiques détaillées", aboutTitle: "La technologie, choisie avec soin.", aboutIntro: "WEEXEY réunit technologie réfléchie et service attentif pour que chaque appareil soit le bon choix.", aboutStory: "Nous avons créé WEEXEY avec une conviction simple : acheter de la technologie doit être clair, réfléchi et fiable. Notre sélection privilégie l’innovation utile, les marques reconnues et un accompagnement qui continue après la livraison.", aboutValues: ["Technologie utile et soigneusement sélectionnée", "Un service clair de la commande à la livraison", "Une assistance toujours à vos côtés"], eyebrow: "WEEXEY · la technologie en toute confiance", product: "Détails du produit", notFound: "Ce produit est introuvable.", backShop: "Retour aux produits", inStock: "En stock · prêt à expédier", outStock: "Actuellement indisponible", add: "Ajouter au panier", added: "Ajouté au panier", saved: "Enregistré", save: "Ajouter aux favoris", rating: "avis clients", features: "Points forts", delivery: "Livraison offerte dès 299 SAR", warranty: "Garantie de 2 ans", returns: "Retours sous 7 jours", emptyWishTitle: "Votre liste de favoris vous attend", emptyWish: "Enregistrez vos produits préférés pour les retrouver ici.", browse: "Découvrir les produits", savedCount: "produits enregistrés", moveToBag: "Ajouter au panier", remove: "Supprimer", emptyCartTitle: "Votre panier est vide", emptyCart: "Ajoutez un produit pour commencer.", continue: "Continuer les achats", orderSummary: "Récapitulatif de commande", subtotal: "Sous-total", shippingCost: "Livraison", free: "Offerte", total: "Total", checkout: "Continuer vers le paiement", shippingNote: "Livraison offerte dès 299 SAR. Taxes comprises.", bag: "Panier", bagIntro: "Vérifiez vos articles avant de commander.", checkoutTitle: "Finaliser la commande", checkoutIntro: "Quelques informations et votre commande est prête.", contact: "Coordonnées", fullName: "Nom complet", email: "Adresse e-mail", phone: "Téléphone portable", deliveryAddress: "Adresse de livraison", city: "Ville", address: "Adresse", postal: "Code postal", notes: "Instructions de livraison (facultatif)", payment: "Mode de paiement", cod: "Paiement à la livraison", codNote: "Payez en espèces ou par carte à la réception.", confirmOrder: "Confirmer la commande", noPayment: "Cette démo ne collecte ni ne traite les paiements en ligne.", orderPlaced: "Commande confirmée", thankYou: "Merci. Votre commande a été enregistrée.", orderNumber: "Numéro de commande", viewAccount: "Voir vos commandes", profile: "Profil", settings: "Préférences", orders: "Commandes", saveProfile: "Enregistrer le profil", profileSaved: "Votre profil a été enregistré.", updates: "Suivi des commandes", updatesNote: "Recevez des nouvelles sur la livraison et le statut de vos commandes.", offers: "Offres et nouveautés", offersNote: "Recevez occasionnellement des actualités et des offres.", saveSettings: "Enregistrer les préférences", settingsSaved: "Vos préférences ont été enregistrées.", noOrders: "Aucune commande", noOrdersNote: "Vos commandes terminées apparaîtront ici.", status: "Confirmée", helpTitle: "Comment pouvons-nous vous aider ?", helpIntro: "Des réponses claires sur la livraison, le paiement, les retours et votre compte.", faq: "Questions fréquentes", deliveryTitle: "Livraison", deliveryBody: "Nous livrons dans toute l’Arabie saoudite. La livraison standard prend généralement 1 à 2 jours ouvrés. Elle est offerte dès 299 SAR ; sinon, des frais de 25 SAR s’appliquent.", paymentsTitle: "Paiement", paymentsBody: "Choisissez le paiement en espèces ou par carte à la livraison. Le paiement en ligne n’est pas disponible dans cette démo.", returnsTitle: "Retours et garantie", returnsBody: "Vous pouvez demander le retour des articles éligibles sous 7 jours, dans leur état d’origine. Les produits bénéficient d’une garantie de 2 ans contre les défauts de fabrication.", accountTitle: "Commandes et compte", accountBody: "Votre profil, vos préférences, vos favoris et l’historique de démonstration sont enregistrés dans ce navigateur. Aucun compte ni dossier client n’est créé sur un serveur.", faqDelivery: "Quel est le délai de livraison ?", faqDeliveryAnswer: "La plupart des commandes arrivent sous 1 à 2 jours ouvrés. Les zones éloignées peuvent nécessiter plus de temps.", faqReturn: "Comment demander un retour ?", faqReturnAnswer: "Contactez-nous sous 7 jours après la réception d’un produit éligible et gardez-le avec ses accessoires dans leur état d’origine.", faqWarranty: "Que couvre la garantie ?", faqWarrantyAnswer: "La garantie de 2 ans couvre les défauts de fabrication, mais pas les dommages accidentels ni l’usure normale.", contactTitle: "Contacter WEEXEY", contactIntro: "Envoyez-nous un message, notre équipe vous répondra.", message: "Votre message", sendMessage: "Envoyer le message", messageSent: "Votre message est prêt. Pour une réponse, écrivez à hello@noursstore.com.", termsTitle: "Conditions d’utilisation", termsBody: "Les disponibilités, prix et délais affichés sont indicatifs et peuvent changer. Les commandes de démonstration restent dans ce navigateur et ne sont pas transmises à un commerçant. Un achat réel nécessite un service de commerce et de paiement connecté.", privacyTitle: "Avis de confidentialité", privacyBody: "Cette démo conserve favoris, panier, profil, préférences et commandes dans le stockage local du navigateur. Le formulaire de contact n’envoie pas de messages. Effacer les données du navigateur supprimera ces informations.", helpLink: "Aide et politiques du magasin", qty: "Quantité", item: "article", items: "articles", cityDefault: "Riyad", supportPhone: "+966 50 000 0000", supportEmail: "hello@noursstore.com", lowStock: "Plus qu’un exemplaire", languageSaved: "La langue a été enregistrée dans ce navigateur.", categoryNames: { phones: "Téléphones", laptops: "Ordinateurs portables", audio: "Audio", wearables: "Objets connectés" },
     },
     es: {
-      home: "Inicio", products: "Tienda", wishlist: "Favoritos", cart: "Carrito", account: "Cuenta", support: "Ayuda", switch: "العربية", rights: "© 2026 RUQO TECH. Todos los derechos reservados.", terms: "Condiciones", privacy: "Privacidad", shippingInfo: "Envío", about: "Sobre nosotros", currencyLabel: "Cambiar moneda", previousImage: "Imagen anterior", nextImage: "Imagen siguiente", chooseVariant: "Elige una opción", storage: "Almacenamiento", size: "Tamaño", color: "Color", category: "Categoría", detailedSpecs: "Ver especificaciones detalladas", hideSpecs: "Ocultar especificaciones", detailsTitle: "Especificaciones detalladas", aboutTitle: "Tecnología elegida con cuidado.", aboutIntro: "RUQO TECH une tecnología bien pensada y un servicio atento para ayudarte a elegir el dispositivo adecuado.", aboutStory: "Creamos RUQO TECH con una idea sencilla: comprar tecnología debe ser fácil, consciente y fiable. Nuestra selección prioriza la innovación útil, las marcas de confianza y el soporte que continúa después de la entrega.", aboutValues: ["Tecnología útil y cuidadosamente seleccionada", "Servicio claro desde el pedido hasta la entrega", "Asistencia que sigue contigo"], eyebrow: "RUQO TECH · tecnología con criterio", product: "Detalles del producto", notFound: "No encontramos este producto.", backShop: "Volver a productos", inStock: "Disponible · listo para enviar", outStock: "No disponible actualmente", add: "Añadir al carrito", added: "Añadido al carrito", saved: "Guardado", save: "Guardar en favoritos", rating: "opiniones de clientes", features: "Características", delivery: "Envío gratis a partir de 299 SAR", warranty: "Garantía de 2 años", returns: "Devoluciones en 7 días", emptyWishTitle: "Tu lista de favoritos te espera", emptyWish: "Guarda tus productos favoritos y encuéntralos aquí.", browse: "Explorar productos", savedCount: "productos guardados", moveToBag: "Añadir al carrito", remove: "Eliminar", emptyCartTitle: "Tu carrito está vacío", emptyCart: "Añade algo que te guste para empezar.", continue: "Seguir comprando", orderSummary: "Resumen del pedido", subtotal: "Subtotal", shippingCost: "Envío", free: "Gratis", total: "Total", checkout: "Continuar al pago", shippingNote: "Envío gratis en pedidos superiores a 299 SAR. Impuestos incluidos.", bag: "Carrito", bagIntro: "Revisa tus artículos antes de finalizar el pedido.", checkoutTitle: "Finalizar compra", checkoutIntro: "Completa unos datos y prepararemos tu pedido.", contact: "Datos de contacto", fullName: "Nombre completo", email: "Correo electrónico", phone: "Móvil", deliveryAddress: "Dirección de entrega", city: "Ciudad", address: "Dirección", postal: "Código postal", notes: "Notas de entrega (opcional)", payment: "Método de pago", cod: "Pago contra entrega", codNote: "Paga en efectivo o con tarjeta cuando llegue tu pedido.", confirmOrder: "Confirmar pedido", noPayment: "Esta demostración no recopila ni procesa pagos en línea.", orderPlaced: "Pedido confirmado", thankYou: "Gracias. Tu pedido se ha guardado.", orderNumber: "Número de pedido", viewAccount: "Ver tus pedidos", profile: "Perfil", settings: "Preferencias", orders: "Pedidos", saveProfile: "Guardar perfil", profileSaved: "Tu perfil se ha guardado.", updates: "Actualizaciones del pedido", updatesNote: "Recibe novedades sobre la entrega y el estado del pedido.", offers: "Ofertas y novedades", offersNote: "Recibe ocasionalmente noticias y ofertas de la tienda.", saveSettings: "Guardar preferencias", settingsSaved: "Tus preferencias se han guardado.", noOrders: "Aún no hay pedidos", noOrdersNote: "Aquí aparecerán tus pedidos completados.", status: "Confirmado", helpTitle: "¿Cómo podemos ayudarte?", helpIntro: "Respuestas claras sobre envíos, pagos, devoluciones y tu cuenta.", faq: "Preguntas frecuentes", deliveryTitle: "Envío", deliveryBody: "Enviamos a toda Arabia Saudí. La entrega estándar suele tardar entre 1 y 2 días laborables. El envío es gratis a partir de 299 SAR; en pedidos menores se aplican 25 SAR.", paymentsTitle: "Pago", paymentsBody: "Puedes pagar en efectivo o con tarjeta al recibir el pedido. El pago en línea no está habilitado en esta demostración.", returnsTitle: "Devoluciones y garantía", returnsBody: "Puedes solicitar la devolución de productos elegibles en un plazo de 7 días y en su estado original. Los productos incluyen 2 años de garantía frente a defectos de fabricación.", accountTitle: "Pedidos y cuenta", accountBody: "Tu perfil, preferencias, favoritos e historial de pedidos de prueba se guardan en este navegador. No se crea una cuenta ni un registro de cliente en un servidor.", faqDelivery: "¿Cuánto tarda el envío?", faqDeliveryAnswer: "La mayoría de los pedidos llegan en 1 o 2 días laborables. Las zonas remotas pueden tardar algo más.", faqReturn: "¿Cómo solicito una devolución?", faqReturnAnswer: "Contáctanos dentro de los 7 días posteriores a recibir un producto elegible y conserva el artículo con sus accesorios en su estado original.", faqWarranty: "¿Qué cubre la garantía?", faqWarrantyAnswer: "La garantía de 2 años cubre defectos de fabricación; no incluye daños accidentales ni desgaste normal.", contactTitle: "Contacta con RUQO TECH", contactIntro: "Envíanos un mensaje y nuestro equipo de soporte te responderá.", message: "Tu mensaje", sendMessage: "Enviar mensaje", messageSent: "Tu mensaje está preparado. Para recibir respuesta, escribe a hello@noursstore.com.", termsTitle: "Condiciones de uso", termsBody: "La disponibilidad, los precios y los plazos de entrega son orientativos y pueden cambiar. Los pedidos de prueba se guardan solo en este navegador y no se envían a ningún comercio. Una compra real requiere servicios de comercio y pago conectados.", privacyTitle: "Aviso de privacidad", privacyBody: "Esta demostración guarda favoritos, carrito, perfil, preferencias e historial en el almacenamiento local del navegador. El formulario de contacto no envía mensajes. Al borrar los datos del navegador se eliminará esta información.", helpLink: "Ayuda y políticas de la tienda", qty: "Cantidad", item: "artículo", items: "artículos", cityDefault: "Riad", supportPhone: "+966 50 000 0000", supportEmail: "hello@noursstore.com", lowStock: "Solo queda una unidad", languageSaved: "El idioma se ha guardado en este navegador.", categoryNames: { phones: "Móviles", laptops: "Portátiles", audio: "Audio", wearables: "Dispositivos vestibles" },
+      home: "Inicio", products: "Tienda", wishlist: "Favoritos", cart: "Carrito", account: "Cuenta", support: "Ayuda", switch: "العربية", rights: "© 2026 WEEXEY. Todos los derechos reservados.", terms: "Condiciones", privacy: "Privacidad", shippingInfo: "Envío", about: "Sobre nosotros", currencyLabel: "Cambiar moneda", previousImage: "Imagen anterior", nextImage: "Imagen siguiente", chooseVariant: "Elige una opción", storage: "Almacenamiento", size: "Tamaño", color: "Color", category: "Categoría", detailedSpecs: "Ver especificaciones detalladas", hideSpecs: "Ocultar especificaciones", detailsTitle: "Especificaciones detalladas", aboutTitle: "Tecnología elegida con cuidado.", aboutIntro: "WEEXEY une tecnología bien pensada y un servicio atento para ayudarte a elegir el dispositivo adecuado.", aboutStory: "Creamos WEEXEY con una idea sencilla: comprar tecnología debe ser fácil, consciente y fiable. Nuestra selección prioriza la innovación útil, las marcas de confianza y el soporte que continúa después de la entrega.", aboutValues: ["Tecnología útil y cuidadosamente seleccionada", "Servicio claro desde el pedido hasta la entrega", "Asistencia que sigue contigo"], eyebrow: "WEEXEY · tecnología con criterio", product: "Detalles del producto", notFound: "No encontramos este producto.", backShop: "Volver a productos", inStock: "Disponible · listo para enviar", outStock: "No disponible actualmente", add: "Añadir al carrito", added: "Añadido al carrito", saved: "Guardado", save: "Guardar en favoritos", rating: "opiniones de clientes", features: "Características", delivery: "Envío gratis a partir de 299 SAR", warranty: "Garantía de 2 años", returns: "Devoluciones en 7 días", emptyWishTitle: "Tu lista de favoritos te espera", emptyWish: "Guarda tus productos favoritos y encuéntralos aquí.", browse: "Explorar productos", savedCount: "productos guardados", moveToBag: "Añadir al carrito", remove: "Eliminar", emptyCartTitle: "Tu carrito está vacío", emptyCart: "Añade algo que te guste para empezar.", continue: "Seguir comprando", orderSummary: "Resumen del pedido", subtotal: "Subtotal", shippingCost: "Envío", free: "Gratis", total: "Total", checkout: "Continuar al pago", shippingNote: "Envío gratis en pedidos superiores a 299 SAR. Impuestos incluidos.", bag: "Carrito", bagIntro: "Revisa tus artículos antes de finalizar el pedido.", checkoutTitle: "Finalizar compra", checkoutIntro: "Completa unos datos y prepararemos tu pedido.", contact: "Datos de contacto", fullName: "Nombre completo", email: "Correo electrónico", phone: "Móvil", deliveryAddress: "Dirección de entrega", city: "Ciudad", address: "Dirección", postal: "Código postal", notes: "Notas de entrega (opcional)", payment: "Método de pago", cod: "Pago contra entrega", codNote: "Paga en efectivo o con tarjeta cuando llegue tu pedido.", confirmOrder: "Confirmar pedido", noPayment: "Esta demostración no recopila ni procesa pagos en línea.", orderPlaced: "Pedido confirmado", thankYou: "Gracias. Tu pedido se ha guardado.", orderNumber: "Número de pedido", viewAccount: "Ver tus pedidos", profile: "Perfil", settings: "Preferencias", orders: "Pedidos", saveProfile: "Guardar perfil", profileSaved: "Tu perfil se ha guardado.", updates: "Actualizaciones del pedido", updatesNote: "Recibe novedades sobre la entrega y el estado del pedido.", offers: "Ofertas y novedades", offersNote: "Recibe ocasionalmente noticias y ofertas de la tienda.", saveSettings: "Guardar preferencias", settingsSaved: "Tus preferencias se han guardado.", noOrders: "Aún no hay pedidos", noOrdersNote: "Aquí aparecerán tus pedidos completados.", status: "Confirmado", helpTitle: "¿Cómo podemos ayudarte?", helpIntro: "Respuestas claras sobre envíos, pagos, devoluciones y tu cuenta.", faq: "Preguntas frecuentes", deliveryTitle: "Envío", deliveryBody: "Enviamos a toda Arabia Saudí. La entrega estándar suele tardar entre 1 y 2 días laborables. El envío es gratis a partir de 299 SAR; en pedidos menores se aplican 25 SAR.", paymentsTitle: "Pago", paymentsBody: "Puedes pagar en efectivo o con tarjeta al recibir el pedido. El pago en línea no está habilitado en esta demostración.", returnsTitle: "Devoluciones y garantía", returnsBody: "Puedes solicitar la devolución de productos elegibles en un plazo de 7 días y en su estado original. Los productos incluyen 2 años de garantía frente a defectos de fabricación.", accountTitle: "Pedidos y cuenta", accountBody: "Tu perfil, preferencias, favoritos e historial de pedidos de prueba se guardan en este navegador. No se crea una cuenta ni un registro de cliente en un servidor.", faqDelivery: "¿Cuánto tarda el envío?", faqDeliveryAnswer: "La mayoría de los pedidos llegan en 1 o 2 días laborables. Las zonas remotas pueden tardar algo más.", faqReturn: "¿Cómo solicito una devolución?", faqReturnAnswer: "Contáctanos dentro de los 7 días posteriores a recibir un producto elegible y conserva el artículo con sus accesorios en su estado original.", faqWarranty: "¿Qué cubre la garantía?", faqWarrantyAnswer: "La garantía de 2 años cubre defectos de fabricación; no incluye daños accidentales ni desgaste normal.", contactTitle: "Contacta con WEEXEY", contactIntro: "Envíanos un mensaje y nuestro equipo de soporte te responderá.", message: "Tu mensaje", sendMessage: "Enviar mensaje", messageSent: "Tu mensaje está preparado. Para recibir respuesta, escribe a hello@noursstore.com.", termsTitle: "Condiciones de uso", termsBody: "La disponibilidad, los precios y los plazos de entrega son orientativos y pueden cambiar. Los pedidos de prueba se guardan solo en este navegador y no se envían a ningún comercio. Una compra real requiere servicios de comercio y pago conectados.", privacyTitle: "Aviso de privacidad", privacyBody: "Esta demostración guarda favoritos, carrito, perfil, preferencias e historial en el almacenamiento local del navegador. El formulario de contacto no envía mensajes. Al borrar los datos del navegador se eliminará esta información.", helpLink: "Ayuda y políticas de la tienda", qty: "Cantidad", item: "artículo", items: "artículos", cityDefault: "Riad", supportPhone: "+966 50 000 0000", supportEmail: "hello@noursstore.com", lowStock: "Solo queda una unidad", languageSaved: "El idioma se ha guardado en este navegador.", categoryNames: { phones: "Móviles", laptops: "Portátiles", audio: "Audio", wearables: "Dispositivos vestibles" },
     },
     zh: {
-      home: "首页", products: "选购", wishlist: "心愿单", cart: "购物袋", account: "账户", support: "帮助", switch: "العربية", rights: "© 2026 RUQO TECH。保留所有权利。", terms: "条款", privacy: "隐私", shippingInfo: "配送", about: "关于我们", currencyLabel: "更改货币", previousImage: "上一张图片", nextImage: "下一张图片", chooseVariant: "选择选项", storage: "存储容量", size: "尺寸", color: "颜色", category: "分类", detailedSpecs: "查看详细规格", hideSpecs: "隐藏详细规格", detailsTitle: "详细规格", aboutTitle: "用心甄选科技。", aboutIntro: "RUQO TECH 将精心挑选的科技产品与贴心服务结合，助你找到合适的设备。", aboutStory: "RUQO TECH 源于一个简单信念：购买科技产品应当清晰、周到且可靠。我们精选实用创新与可信品牌，并在配送后持续提供支持。", aboutValues: ["精心挑选的实用科技", "从下单到配送，服务清晰可靠", "始终陪伴你的支持服务"], eyebrow: "RUQO TECH · 用心甄选科技", product: "商品详情", notFound: "找不到该商品。", backShop: "返回商品列表", inStock: "有货 · 即刻发货", outStock: "暂时缺货", add: "加入购物袋", added: "已加入购物袋", saved: "已保存", save: "加入心愿单", rating: "客户评价", features: "产品亮点", delivery: "订单满 299 SAR 免运费", warranty: "两年保修", returns: "七天退货", emptyWishTitle: "你的心愿单已准备就绪", emptyWish: "保存喜欢的商品，之后可在这里查看。", browse: "浏览商品", savedCount: "件已保存商品", moveToBag: "加入购物袋", remove: "移除", emptyCartTitle: "购物袋为空", emptyCart: "添加喜欢的商品即可开始。", continue: "继续购物", orderSummary: "订单摘要", subtotal: "小计", shippingCost: "配送", free: "免费", total: "总计", checkout: "继续结账", shippingNote: "订单满 299 SAR 免运费，税费已包含。", bag: "购物袋", bagIntro: "结账前请确认商品。", checkoutTitle: "结账", checkoutIntro: "填写少量信息即可提交订单。", contact: "联系方式", fullName: "姓名", email: "电子邮箱", phone: "手机号码", deliveryAddress: "配送信息", city: "城市", address: "街道地址", postal: "邮政编码", notes: "配送备注（选填）", payment: "支付方式", cod: "货到付款", codNote: "收到商品时可使用现金或银行卡支付。", confirmOrder: "提交订单", noPayment: "此演示不会收集或处理在线支付。", orderPlaced: "订单已确认", thankYou: "谢谢，订单已保存。", orderNumber: "订单编号", viewAccount: "查看订单", profile: "个人资料", settings: "偏好设置", orders: "订单", saveProfile: "保存资料", profileSaved: "个人资料已保存。", updates: "订单更新", updatesNote: "接收配送与订单状态更新。", offers: "优惠与新品", offersNote: "不定期接收商品资讯和店铺优惠。", saveSettings: "保存偏好", settingsSaved: "偏好设置已保存。", noOrders: "暂无订单", noOrdersNote: "已完成的订单会显示在这里。", status: "已确认", helpTitle: "需要什么帮助？", helpIntro: "关于配送、支付、退货和账户的清晰解答。", faq: "常见问题", deliveryTitle: "配送", deliveryBody: "我们配送至沙特阿拉伯各地。标准配送通常需要 1 至 2 个工作日。订单满 299 SAR 免运费；不足时收取 25 SAR 配送费。", paymentsTitle: "支付", paymentsBody: "结账时可选择货到付款或刷卡。此演示暂不支持在线银行卡支付。", returnsTitle: "退货与保修", returnsBody: "符合条件的商品可在收货后 7 天内按原状申请退货。商品享有两年制造缺陷保修。", accountTitle: "订单与账户", accountBody: "个人资料、偏好、心愿单和演示订单历史保存在当前浏览器中，不会在服务器上创建账户或客户记录。", faqDelivery: "配送需要多长时间？", faqDeliveryAnswer: "大多数订单会在 1 至 2 个工作日内送达。偏远地区可能需要更长时间。", faqReturn: "如何申请退货？", faqReturnAnswer: "请在收到符合条件的商品后 7 天内联系我们，并保持商品及配件原有状态。", faqWarranty: "保修包含哪些内容？", faqWarrantyAnswer: "两年保修涵盖制造缺陷，不包括意外损坏和正常磨损。", contactTitle: "联系 RUQO TECH", contactIntro: "发送消息，我们的支持团队会回复你。", message: "你的消息", sendMessage: "发送消息", messageSent: "消息已准备好。如需实际回复，请联系 hello@noursstore.com。", termsTitle: "使用条款", termsBody: "此处显示的库存、价格和配送时间仅供参考，可能会发生变化。演示订单只保存在当前浏览器，不会发送给零售商。实际购买需要接入电商和支付服务。", privacyTitle: "隐私声明", privacyBody: "此演示将心愿单、购物袋、个人资料、偏好和订单历史保存在浏览器本地。联系表单不会发送消息。清除浏览器数据会删除这些信息。", helpLink: "帮助与店铺政策", qty: "数量", item: "件", items: "件", cityDefault: "利雅得", supportPhone: "+966 50 000 0000", supportEmail: "hello@noursstore.com", lowStock: "仅剩一件", languageSaved: "语言偏好已保存在此浏览器。", categoryNames: { phones: "手机", laptops: "笔记本电脑", audio: "音频", wearables: "可穿戴设备" },
+      home: "首页", products: "选购", wishlist: "心愿单", cart: "购物袋", account: "账户", support: "帮助", switch: "العربية", rights: "© 2026 WEEXEY。保留所有权利。", terms: "条款", privacy: "隐私", shippingInfo: "配送", about: "关于我们", currencyLabel: "更改货币", previousImage: "上一张图片", nextImage: "下一张图片", chooseVariant: "选择选项", storage: "存储容量", size: "尺寸", color: "颜色", category: "分类", detailedSpecs: "查看详细规格", hideSpecs: "隐藏详细规格", detailsTitle: "详细规格", aboutTitle: "用心甄选科技。", aboutIntro: "WEEXEY 将精心挑选的科技产品与贴心服务结合，助你找到合适的设备。", aboutStory: "WEEXEY 源于一个简单信念：购买科技产品应当清晰、周到且可靠。我们精选实用创新与可信品牌，并在配送后持续提供支持。", aboutValues: ["精心挑选的实用科技", "从下单到配送，服务清晰可靠", "始终陪伴你的支持服务"], eyebrow: "WEEXEY · 用心甄选科技", product: "商品详情", notFound: "找不到该商品。", backShop: "返回商品列表", inStock: "有货 · 即刻发货", outStock: "暂时缺货", add: "加入购物袋", added: "已加入购物袋", saved: "已保存", save: "加入心愿单", rating: "客户评价", features: "产品亮点", delivery: "订单满 299 SAR 免运费", warranty: "两年保修", returns: "七天退货", emptyWishTitle: "你的心愿单已准备就绪", emptyWish: "保存喜欢的商品，之后可在这里查看。", browse: "浏览商品", savedCount: "件已保存商品", moveToBag: "加入购物袋", remove: "移除", emptyCartTitle: "购物袋为空", emptyCart: "添加喜欢的商品即可开始。", continue: "继续购物", orderSummary: "订单摘要", subtotal: "小计", shippingCost: "配送", free: "免费", total: "总计", checkout: "继续结账", shippingNote: "订单满 299 SAR 免运费，税费已包含。", bag: "购物袋", bagIntro: "结账前请确认商品。", checkoutTitle: "结账", checkoutIntro: "填写少量信息即可提交订单。", contact: "联系方式", fullName: "姓名", email: "电子邮箱", phone: "手机号码", deliveryAddress: "配送信息", city: "城市", address: "街道地址", postal: "邮政编码", notes: "配送备注（选填）", payment: "支付方式", cod: "货到付款", codNote: "收到商品时可使用现金或银行卡支付。", confirmOrder: "提交订单", noPayment: "此演示不会收集或处理在线支付。", orderPlaced: "订单已确认", thankYou: "谢谢，订单已保存。", orderNumber: "订单编号", viewAccount: "查看订单", profile: "个人资料", settings: "偏好设置", orders: "订单", saveProfile: "保存资料", profileSaved: "个人资料已保存。", updates: "订单更新", updatesNote: "接收配送与订单状态更新。", offers: "优惠与新品", offersNote: "不定期接收商品资讯和店铺优惠。", saveSettings: "保存偏好", settingsSaved: "偏好设置已保存。", noOrders: "暂无订单", noOrdersNote: "已完成的订单会显示在这里。", status: "已确认", helpTitle: "需要什么帮助？", helpIntro: "关于配送、支付、退货和账户的清晰解答。", faq: "常见问题", deliveryTitle: "配送", deliveryBody: "我们配送至沙特阿拉伯各地。标准配送通常需要 1 至 2 个工作日。订单满 299 SAR 免运费；不足时收取 25 SAR 配送费。", paymentsTitle: "支付", paymentsBody: "结账时可选择货到付款或刷卡。此演示暂不支持在线银行卡支付。", returnsTitle: "退货与保修", returnsBody: "符合条件的商品可在收货后 7 天内按原状申请退货。商品享有两年制造缺陷保修。", accountTitle: "订单与账户", accountBody: "个人资料、偏好、心愿单和演示订单历史保存在当前浏览器中，不会在服务器上创建账户或客户记录。", faqDelivery: "配送需要多长时间？", faqDeliveryAnswer: "大多数订单会在 1 至 2 个工作日内送达。偏远地区可能需要更长时间。", faqReturn: "如何申请退货？", faqReturnAnswer: "请在收到符合条件的商品后 7 天内联系我们，并保持商品及配件原有状态。", faqWarranty: "保修包含哪些内容？", faqWarrantyAnswer: "两年保修涵盖制造缺陷，不包括意外损坏和正常磨损。", contactTitle: "联系 WEEXEY", contactIntro: "发送消息，我们的支持团队会回复你。", message: "你的消息", sendMessage: "发送消息", messageSent: "消息已准备好。如需实际回复，请联系 hello@noursstore.com。", termsTitle: "使用条款", termsBody: "此处显示的库存、价格和配送时间仅供参考，可能会发生变化。演示订单只保存在当前浏览器，不会发送给零售商。实际购买需要接入电商和支付服务。", privacyTitle: "隐私声明", privacyBody: "此演示将心愿单、购物袋、个人资料、偏好和订单历史保存在浏览器本地。联系表单不会发送消息。清除浏览器数据会删除这些信息。", helpLink: "帮助与店铺政策", qty: "数量", item: "件", items: "件", cityDefault: "利雅得", supportPhone: "+966 50 000 0000", supportEmail: "hello@noursstore.com", lowStock: "仅剩一件", languageSaved: "语言偏好已保存在此浏览器。", categoryNames: { phones: "手机", laptops: "笔记本电脑", audio: "音频", wearables: "可穿戴设备" },
     },
   };
   const supplementalText = {
@@ -648,7 +648,7 @@
   };
 
   function renderShell() {
-    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
     header.innerHTML = `<header class="commerce-header"><div class="container commerce-nav"><a class="brand" href="/" aria-label="${escapeHtml(storeName)}"><img class="brand-logo" src="${defaultLightLogoUrl}" alt="${escapeHtml(storeName)}" /></a><nav class="commerce-links" aria-label="${language === "ar" ? "التنقل الرئيسي" : "Main navigation"}"><a href="/">${t.home}</a><a href="/products.html">${t.products}</a><a href="/wishlist.html">${t.wishlist}</a><a href="/account.html">${t.account}</a><a href="/support.html">${t.support}</a></nav><div class="commerce-actions"><button class="commerce-icon-button theme-toggle" type="button" data-theme-toggle aria-pressed="false"><i data-lucide="moon" aria-hidden="true"></i></button><select class="commerce-currency currency-select" data-currency-select aria-label="${t.currencyLabel || "Currency"}" title="${t.currencyLabel || "Currency"}"><option value="USD">USD dollar</option><option value="SAR">SAR</option><option value="EUR">EUR</option></select><select class="commerce-lang language-select" data-language-select aria-label="Language" title="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="zh">ZH</option><option value="ar">عربي</option></select><a class="commerce-icon-button" href="/cart.html" aria-label="${t.cart}, ${store.cartCount()} ${t.items}">${icon("shopping-bag")}</a></div></div></header>`;
     if (page === "checkout") {
       syncCheckoutHeaderScroll();
@@ -702,7 +702,7 @@
         </div>
         <div class="footer-bottom">
           <div class="container footer-bottom-inner">
-            <span data-footer-label="footer.rights">${t.rights.replace("RUQO TECH", escapeHtml(storeName))}</span>
+            <span data-footer-label="footer.rights">${t.rights.replace("WEEXEY", escapeHtml(storeName))}</span>
           </div>
         </div>
       </footer>`;
@@ -781,7 +781,185 @@
     return `<article class="commerce-product-card"><a href="${productUrl(product.id)}"><img src="${product.image}" alt="${escapeHtml(product.name)}" loading="lazy" /></a><div class="commerce-product-info"><span class="commerce-product-brand">${escapeHtml(product.brand)}</span><h2><a href="${productUrl(product.id)}">${escapeHtml(product.name)}</a></h2><p>${escapeHtml(product.description[language])}</p><div class="commerce-product-actions"><strong class="commerce-price">${money(product.price)}</strong><button class="commerce-button" type="button" data-add="${product.id}" ${product.stock ? "" : "disabled"}>${icon("shopping-bag")}<span>${t.moveToBag}</span></button><button class="commerce-danger" type="button" data-remove-wish="${product.id}" aria-label="${t.remove}">${icon(saved ? "heart-off" : "heart")}</button></div></div></article>`;
   }
 
+  let relatedProductsObserver;
+  let cleanupProductShare;
+  let cleanupDetailViewer;
+
+  function setupMobileDetailViewer(slides, detail, imageCopy) {
+    const mobile = window.matchMedia("(max-width: 850px)");
+    const copy = {
+      en: { zoom: "Zoom in", reset: "Reset zoom", failed: "Couldn't load this image." },
+      ar: { zoom: "تكبير الصورة", reset: "إعادة الحجم الأصلي", failed: "تعذّر تحميل هذه الصورة." },
+      fr: { zoom: "Agrandir", reset: "Réinitialiser le zoom", failed: "Impossible de charger cette image." },
+      es: { zoom: "Ampliar", reset: "Restablecer zoom", failed: "No se pudo cargar esta imagen." },
+      zh: { zoom: "放大", reset: "重置缩放", failed: "无法加载此图片。" },
+    }[language] || { zoom: "Zoom in", reset: "Reset zoom", failed: "Couldn't load this image." };
+    const viewer = document.createElement("dialog");
+    viewer.className = "detail-images-lightbox";
+    viewer.setAttribute("aria-label", imageCopy.title);
+    viewer.innerHTML = `<div class="detail-images-toolbar"><button type="button" data-detail-viewer-zoom aria-label="${copy.zoom}">${icon("zoom-in")}</button><button type="button" data-detail-viewer-close aria-label="${detail.close}">${icon("x")}</button></div><div class="detail-images-stage"><img alt="" draggable="false" /><p role="status" hidden>${copy.failed}</p></div><div class="product-detail-carousel-controls"><button type="button" class="product-detail-carousel-button" data-detail-viewer-step="-1" aria-label="${imageCopy.previous}">${icon(language === "ar" ? "chevron-right" : "chevron-left")}</button><span class="product-detail-carousel-count" aria-live="polite"></span><button type="button" class="product-detail-carousel-button" data-detail-viewer-step="1" aria-label="${imageCopy.next}">${icon(language === "ar" ? "chevron-left" : "chevron-right")}</button></div>`;
+    root.append(viewer);
+    const stage = viewer.querySelector(".detail-images-stage");
+    const image = stage.querySelector("img");
+    const errorMessage = stage.querySelector("[role='status']");
+    const zoomButton = viewer.querySelector("[data-detail-viewer-zoom]");
+    const counter = viewer.querySelector(".product-detail-carousel-count");
+    const pointers = new Map();
+    let index = 0;
+    let scale = 1;
+    let x = 0;
+    let y = 0;
+    let gesture;
+    let swipe;
+    let opener;
+    const applyTransform = () => {
+      const fit = image.naturalWidth && image.naturalHeight
+        ? Math.min(stage.clientWidth / image.naturalWidth, stage.clientHeight / image.naturalHeight)
+        : 0;
+      const maxX = Math.max(0, (image.naturalWidth * fit * scale - stage.clientWidth) / 2);
+      const maxY = Math.max(0, (image.naturalHeight * fit * scale - stage.clientHeight) / 2);
+      x = Math.min(maxX, Math.max(-maxX, x));
+      y = Math.min(maxY, Math.max(-maxY, y));
+      image.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+      zoomButton.setAttribute("aria-label", scale > 1 ? copy.reset : copy.zoom);
+      zoomButton.setAttribute("aria-pressed", String(scale > 1));
+    };
+    const resetZoom = () => {
+      scale = 1;
+      x = y = 0;
+      gesture = swipe = null;
+      pointers.clear();
+      applyTransform();
+    };
+    const showImage = (next) => {
+      index = (next + slides.length) % slides.length;
+      resetZoom();
+      errorMessage.hidden = true;
+      const source = slides[index].querySelector("img");
+      image.alt = source.alt;
+      image.src = source.currentSrc || source.src;
+      counter.textContent = `${index + 1} / ${slides.length}`;
+    };
+    const openImage = (next, source) => {
+      if (!mobile.matches) return;
+      opener = source;
+      showImage(next);
+      viewer.showModal();
+    };
+    const updateMobile = () => {
+      slides.forEach((slide) => {
+        const source = slide.querySelector("img");
+        if (mobile.matches) {
+          source.tabIndex = 0;
+          source.setAttribute("role", "button");
+          source.setAttribute("aria-haspopup", "dialog");
+          source.setAttribute("aria-label", `${detail.zoom}: ${source.alt}`);
+        } else {
+          source.removeAttribute("tabindex");
+          source.removeAttribute("role");
+          source.removeAttribute("aria-haspopup");
+          source.removeAttribute("aria-label");
+        }
+      });
+      if (!mobile.matches && viewer.open) viewer.close();
+      if (viewer.open) resetZoom();
+    };
+    slides.forEach((slide, next) => {
+      const source = slide.querySelector("img");
+      source.addEventListener("click", () => openImage(next, source));
+      source.addEventListener("keydown", (event) => {
+        if (!mobile.matches || !["Enter", " "].includes(event.key)) return;
+        event.preventDefault();
+        openImage(next, source);
+      });
+    });
+    viewer.querySelector("[data-detail-viewer-close]").addEventListener("click", () => viewer.close());
+    viewer.querySelectorAll("[data-detail-viewer-step]").forEach((button) => {
+      button.hidden = slides.length < 2;
+      button.addEventListener("click", () => showImage(index + Number(button.dataset.detailViewerStep)));
+    });
+    zoomButton.addEventListener("click", () => {
+      if (scale > 1) resetZoom();
+      else {
+        scale = 2;
+        applyTransform();
+      }
+    });
+    image.addEventListener("load", applyTransform);
+    image.addEventListener("error", () => { errorMessage.hidden = false; });
+    viewer.addEventListener("close", () => {
+      resetZoom();
+      if (opener?.isConnected) opener.focus({ preventScroll: true });
+    });
+    viewer.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      event.preventDefault();
+      showImage(index + (event.key === "ArrowRight" ? 1 : -1) * (language === "ar" ? -1 : 1));
+    });
+    const startGesture = () => {
+      const points = [...pointers.values()];
+      if (points.length >= 2) {
+        const bounds = stage.getBoundingClientRect();
+        const midX = (points[0].x + points[1].x) / 2 - bounds.left - bounds.width / 2;
+        const midY = (points[0].y + points[1].y) / 2 - bounds.top - bounds.height / 2;
+        gesture = {
+          distance: Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y),
+          scale, anchorX: (midX - x) / scale, anchorY: (midY - y) / scale,
+        };
+        swipe = null;
+      } else if (points.length) {
+        gesture = { start: points[0], x, y };
+      }
+    };
+    stage.addEventListener("pointerdown", (event) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      stage.setPointerCapture(event.pointerId);
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (pointers.size === 1 && scale === 1) swipe = { x: event.clientX, y: event.clientY };
+      startGesture();
+    });
+    stage.addEventListener("pointermove", (event) => {
+      if (!pointers.has(event.pointerId)) return;
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      const points = [...pointers.values()];
+      if (points.length >= 2 && gesture?.distance > 0) {
+        const bounds = stage.getBoundingClientRect();
+        scale = Math.min(4, Math.max(1, gesture.scale * Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y) / gesture.distance));
+        x = (points[0].x + points[1].x) / 2 - bounds.left - bounds.width / 2 - gesture.anchorX * scale;
+        y = (points[0].y + points[1].y) / 2 - bounds.top - bounds.height / 2 - gesture.anchorY * scale;
+      } else if (points.length === 1 && gesture?.start && scale > 1) {
+        x = gesture.x + event.clientX - gesture.start.x;
+        y = gesture.y + event.clientY - gesture.start.y;
+      }
+      applyTransform();
+    });
+    const endPointer = (event) => {
+      if (!pointers.has(event.pointerId)) return;
+      pointers.delete(event.pointerId);
+      if (!pointers.size) {
+        const dx = swipe ? event.clientX - swipe.x : 0;
+        const dy = swipe ? event.clientY - swipe.y : 0;
+        if (event.type === "pointerup" && scale === 1 && Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+          showImage(index + (dx < 0 ? 1 : -1) * (language === "ar" ? -1 : 1));
+        }
+        gesture = swipe = null;
+      } else startGesture();
+    };
+    stage.addEventListener("pointerup", endPointer);
+    stage.addEventListener("pointercancel", endPointer);
+    stage.addEventListener("lostpointercapture", endPointer);
+    mobile.addEventListener("change", updateMobile);
+    updateMobile();
+    return () => {
+      mobile.removeEventListener("change", updateMobile);
+      if (viewer.open) viewer.close();
+    };
+  }
+
   function renderProduct() {
+    relatedProductsObserver?.disconnect();
+    cleanupProductShare?.();
+    cleanupDetailViewer?.();
     const isPremiumProduct =
       document.body.dataset.productDesign === "premium";
     const product = productById(new URLSearchParams(location.search).get("id"));
@@ -789,7 +967,7 @@
       root.innerHTML = `<section class="commerce-empty">${icon("package-x")}<h1>${t.notFound}</h1><a class="commerce-button" href="/products.html">${t.backShop}</a></section>`;
       return;
     }
-    document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH"}`;
+    document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY"}`;
     const isSaved = store.wishlist().includes(product.id);
     const detail = {
       en: {
@@ -929,7 +1107,7 @@
       .filter(
         (item) => item.category === product.category && item.id !== product.id,
       )
-      .slice(0, 3)
+      .slice(0, isPremiumProduct ? 8 : 3)
       .map(localizeProduct);
     const reviewKey = `nours-reviews-${product.id}`;
     const reviews = store.read(reviewKey, []);
@@ -965,7 +1143,7 @@
               (item) =>
                 item.id !== product.id && item.category !== product.category,
             )
-            .slice(0, Math.max(0, 3 - related.length))
+            .slice(0, Math.max(0, 8 - related.length))
             .map(localizeProduct),
         ]
       : related.length
@@ -999,6 +1177,65 @@
       es: { title: "Más detalles", previous: "Imagen anterior", next: "Imagen siguiente" },
       zh: { title: "更多详情", previous: "上一张详情图片", next: "下一张详情图片" },
     }[language] || { title: "More Image Details", previous: "Previous detail image", next: "Next detail image" };
+    if (isPremiumProduct) {
+      const section = root.querySelector(".related-products-section");
+      const track = section.querySelector(".commerce-product-grid");
+      const cards = [...track.children];
+      track.classList.add("related-products-track");
+      track.tabIndex = 0;
+      track.setAttribute("role", "region");
+      track.setAttribute("aria-label", detail.related);
+      const navigationCopy = {
+        en: ["Previous products", "Next products"],
+        ar: ["المنتجات السابقة", "المنتجات التالية"],
+        fr: ["Produits précédents", "Produits suivants"],
+        es: ["Productos anteriores", "Productos siguientes"],
+        zh: ["上一组商品", "下一组商品"],
+      }[language] || ["Previous products", "Next products"];
+      const controls = document.createElement("div");
+      controls.className = "product-detail-carousel-controls related-products-controls";
+      controls.setAttribute("role", "group");
+      controls.setAttribute("aria-label", detail.related);
+      const buttons = [-1, 1].map((step, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "product-detail-carousel-button";
+        button.setAttribute("aria-label", navigationCopy[index]);
+        button.title = navigationCopy[index];
+        button.innerHTML = icon((step < 0) !== (language === "ar") ? "chevron-left" : "chevron-right");
+        button.addEventListener("click", () => scrollProducts(step));
+        controls.append(button);
+        return button;
+      });
+      section.append(controls);
+      const updateNavigation = () => {
+        const bounds = track.getBoundingClientRect();
+        const rtl = getComputedStyle(track).direction === "rtl";
+        controls.hidden = track.scrollWidth <= track.clientWidth + 1;
+        const first = cards[0]?.getBoundingClientRect();
+        const last = cards[cards.length - 1]?.getBoundingClientRect();
+        buttons[0].disabled = !first || (rtl ? first.right <= bounds.right + 1 : first.left >= bounds.left - 1);
+        buttons[1].disabled = !last || (rtl ? last.left >= bounds.left - 1 : last.right <= bounds.right + 1);
+      };
+      const scrollProducts = (step) => {
+        const stride = cards.length > 1
+          ? Math.abs(cards[1].offsetLeft - cards[0].offsetLeft)
+          : track.clientWidth;
+        track.scrollBy({
+          left: step * stride * (getComputedStyle(track).direction === "rtl" ? -1 : 1),
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        });
+      };
+      track.addEventListener("scroll", updateNavigation, { passive: true });
+      track.addEventListener("keydown", (event) => {
+        if (event.target !== track || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+        event.preventDefault();
+        scrollProducts((event.key === "ArrowRight" ? 1 : -1) * (getComputedStyle(track).direction === "rtl" ? -1 : 1));
+      });
+      relatedProductsObserver = new ResizeObserver(updateNavigation);
+      relatedProductsObserver.observe(track);
+      updateNavigation();
+    }
     const detailImages = (product.detailImages || []).filter(Boolean);
     if (detailImages.length) {
       const detailSection = document.createElement("section");
@@ -1013,6 +1250,18 @@
       const track = detailSection.querySelector("[data-detail-track]");
       const slides = [...track.querySelectorAll(".product-detail-carousel-slide")];
       const count = detailSection.querySelector("[data-detail-count]");
+      if (isPremiumProduct && count) {
+        const controls = document.createElement("div");
+        controls.className = "product-detail-carousel-controls";
+        controls.setAttribute("role", "group");
+        controls.setAttribute("aria-label", detailImageCopy.title);
+        controls.append(
+          detailSection.querySelector('[data-detail-step="-1"]'),
+          count,
+          detailSection.querySelector('[data-detail-step="1"]'),
+        );
+        detailSection.querySelector("[data-detail-carousel]").after(controls);
+      }
       let activeSlide = 0;
       let settleTimer;
       const updateCount = () => {
@@ -1068,6 +1317,7 @@
         if (event.key === "ArrowRight") showSlide(activeSlide + (language === "ar" ? -1 : 1));
         if (event.key === "ArrowLeft") showSlide(activeSlide + (language === "ar" ? 1 : -1));
       });
+      if (isPremiumProduct) cleanupDetailViewer = setupMobileDetailViewer(slides, detail, detailImageCopy);
     }
     const upperDescription = root.querySelector(".detail-description");
     if (upperDescription) upperDescription.textContent = product.descriptionName[language];
@@ -1758,6 +2008,51 @@
 
     detailPriceBlock.after(root.querySelector(".product-purchase-row"));
 
+    if (isPremiumProduct) {
+      const shareCopy = {
+        en: { label: "Share this product", copied: "Product link copied.", manual: "Copy this product link:", failed: "Couldn't share automatically. You can copy the link manually." },
+        ar: { label: "مشاركة هذا المنتج", copied: "تم نسخ رابط المنتج.", manual: "انسخ رابط هذا المنتج:", failed: "تعذّرت المشاركة التلقائية. يمكنك نسخ الرابط يدويًا." },
+        fr: { label: "Partager ce produit", copied: "Lien du produit copié.", manual: "Copiez le lien de ce produit :", failed: "Le partage automatique a échoué. Copiez le lien manuellement." },
+        es: { label: "Compartir este producto", copied: "Enlace del producto copiado.", manual: "Copia el enlace de este producto:", failed: "No se pudo compartir automáticamente. Copia el enlace manualmente." },
+        zh: { label: "分享此商品", copied: "商品链接已复制。", manual: "复制此商品链接：", failed: "无法自动分享，请手动复制链接。" },
+      }[language] || { label: "Share this product", copied: "Product link copied.", manual: "Copy this product link:", failed: "Couldn't share automatically. You can copy the link manually." };
+      const shareButton = document.createElement("button");
+      shareButton.type = "button";
+      shareButton.className = "product-share-button";
+      shareButton.innerHTML = `${icon("share-2")}<span>${escapeHtml(shareCopy.label)}</span>`;
+      const mobileShare = window.matchMedia("(max-width: 850px)");
+      const placeShareButton = () => {
+        const parent = root.querySelector(mobileShare.matches ? ".product-purchase-row" : ".product-detail-page");
+        parent.append(shareButton);
+      };
+      mobileShare.addEventListener("change", placeShareButton);
+      cleanupProductShare = () => mobileShare.removeEventListener("change", placeShareButton);
+      placeShareButton();
+      shareButton.addEventListener("click", async () => {
+        const url = new URL("product.html", location.href);
+        url.searchParams.set("id", product.id);
+        shareButton.disabled = true;
+        try {
+          if (typeof navigator.share === "function") {
+            await navigator.share({ title: product.name, url: url.href });
+          } else if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(url.href);
+            toast(shareCopy.copied);
+          } else {
+            window.prompt(shareCopy.manual, url.href);
+          }
+        } catch (error) {
+          if (error.name !== "AbortError") {
+            console.error("Could not share product link.", error);
+            toast(shareCopy.failed);
+            window.prompt(shareCopy.manual, url.href);
+          }
+        } finally {
+          shareButton.disabled = false;
+        }
+      });
+    }
+
     const detailsDisclosure = document.createElement("details");
     detailsDisclosure.className = "product-spec-disclosure";
     detailsDisclosure.innerHTML = `<summary>${icon("chevron-down")}<span>${detail.detailedSpecs}</span></summary><div class="product-spec-expanded"><h3>${detail.detailsTitle}</h3><p>${escapeHtml(product.description[language] || product.description.en || "")}</p><div class="product-spec-table">${specs}<div class="product-spec-row"><span>${t.category}</span><strong>${t.categoryNames[product.category]}</strong></div><div class="product-spec-row"><span>${language === "ar" ? "رقم المنتج" : "Product reference"}</span><strong>${product.id.toUpperCase()}</strong></div><div class="product-spec-row"><span>${t.warranty}</span><strong>${t.returns}</strong></div><div class="product-spec-row"><span>${optionGroupNamesText || (language === "ar" ? "الخيارات" : "Options")}</span><strong>${escapeHtml(currentOption.label)}</strong></div></div></div>`;
@@ -1776,8 +2071,16 @@
       centeredDetails.id = "product-design-centered-details";
       centeredDetails.setAttribute("aria-labelledby", "product-design-highlights");
       featureHeading.id = "product-design-highlights";
-      centeredDetails.append(featureHeading, featureList, detailsDisclosure);
-      productLayout.append(centeredDetails);
+      centeredDetails.append(featureHeading, featureList);
+      const specifications = document.createElement("section");
+      specifications.className = "product-design-centered-details product-design-specifications";
+      specifications.id = "product-design-specifications";
+      specifications.setAttribute("aria-labelledby", "product-design-specifications-heading");
+      const expandedSpecifications = detailsDisclosure.querySelector(".product-spec-expanded");
+      expandedSpecifications.querySelector("h3").id = "product-design-specifications-heading";
+      specifications.append(expandedSpecifications);
+      detailsDisclosure.remove();
+      productLayout.append(centeredDetails, specifications);
     }
 
     const mainImage = root.querySelector("[data-detail-image]");
@@ -1913,9 +2216,15 @@
       }
       lightbox.showModal();
     });
-    if (window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 800px)").matches) {
+    {
       const zoomFactor = 2.25;
       let lastZoomPointer = null;
+      const zoomViewport = window.matchMedia("(min-width: 800px)");
+      const resetZoomPane = () => {
+        lastZoomPointer = null;
+        imageStage.classList.remove("is-zoom-active");
+        imageStage.parentElement.classList.remove("is-zoom-active");
+      };
       const zoomPaneGap = isPremiumProduct ? 80 : 44;
       const positionFactor = (value, axis) => {
         const token = value.split(" ")[axis] || "50%";
@@ -1961,14 +2270,19 @@
         if (lastZoomPointer) updateZoomPane(lastZoomPointer);
       });
       imageStage.addEventListener("pointermove", (event) => {
+        if (event.pointerType !== "mouse" || !zoomViewport.matches) {
+          resetZoomPane();
+          return;
+        }
         imageStage.classList.add("is-zoom-active");
         imageStage.parentElement.classList.add("is-zoom-active");
         updateZoomPane(event);
       });
-      imageStage.addEventListener("pointerleave", () => {
-        imageStage.classList.remove("is-zoom-active");
-        imageStage.parentElement.classList.remove("is-zoom-active");
+      imageStage.addEventListener("pointerdown", (event) => {
+        if (event.pointerType !== "mouse") resetZoomPane();
       });
+      imageStage.addEventListener("pointerleave", resetZoomPane);
+      imageStage.addEventListener("pointercancel", resetZoomPane);
     }
     const enableSwipe = (element) => {
       let startX = null;
@@ -2528,7 +2842,7 @@
               <div class="node-circle"><span class="ring-pulse"></span><i data-lucide="package" aria-hidden="true"></i></div>
               <div class="node-content">
                 <strong>${t.stepProcessing || "Quality Check & Packing"}</strong>
-                <small>${t.stepProcessingDesc || "At RUQO central hub"}</small>
+                <small>${t.stepProcessingDesc || "At WEEXEY central hub"}</small>
               </div>
             </div>
             <div class="stepper-bar"></div>
@@ -2718,11 +3032,86 @@
     root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.account}</h1></div></div><div class="account-layout"><nav class="account-tabs"><a href="#profile" aria-current="page">${t.profile}</a><a href="#settings">${t.settings}</a><a href="#orders">${t.orders}</a></nav><div class="account-content"><section class="commerce-panel" id="profile"><h2>${t.profile}</h2><form class="commerce-form" data-profile-form><div class="commerce-form-grid"><label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" value="${escapeHtml(profile.name)}" /></label><label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" value="${escapeHtml(profile.email)}" /></label><label class="commerce-field">${t.phone}<input name="phone" type="tel" autocomplete="tel" value="${escapeHtml(profile.phone)}" /></label><label class="commerce-field">${t.city}<input name="city" value="${escapeHtml(profile.city || t.cityDefault)}" /></label></div><div class="form-feedback" data-profile-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${t.saveProfile}</button></form></section><section class="commerce-panel" id="settings"><h2>${t.settings}</h2><form data-settings-form><label class="settings-row"><span>${t.updates}<small>${t.updatesNote}</small></span><input type="checkbox" name="orderUpdates" ${settings.orderUpdates ? "checked" : ""} /></label><label class="settings-row"><span>${t.offers}<small>${t.offersNote}</small></span><input type="checkbox" name="offers" ${settings.offers ? "checked" : ""} /></label><div class="form-feedback" data-settings-feedback aria-live="polite"></div><button class="commerce-button-secondary" type="submit">${t.saveSettings}</button></form></section><section class="commerce-panel" id="orders"><h2>${t.orders}</h2>${orderMarkup}</section></div></div>`;
   }
 
+  function renderCategories() {
+    const copy = {
+      en: {
+        title: "Explore our catalogs.",
+        label: "Product catalogs",
+        intro: "Browse by category and discover the technology that fits your day.",
+        browse: "Browse the collection",
+        products: "Products",
+        all: "Shop all products",
+        description: "Explore the products in this collection.",
+        empty: "No catalogs are available right now.",
+        emptyNote: "Please check back later or contact our team for help.",
+        imageError: "Image unavailable",
+      },
+      ar: {
+        title: "استكشف كتالوجاتنا.",
+        label: "كتالوجات المنتجات",
+        intro: "تصفّح أقسامنا واكتشف التقنية التي تناسب يومك، من مكان واحد.",
+        browse: "استكشف المجموعة",
+        products: "المنتجات",
+        all: "تسوّق كل المنتجات",
+        description: "اكتشف المنتجات المتاحة ضمن هذه المجموعة.",
+        empty: "لا توجد كتالوجات متاحة حالياً.",
+        emptyNote: "تفضّل بزيارتنا لاحقاً، أو تواصل مع فريقنا للمساعدة.",
+        imageError: "الصورة غير متاحة",
+      },
+      fr: {
+        title: "Explorez nos catalogues.",
+        label: "Catalogues produits",
+        intro: "Parcourez nos catégories et trouvez la technologie adaptée à votre quotidien.",
+        browse: "Explorer la collection",
+        products: "Produits",
+        all: "Voir tous les produits",
+        description: "Découvrez les produits de cette collection.",
+        empty: "Aucun catalogue n'est disponible pour le moment.",
+        emptyNote: "Revenez plus tard ou contactez notre équipe.",
+        imageError: "Image indisponible",
+      },
+      es: {
+        title: "Explora nuestros catálogos.",
+        label: "Catálogos de productos",
+        intro: "Explora nuestras categorías y encuentra la tecnología que encaja con tu día.",
+        browse: "Explorar la colección",
+        products: "Productos",
+        all: "Ver todos los productos",
+        description: "Descubre los productos de esta colección.",
+        empty: "No hay catálogos disponibles en este momento.",
+        emptyNote: "Vuelve más tarde o contacta con nuestro equipo.",
+        imageError: "Imagen no disponible",
+      },
+      zh: {
+        title: "探索我们的产品目录。",
+        label: "产品目录",
+        intro: "按分类浏览，发现适合你日常生活的科技产品。",
+        browse: "探索此系列",
+        products: "产品",
+        all: "选购全部产品",
+        description: "探索此系列中的产品。",
+        empty: "目前没有可用的产品目录。",
+        emptyNote: "请稍后再来，或联系我们的团队。",
+        imageError: "图片暂不可用",
+      },
+    }[language];
+    root.innerHTML = `<div class="catalogs-page">
+      <nav class="catalogs-breadcrumb" aria-label="${copy.label}"><a href="/">${t.home}</a><span aria-hidden="true">/</span><span aria-current="page">${copy.label}</span></nav>
+      <section class="catalogs-intro">
+        <div><span class="commerce-eyebrow">${copy.label}</span><h1>${copy.title}</h1><p>${copy.intro}</p></div>
+        <a class="catalogs-all-link" href="/products.html">${copy.all}<i data-lucide="arrow-right" aria-hidden="true"></i></a>
+      </section>
+      <div data-catalog-explorer></div>
+    </div>`;
+    document.querySelector('meta[name="description"]').content = copy.intro;
+    window.mountCatalogExplorer(root.querySelector("[data-catalog-explorer]"), copy, language);
+  }
+
   function getSupportCopy() {
     const copy = {
       en: {
         intro: "Straightforward guidance on ordering, delivery, payment, returns, and contacting our team.",
-        trustOrder: "Orders reach our store", trustOrderText: "Checkout details are submitted to RUQO TECH for order processing.",
+        trustOrder: "Orders reach our store", trustOrderText: "Checkout details are submitted to WEEXEY for order processing.",
         trustPayment: "Pay when it arrives", trustPaymentText: "Choose cash or card on delivery. Online card payment is not offered here.",
         trustDelivery: "Delivery costs shown upfront", trustDeliveryText: "Review the delivery fee and order total before confirming.",
         trustReturns: "After-sales policies", trustReturnsText: "Eligible items may be requested for return within 7 days; products include a 2-year manufacturing-defect warranty.",
@@ -2744,10 +3133,18 @@
         contactIntro: "Send a message using the form and it will be submitted to our support team.",
         contactPrivacy: "Your message and contact details are saved so the team can review your request.",
         noContactChannels: "Direct phone and email details are not currently available. Please use the message form.",
+        searchLabel: "Find your answer",
+        searchPlaceholder: "Try delivery, warranty, or payment",
+        searchClear: "Clear search",
+        searchResults: "Results: {count}",
+        noSearchResults: "No matching answers. Try another word, or use the contact form below.",
+        policiesLabel: "The details, made clear.",
+        helpHeading: "Still need a hand?",
+        contactHelp: "For an existing order, keep your order number handy. Never share passwords or payment card details.",
       },
       ar: {
         intro: "إرشادات واضحة لإتمام الطلب والتوصيل والدفع والاسترجاع والتواصل مع فريقنا.",
-        trustOrder: "طلباتك تصل إلى المتجر", trustOrderText: "تُرسل بيانات الطلب عند إتمام الشراء إلى RUQO TECH لمعالجته.",
+        trustOrder: "طلباتك تصل إلى المتجر", trustOrderText: "تُرسل بيانات الطلب عند إتمام الشراء إلى WEEXEY لمعالجته.",
         trustPayment: "ادفع عند الاستلام", trustPaymentText: "اختر الدفع نقداً أو بالبطاقة عند الاستلام. لا نطلب دفعاً إلكترونياً بالبطاقة هنا.",
         trustDelivery: "رسوم التوصيل واضحة", trustDeliveryText: "راجع رسوم التوصيل والإجمالي قبل تأكيد الطلب.",
         trustReturns: "سياسات ما بعد الشراء", trustReturnsText: "يمكن طلب استرجاع المنتجات المؤهلة خلال 7 أيام، وتشمل المنتجات ضماناً لمدة سنتين ضد عيوب التصنيع.",
@@ -2769,10 +3166,18 @@
         contactIntro: "أرسل رسالتك عبر النموذج لتصل إلى فريق الدعم.",
         contactPrivacy: "تُحفظ رسالتك وبيانات التواصل ليتمكن الفريق من مراجعة طلبك.",
         noContactChannels: "بيانات الهاتف والبريد المباشر غير متاحة حالياً. يرجى استخدام نموذج الرسائل.",
+        searchLabel: "ابحث عن إجابتك",
+        searchPlaceholder: "جرّب التوصيل أو الضمان أو الدفع",
+        searchClear: "مسح البحث",
+        searchResults: "نتائج البحث: {count}",
+        noSearchResults: "لم نجد إجابة مطابقة. جرّب كلمة أخرى، أو استخدم نموذج التواصل أدناه.",
+        policiesLabel: "كل التفاصيل، بوضوح.",
+        helpHeading: "تحتاج مساعدة إضافية؟",
+        contactHelp: "إذا كان استفسارك عن طلب قائم، جهّز رقم الطلب. لا تشارك كلمات المرور أو بيانات بطاقات الدفع.",
       },
       fr: {
         intro: "Des informations claires sur les commandes, la livraison, le paiement, les retours et notre équipe.",
-        trustOrder: "Commandes transmises au magasin", trustOrderText: "Les informations de commande sont envoyées à RUQO TECH pour traitement.",
+        trustOrder: "Commandes transmises au magasin", trustOrderText: "Les informations de commande sont envoyées à WEEXEY pour traitement.",
         trustPayment: "Paiement à la livraison", trustPaymentText: "Payez en espèces ou par carte à la livraison. Aucun paiement par carte en ligne n'est proposé ici.",
         trustDelivery: "Frais affichés à l'avance", trustDeliveryText: "Consultez les frais de livraison et le total avant de confirmer.",
         trustReturns: "Politiques après-vente", trustReturnsText: "Le retour des articles éligibles peut être demandé sous 7 jours ; les produits bénéficient d'une garantie de 2 ans contre les défauts de fabrication.",
@@ -2794,10 +3199,18 @@
         contactIntro: "Envoyez un message avec le formulaire ; il sera transmis à notre équipe d'assistance.",
         contactPrivacy: "Votre message et vos coordonnées sont enregistrés afin que l'équipe puisse examiner votre demande.",
         noContactChannels: "Aucun numéro ni e-mail direct n'est disponible pour le moment. Utilisez le formulaire.",
+        searchLabel: "Trouvez votre réponse",
+        searchPlaceholder: "Livraison, garantie ou paiement",
+        searchClear: "Effacer la recherche",
+        searchResults: "Résultats : {count}",
+        noSearchResults: "Aucune réponse correspondante. Essayez un autre mot ou utilisez le formulaire ci-dessous.",
+        policiesLabel: "Les détails, en toute clarté.",
+        helpHeading: "Besoin d'un coup de main ?",
+        contactHelp: "Pour une commande existante, préparez son numéro. Ne partagez jamais de mot de passe ni de données de carte.",
       },
       es: {
         intro: "Información clara sobre pedidos, entrega, pagos, devoluciones y cómo contactar con el equipo.",
-        trustOrder: "El pedido llega a la tienda", trustOrderText: "Los datos del pedido se envían a RUQO TECH para su tramitación.",
+        trustOrder: "El pedido llega a la tienda", trustOrderText: "Los datos del pedido se envían a WEEXEY para su tramitación.",
         trustPayment: "Paga al recibirlo", trustPaymentText: "Elige efectivo o tarjeta al recibir. Aquí no se solicita el pago online con tarjeta.",
         trustDelivery: "Costes visibles antes de confirmar", trustDeliveryText: "Revisa el envío y el total del pedido antes de confirmarlo.",
         trustReturns: "Políticas posventa", trustReturnsText: "Se puede solicitar la devolución de artículos aptos durante 7 días; los productos incluyen 2 años de garantía por defectos de fabricación.",
@@ -2819,10 +3232,18 @@
         contactIntro: "Envía un mensaje mediante el formulario para que llegue al equipo de soporte.",
         contactPrivacy: "El mensaje y tus datos de contacto se guardan para que el equipo pueda revisar tu solicitud.",
         noContactChannels: "Por el momento no hay teléfono ni correo directo disponibles. Usa el formulario.",
+        searchLabel: "Encuentra tu respuesta",
+        searchPlaceholder: "Entrega, garantía o pago",
+        searchClear: "Borrar búsqueda",
+        searchResults: "Resultados: {count}",
+        noSearchResults: "No hay respuestas coincidentes. Prueba otra palabra o usa el formulario de abajo.",
+        policiesLabel: "Los detalles, con claridad.",
+        helpHeading: "¿Necesitas más ayuda?",
+        contactHelp: "Si consultas un pedido, ten a mano su número. Nunca compartas contraseñas ni datos de tarjetas.",
       },
       zh: {
         intro: "了解下单、配送、付款、退货政策，以及如何联系店铺团队。",
-        trustOrder: "订单提交至店铺", trustOrderText: "结账信息会发送至 RUQO TECH 以处理订单。",
+        trustOrder: "订单提交至店铺", trustOrderText: "结账信息会发送至 WEEXEY 以处理订单。",
         trustPayment: "收货时付款", trustPaymentText: "可选择现金或配送时刷卡。本店不提供在线银行卡付款。",
         trustDelivery: "配送费用提前显示", trustDeliveryText: "确认前请查看配送费用和订单总额。",
         trustReturns: "售后政策", trustReturnsText: "符合条件的商品可在 7 天内申请退货；商品享有两年制造缺陷保修。",
@@ -2844,14 +3265,108 @@
         contactIntro: "通过表单发送消息，内容会提交给客服团队。",
         contactPrivacy: "消息和联系方式会被保存，以便团队查看你的请求。",
         noContactChannels: "目前没有可用的直接电话或邮箱，请使用消息表单。",
+        searchLabel: "查找答案",
+        searchPlaceholder: "试试配送、保修或付款",
+        searchClear: "清除搜索",
+        searchResults: "搜索结果：{count}",
+        noSearchResults: "没有找到相关答案。请尝试其他关键词，或使用下方联系表单。",
+        policiesLabel: "每个细节，清晰明了。",
+        helpHeading: "还需要帮助？",
+        contactHelp: "咨询已有订单时，请准备好订单号。切勿分享密码或银行卡信息。",
       },
     };
     return copy[language] || copy.en;
   }
 
+  function setupSupportSearch(copy) {
+    const form = root.querySelector("[data-support-search]");
+    const input = form.querySelector("input");
+    const clear = form.querySelector("[data-support-search-clear]");
+    const results = root.querySelector("#support-search-results");
+    const list = results.querySelector("ul");
+    const status = root.querySelector("[data-support-search-status]");
+    const entries = Array.from(root.querySelectorAll("[data-support-searchable]"), (element) => {
+      element.tabIndex = -1;
+      const title = element.querySelector("summary, h2").textContent.trim();
+      const body = Array.from(element.querySelectorAll("p"), (paragraph) => paragraph.textContent.trim()).join(" ");
+      return {
+        element,
+        title,
+        body,
+        kind: element.dataset.supportSearchable === "faq" ? t.faq : copy.policiesLabel,
+        searchTitle: store.normalizeSearchText(title),
+        searchText: store.normalizeSearchText(`${title} ${body}`),
+      };
+    });
+
+    const renderResults = () => {
+      const terms = store.normalizeSearchText(input.value).split(/\s+/).filter(Boolean);
+      list.replaceChildren();
+      clear.hidden = !input.value;
+      results.hidden = !terms.length;
+      status.textContent = "";
+      if (!terms.length) return;
+
+      const matches = entries
+        .filter((entry) => terms.every((term) => entry.searchText.includes(term)))
+        .sort((a, b) =>
+          terms.filter((term) => b.searchTitle.includes(term)).length -
+          terms.filter((term) => a.searchTitle.includes(term)).length,
+        );
+      status.textContent = matches.length
+        ? copy.searchResults.replace("{count}", new Intl.NumberFormat(language).format(matches.length))
+        : copy.noSearchResults;
+      results.hidden = !matches.length;
+
+      for (const entry of matches) {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = `#${entry.element.id}`;
+        const kind = document.createElement("small");
+        kind.textContent = entry.kind;
+        const title = document.createElement("strong");
+        title.textContent = entry.title;
+        const preview = document.createElement("span");
+        preview.textContent = entry.body;
+        link.append(kind, title, preview);
+        link.addEventListener("click", () => {
+          if (entry.element instanceof HTMLDetailsElement) entry.element.open = true;
+          entry.element.focus({ preventScroll: true });
+        });
+        item.append(link);
+        list.append(item);
+      }
+    };
+
+    const clearSearch = () => {
+      input.value = "";
+      renderResults();
+      input.focus();
+    };
+    input.addEventListener("input", renderResults);
+    input.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      clearSearch();
+    });
+    clear.addEventListener("click", clearSearch);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      renderResults();
+      list.querySelector("a")?.focus();
+    });
+
+    const linkedAnswer = entries.find((entry) => `#${entry.element.id}` === location.hash);
+    if (linkedAnswer?.element instanceof HTMLDetailsElement) linkedAnswer.element.open = true;
+  }
+
   function renderSupport() {
     const copy = getSupportCopy();
     const settings = window.RUQO_STORE_SETTINGS || {};
+    const storeName = settings.store_name || "WEEXEY";
+    const brandedText = (text) => escapeHtml(text.replaceAll("WEEXEY", storeName));
+    document.querySelector('meta[name="description"]').content =
+      `${storeName} — ${copy.intro}`;
     const phone = String(settings.support_phone || "").trim();
     const phoneHref = phone.replace(/[^+\d]/g, "");
     const email = String(settings.support_email || "").trim();
@@ -2864,20 +3379,45 @@
       <div class="support-page">
         <section class="support-hero">
           <div class="support-hero-copy">
-            <span class="commerce-eyebrow">${t.eyebrow}</span>
+            <span class="commerce-eyebrow"><i data-lucide="sparkles" aria-hidden="true"></i>${brandedText(t.eyebrow)}</span>
             <h1>${t.helpTitle}</h1>
             <p>${copy.intro}</p>
+            <div class="support-search-block">
+              <form role="search" aria-label="${copy.searchLabel}" data-support-search>
+                <label class="support-search-label" for="support-search-input">${copy.searchLabel}</label>
+                <div class="support-search-field">
+                  <i data-lucide="search" aria-hidden="true"></i>
+                  <input id="support-search-input" type="search" maxlength="160" autocomplete="off" placeholder="${copy.searchPlaceholder}" aria-controls="support-search-results" />
+                  <button type="button" data-support-search-clear aria-label="${copy.searchClear}" hidden><i data-lucide="x" aria-hidden="true"></i></button>
+                  <button class="support-search-submit" type="submit" aria-label="${copy.searchLabel}"><i data-lucide="arrow-right" aria-hidden="true"></i></button>
+                </div>
+              </form>
+              <p class="support-search-status" data-support-search-status role="status" aria-live="polite"></p>
+              <div class="support-search-results" id="support-search-results" hidden><ul></ul></div>
+            </div>
             <div class="support-hero-actions">
-              <a class="commerce-button" href="#contact"><i data-lucide="message-circle" aria-hidden="true"></i>${t.contactTitle}</a>
+              <a class="commerce-button" href="#contact"><i data-lucide="message-circle" aria-hidden="true"></i>${brandedText(t.contactTitle)}</a>
               <a class="support-text-link" href="#faq">${t.faq}<i data-lucide="arrow-down" aria-hidden="true"></i></a>
             </div>
           </div>
           <aside class="support-hero-note">
-            <span class="support-hero-icon"><i data-lucide="badge-check" aria-hidden="true"></i></span>
+            <div class="support-hero-art" aria-hidden="true">
+              <span class="support-art-satellite"><i data-lucide="truck"></i></span>
+              <span class="support-hero-icon"><i data-lucide="headset"></i></span>
+              <span class="support-art-satellite"><i data-lucide="package-check"></i></span>
+              <span class="support-art-satellite"><i data-lucide="message-circle"></i></span>
+            </div>
             <strong>${copy.trustOrder}</strong>
-            <p>${copy.trustOrderText}</p>
+            <p>${brandedText(copy.trustOrderText)}</p>
           </aside>
         </section>
+
+        <nav class="support-quick-links" aria-label="${t.support}">
+          <a href="#account-help"><span class="support-policy-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span><span>${t.accountTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
+          <a href="#delivery"><span class="support-policy-icon"><i data-lucide="truck" aria-hidden="true"></i></span><span>${t.deliveryTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
+          <a href="#payment"><span class="support-policy-icon"><i data-lucide="wallet-cards" aria-hidden="true"></i></span><span>${t.paymentsTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
+          <a href="#returns"><span class="support-policy-icon"><i data-lucide="package-check" aria-hidden="true"></i></span><span>${t.returnsTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
+        </nav>
 
         <section class="support-trust-grid" aria-label="${t.support}">
           <article class="support-trust-item"><i data-lucide="banknote" aria-hidden="true"></i><div><h2>${copy.trustPayment}</h2><p>${copy.trustPaymentText}</p></div></article>
@@ -2886,66 +3426,82 @@
         </section>
 
         <nav class="support-anchor-nav" aria-label="${t.helpTitle}">
-          <a href="#ordering">${copy.flowTitle}</a><a href="#faq">${t.faq}</a><a href="#delivery">${t.deliveryTitle}</a><a href="#payment">${t.paymentsTitle}</a><a href="#returns">${t.returnsTitle}</a><a href="#contact">${t.contactTitle}</a><a href="#terms">${t.terms}</a><a href="#privacy">${t.privacy}</a>
+          <a href="#ordering">${copy.flowTitle}</a><a href="#faq">${t.faq}</a><a href="#delivery">${t.deliveryTitle}</a><a href="#payment">${t.paymentsTitle}</a><a href="#returns">${t.returnsTitle}</a><a href="#contact">${brandedText(t.contactTitle)}</a><a href="#terms">${t.terms}</a><a href="#privacy">${t.privacy}</a>
         </nav>
 
         <section class="support-section support-flow" id="ordering">
           <div class="support-section-heading"><span class="commerce-eyebrow">${t.checkout}</span><h2>${copy.flowTitle}</h2></div>
           <div class="support-flow-grid">
-            <article><span class="support-step-number">01</span><h3>${copy.flowOne}</h3><p>${copy.flowOneText}</p></article>
-            <article><span class="support-step-number">02</span><h3>${copy.flowTwo}</h3><p>${copy.flowTwoText}</p></article>
-            <article><span class="support-step-number">03</span><h3>${copy.flowThree}</h3><p>${copy.flowThreeText}</p></article>
+            <article><div class="support-step-top"><span class="support-step-number">01</span><i data-lucide="shopping-bag" aria-hidden="true"></i></div><h3>${copy.flowOne}</h3><p>${copy.flowOneText}</p></article>
+            <article><div class="support-step-top"><span class="support-step-number">02</span><i data-lucide="clipboard-check" aria-hidden="true"></i></div><h3>${copy.flowTwo}</h3><p>${copy.flowTwoText}</p></article>
+            <article><div class="support-step-top"><span class="support-step-number">03</span><i data-lucide="banknote" aria-hidden="true"></i></div><h3>${copy.flowThree}</h3><p>${copy.flowThreeText}</p></article>
           </div>
         </section>
 
-        <section class="support-section" id="faq">
+        <section class="support-section support-faq-layout" id="faq">
+          <div class="support-faq-main">
           <div class="support-section-heading"><span class="commerce-eyebrow">${t.support}</span><h2>${t.faq}</h2></div>
           <div class="faq-list">
-            <details><summary>${t.faqDelivery}</summary><p>${copy.faqDeliveryAnswer}</p></details>
-            <details><summary>${t.paymentsTitle}</summary><p>${copy.faqPaymentAnswer}</p></details>
-            <details><summary>${t.faqReturn}</summary><p>${copy.faqReturnAnswer}</p></details>
-            <details><summary>${t.faqWarranty}</summary><p>${copy.faqWarrantyAnswer}</p></details>
-            <details><summary>${t.accountTitle}</summary><p>${copy.faqAccountAnswer}</p></details>
-            <details><summary>${t.contactTitle}</summary><p>${copy.faqContactAnswer}</p></details>
+            <details id="faq-delivery" data-support-searchable="faq"><summary>${t.faqDelivery}</summary><p>${copy.faqDeliveryAnswer}</p></details>
+            <details id="faq-payment" data-support-searchable="faq"><summary>${t.paymentsTitle}</summary><p>${copy.faqPaymentAnswer}</p></details>
+            <details id="faq-return" data-support-searchable="faq"><summary>${t.faqReturn}</summary><p>${copy.faqReturnAnswer}</p></details>
+            <details id="faq-warranty" data-support-searchable="faq"><summary>${t.faqWarranty}</summary><p>${copy.faqWarrantyAnswer}</p></details>
+            <details id="faq-account" data-support-searchable="faq"><summary>${t.accountTitle}</summary><p>${copy.faqAccountAnswer}</p></details>
+            <details id="faq-contact" data-support-searchable="faq"><summary>${brandedText(t.contactTitle)}</summary><p>${copy.faqContactAnswer}</p></details>
           </div>
+          </div>
+          <aside class="support-faq-aside">
+            <span class="support-policy-icon"><i data-lucide="messages-square" aria-hidden="true"></i></span>
+            <h3>${copy.helpHeading}</h3>
+            <p>${copy.contactIntro}</p>
+            <a class="commerce-button" href="#contact">${brandedText(t.contactTitle)}<i data-lucide="arrow-down" aria-hidden="true"></i></a>
+          </aside>
         </section>
 
-        <section class="support-section support-policy-grid">
-          <article id="delivery"><span class="support-policy-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span><h2>${t.deliveryTitle}</h2><p>${shippingNote()}</p><p>${copy.deliveryBody}</p></article>
-          <article id="payment"><span class="support-policy-icon"><i data-lucide="wallet-cards" aria-hidden="true"></i></span><h2>${t.paymentsTitle}</h2><p>${copy.paymentBody}</p></article>
-          <article id="returns"><span class="support-policy-icon"><i data-lucide="package-check" aria-hidden="true"></i></span><h2>${t.returnsTitle}</h2><p>${copy.returnsBody}</p></article>
-          <article id="account-help"><span class="support-policy-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span><h2>${t.accountTitle}</h2><p>${copy.accountBody}</p></article>
+        <section class="support-section support-policies">
+          <div class="support-section-heading"><span class="commerce-eyebrow">${t.support}</span><h2>${copy.policiesLabel}</h2></div>
+          <div class="support-policy-grid">
+          <article id="delivery" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span><h2>${t.deliveryTitle}</h2><p>${shippingNote()}</p><p>${copy.deliveryBody}</p></article>
+          <article id="payment" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="wallet-cards" aria-hidden="true"></i></span><h2>${t.paymentsTitle}</h2><p>${copy.paymentBody}</p></article>
+          <article id="returns" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="package-check" aria-hidden="true"></i></span><h2>${t.returnsTitle}</h2><p>${copy.returnsBody}</p></article>
+          <article id="account-help" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span><h2>${t.accountTitle}</h2><p>${copy.accountBody}</p></article>
+          </div>
         </section>
 
         <section class="support-section contact-layout" id="contact">
           <div class="support-contact-form">
-            <span class="commerce-eyebrow">${t.support}</span><h2>${t.contactTitle}</h2><p>${copy.contactIntro}</p>
+            <span class="commerce-eyebrow">${t.support}</span><h2>${brandedText(t.contactTitle)}</h2><p>${copy.contactIntro}</p>
             <form class="commerce-form" data-contact-form>
               <label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" minlength="2" maxlength="120" required /></label>
               <label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" maxlength="254" required /></label>
-              <label class="commerce-field">${t.message}<textarea name="message" minlength="8" maxlength="3000" required></textarea></label>
-              <p class="support-form-note">${copy.contactPrivacy}</p>
-              <div class="form-feedback" data-contact-feedback aria-live="polite"></div>
-              <button class="commerce-button" type="submit"><i data-lucide="send" aria-hidden="true"></i>${t.sendMessage}</button>
+              <label class="commerce-field support-form-wide">${t.message}<textarea name="message" minlength="8" maxlength="3000" required></textarea></label>
+              <p class="support-form-note support-form-wide">${copy.contactPrivacy}</p>
+              <div class="form-feedback support-form-wide" data-contact-feedback aria-live="polite"></div>
+              <button class="commerce-button support-form-wide" type="submit"><i data-lucide="send" aria-hidden="true"></i>${t.sendMessage}</button>
             </form>
           </div>
           <aside class="support-contact-aside">
             <span class="support-policy-icon"><i data-lucide="headset" aria-hidden="true"></i></span>
             <h3>${t.support}</h3>
-            <p>${copy.contactPrivacy}</p>
+            <p>${copy.contactHelp}</p>
             <div class="contact-details">${contacts || `<p>${copy.noContactChannels}</p>`}</div>
           </aside>
         </section>
 
-        <section class="support-section support-legal" id="terms"><span class="commerce-eyebrow">${t.terms}</span><h2>${t.termsTitle}</h2><p>${copy.termsBody}</p></section>
-        <section class="support-section support-legal" id="privacy"><span class="commerce-eyebrow">${t.privacy}</span><h2>${t.privacyTitle}</h2><p>${copy.privacyBody}</p></section>
+        <section class="support-section support-legal" id="terms" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="file-text" aria-hidden="true"></i></span><span class="commerce-eyebrow">${t.terms}</span><h2>${t.termsTitle}</h2><p>${copy.termsBody}</p></section>
+        <section class="support-section support-legal" id="privacy" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="shield-check" aria-hidden="true"></i></span><span class="commerce-eyebrow">${t.privacy}</span><h2>${t.privacyTitle}</h2><p>${copy.privacyBody}</p></section>
       </div>`;
+    setupSupportSearch(copy);
     window.lucide?.createIcons();
   }
 
   function renderAbout() {
     const isArabic = language === "ar";
-    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
+    const brandedText = (text) => escapeHtml(text.replaceAll("WEEXEY", storeName));
+    const brandInitial = escapeHtml(Array.from(storeName)[0] || "W");
+    document.querySelector('meta[name="description"]').content =
+      t.aboutIntro.replaceAll("WEEXEY", storeName);
     const serviceCards = isArabic
       ? [
           ["sparkles", "تقنية تستحق الاختيار", "أجهزة وعلامات ننتقيها بعناية لتناسب احتياجاتك اليومية."],
@@ -2977,9 +3533,9 @@
     root.innerHTML = `<div class="about-page about-premium">
       <section class="about-premium-hero">
         <div class="about-premium-copy">
-          <span class="about-premium-kicker"><i></i>${storeName} <span>—</span> ${isArabic ? "تقنية تستحقها" : "A more considered choice"}</span>
+          <span class="about-premium-kicker"><i></i>${escapeHtml(storeName)} <span>—</span> ${isArabic ? "تقنية تستحقها" : "A more considered choice"}</span>
           <h1>${isArabic ? "تقنيةٌ تُشبهك.<br><span>وتجربةٌ تفوق توقّعك.</span>" : "Technology,<br><span>with more thought.</span>"}</h1>
-          <p>${t.aboutIntro}</p>
+          <p>${brandedText(t.aboutIntro)}</p>
           <div class="about-premium-actions">
             <a class="about-premium-button" href="/products.html">${t.browse} ${icon("arrow-up-left")}</a>
             <a class="about-premium-link" href="#about-story">${isArabic ? "اكتشف الحكاية" : "Discover our story"} ${icon("arrow-down")}</a>
@@ -2995,7 +3551,7 @@
           </div>
           <div class="about-premium-float about-premium-float-top">${icon("sparkles")}<span>${isArabic ? "مختارة بعناية" : "Thoughtfully chosen"}</span></div>
           <div class="about-premium-float about-premium-float-bottom">${icon("shield-check")}<span><strong>${isArabic ? "راحة بال" : "Peace of mind"}</strong><small>${isArabic ? "تستمر بعد الشراء" : "beyond checkout"}</small></span></div>
-          <div class="about-premium-stage-index">W / 01</div>
+          <div class="about-premium-stage-index">${brandInitial} / 01</div>
         </div>
         <a class="about-premium-scroll" href="#about-story" aria-label="${isArabic ? "انتقل إلى قصتنا" : "Scroll to our story"}"><span></span></a>
       </section>
@@ -3015,7 +3571,7 @@
         <div class="about-story-copy about-premium-story-copy">
           <span class="about-premium-section-index">01 <i></i> ${isArabic ? "حكايتنا" : "OUR STORY"}</span>
           <h2>${t.aboutStoryTitle}</h2>
-          <p>${t.aboutStory}</p>
+          <p>${brandedText(t.aboutStory)}</p>
           <div class="about-premium-purpose">
             <article><span>${isArabic ? "رسالتنا" : "OUR MISSION"}</span><p>${isArabic ? "أن نجعل اختيار التقنية المناسبة أسهل، بتجربة واضحة وخدمة يمكنك الاعتماد عليها." : "Make choosing the right technology easier through a clear experience and dependable service."}</p></article>
             <article><span>${isArabic ? "رؤيتنا" : "OUR VISION"}</span><p>${isArabic ? "أن تكون كل خطوة في رحلتك مع التقنية أكثر بساطة واطمئنانًا." : "Make every step of your relationship with technology feel simpler and more reassuring."}</p></article>
@@ -3025,15 +3581,23 @@
         <div class="about-story-image about-premium-story-image">
           <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1300&q=85" alt="${isArabic ? "مجموعة من الأجهزة التقنية العصرية" : "A collection of modern technology devices"}" loading="lazy" />
           <span>${isArabic ? "التفاصيل تصنع الفرق" : "The details make the difference"}</span>
-          <div class="about-premium-image-label">${storeName}<small>${isArabic ? "منذ البداية، نهتم بالتفاصيل" : "Thoughtful, from the start"}</small></div>
+          <div class="about-premium-image-label">${escapeHtml(storeName)}<small>${isArabic ? "منذ البداية، نهتم بالتفاصيل" : "Thoughtful, from the start"}</small></div>
         </div>
       </section>
 
       <section class="about-values about-premium-values about-reveal">
+        <div class="about-values-intro">
         <div class="about-premium-section-heading">
           <span class="commerce-eyebrow">${isArabic ? "كيف نهتم بالتفاصيل" : "THE WEEXEY DIFFERENCE"}</span>
           <h2>${isArabic ? "الأفضل ليس جهازًا فقط.<br>بل كل ما حوله." : "Great technology deserves<br>a great experience."}</h2>
           <p>${isArabic ? "نؤمن أن التجربة المميزة تبدأ قبل وصول المنتج، وتستمر بعده." : "The right experience starts before your order arrives—and stays with you after."}</p>
+        </div>
+        <div class="about-values-art about-reveal" data-about-values-art>
+          <picture>
+            <source media="(min-width: 901px)" srcset="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&amp;fit=crop&amp;w=1100&amp;h=825&amp;q=85" />
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3C/svg%3E" width="1100" height="825" loading="lazy" decoding="async" alt="${isArabic ? "حاسوب محمول وأجهزة تقنية على مكتب عصري" : "A laptop and technology on a modern workspace"}" />
+          </picture>
+        </div>
         </div>
         <div class="about-premium-service-grid">${serviceCards.map(([glyph, title, description], index) => `<article class="about-service-card about-premium-service-card about-reveal"><span class="about-service-icon">${icon(glyph)}</span><span class="about-service-index">0${index + 1}</span><h3>${title}</h3><p>${description}</p><span class="about-premium-card-line"></span></article>`).join("")}</div>
       </section>
@@ -3052,7 +3616,7 @@
           <h2>${isArabic ? "نحن هنا<br>لنجعلها أسهل." : "Here to make<br>it feel effortless."}</h2>
           <p>${isArabic ? "من مساعدتك في الاختيار إلى الإجابة عن أسئلتك بعد وصول طلبك، نعمل لنقدم لك دعمًا واضحًا وإنسانيًا في كل خطوة." : "From helping you choose to answering questions after your order arrives, we’re here with thoughtful support at every step."}</p>
           <ul>${t.aboutValues.map((value) => `<li>${icon("check")}<span>${value}</span></li>`).join("")}</ul>
-          <a class="about-premium-link" href="/support.html#contact">${t.contactTitle} ${icon("arrow-up-left")}</a>
+          <a class="about-premium-link" href="/support.html#contact">${brandedText(t.contactTitle)} ${icon("arrow-up-left")}</a>
         </div>
       </section>
 
@@ -3067,14 +3631,15 @@
 
       <section class="about-contact about-premium-contact about-reveal">
         <div><span class="commerce-eyebrow">${isArabic ? "ابدأ من هنا" : "YOUR NEXT CHAPTER"}</span><h2>${isArabic ? "شيء رائع<br>ينتظرك." : "Something great<br>is waiting."}</h2><p>${isArabic ? "استكشف مجموعتنا، أو تواصل معنا إذا احتجت إلى المساعدة." : "Explore our collection, or talk to us if you need a hand."}</p></div>
-        <div class="about-contact-actions"><a class="about-premium-button" href="/products.html">${t.browse} ${icon("arrow-up-left")}</a><a class="about-premium-link" href="/support.html#contact">${t.contactTitle} ${icon("arrow-up-left")}</a></div>
-        <span class="about-premium-contact-mark" aria-hidden="true">W</span>
+        <div class="about-contact-actions"><a class="about-premium-button" href="/products.html">${t.browse} ${icon("arrow-up-left")}</a><a class="about-premium-link" href="/support.html#contact">${brandedText(t.contactTitle)} ${icon("arrow-up-left")}</a></div>
+        <span class="about-premium-contact-mark" aria-hidden="true">${brandInitial}</span>
       </section>
     </div>`;
 
     const revealItems = root.querySelectorAll(".about-reveal");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!("IntersectionObserver" in window) || prefersReducedMotion) {
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    if (!("IntersectionObserver" in window) || prefersReducedMotion || coarsePointer) {
       revealItems.forEach((element) => element.classList.add("is-in-view"));
     } else {
       aboutRevealObserver = new IntersectionObserver(
@@ -3091,19 +3656,20 @@
       revealItems.forEach((element) => aboutRevealObserver.observe(element));
     }
 
-    const stage = root.querySelector("[data-about-stage]");
-    if (stage && !prefersReducedMotion) {
-      stage.addEventListener("pointermove", (event) => {
-        if (event.pointerType === "touch") return;
-        const bounds = stage.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-        stage.style.setProperty("--pointer-x", x.toFixed(3));
-        stage.style.setProperty("--pointer-y", y.toFixed(3));
-      });
-      stage.addEventListener("pointerleave", () => {
-        stage.style.setProperty("--pointer-x", "0");
-        stage.style.setProperty("--pointer-y", "0");
+    if (!prefersReducedMotion && !coarsePointer) {
+      root.querySelectorAll("[data-about-stage], [data-about-values-art]").forEach((stage) => {
+        stage.addEventListener("pointermove", (event) => {
+          if (event.pointerType === "touch") return;
+          const bounds = stage.getBoundingClientRect();
+          const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+          const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+          stage.style.setProperty("--pointer-x", x.toFixed(3));
+          stage.style.setProperty("--pointer-y", y.toFixed(3));
+        });
+        stage.addEventListener("pointerleave", () => {
+          stage.style.setProperty("--pointer-x", "0");
+          stage.style.setProperty("--pointer-y", "0");
+        });
       });
     }
   }
@@ -3118,6 +3684,7 @@
     else if (page === "cart") renderCart();
     else if (page === "checkout") renderCheckout();
     else if (page === "account") renderAccount();
+    else if (page === "categories") renderCategories();
     else if (page === "about") {
       renderAbout();
       root.querySelector(".about-story h2").textContent = t.aboutStoryTitle;
@@ -3159,11 +3726,12 @@
       checkout: { en: "Checkout", fr: "Commande", es: "Finalizar compra", zh: "结账", ar: "إتمام الطلب" },
       account: { en: "Account & settings", fr: "Compte et préférences", es: "Cuenta y preferencias", zh: "账户与偏好", ar: "الحساب والتفضيلات" },
       support: { en: "Help & policies", fr: "Aide et politiques", es: "Ayuda y políticas", zh: "帮助与政策", ar: "المساعدة والسياسات" },
-      about: { en: "About RUQO TECH", fr: "À propos de RUQO TECH", es: "Sobre RUQO TECH", zh: "关于 RUQO TECH", ar: "من نحن" },
+      categories: { en: "Product catalogs", fr: "Catalogues produits", es: "Catálogos de productos", zh: "产品目录", ar: "كتالوجات المنتجات" },
+      about: { en: "About WEEXEY", fr: "À propos de WEEXEY", es: "Sobre WEEXEY", zh: "关于 WEEXEY", ar: "من نحن" },
     };
     if (pageTitles[page]) {
-      const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
-      document.title = `${pageTitles[page][language].replace("RUQO TECH", storeName)} | ${storeName}`;
+      const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
+      document.title = `${pageTitles[page][language].replace("WEEXEY", storeName)} | ${storeName}`;
     }
     window.lucide?.createIcons();
     if (location.hash) {
@@ -3521,7 +4089,7 @@
     if (page === "product") {
       const product = productById(new URLSearchParams(location.search).get("id"));
       if (product) {
-        document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH"}`;
+        document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY"}`;
       }
       renderShell();
       setupProductSideMenu(document.querySelector(".commerce-menu--product-page"));

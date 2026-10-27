@@ -3596,7 +3596,7 @@ html[data-theme="dark"] .about-review-author small {
   transform: none;
   pointer-events: none;
 }
-@media (hover: hover) and (pointer: fine) and (min-width: 800px) {
+@media (min-width: 800px) {
   .product-detail-gallery.is-zoom-active {
     position: relative;
     z-index: 20;

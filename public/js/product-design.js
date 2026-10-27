@@ -34,6 +34,8 @@
     });
   }
 
+  if (window.matchMedia("(pointer: coarse)").matches) return;
+
   const progress = document.createElement("div");
   progress.className = "product-design-progress";
   progress.setAttribute("aria-hidden", "true");

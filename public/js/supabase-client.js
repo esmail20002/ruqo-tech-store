@@ -26,8 +26,8 @@
     const displayLogoUrl = document.documentElement.dataset.theme === "dark"
       ? defaultLogoUrls.dark
       : logoUrl || defaultLogoUrls.light;
-    const storeName = settings.store_name || "RUQO TECH";
-    document.title = document.title.replace("RUQO TECH", storeName);
+    const storeName = settings.store_name || "WEEXEY";
+    document.title = document.title.replace(/\b(?:RUQO|WEEXEY)(?:\s+TECH)?\b/gi, () => storeName);
     const brandColor = /^#[0-9a-f]{6}$/i.test(settings.brand_color || "")
       ? settings.brand_color
       : null;
@@ -74,11 +74,11 @@
     if (!footerRoot) return;
     const footerSettings = window.RUQO_STORE_SETTINGS?.footer || {};
     const localizedText = footerSettings.translations?.[language] || {};
-    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
     footerRoot.querySelectorAll("[data-footer-label]").forEach((node) => {
       const text = localizedText[node.dataset.footerLabel];
       if (typeof text === "string" && text.trim()) {
-        node.textContent = text.replaceAll("RUQO TECH", storeName);
+        node.textContent = text.replace(/\b(?:RUQO|WEEXEY)(?:\s+TECH)?\b/gi, () => storeName);
       }
     });
     footerRoot.querySelectorAll("[data-footer-link]").forEach((node) => {
@@ -112,6 +112,9 @@
     .then(({ data, error }) => {
       if (error) throw error;
       const settings = data?.setting_value || {};
+      if (/^\s*RUQO(?:\s+TECH)?\s*$/i.test(settings.store_name || "")) {
+        settings.store_name = "WEEXEY";
+      }
       window.RUQO_STORE_SETTINGS = settings;
       window.RUQO_BRAND_LOGO_URL = settings.logo_path
         ? client.storage.from("store-assets").getPublicUrl(settings.logo_path).data.publicUrl

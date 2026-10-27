@@ -47,7 +47,7 @@
       "footer.policy1": "Terms",
       "footer.policy2": "Returns",
       "footer.policy3": "Privacy",
-      "footer.rights": "© 2026 RUQO TECH. All rights reserved.",
+      "footer.rights": "© 2026 WEEXEY. All rights reserved.",
     },
     ar: {
       "footer.copy": "متجر إلكترونيات فاخر يجمع بين الأداء، التصميم، والثقة في كل طلب.",
@@ -66,7 +66,7 @@
       "footer.policy1": "الشروط",
       "footer.policy2": "الاسترجاع",
       "footer.policy3": "الخصوصية",
-      "footer.rights": "© 2026 RUQO TECH. جميع الحقوق محفوظة.",
+      "footer.rights": "© 2026 WEEXEY. جميع الحقوق محفوظة.",
     },
   };
   const footerLinkFields = [
@@ -124,6 +124,20 @@
   const loginScreen = $("#login-screen");
   const adminApp = $("#admin-app");
   const loginForm = $("#login-form");
+  const loginPassword = $("#login-password");
+  const loginPasswordToggle = $("#login-password-toggle");
+  function setLoginPasswordVisible(visible) {
+    loginPassword.type = visible ? "text" : "password";
+    loginPasswordToggle.setAttribute("aria-label", visible ? "Hide password" : "Show password");
+    loginPasswordToggle.setAttribute("aria-pressed", String(visible));
+    loginPasswordToggle.innerHTML = `<i data-lucide="${visible ? "eye-off" : "eye"}" aria-hidden="true"></i>`;
+    window.lucide?.createIcons();
+  }
+  loginPasswordToggle.addEventListener("click", () => {
+    setLoginPasswordVisible(loginPassword.type === "password");
+  });
+  loginForm.addEventListener("reset", () => setLoginPasswordVisible(false));
+  loginForm.addEventListener("submit", () => setLoginPasswordVisible(false));
   const loginError = $("#login-error");
   const localDevLoginNote = $("#local-dev-login-note");
   const localDevNotice = $("#local-dev-notice");
@@ -324,7 +338,7 @@
       currentRoles = roles;
       loginScreen.hidden = true;
       adminApp.hidden = false;
-      $("#admin-user").textContent = user.email || "RUQO staff";
+      $("#admin-user").textContent = user.email || "WEEXEY staff";
       $(".connection-indicator").title = `Authenticated as ${roles.join(", ")}`;
       setView("overview");
       await loadAdminData();
@@ -605,7 +619,7 @@
     contactMessages = [{ id: "local-message-1", customer_name: "Demo Customer", customer_email: "customer@example.com", message: "Sample support message for local preview.", language_code: "en", status: "new", created_at: new Date().toISOString() }];
     newsletterSubscribers = [{ email: "subscriber@example.com", is_active: true, subscribed_at: new Date().toISOString() }];
     brandSettings = {
-      store_name: "RUQO TECH",
+      store_name: "WEEXEY",
       logo_path: null,
       support_email: "hello@example.com",
       support_phone: "+966500000000",
@@ -710,7 +724,7 @@
       .maybeSingle();
     if (error) throw error;
     brandSettings = data?.setting_value || {
-      store_name: "RUQO TECH",
+      store_name: "WEEXEY",
       logo_path: null,
       support_email: "",
       support_phone: "",
@@ -728,7 +742,7 @@
     const adminLogoUrl = getAdminBrandLogoUrl(brandSettings.logo_path);
     document.querySelectorAll("[data-admin-brand-logo]").forEach((image) => {
       image.src = adminLogoUrl;
-      image.alt = brandSettings.store_name || "RUQO TECH";
+      image.alt = brandSettings.store_name || "WEEXEY";
     });
     brandSettingsForm.dataset.resetLogo = "false";
     const savedFooter = brandSettings.footer || {};
@@ -3062,7 +3076,7 @@
   }
 
   function brandFor(slug, formData) {
-    return String(formData.get("brand") || products.find((item) => item.slug === slug)?.brand || "RUQO TECH").trim();
+    return String(formData.get("brand") || products.find((item) => item.slug === slug)?.brand || "WEEXEY").trim();
   }
 
   async function deleteProduct() {
@@ -3100,7 +3114,7 @@
         password: enteredPassword,
       });
       submit.disabled = false;
-      submit.innerHTML = 'Sign in <i data-lucide="arrow-up-right" aria-hidden="true"></i>';
+      submit.innerHTML = 'Sign in <i data-lucide="arrow-right" aria-hidden="true"></i>';
       window.lucide?.createIcons();
       if (error) {
         showLoginError("Sign-in failed. Check your credentials and try again.");

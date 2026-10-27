@@ -13,7 +13,7 @@ const copy = {
     cartLabel: "Cart, 2 items",
     home: "Home",
     allProducts: "All products",
-    eyebrow: "The RUQO TECH collection",
+    eyebrow: "The WEEXEY collection",
     title: "Find your next favorite.",
     intro: "Considered technology, chosen for the way you live and work.",
     delivery: "Fast delivery",
@@ -74,7 +74,7 @@ const copy = {
     adCardPerk1: "Ultra-fast SSD & Unified RAM",
     adCardPerk2: "2-Year Official Warranty",
     adCardCta: "Explore Laptops →",
-    rights: "© 2026 RUQO TECH. All rights reserved.",
+    rights: "© 2026 WEEXEY. All rights reserved.",
   },
   ar: {
     shipping: "توصيل مجاني فوق 299 ر.س",
@@ -90,7 +90,7 @@ const copy = {
     cartLabel: "السلة، عنصران",
     home: "الرئيسية",
     allProducts: "كل المنتجات",
-    eyebrow: "مجموعة RUQO TECH",
+    eyebrow: "مجموعة WEEXEY",
     title: "اعثر على جهازك القادم.",
     intro: "تقنيات مختارة بعناية لتناسب أسلوب حياتك وعملك.",
     delivery: "توصيل سريع",
@@ -151,7 +151,7 @@ const copy = {
     adCardPerk1: "معالجات فائقة للألعاب والتصميم",
     adCardPerk2: "ضمان رسمي سنتين وشحن سريع",
     adCardCta: "استكشف اللابتوبات ←",
-    rights: "© 2026 RUQO TECH. جميع الحقوق محفوظة.",
+    rights: "© 2026 WEEXEY. جميع الحقوق محفوظة.",
   },
   fr: {
     shipping: "Livraison offerte dès 299 SAR",
@@ -167,7 +167,7 @@ const copy = {
     cartLabel: "Panier, 2 articles",
     home: "Accueil",
     allProducts: "Tous les produits",
-    eyebrow: "La collection RUQO TECH",
+    eyebrow: "La collection WEEXEY",
     title: "Trouvez votre prochain coup de cœur.",
     intro: "Des technologies choisies avec soin pour votre quotidien et votre travail.",
     delivery: "Livraison rapide",
@@ -228,7 +228,7 @@ const copy = {
     adCardPerk1: "SSD ultra-rapide et RAM unifiée",
     adCardPerk2: "Garantie officielle de 2 ans",
     adCardCta: "Explorer les portables →",
-    rights: "© 2026 RUQO TECH. Tous droits réservés.",
+    rights: "© 2026 WEEXEY. Tous droits réservés.",
   },
   es: {
     shipping: "Envío gratis a partir de 299 SAR",
@@ -244,7 +244,7 @@ const copy = {
     cartLabel: "Carrito, 2 artículos",
     home: "Inicio",
     allProducts: "Todos los productos",
-    eyebrow: "La colección RUQO TECH",
+    eyebrow: "La colección WEEXEY",
     title: "Encuentra tu próximo favorito.",
     intro: "Tecnología seleccionada para tu vida y tu trabajo.",
     delivery: "Entrega rápida",
@@ -305,7 +305,7 @@ const copy = {
     adCardPerk1: "SSD ultra rápido y RAM unificada",
     adCardPerk2: "Garantía oficial de 2 años",
     adCardCta: "Explorar portátiles →",
-    rights: "© 2026 RUQO TECH. Todos los derechos reservados.",
+    rights: "© 2026 WEEXEY. Todos los derechos reservados.",
   },
   zh: {
     shipping: "订单满 299 SAR 免运费",
@@ -321,7 +321,7 @@ const copy = {
     cartLabel: "购物袋，2 件商品",
     home: "首页",
     allProducts: "全部商品",
-    eyebrow: "RUQO TECH 精选系列",
+    eyebrow: "WEEXEY 精选系列",
     title: "找到下一款心仪设备。",
     intro: "为你的生活与工作精心挑选科技产品。",
     delivery: "快速配送",
@@ -382,7 +382,7 @@ const copy = {
     adCardPerk1: "超高速固态硬盘与统一内存",
     adCardPerk2: "两年官方保修与急速配送",
     adCardCta: "探索笔记本电脑 →",
-    rights: "© 2026 RUQO TECH。保留所有权利。",
+    rights: "© 2026 WEEXEY。保留所有权利。",
   },
 };
 
@@ -521,7 +521,15 @@ const ui = {
 };
 let language = window.NoursStore?.getLanguage() || "en";
 let priceFilterCurrency = "SAR";
-const PRICE_FILTER_MAX_SAR = 10000;
+const incomingCatalogParams = new URLSearchParams(location.search);
+const catalogExplorerEntry = incomingCatalogParams.get("catalog") === "1";
+const incomingCatalogPrice = (key) => {
+  const value = incomingCatalogParams.get(key);
+  if (value === null || value.trim() === "") return null;
+  const price = Number(value);
+  return Number.isFinite(price) && price >= 0 ? price : null;
+};
+const PRICE_FILTER_MAX_SAR = Math.max(10000, ...products.map((product) => product.price), catalogExplorerEntry ? incomingCatalogPrice("max") || 0 : 0);
 const PRICE_FILTER_STEP_SAR = 100;
 let cartCount = window.NoursStore?.cartCount() || 0;
 const localeByLanguage = {
@@ -544,6 +552,7 @@ let dealsOnly =
 ui.sale.checked = dealsOnly;
 const BRAND_FILTERS_STORAGE_KEY = "nours-catalog-brands";
 let brandFiltersInitialized = false;
+let requestedCatalogBrandApplied = false;
 let brandFilterExpanded = false;
 let toastTimer;
 let wishlist = new Set();
@@ -574,11 +583,11 @@ function formatPrice(value, sourceCurrency = "SAR") {
 }
 function convertPrice(value, fromCurrency, toCurrency) {
   const rates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
-  return window.NoursStore?.convertCurrency(value, fromCurrency, toCurrency)
+  return window.NoursStore?.convertCurrencyExact(value, fromCurrency, toCurrency)
     ?? value * (rates[toCurrency] || 1) / (rates[fromCurrency] || 1);
 }
 function priceFilterMaximum(currency = priceFilterCurrency) {
-  return convertPrice(PRICE_FILTER_MAX_SAR, "SAR", currency);
+  return convertPrice(Math.max(PRICE_FILTER_MAX_SAR, ...products.map((product) => product.price)), "SAR", currency);
 }
 function updatePriceFilterDisplay() {
   const maximum = priceFilterMaximum();
@@ -625,14 +634,14 @@ function setLanguage(next) {
   language = next;
   document.documentElement.lang = language === "zh" ? "zh-CN" : language;
   document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
-  const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+  const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
   document.title = {
-    en: "Shop All Products | RUQO TECH",
-    fr: "Tous les produits | RUQO TECH",
-    es: "Todos los productos | RUQO TECH",
-    zh: "全部商品 | RUQO TECH",
-    ar: "كل المنتجات | RUQO TECH",
-  }[language].replace("RUQO TECH", storeName);
+    en: "Shop All Products | WEEXEY",
+    fr: "Tous les produits | WEEXEY",
+    es: "Todos los productos | WEEXEY",
+    zh: "全部商品 | WEEXEY",
+    ar: "كل المنتجات | WEEXEY",
+  }[language].replace("WEEXEY", storeName);
   document.body.classList.toggle("is-english", language === "en");
   $$("[data-copy]").forEach((node) => {
     const text = copy[language][node.dataset.copy];
@@ -700,22 +709,27 @@ function renderManagedCategoryBanner() {
 function filteredProducts() {
   const query = ui.search.value.trim().toLocaleLowerCase();
   const cats = $$("[data-category-filter]:checked").map((input) => input.value);
-  const brands = $$("[data-brand-filter]:checked").map((input) => input.value);
+  const brands = catalogExplorerEntry && !requestedCatalogBrandApplied && incomingCatalogParams.get("brand")
+    ? [incomingCatalogParams.get("brand")]
+    : $$("[data-brand-filter]:checked").map((input) => input.value);
   const min = Number(ui.min.value) || 0;
-  const max = Number(ui.max.value) || priceFilterMaximum();
+  const max = ui.max.value === "" ? priceFilterMaximum() : Number(ui.max.value);
   const minInSar = convertPrice(min, priceFilterCurrency, "SAR");
   const maxInSar = convertPrice(max, priceFilterCurrency, "SAR");
   const rating = Number($("[data-rating-filter]:checked").value);
+  const categories = window.NoursData.getCategories();
   const results = products.filter((product) => {
     const localized = localizeProduct(product);
     const searchText =
       `${localized.name} ${product.brand} ${localized.description[language]} ${product.description.en} ${product.description.ar}`.toLocaleLowerCase();
     return (
-      (!query || searchText.includes(query)) &&
+      (!query || (catalogExplorerEntry
+        ? window.NoursData.matchesCatalogProduct(product, categories.find((category) => category.slug === product.category) || { slug: product.category }, { query, brand: "", min: null, max: null, stock: false }, language)
+        : searchText.includes(query))) &&
       (!cats.length || cats.includes(product.category)) &&
       (!brands.length || brands.includes(product.brand)) &&
-      product.price >= minInSar &&
-      product.price <= maxInSar &&
+      product.price >= minInSar - 0.000001 &&
+      product.price <= maxInSar + 0.000001 &&
       product.rating >= rating &&
       (!dealsOnly || (product.oldPrice && product.oldPrice > product.price)) &&
       (!ui.newArrivals.checked || product.badge === "new") &&
@@ -878,9 +892,9 @@ function productCard(product) {
 let requestedCategoryApplied = false;
 
 function syncCategoryFilters() {
-  const categories = window.RUQO_CATEGORIES;
+  const categories = window.NoursData.getCategories();
   const fieldset = document.querySelector(".filter-categories");
-  if (!Array.isArray(categories) || !categories.length || !fieldset) return;
+  if (!fieldset) return;
   const selected = new Set($$('[data-category-filter]:checked').map((input) => input.value));
   const requestedCategory = new URLSearchParams(location.search).get("category");
   const legend = fieldset.querySelector("legend");
@@ -895,18 +909,24 @@ function syncCategoryFilters() {
     const name = document.createElement("span");
     name.textContent = category.name_translations?.[language] || category.name_translations?.en || category.slug;
     const count = document.createElement("small");
-    count.textContent = String(products.filter((product) => product.category === category.slug).length);
+    count.textContent = String(category.productCount);
     label.append(input, name, count);
     return label;
   });
   fieldset.replaceChildren(legend, ...labels);
-  requestedCategoryApplied = true;
+  if (categories.some((category) => category.slug === requestedCategory)) {
+    requestedCategoryApplied = true;
+  }
 }
 function syncBrandFilters() {
   const brands = [...new Set(products.map((product) => product.brand).filter(Boolean))].sort((a, b) => a.localeCompare(b));
   const selectedBrands = brandFiltersInitialized
     ? $$('[data-brand-filter]:checked').map((input) => input.value)
     : (() => {
+        if (catalogExplorerEntry) {
+          const requestedBrand = incomingCatalogParams.get("brand");
+          return requestedBrand ? [requestedBrand] : [];
+        }
         try {
           const saved = JSON.parse(localStorage.getItem(BRAND_FILTERS_STORAGE_KEY) || "[]");
           return Array.isArray(saved) ? saved.filter((brand) => brands.includes(brand)) : [];
@@ -915,6 +935,11 @@ function syncBrandFilters() {
         }
       })();
   const selected = new Set(selectedBrands);
+  if (catalogExplorerEntry && !requestedCatalogBrandApplied) {
+    const requestedBrand = incomingCatalogParams.get("brand");
+    if (requestedBrand) selected.add(requestedBrand);
+    if (!requestedBrand || brands.includes(requestedBrand)) requestedCatalogBrandApplied = true;
+  }
   if (!brandFiltersInitialized) {
     brandFilterExpanded = selected.size > 0;
     brandFiltersInitialized = true;
@@ -927,6 +952,7 @@ function syncBrandFilters() {
     input.dataset.brandFilter = "";
     input.checked = selected.has(brand);
     input.addEventListener("change", () => {
+      requestedCatalogBrandApplied = true;
       brandFilterExpanded = true;
       saveSelectedBrandFilters();
       render();
@@ -1041,7 +1067,7 @@ function createDesktopAdCard() {
       <span>${copy[language].adCardBadge}</span>
     </div>
     <div class="ad-card-body">
-      <span class="ad-card-kicker">RUQO TECH · COMPUTING</span>
+      <span class="ad-card-kicker">WEEXEY · COMPUTING</span>
       <h3 class="ad-card-title">${copy[language].adCardTitle}</h3>
       <p class="ad-card-text">${copy[language].adCardText}</p>
       <div class="ad-card-perks">
@@ -1058,6 +1084,15 @@ function createDesktopAdCard() {
 }
 
 function render() {
+  const previousMaximum = Number(ui.max.max);
+  if (priceFilterMaximum() > previousMaximum + 0.000001) {
+    const wasAtMaximum = Math.abs(Number(ui.max.value) - previousMaximum) < 0.000001;
+    updatePriceFilterDisplay();
+    if (wasAtMaximum && !(catalogExplorerEntry && incomingCatalogPrice("max") !== null)) {
+      ui.max.value = String(priceFilterMaximum());
+      ui.range.value = ui.max.value;
+    }
+  }
   syncCategoryFilters();
   syncBrandFilters();
   const results = filteredProducts();
@@ -1098,6 +1133,8 @@ function closeFilters(returnFocus = true) {
   if (returnFocus) ui.filterButton.focus();
 }
 function resetFilters() {
+  requestedCatalogBrandApplied = true;
+  requestedCategoryApplied = true;
   ui.search.value = "";
   setDealsFilter(false);
   ui.newArrivals.checked = false;
@@ -1246,7 +1283,18 @@ const productsCurrencySelect = document.querySelector("[data-currency-select]");
 if (productsCurrencySelect) {
   productsCurrencySelect.value = window.NoursStore?.getCurrency() || "USD";
 }
+ui.max.value = String(priceFilterMaximum("SAR"));
+ui.range.value = ui.max.value;
 setPriceFilterCurrency(window.NoursStore?.getCurrency() || "USD");
+if (catalogExplorerEntry) {
+  ui.search.value = incomingCatalogParams.get("q") || "";
+  ui.stock.checked = incomingCatalogParams.get("stock") === "1";
+  const min = incomingCatalogPrice("min");
+  const max = incomingCatalogPrice("max");
+  if (min !== null) ui.min.value = String(convertPrice(min, "SAR", priceFilterCurrency));
+  if (max !== null) ui.max.value = String(convertPrice(max, "SAR", priceFilterCurrency));
+  ui.range.value = ui.max.value;
+}
 setLanguage(language);
 if (productsCurrencySelect) {
   productsCurrencySelect.addEventListener("change", (event) => {

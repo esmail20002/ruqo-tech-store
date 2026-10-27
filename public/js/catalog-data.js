@@ -514,31 +514,76 @@
     };
   };
 
+  const defaultCategoryNames = {
+    phones: { en: "Phones", ar: "الهواتف", fr: "Téléphones", es: "Móviles", zh: "手机" },
+    laptops: { en: "Laptops", ar: "اللابتوبات", fr: "Ordinateurs portables", es: "Portátiles", zh: "笔记本电脑" },
+    audio: { en: "Audio", ar: "الصوتيات", fr: "Audio", es: "Audio", zh: "音频" },
+    wearables: { en: "Wearables", ar: "الأجهزة القابلة للارتداء", fr: "Objets connectés", es: "Dispositivos vestibles", zh: "可穿戴设备" },
+  };
+
+  const getCategories = () => {
+    const categories = Array.isArray(window.RUQO_CATEGORIES)
+      ? window.RUQO_CATEGORIES
+      : Array.from(new Set(products.map((product) => product.category).filter(Boolean)), (slug) => ({
+          slug,
+          name_translations: defaultCategoryNames[slug] || {},
+          description_translations: {},
+        }));
+    return categories.map((category) => {
+      const categoryProducts = products.filter((product) => product.category === category.slug);
+      return {
+        ...category,
+        productCount: categoryProducts.length,
+        image: categoryProducts.find((product) => product.image)?.image || "",
+      };
+    });
+  };
+
+  const matchesCatalogProduct = (product, category, filters, language) => {
+    const localized = localizeProduct(product, language);
+    const normalize = window.NoursStore.normalizeSearchText;
+    const categoryText = normalize([
+      category.name_translations?.[language] || category.name_translations?.en || category.slug,
+      category.description_translations?.[language] || category.description_translations?.en || "",
+    ].join(" "));
+    const productText = normalize([localized.name, product.brand, localized.description[language], product.description.en].join(" "));
+    const terms = normalize(filters.query).split(/\s+/).filter(Boolean);
+    return terms.every((term) => `${categoryText} ${productText}`.includes(term))
+      && (!filters.brand || product.brand === filters.brand)
+      && (filters.min === null || product.price >= filters.min - 0.000001)
+      && (filters.max === null || product.price <= filters.max + 0.000001)
+      && (!filters.stock || product.stock);
+  };
+
   async function loadFromSupabase(client) {
     if (!client) return false;
-    const { data: productRows, error: productsError } = await client
-      .from("products")
-      .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, product_option_values, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
-      .eq("is_active", true)
-      .order("sort_order", { ascending: false });
-    if (productsError) throw productsError;
-    if (!productRows?.length) return false;
+    const [productResult, categoryResult] = await Promise.all([
+      client.from("products")
+        .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, product_option_values, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: false }),
+      client.from("categories").select("slug, name_translations, description_translations, sort_order").eq("is_active", true).order("sort_order"),
+    ]);
+    if (productResult.error) throw productResult.error;
+    if (categoryResult.error) throw categoryResult.error;
+    const productRows = productResult.data || [];
 
     const slugs = productRows.map((product) => product.slug);
-    const [featureResult, specificationResult, variantResult, imageResult, detailImageResult, categoryResult] = await Promise.all([
+    const emptyResult = { data: [], error: null };
+    const [featureResult, specificationResult, variantResult, imageResult, detailImageResult] = slugs.length ? await Promise.all([
       client.from("product_features").select("product_slug, language_code, position, content").in("product_slug", slugs).order("position"),
       client.from("product_specifications").select("product_slug, language_code, position, title, description").in("product_slug", slugs).order("position"),
       client.from("product_variants").select("id, variant_key, product_slug, option_group, option_value, option_values, option_label_translations, price_adjustment, final_price, stock_quantity, sort_order").eq("is_active", true).in("product_slug", slugs).order("sort_order"),
       client.from("product_images").select("product_slug, image_url, storage_path, alt_translations, is_primary, sort_order").in("product_slug", slugs).order("sort_order"),
       client.from("product_detail_images").select("product_slug, image_url, storage_path, sort_order").in("product_slug", slugs).order("sort_order"),
-      client.from("categories").select("slug, name_translations, description_translations, sort_order").eq("is_active", true).order("sort_order"),
-    ]);
+    ]) : Array(5).fill(emptyResult);
     const detailImagesTableMissing = detailImageResult.error?.code === "PGRST205"
       || /could not find the table.*product_detail_images.*schema cache/i.test(detailImageResult.error?.message || "");
     for (const result of [featureResult, specificationResult, variantResult, imageResult, categoryResult]) {
       if (result.error) throw result.error;
     }
     if (detailImageResult.error && !detailImagesTableMissing) throw detailImageResult.error;
+    const categoriesChanged = JSON.stringify(window.RUQO_CATEGORIES) !== JSON.stringify(categoryResult.data || []);
     window.RUQO_CATEGORIES = categoryResult.data || [];
     const productCurrencies = new Map(productRows.map((product) => [product.slug, product.currency || "SAR"]));
     const productPrices = new Map(productRows.map((product) => [product.slug, Number(product.price) || 0]));
@@ -673,7 +718,7 @@
     try {
       localStorage.setItem("ruqo-catalog-cache-v1", serializedNew);
     } catch (_) {}
-    if (serializedNew !== serializedOld) {
+    if (serializedNew !== serializedOld || categoriesChanged) {
       window.dispatchEvent(new CustomEvent("ruqo:catalog-updated"));
     }
     return true;
@@ -717,13 +762,13 @@
     const cached = localStorage.getItem("ruqo-catalog-cache-v1");
     if (cached) {
       const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length) {
+      if (Array.isArray(parsed)) {
         products.splice(0, products.length, ...parsed);
         isLoadedFromCache = true;
       }
     }
   } catch (_) {}
 
-  window.NoursData = { products, localizeProduct, loadFromSupabase, loaded: isLoadedFromCache };
+  window.NoursData = { products, localizeProduct, getCategories, matchesCatalogProduct, loadFromSupabase, loaded: isLoadedFromCache };
   scheduleProductSaleRefresh();
 })();

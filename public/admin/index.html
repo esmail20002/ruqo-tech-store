@@ -18,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#f4f7f8" />
-    <title>Store Admin | RUQO TECH</title>
+    <title>Store Admin | WEEXEY</title>
     <link rel="icon" type="image/png" href="/images/new/li.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,45 +28,72 @@
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
       <section class="admin-login-panel" aria-labelledby="login-title">
-        <a class="admin-brand" href="/" aria-label="RUQO TECH storefront">
-          <img src="/images/new/li.png" alt="RUQO TECH" data-admin-brand-logo />
-          <span>STORE MANAGEMENT</span>
-        </a>
+        <div class="login-panel-header">
+          <a class="admin-brand" href="/" aria-label="WEEXEY storefront">
+            <img src="/images/new/li.png" alt="WEEXEY" data-admin-brand-logo />
+            <span>STORE MANAGEMENT</span>
+          </a>
+          <a class="login-store-link" href="/"><i data-lucide="arrow-up-right" aria-hidden="true"></i> View store</a>
+        </div>
+        <div class="login-panel-content">
+        <div class="login-workspace-badge"><span></span> WEEXEY ADMIN</div>
         <div class="login-copy">
-          <span class="admin-eyebrow">SECURE WORKSPACE</span>
-          <h1 id="login-title">Sign in to RUQO</h1>
-          <p>Use your invited store-admin account to continue.</p>
+          <h1 id="login-title">Welcome back<span>.</span></h1>
+          <p>Your store, all in one place.<br />Sign in to your workspace to get started.</p>
         </div>
         <form id="login-form" class="admin-login-form">
-          <label>Email or local username<input name="email" type="text" inputmode="email" autocomplete="username" required /></label>
-          <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+          <label for="login-email">Email or local username</label>
+          <div class="login-input-wrap">
+            <i data-lucide="mail" aria-hidden="true"></i>
+            <input id="login-email" name="email" type="text" inputmode="email" autocomplete="username" placeholder="Enter your email address" autocapitalize="none" spellcheck="false" required />
+          </div>
+          <div class="login-password-heading">
+            <label for="login-password">Password</label>
+            <button id="forgot-password" class="admin-text-button" type="button">Forgot password?</button>
+          </div>
+          <div class="login-input-wrap">
+            <i data-lucide="lock-keyhole" aria-hidden="true"></i>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+            <button id="login-password-toggle" class="login-password-toggle" type="button" aria-label="Show password" aria-controls="login-password" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button>
+          </div>
           <p id="login-error" class="admin-feedback" role="alert" hidden></p>
-          <button class="admin-primary-button" type="submit">Sign in <i data-lucide="arrow-up-right" aria-hidden="true"></i></button>
+          <button class="admin-primary-button" type="submit">Sign in <i data-lucide="arrow-right" aria-hidden="true"></i></button>
         </form>
         <p id="local-dev-login-note" class="admin-login-footnote" hidden>Local development only · use the workspace demo credentials.</p>
-        <button id="forgot-password" class="admin-text-button" type="button">Forgot password?</button>
         <form id="password-recovery-form" class="admin-login-form" hidden>
           <label>New password<input name="password" type="password" autocomplete="new-password" minlength="10" required /></label>
           <label>Confirm new password<input name="confirm_password" type="password" autocomplete="new-password" minlength="10" required /></label>
           <p id="password-recovery-feedback" class="admin-feedback" role="status" hidden></p>
           <button class="admin-primary-button" type="submit">Set new password <i data-lucide="key-round" aria-hidden="true"></i></button>
         </form>
-        <p class="admin-login-footnote"><i data-lucide="shield-check" aria-hidden="true"></i> Access is limited to authorized RUQO staff.</p>
+        <p class="admin-login-footnote"><i data-lucide="shield-check" aria-hidden="true"></i> Access is limited to authorized WEEXEY staff.</p>
+        </div>
+        <footer class="login-panel-footer"><span>&copy; 2026 WEEXEY</span><span><i data-lucide="lock-keyhole" aria-hidden="true"></i> Staff access only</span></footer>
       </section>
-      <aside class="admin-login-aside" aria-hidden="true">
-        <div class="admin-aside-mark">R<span>.</span></div>
-        <p>RUQO TECH</p>
-        <span>OPERATIONS</span>
+      <aside class="admin-login-aside" aria-labelledby="login-aside-title">
+        <div class="login-aside-top"><span class="login-aside-brand">weexey<span>✦</span></span><span class="login-aside-tag">THE ADMIN WORKSPACE</span></div>
+        <div class="login-aside-content">
+          <span class="login-aside-eyebrow"><span></span> LESS FRICTION. MORE FOCUS.</span>
+          <h2 id="login-aside-title">Behind every<br />great store.<br /><span>A clearer workspace.</span></h2>
+          <p>From your first product to your next order, keep everything moving in one thoughtfully connected space.</p>
+          <div class="login-workspace-preview">
+            <div class="login-preview-heading"><span><i data-lucide="layout-dashboard" aria-hidden="true"></i> Your workspace</span><span class="login-preview-dots" aria-hidden="true">•••</span></div>
+            <div class="login-feature"><span class="login-feature-icon"><i data-lucide="package-2" aria-hidden="true"></i></span><div><h3>A catalog, beautifully organized</h3><p>Products, categories &amp; inventory</p></div><i data-lucide="check" aria-hidden="true"></i></div>
+            <div class="login-feature"><span class="login-feature-icon"><i data-lucide="shopping-bag" aria-hidden="true"></i></span><div><h3>Every order. One place.</h3><p>Orders, customers &amp; conversations</p></div><i data-lucide="check" aria-hidden="true"></i></div>
+            <div class="login-feature"><span class="login-feature-icon"><i data-lucide="sparkles" aria-hidden="true"></i></span><div><h3>Make your storefront yours</h3><p>Offers, banners &amp; store content</p></div><i data-lucide="check" aria-hidden="true"></i></div>
+          </div>
+        </div>
+        <div class="login-aside-footer"><span>BUILT FOR YOUR EVERYDAY OPERATIONS</span><i data-lucide="sparkles" aria-hidden="true"></i></div>
       </aside>
     </main>
 
     <div id="admin-app" class="admin-app" hidden>
       <aside class="admin-sidebar">
-        <a class="admin-brand" href="/" aria-label="RUQO TECH storefront">
-          <img src="/images/new/li.png" alt="RUQO TECH" data-admin-brand-logo />
+        <a class="admin-brand" href="/" aria-label="WEEXEY storefront">
+          <img src="/images/new/li.png" alt="WEEXEY" data-admin-brand-logo />
           <span>STORE MANAGEMENT</span>
         </a>
-        <div class="workspace-label">WORKSPACE <strong>RUQO TECH</strong></div>
+        <div class="workspace-label">WORKSPACE <strong>WEEXEY</strong></div>
         <nav class="admin-navigation" aria-label="Admin navigation">
           <button class="admin-nav-item is-active" type="button" data-admin-view="overview"><i data-lucide="layout-dashboard" aria-hidden="true"></i><span>Overview</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="products"><i data-lucide="package-2" aria-hidden="true"></i><span>Products</span></button>
@@ -88,7 +115,7 @@
 
       <div class="admin-content-shell">
         <header class="admin-topbar">
-          <div class="admin-breadcrumb"><span>RUQO TECH</span><i data-lucide="chevron-right" aria-hidden="true"></i><strong id="breadcrumb-current">Overview</strong></div>
+          <div class="admin-breadcrumb"><span>WEEXEY</span><i data-lucide="chevron-right" aria-hidden="true"></i><strong id="breadcrumb-current">Overview</strong></div>
           <div class="admin-topbar-actions">
             <span id="admin-user" class="admin-user"></span>
             <button id="admin-theme-toggle" class="admin-icon-button" type="button" aria-label="Toggle color theme"><i data-lucide="moon" aria-hidden="true"></i></button>
@@ -433,6 +460,6 @@
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="/js/supabase-config.js"></script>
     <script src="/js/product-options.js" defer></script>
-    <script src="/js/admin.js" defer></script>
+    <script src="/js/admin.js?v=3" defer></script>
   </body>
 </html>

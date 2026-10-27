@@ -2,6 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
+    <script src="/js/home-i18n.js?v=1"></script>
     <script>
       (function () {
         try {
@@ -20,7 +21,7 @@
       name="description"
       content="Premium electronics store featuring the latest mobile devices, laptops, smartwatches, and immersive audio experiences."
     />
-    <title>RUQO TECH | Premium Electronics Store</title>
+    <title>WEEXEY | Premium Electronics Store</title>
     <link rel="icon" type="image/png" href="/images/new/li.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,9 +29,9 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/premium-experience.css?v=1" />
-    <link rel="stylesheet" href="/css/store-motion.css?v=1" />
+    <link rel="stylesheet" href="/css/styles.css?v=7" />
+    <link rel="stylesheet" href="/css/premium-experience.css?v=8" />
+    <link rel="stylesheet" href="/css/store-motion.css?v=2" />
   </head>
   <body data-page="home">
     <div class="page-shell">
@@ -55,8 +56,8 @@
 
       <header class="site-header">
         <div class="container nav-wrap">
-          <a href="/" class="brand" aria-label="RUQO TECH">
-            <img class="brand-logo" src="/images/new/li.png" alt="RUQO TECH" />
+          <a href="/" class="brand" aria-label="WEEXEY">
+            <img class="brand-logo" src="/images/new/li.png" alt="WEEXEY" />
           </a>
 
           <nav id="main-navigation" class="main-nav" aria-label="التنقل الرئيسي">
@@ -126,6 +127,7 @@
         </div>
       </header>
 
+      <div class="mobile-ad-shell">
       <a class="mobile-ad-banner" href="#deals">
         <img
           class="mobile-ad-image"
@@ -134,12 +136,12 @@
           loading="eager"
         />
         <span class="mobile-ad-content">
-          <span class="mobile-ad-label">عرض محدود</span>
-          <span class="mobile-ad-copy"
+          <span class="mobile-ad-label" data-i18n="mobileAd.label">عرض محدود</span>
+          <span class="mobile-ad-copy" data-i18n="mobileAd.copy"
             >خصومات تصل إلى 35% على أجهزة مختارة</span
           >
           <span class="mobile-ad-action">
-            <span class="mobile-ad-action-label">تسوق الآن</span>
+            <span class="mobile-ad-action-label" data-i18n="mobileAd.action">تسوق الآن</span>
             <i
               class="mobile-ad-arrow"
               data-lucide="arrow-right"
@@ -148,6 +150,8 @@
           </span>
         </span>
       </a>
+      <div class="mobile-ad-controls" hidden></div>
+      </div>
 
       <main>
         <section class="hero container reveal">
@@ -258,7 +262,7 @@
               <h2 data-i18n="sections.categoriesTitle">فئات المنتجات</h2>
             </div>
             <a
-              href="/products.html"
+              href="/categories.html"
               class="section-link"
               data-i18n="sections.viewAll"
               >عرض الكل</a
@@ -639,7 +643,7 @@
         <div class="container footer-grid">
           <div>
             <a href="/" class="brand footer-brand">
-              <img class="brand-logo" src="/images/new/li.png" alt="RUQO TECH" />
+              <img class="brand-logo" src="/images/new/li.png" alt="WEEXEY" />
             </a>
             <p class="footer-copy" data-i18n="footer.copy" data-footer-label="footer.copy">
               متجر إلكترونيات فاخر يجمع بين الأداء، التصميم، والثقة في كل طلب.
@@ -705,23 +709,20 @@
         <div class="footer-bottom">
           <div class="container footer-bottom-inner">
             <span data-i18n="footer.rights" data-footer-label="footer.rights"
-              >© 2026 RUQO TECH. جميع الحقوق محفوظة.</span
+              >© 2026 WEEXEY. جميع الحقوق محفوظة.</span
             >
           </div>
         </div>
       </footer>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/supabase-config.js"></script>
-    <script src="/js/store.js"></script>
+    <script src="/js/store.js?v=6"></script>
     <script src="/js/catalog-data.js"></script>
-    <script src="/js/supabase-client.js"></script>
-    <script src="/js/main.js"></script>
-    <script>
-      if (window.lucide) lucide.createIcons();
-    </script>
+    <script src="/js/main.js?v=5"></script>
     <script src="/js/store-motion.js?v=1"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="/js/supabase-config.js"></script>
+    <script defer src="/js/supabase-client.js?v=3"></script>
   </body>
 </html>

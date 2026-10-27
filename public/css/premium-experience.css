@@ -26,6 +26,26 @@ body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-group spa
   color: #f6c4e3;
 }
 
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-track {
+    width: max-content;
+    justify-content: flex-start;
+    animation: topbar-marquee 28s linear infinite;
+  }
+
+  html[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-track {
+    animation-name: topbar-marquee-rtl;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-group,
+  body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-group[aria-hidden="true"] {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+}
+
 body:is([data-page="experiments"], [data-page="home"]) .site-header {
   background: rgba(255, 255, 255, 0.86);
   border-bottom: 1px solid rgba(73, 40, 105, 0.08);
@@ -242,7 +262,8 @@ body:is([data-page="experiments"], [data-page="home"]) .partner-row {
 }
 
 body:is([data-page="experiments"], [data-page="home"]) .partner-track,
-body:is([data-page="experiments"], [data-page="home"]) .partner-group {
+body:is([data-page="experiments"], [data-page="home"]) .partner-group,
+body:is([data-page="experiments"], [data-page="home"]) .partner-group[aria-hidden="true"] {
   display: flex;
   width: max-content;
   align-items: center;
@@ -732,6 +753,10 @@ html[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) .partner-
 }
 
 @media (max-width: 640px) {
+  body:is([data-page="experiments"], [data-page="home"]) .hero-visual .card-one {
+    display: none;
+  }
+
   body:is([data-page="experiments"], [data-page="home"]) .topbar-inner {
     min-height: 34px;
   }
@@ -805,9 +830,29 @@ html[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) .partner-
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .card-two {
-    inset-inline-end: -1%;
-    top: auto;
-    bottom: 2%;
+    inset-inline: auto;
+    top: 14px;
+    right: 14px;
+    bottom: auto;
+    left: auto;
+    width: min(132px, 46%);
+    min-height: 96px;
+    padding: 10px;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .card-two > span {
+    font-size: 0.66rem;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .card-two > strong {
+    font-size: 0.82rem;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .card-two > small {
+    min-height: 0;
+    max-height: none;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .partners {
@@ -843,6 +888,27 @@ html[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) .partner-
   body:is([data-page="experiments"], [data-page="home"]) .stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .stats {
+    display: grid;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) :is(.category-card, .feature-box, .testimonial-card, .stat-item) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .testimonial-card .author {
+    flex-wrap: wrap;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .testimonial-card .author > div:last-child {
+    min-width: 0;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .testimonial-card .avatar {
+    flex-shrink: 0;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .category-card {
@@ -932,23 +998,92 @@ html[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) .partner-
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .category-grid,
-  body:is([data-page="experiments"], [data-page="home"]) .product-grid,
   body:is([data-page="experiments"], [data-page="home"]) .feature-grid,
   body:is([data-page="experiments"], [data-page="home"]) .testimonial-grid,
   body:is([data-page="experiments"], [data-page="home"]) .stats {
-    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .category-card {
-    min-height: 280px;
+    min-height: 180px;
+    border-radius: 16px;
   }
 
-  body:is([data-page="experiments"], [data-page="home"]) .product-image {
-    height: 230px;
+  body:is([data-page="experiments"], [data-page="home"]) .category-content {
+    padding: 12px 10px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-card h3 {
+    font-size: 1rem;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) :is(.feature-box, .testimonial-card) {
+    padding: 14px 10px;
+    border-radius: 16px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .feature-box h3 {
+    font-size: 0.92rem;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .feature-box p {
+    font-size: 0.76rem;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .testimonial-card p {
+    margin-bottom: 14px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .testimonial-card .author {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .stat-item {
+    padding: 16px 10px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #new .product-grid {
+    gap: 10px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #new .product-image {
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #new .product-body {
+    padding: 10px 8px 12px;
+    overflow-wrap: anywhere;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #new .product-info h3 {
+    font-size: 0.85rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-track,
+  body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-group {
+    width: 100%;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .partner-track {
+    width: 100%;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .partner-group {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px 22px;
+    padding-inline: 12px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .partner-group[aria-hidden="true"] {
+    display: none;
+  }
+
   body:is([data-page="experiments"], [data-page="home"]),
   body:is([data-page="experiments"], [data-page="home"]) .topbar-marquee-track,
   body:is([data-page="experiments"], [data-page="home"]) .partner-track,

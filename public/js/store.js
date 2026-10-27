@@ -155,7 +155,7 @@
     productInfo.className = "bag-confirmation-product-info";
     const brand = document.createElement("span");
     brand.className = "bag-confirmation-brand";
-    brand.textContent = product.brand || "RUQO TECH";
+    brand.textContent = product.brand || "WEEXEY";
     const name = document.createElement("strong");
     name.className = "bag-confirmation-name";
     name.textContent = product.name || "";
@@ -240,7 +240,7 @@
     const logoFile = theme === "dark" ? "new/dark.png" : "new/li.png";
     const defaultLogoUrl = new URL(logoFile, imageDirectory).href;
     const logoUrl = theme === "dark" ? defaultLogoUrl : window.RUQO_BRAND_LOGO_URL || defaultLogoUrl;
-    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
     document.documentElement.dataset.theme = theme;
     document.documentElement.lang = language === "zh" ? "zh-CN" : language;
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
@@ -295,12 +295,14 @@
     return next;
   };
   const currencyRates = Object.freeze({ SAR: 1, USD: 1 / 3.75, EUR: 0.245 });
-  const convertCurrency = (amount, fromCurrency = "SAR", toCurrency = getCurrency()) => {
+  const convertCurrencyExact = (amount, fromCurrency = "SAR", toCurrency = getCurrency()) => {
     const value = Number(amount) || 0;
     const sourceRate = currencyRates[fromCurrency] || currencyRates.SAR;
     const targetRate = currencyRates[toCurrency] || currencyRates.SAR;
-    return Math.round((value * targetRate / sourceRate + Number.EPSILON) * 100) / 100;
+    return value * targetRate / sourceRate;
   };
+  const convertCurrency = (amount, fromCurrency = "SAR", toCurrency = getCurrency()) =>
+    Math.round((convertCurrencyExact(amount, fromCurrency, toCurrency) + Number.EPSILON) * 100) / 100;
   const productVariants = () => read(keys.variants, {});
   const getProductVariant = (id) => productVariants()[id] || "";
   const setProductVariant = (id, variant) => {
@@ -561,6 +563,7 @@
     searchPanel.style.top = `${bounds.bottom + 8}px`;
     searchPanel.style.maxHeight = `${Math.max(100, window.innerHeight - bounds.bottom - 20)}px`;
   };
+  const normalizeSearchText = (value) => String(value || "").normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().trim();
   const renderSearch = () => {
     if (!searchPanel || searchPanel.hidden) return;
     const input = searchPanel.querySelector("input");
@@ -568,8 +571,7 @@
     const status = searchPanel.querySelector(".site-search-status");
     const copy = searchCopy();
     const language = getLanguage();
-    const normalize = (value) => String(value || "").normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().trim();
-    const terms = normalize(input.value).split(/\s+/).filter(Boolean);
+    const terms = normalizeSearchText(input.value).split(/\s+/).filter(Boolean);
     results.replaceChildren();
     status.textContent = "";
     status.hidden = true;
@@ -582,7 +584,7 @@
     }
     const matches = catalog.products.filter((product) => {
       const localized = catalog.localizeProduct(product, language);
-      const haystack = normalize([localized.name, product.name, product.brand, product.id, localized.category].join(" "));
+      const haystack = normalizeSearchText([localized.name, product.name, product.brand, product.id, localized.category].join(" "));
       return terms.every((term) => haystack.includes(term));
     }).slice(0, 5);
     if (!matches.length) {
@@ -697,6 +699,12 @@
       view: "View product",
       suggestions: ["A phone with a great camera", "A laptop for work", "Noise-cancelling headphones"],
       close: "Close shopping assistant",
+      intro: "Your next great find starts here.",
+      starters: "A little inspiration",
+      note: "Suggestions from the WEEXEY catalog. Check product details before ordering.",
+      restart: "Start a new conversation",
+      you: "You",
+      assistant: "WEEXEY assistant",
     },
     ar: {
       trigger: "تسوّق مع AI",
@@ -710,6 +718,12 @@
       view: "عرض المنتج",
       suggestions: ["هاتف بكاميرا ممتازة", "لابتوب للعمل", "سماعة بعزل الضوضاء"],
       close: "إغلاق مساعد التسوق",
+      intro: "اختيارك القادم يبدأ من هنا.",
+      starters: "بماذا نبدأ؟",
+      note: "اقتراحات من كتالوج WEEXEY. راجع تفاصيل المنتج قبل الطلب.",
+      restart: "بدء محادثة جديدة",
+      you: "أنت",
+      assistant: "مساعد WEEXEY",
     },
     fr: {
       trigger: "Shop with AI",
@@ -723,6 +737,12 @@
       view: "Voir le produit",
       suggestions: ["Un téléphone avec un bon appareil photo", "Un ordinateur pour travailler", "Un casque antibruit"],
       close: "Fermer l’assistant shopping",
+      intro: "Votre prochaine découverte commence ici.",
+      starters: "Un peu d’inspiration",
+      note: "Suggestions du catalogue WEEXEY. Vérifiez les détails avant de commander.",
+      restart: "Nouvelle conversation",
+      you: "Vous",
+      assistant: "Assistant WEEXEY",
     },
     es: {
       trigger: "Shop with AI",
@@ -736,6 +756,12 @@
       view: "Ver producto",
       suggestions: ["Un móvil con buena cámara", "Un portátil para trabajar", "Auriculares con cancelación de ruido"],
       close: "Cerrar asistente de compras",
+      intro: "Tu próximo descubrimiento empieza aquí.",
+      starters: "Un poco de inspiración",
+      note: "Sugerencias del catálogo WEEXEY. Revisa los detalles antes de comprar.",
+      restart: "Iniciar una nueva conversación",
+      you: "Tú",
+      assistant: "Asistente WEEXEY",
     },
     zh: {
       trigger: "AI 选购",
@@ -749,6 +775,12 @@
       view: "查看商品",
       suggestions: ["拍照效果好的手机", "适合办公的笔记本电脑", "降噪耳机"],
       close: "关闭购物助手",
+      intro: "从这里发现你的下一件好物。",
+      starters: "从这些灵感开始",
+      note: "推荐来自 WEEXEY 商品目录。下单前请查看商品详情。",
+      restart: "开始新对话",
+      you: "你",
+      assistant: "WEEXEY 助手",
     },
   };
 
@@ -763,27 +795,48 @@
 
   function setupShopAssistant(trigger, language, listen, store) {
     const existingOverlay = document.querySelector(".shop-ai-overlay");
+    if (existingOverlay?.dataset.language === language) {
+      existingOverlay.bindAssistantTrigger(trigger, listen);
+      return;
+    }
     existingOverlay?.closeAssistant?.(false);
     existingOverlay?.remove();
     const copy = shopAssistantCopy[language] || shopAssistantCopy.en;
     const overlay = document.createElement("div");
     overlay.className = "shop-ai-overlay";
+    overlay.dataset.language = language;
     overlay.hidden = true;
     overlay.dir = language === "ar" ? "rtl" : "ltr";
     overlay.innerHTML = `
-      <section class="shop-ai-dialog" role="dialog" aria-modal="true" aria-labelledby="shop-ai-title">
+      <section class="shop-ai-dialog" role="dialog" aria-modal="true" aria-labelledby="shop-ai-title" tabindex="-1">
         <header class="shop-ai-header">
           <div class="shop-ai-heading">
             <span class="shop-ai-mark"><i data-lucide="sparkles" aria-hidden="true"></i></span>
-            <div><h2 id="shop-ai-title">${copy.title}</h2><p>${copy.subtitle}</p></div>
+            <div><span class="shop-ai-brand" dir="ltr">WEEXEY AI</span><h2 id="shop-ai-title">${copy.title}</h2></div>
           </div>
-          <button class="shop-ai-close" type="button" aria-label="${copy.close}"><i data-lucide="x" aria-hidden="true"></i></button>
+          <div class="shop-ai-header-actions">
+            <button class="shop-ai-restart" type="button" aria-label="${copy.restart}" title="${copy.restart}"><i data-lucide="square-pen" aria-hidden="true"></i></button>
+            <button class="shop-ai-close" type="button" aria-label="${copy.close}"><i data-lucide="x" aria-hidden="true"></i></button>
+          </div>
         </header>
-        <div class="shop-ai-thread" aria-live="polite" aria-relevant="additions text"></div>
-        <div class="shop-ai-suggestions"></div>
+        <div class="shop-ai-thread" role="log" aria-live="polite" aria-relevant="additions text" aria-label="${copy.title}">
+          <div class="shop-ai-welcome">
+            <div class="shop-ai-orb" aria-hidden="true"><i data-lucide="sparkles"></i></div>
+            <span class="shop-ai-eyebrow">${copy.assistant}</span>
+            <h3>${copy.intro}</h3>
+            <p>${copy.welcome}</p>
+          </div>
+        </div>
+        <div class="shop-ai-starters">
+          <p>${copy.starters}</p>
+          <div class="shop-ai-suggestions"></div>
+        </div>
         <form class="shop-ai-form">
-          <label class="shop-ai-input-wrap"><span class="sr-only">${copy.placeholder}</span><input name="message" autocomplete="off" placeholder="${copy.placeholder}" required /></label>
-          <button class="shop-ai-send" type="submit" aria-label="${copy.send}"><i data-lucide="arrow-up" aria-hidden="true"></i></button>
+          <div class="shop-ai-composer">
+            <label class="shop-ai-input-wrap"><input name="message" aria-label="${copy.placeholder}" autocomplete="off" maxlength="500" placeholder="${copy.placeholder}" required /></label>
+            <button class="shop-ai-send" type="submit" aria-label="${copy.send}"><i data-lucide="arrow-up" aria-hidden="true"></i></button>
+          </div>
+          <p class="shop-ai-note"><i data-lucide="info" aria-hidden="true"></i><span>${copy.note}</span></p>
         </form>
       </section>
     `;
@@ -793,16 +846,40 @@
     const thread = overlay.querySelector(".shop-ai-thread");
     const form = overlay.querySelector(".shop-ai-form");
     const input = form.elements.message;
+    const welcome = overlay.querySelector(".shop-ai-welcome");
     const shell = document.querySelector(".page-shell");
     let previousInert = false;
     let previousOverflow = "";
+    let viewportController;
+    let fullViewportHeight = 0;
+    let viewportWidth = 0;
+    const mobileAssistantQuery = window.matchMedia("(max-width: 650px), (max-width: 1000px) and (pointer: coarse)");
+    const focusAssistant = () => {
+      (mobileAssistantQuery.matches ? dialog : input).focus({ preventScroll: true });
+    };
+    const syncAssistantViewport = () => {
+      if (overlay.hidden) return;
+      const viewport = window.visualViewport;
+      const height = viewport?.height || window.innerHeight;
+      if (viewportWidth !== window.innerWidth) fullViewportHeight = 0;
+      viewportWidth = window.innerWidth;
+      fullViewportHeight = Math.max(fullViewportHeight, height, window.innerHeight);
+      overlay.classList.toggle("is-mobile-viewport", mobileAssistantQuery.matches);
+      overlay.classList.toggle("is-keyboard-open",
+        mobileAssistantQuery.matches && document.activeElement === input && fullViewportHeight - height > 80);
+      overlay.style.setProperty("--shop-ai-viewport-height", `${height}px`);
+      overlay.style.setProperty("--shop-ai-viewport-top", `${viewport?.offsetTop || 0}px`);
+    };
 
     const addMessage = (text, role, products = []) => {
       const message = document.createElement("article");
       message.className = `shop-ai-message is-${role}`;
+      const author = document.createElement("span");
+      author.className = "shop-ai-author";
+      author.textContent = role === "user" ? copy.you : copy.assistant;
       const paragraph = document.createElement("p");
       paragraph.textContent = text;
-      message.append(paragraph);
+      message.append(author, paragraph);
       if (products.length) {
         const results = document.createElement("div");
         results.className = "shop-ai-results";
@@ -814,6 +891,7 @@
           const image = document.createElement("img");
           image.src = product.image;
           image.alt = "";
+          image.loading = "lazy";
           const details = document.createElement("span");
           details.className = "shop-ai-product-details";
           const name = document.createElement("strong");
@@ -827,8 +905,11 @@
             language === "zh" ? "zh-CN" : ({ ar: "ar-SA", fr: "fr-FR", es: "es-ES" }[language] || "en-US"),
             { style: "currency", currency, maximumFractionDigits: currency === "SAR" ? 0 : 2 },
           ).format(store.convertCurrency(product.price, "SAR", currency));
-          details.append(name, description);
-          link.append(image, details, price);
+          const action = document.createElement("span");
+          action.className = "shop-ai-product-action";
+          action.textContent = copy.view;
+          details.append(description, name, price);
+          link.append(image, details, action);
           results.append(link);
         });
         message.append(results);
@@ -884,30 +965,41 @@
         .map((item) => item.product);
     };
 
-    const submitMessage = (text) => {
+    const submitMessage = (text, focusInput = !mobileAssistantQuery.matches) => {
       const message = text.trim();
       if (!message) return;
+      welcome.hidden = true;
+      dialog.classList.add("is-chatting");
       addMessage(message, "user");
       const matches = recommend(message);
       addMessage(matches.length ? copy.matches : copy.noMatches, "assistant", matches);
       form.reset();
-      input.focus();
+      if (focusInput) input.focus({ preventScroll: true });
     };
 
-    addMessage(copy.welcome, "assistant");
     const suggestions = overlay.querySelector(".shop-ai-suggestions");
-    copy.suggestions.forEach((suggestion) => {
+    copy.suggestions.forEach((suggestion, index) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "shop-ai-suggestion";
-      button.textContent = suggestion;
+      button.innerHTML = `<i data-lucide="${["smartphone", "laptop", "headphones"][index]}" aria-hidden="true"></i><span></span><i data-lucide="arrow-up-right" aria-hidden="true"></i>`;
+      button.querySelector("span").textContent = suggestion;
       button.addEventListener("click", () => submitMessage(suggestion));
       suggestions.append(button);
+    });
+    overlay.querySelector(".shop-ai-restart").addEventListener("click", () => {
+      thread.querySelectorAll(".shop-ai-message").forEach((message) => message.remove());
+      welcome.hidden = false;
+      dialog.classList.remove("is-chatting");
+      form.reset();
+      thread.scrollTop = 0;
+      focusAssistant();
     });
 
     const close = (restoreFocus = true) => {
       if (overlay.hidden) return;
       overlay.hidden = true;
+      viewportController?.abort();
       trigger.setAttribute("aria-expanded", "false");
       if (shell) shell.inert = previousInert;
       document.body.style.overflow = previousOverflow;
@@ -924,20 +1016,35 @@
       document.body.style.overflow = "hidden";
       overlay.hidden = false;
       trigger.setAttribute("aria-expanded", "true");
-      input.focus({ preventScroll: true });
+      fullViewportHeight = 0;
+      viewportWidth = 0;
+      viewportController = new AbortController();
+      const viewportOptions = { signal: viewportController.signal };
+      window.addEventListener("resize", syncAssistantViewport, viewportOptions);
+      window.visualViewport?.addEventListener("resize", syncAssistantViewport, viewportOptions);
+      window.visualViewport?.addEventListener("scroll", syncAssistantViewport, viewportOptions);
+      focusAssistant();
+      syncAssistantViewport();
       window.lucide?.createIcons();
     };
 
-    listen(trigger, "click", open);
-    listen(overlay.querySelector(".shop-ai-close"), "click", () => close());
-    listen(overlay, "click", (event) => {
+    overlay.bindAssistantTrigger = (nextTrigger, bind) => {
+      trigger = nextTrigger;
+      trigger.setAttribute("aria-expanded", String(!overlay.hidden));
+      bind(trigger, "click", open);
+    };
+    overlay.bindAssistantTrigger(trigger, listen);
+    overlay.querySelector(".shop-ai-close").addEventListener("click", () => close());
+    overlay.addEventListener("click", (event) => {
       if (event.target === overlay) close();
     });
-    listen(form, "submit", (event) => {
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
-      submitMessage(input.value);
+      submitMessage(input.value, true);
     });
-    listen(overlay, "keydown", (event) => {
+    overlay.addEventListener("focusin", syncAssistantViewport);
+    overlay.addEventListener("focusout", () => queueMicrotask(syncAssistantViewport));
+    overlay.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
         close();
@@ -945,10 +1052,10 @@
         const items = [...dialog.querySelectorAll("button, input, a[href]")].filter((item) => item.getClientRects().length);
         const first = items[0];
         const last = items[items.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
           event.preventDefault();
           last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
+        } else if (!event.shiftKey && (document.activeElement === last || document.activeElement === dialog)) {
           event.preventDefault();
           first.focus();
         }
@@ -975,6 +1082,7 @@
     const controller = new AbortController();
     const listen = (target, name, handler) => target.addEventListener(name, handler, { signal: controller.signal });
     document.body.classList.add("has-store-menu");
+    delete document.documentElement.dataset.homeNavigation;
     document.querySelector(".product-side-menu-trigger")?.remove();
     document.querySelector(".product-side-drawer")?.remove();
     document.querySelector(".product-side-drawer-backdrop")?.remove();
@@ -1106,7 +1214,7 @@
       es: "Espacio de experimentación",
       zh: "实验空间",
     }[language] || "Experiment space";
-    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "RUQO TECH";
+    const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
     const arrowSymbol = language === "ar" ? "←" : "→";
 
     const backdrop = document.createElement("div");
@@ -1348,7 +1456,7 @@
     window.lucide?.createIcons();
     const buttons = () => [trigger, ...document.querySelectorAll(".menu-toggle, .commerce-menu")];
     const shell = document.querySelector(".page-shell");
-    const previousInert = shell?.inert || false;
+    let previousInert = false;
     let previousOverflow;
     let opener;
     const normalizePath = (path) => path.replace(/index\.html$/, "");
@@ -1379,6 +1487,7 @@
       opener = button;
       closeSearch();
       closeAllMenus();
+      previousInert = shell?.inert || false;
       previousOverflow = document.body.style.overflow;
       drawer.inert = false;
       drawer.classList.add("is-open");
@@ -1494,12 +1603,14 @@
     getCurrency,
     setCurrency,
     convertCurrency,
+    convertCurrencyExact,
     productVariants,
     getProductVariant,
     setProductVariant,
     getProductOptionSelections,
     setProductOptionSelections,
     syncDropdowns,
+    normalizeSearchText,
   };
   document.addEventListener("click", (event) => {
     if (event.target.closest("[data-theme-toggle]")) {
