@@ -24,6 +24,10 @@ All public catalog reads are limited to active records. Write access is controll
 
 Built-in page titles, metadata, translations, image labels, and admin copy use WEEXEY. Public settings with the legacy store name RUQO or RUQO TECH are displayed as WEEXEY, and legacy names in configured footer copy use the current store name. Other configured store names remain supported. Internal `RUQO_*` APIs, `ruqo:*` events, storage keys, and cloud identifiers remain unchanged for compatibility; this display update does not write to remote settings.
 
+### Admin color themes
+
+The admin palette in `public/css/admin.css` follows the storefront's purple identity, warm light surfaces, and plum/charcoal dark surfaces. Button fills and accent text have separate tokens so white button labels and lavender dark-mode links retain readable contrast. Published states remain green in both themes. The light sign-in palette is scoped separately to preserve its existing appearance; dark sign-in fields, buttons, and aside use the admin dark palette. Theme persistence and authentication behavior are unchanged.
+
 ### Homepage mobile product grid
 
 The shared shopping assistant uses a centered desktop dialog and a mobile bottom sheet with a branded header, scrollable welcome/conversation area, category starter cards, and an anchored composer. Conversation cards show catalog images, brands, localized names, currency-aware prices, and product links. The new-conversation button clears messages and restores the welcome state; closing/reopening retains the current conversation. All five languages, RTL, themes, focus trapping, Escape, backdrop dismissal, and focus restoration remain supported. Recommendations still use the existing local catalog matcher, not an external AI service; the footer makes their catalog source explicit. Dialog padding is explicitly reset so generic storefront section rules do not add empty space.
