@@ -213,6 +213,11 @@ body:is([data-page="experiments"], [data-page="home"]) .featured-product-image {
   object-fit: cover;
 }
 
+body:is([data-page="experiments"], [data-page="home"]) .featured-product-image:not([src]),
+body:is([data-page="experiments"], [data-page="home"]) .featured-product-image[src=""] {
+  opacity: 0;
+}
+
 body:is([data-page="experiments"], [data-page="home"]) .hero-showcase-price {
   border-color: rgba(82, 47, 116, 0.1);
 }
@@ -1445,5 +1450,450 @@ html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) .
 @media (prefers-reduced-motion: reduce) {
   html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) {
     background-attachment: scroll;
+  }
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-grid {
+  --category-gap: 18px;
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 3 * var(--category-gap)) / 4);
+  gap: var(--category-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+  padding-block: 10px 18px;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card {
+  min-width: 0;
+  padding: 0;
+  scroll-snap-align: start;
+  overflow-wrap: anywhere;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card p {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  margin: 12px auto 0;
+  padding: 7px;
+  border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  box-shadow: 0 8px 26px rgba(50, 26, 74, 0.08);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-controls[hidden],
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button[hidden] {
+  display: none;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--primary);
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button svg {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  pointer-events: none;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-pause {
+  background: linear-gradient(135deg, #8745da, #6429b3);
+  color: #fff;
+  box-shadow: 0 5px 14px rgba(105, 46, 174, 0.24);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(105, 46, 174, 0.18);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:not(.category-carousel-pause):hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary) 24%, transparent);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .category-carousel :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+@media (max-width: 650px) {
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-grid {
+    --category-gap: 12px;
+    grid-auto-columns: calc((100% - var(--category-gap)) / 2);
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card {
+    min-height: 240px;
+    border-radius: 20px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-content {
+    padding: 16px 14px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card h3 {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    letter-spacing: normal;
+    margin-bottom: 5px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card p {
+    font-size: 0.74rem;
+    line-height: 1.5;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card span {
+    padding: 6px 8px;
+    margin-top: 8px;
+    font-size: 0.68rem;
+    letter-spacing: normal;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel-controls {
+    display: none;
+  }
+}
+
+@media (hover: none) {
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card:hover,
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card:hover .category-image,
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:hover:not(:disabled),
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card,
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-image,
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button {
+    transition: none;
+    transform: none;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card:hover,
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel .category-card:hover .category-image,
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:hover:not(:disabled),
+  body:is([data-page="experiments"], [data-page="home"]) .category-carousel-button:active:not(:disabled) {
+    transform: none;
+  }
+}
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh.experiment-editorial {
+  display: block;
+  padding-top: 44px;
+  padding-bottom: 58px;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .experiment-editorial-visual.high-refresh-banner {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-height: 416px;
+  margin: 0;
+  isolation: isolate;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .experiment-editorial-visual.high-refresh-banner::before {
+  inset: 7% -1.2% -4.5% 2.5%;
+  border-radius: 36px;
+  transform: rotate(1.35deg);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-stage {
+  position: relative;
+  width: 100%;
+  height: 416px;
+  border: 8px solid rgba(255, 255, 255, 0.88);
+  border-radius: 32px;
+  background: linear-gradient(145deg, #f3edfc, #fbf5fa);
+  box-shadow: 0 28px 70px rgba(59, 33, 82, 0.16);
+  overflow: hidden;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-banner-img:not([src]),
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-banner-img[src=""] {
+  opacity: 0;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-banner-link {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-banner-link.is-clickable {
+  cursor: pointer;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-banner-link.is-clickable:hover .high-refresh-banner-img {
+  transform: scale(1.025);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: clamp(24px, 4.5vw, 56px);
+  background: linear-gradient(
+    90deg,
+    rgba(20, 12, 31, 0.82) 0%,
+    rgba(20, 12, 31, 0.56) 42%,
+    rgba(20, 12, 31, 0.08) 78%,
+    transparent 100%
+  );
+}
+
+[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay {
+  background: linear-gradient(
+    270deg,
+    rgba(20, 12, 31, 0.82) 0%,
+    rgba(20, 12, 31, 0.56) 42%,
+    rgba(20, 12, 31, 0.08) 78%,
+    transparent 100%
+  );
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay-copy {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  max-width: min(540px, 100%);
+  color: #fff;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay-copy h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.75rem, 3.2vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-shadow: 0 8px 28px rgba(0, 0, 0, 0.36);
+  overflow-wrap: anywhere;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay-copy p {
+  margin: 0;
+  color: rgba(248, 242, 255, 0.88);
+  font-size: clamp(0.92rem, 1.3vw, 1.06rem);
+  line-height: 1.7;
+  max-width: 46ch;
+  overflow-wrap: anywhere;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-cta {
+  margin-top: 6px;
+  box-shadow: 0 14px 32px rgba(115, 56, 198, 0.38);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .experiment-editorial-note {
+  inset-inline-start: -18px;
+  bottom: 26px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 164px;
+  pointer-events: none;
+}
+
+#high-refresh .high-refresh-note-copy {
+  display: grid;
+  gap: 4px;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .experiment-editorial-orbit {
+  top: -22px;
+  inset-inline-end: 4.5%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-controls {
+  position: absolute;
+  inset-inline-end: 24px;
+  bottom: 24px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.84);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 16px 36px rgba(46, 25, 70, 0.16);
+  backdrop-filter: blur(14px);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-arrow {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary-deep);
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-arrow svg {
+  width: 17px;
+  height: 17px;
+}
+
+[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-arrow svg {
+  transform: scaleX(-1);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-arrow:hover {
+  background: color-mix(in srgb, var(--primary) 20%, transparent);
+  transform: translateY(-1px);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 28%, transparent);
+  cursor: pointer;
+  transition: width 200ms ease, background 200ms ease;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-dot.is-active {
+  width: 22px;
+  background: linear-gradient(120deg, var(--primary), var(--accent));
+}
+
+body:is([data-page="experiments"], [data-page="home"]) #high-refresh :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+#high-refresh [hidden] {
+  display: none !important;
+}
+
+html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-stage {
+  border-color: rgba(38, 29, 46, 0.96);
+  background: linear-gradient(145deg, #241931, #191222);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.38);
+}
+
+html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-controls {
+  border-color: rgba(229, 207, 246, 0.16);
+  background: rgba(30, 23, 37, 0.92);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.34);
+}
+
+html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-arrow {
+  background: rgba(215, 180, 250, 0.14);
+  color: #f0e4ff;
+}
+
+@media (max-width: 650px) {
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh.experiment-editorial {
+    padding-top: 26px;
+    padding-bottom: 34px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .experiment-editorial-visual.high-refresh-banner,
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-stage {
+    min-height: 268px;
+    height: 268px;
+    border-radius: 26px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay {
+    align-items: center;
+    padding: 20px 18px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay-copy h2 {
+    font-size: clamp(1.25rem, 5.4vw, 1.65rem);
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-overlay-copy p {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-controls {
+    inset-inline-end: 10px;
+    bottom: 12px;
+    padding: 4px 6px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-arrow {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-banner-img,
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-arrow,
+  body:is([data-page="experiments"], [data-page="home"]) #high-refresh .high-refresh-dot {
+    transition: none;
+    transform: none;
   }
 }

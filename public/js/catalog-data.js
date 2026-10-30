@@ -534,7 +534,8 @@
       return {
         ...category,
         productCount: categoryProducts.length,
-        image: categoryProducts.find((product) => product.image)?.image || "",
+        coverImage: category.cover_image_url || "",
+        image: category.cover_image_url || categoryProducts.find((product) => product.image)?.image || "",
       };
     });
   };
@@ -562,7 +563,7 @@
         .select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, product_option_values, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, rating, review_count, badge, in_stock, is_active, is_featured, sort_order, external_image_url")
         .eq("is_active", true)
         .order("sort_order", { ascending: false }),
-      client.from("categories").select("slug, name_translations, description_translations, sort_order").eq("is_active", true).order("sort_order"),
+      client.from("categories").select("slug, name_translations, description_translations, cover_storage_path, sort_order").eq("is_active", true).order("sort_order"),
     ]);
     if (productResult.error) throw productResult.error;
     if (categoryResult.error) throw categoryResult.error;
@@ -583,8 +584,16 @@
       if (result.error) throw result.error;
     }
     if (detailImageResult.error && !detailImagesTableMissing) throw detailImageResult.error;
-    const categoriesChanged = JSON.stringify(window.RUQO_CATEGORIES) !== JSON.stringify(categoryResult.data || []);
-    window.RUQO_CATEGORIES = categoryResult.data || [];
+    const categoryRows = (categoryResult.data || []).map((category) => ({
+      ...category,
+      cover_image_url: category.cover_storage_path
+        ? client.storage.from("category-images").getPublicUrl(category.cover_storage_path).data.publicUrl : "",
+    }));
+    const categoriesChanged = JSON.stringify(window.RUQO_CATEGORIES) !== JSON.stringify(categoryRows);
+    window.RUQO_CATEGORIES = categoryRows;
+    try {
+      localStorage.setItem("ruqo-categories-cache-v1", JSON.stringify(categoryRows));
+    } catch (_) {}
     const productCurrencies = new Map(productRows.map((product) => [product.slug, product.currency || "SAR"]));
     const productPrices = new Map(productRows.map((product) => [product.slug, Number(product.price) || 0]));
     const convertPriceToSar = (value, currency) => {
@@ -759,6 +768,13 @@
 
   let isLoadedFromCache = false;
   try {
+    const cachedCategories = localStorage.getItem("ruqo-categories-cache-v1");
+    if (cachedCategories) {
+      const parsedCategories = JSON.parse(cachedCategories);
+      if (Array.isArray(parsedCategories)) {
+        window.RUQO_CATEGORIES = parsedCategories;
+      }
+    }
     const cached = localStorage.getItem("ruqo-catalog-cache-v1");
     if (cached) {
       const parsed = JSON.parse(cached);

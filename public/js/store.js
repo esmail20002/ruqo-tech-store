@@ -1,4 +1,29 @@
 (() => {
+  // Lucide keeps data-lucide on generated SVGs, so every global createIcons() call would redraw
+  // every icon on the page. Marking rendered SVGs limits later calls to new placeholders only.
+  const guardLucide = () => {
+    const lucide = window.lucide;
+    if (!lucide?.createIcons) return false;
+    if (lucide.createIcons.ruqoGuarded) return true;
+    const original = lucide.createIcons;
+    const markRendered = () => document.querySelectorAll("svg[data-lucide]").forEach((svg) => {
+      svg.dataset.renderedIcon = svg.getAttribute("data-lucide");
+      svg.removeAttribute("data-lucide");
+    });
+    const guarded = (options) => {
+      markRendered();
+      const result = original(options);
+      markRendered();
+      return result;
+    };
+    guarded.ruqoGuarded = true;
+    lucide.createIcons = guarded;
+    return true;
+  };
+  if (!guardLucide()) {
+    document.addEventListener("DOMContentLoaded", guardLucide, { once: true });
+    window.addEventListener("load", guardLucide, { once: true });
+  }
   const supportedLanguages = ["en", "fr", "es", "zh", "ar"];
   const isLocalDevelopment = ["localhost", "127.0.0.1", "::1"].includes(
     window.location.hostname,

@@ -550,9 +550,42 @@ window.NoursHomeTranslations = {
   root.lang = language === "zh" ? "zh-CN" : language;
   root.dir = language === "ar" ? "rtl" : "ltr";
   root.dataset.homeNavigation = "pending";
+  // Hydrate cached homepage publications immediately in <head> so the first paint
+  // already uses the store's published copy, banners, spotlights, and categories.
+  try {
+    const readJson = (key) => {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : undefined;
+    };
+    const settingsCache = readJson("ruqo-store-settings-cache-v1");
+    if (settingsCache && typeof settingsCache === "object") {
+      window.RUQO_STORE_SETTINGS = settingsCache.settings || {};
+      window.RUQO_BRAND_LOGO_URL = settingsCache.logoUrl || null;
+    }
+    const homeCopyCache = readJson("ruqo-home-copy-cache-v1");
+    if (homeCopyCache !== undefined) window.RUQO_HOME_COPY = homeCopyCache;
+    const highRefreshCache = readJson("ruqo-high-refresh-cache-v1");
+    if (highRefreshCache !== undefined) window.RUQO_HIGH_REFRESH = highRefreshCache;
+    const bannersCache = readJson("ruqo-store-banners-cache-v1");
+    if (Array.isArray(bannersCache)) window.RUQO_STORE_BANNERS = bannersCache;
+    const spotlightsCache = readJson("ruqo-home-spotlights-cache-v1");
+    if (Array.isArray(spotlightsCache)) window.RUQO_HOME_SPOTLIGHTS = spotlightsCache;
+    const categoriesCache = readJson("ruqo-categories-cache-v1");
+    if (Array.isArray(categoriesCache)) window.RUQO_CATEGORIES = categoriesCache;
+  } catch (_) {}
   const dictionary = window.NoursHomeTranslations[language];
   const translateElement = (element) => {
     if (!element || element.nodeType !== Node.ELEMENT_NODE) return;
+    const published = window.RUQO_HOME_COPY?.translations?.[language] || window.RUQO_HOME_COPY?.translations?.en;
+    if (published && typeof published.title === "string" && published.title.trim()) {
+      const copyKey = { "hero.eyebrow": "eyebrow", "hero.title": "title", "hero.text": "text" }[element.getAttribute("data-i18n")];
+      if (copyKey && typeof published[copyKey] === "string") {
+        if (element.textContent !== published[copyKey]) element.textContent = published[copyKey];
+        const shouldHide = !published[copyKey].trim();
+        if (element.hidden !== shouldHide) element.hidden = shouldHide;
+        return;
+      }
+    }
     const text = dictionary[element.getAttribute("data-i18n")];
     if (text && element.textContent.trim() && element.textContent !== text) element.textContent = text;
     const placeholder = dictionary[element.getAttribute("data-i18n-placeholder")];

@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/admin.css?v=4" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -88,36 +88,54 @@
     </main>
 
     <div id="admin-app" class="admin-app" hidden>
-      <aside class="admin-sidebar">
+      <aside id="admin-sidebar" class="admin-sidebar" aria-label="Store workspace">
+        <div class="admin-sidebar-heading">
         <a class="admin-brand" href="/" aria-label="WEEXEY storefront">
           <img src="/images/new/li.png" alt="WEEXEY" data-admin-brand-logo />
           <span>STORE MANAGEMENT</span>
         </a>
-        <div class="workspace-label">WORKSPACE <strong>WEEXEY</strong></div>
+        <button id="admin-menu-close" class="admin-icon-button" type="button" aria-label="Close navigation"><i data-lucide="x" aria-hidden="true"></i></button>
+        </div>
+        <div class="workspace-label"><span class="workspace-avatar" aria-hidden="true">W</span><span>YOUR WORKSPACE <strong>WEEXEY Store</strong></span></div>
         <nav class="admin-navigation" aria-label="Admin navigation">
+          <div class="admin-nav-group" role="group" aria-labelledby="admin-management-label">
+          <span id="admin-management-label" class="admin-nav-group-label">MANAGEMENT</span>
           <button class="admin-nav-item is-active" type="button" data-admin-view="overview"><i data-lucide="layout-dashboard" aria-hidden="true"></i><span>Overview</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="products"><i data-lucide="package-2" aria-hidden="true"></i><span>Products</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="categories"><i data-lucide="layers-3" aria-hidden="true"></i><span>Categories</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="orders"><i data-lucide="clipboard-list" aria-hidden="true"></i><span>Orders</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="messages"><i data-lucide="messages-square" aria-hidden="true"></i><span>Messages</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="audience"><i data-lucide="users-round" aria-hidden="true"></i><span>Audience</span></button>
+          </div>
+          <div class="admin-nav-group" role="group" aria-labelledby="admin-storefront-label">
+          <span id="admin-storefront-label" class="admin-nav-group-label">STOREFRONT</span>
           <button class="admin-nav-item" type="button" data-admin-view="promotions"><i data-lucide="badge-percent" aria-hidden="true"></i><span>Offers</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="banners"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>Banners</span></button>
-          <button class="admin-nav-item" type="button" data-admin-view="audience"><i data-lucide="users-round" aria-hidden="true"></i><span>Audience</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="homepage-showcase"><i data-lucide="gallery-horizontal-end" aria-hidden="true"></i><span>Homepage spotlight</span></button>
-          <button class="admin-nav-item" type="button" data-admin-view="settings"><i data-lucide="settings-2" aria-hidden="true"></i><span>Store settings</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="high-refresh"><i data-lucide="sparkles" aria-hidden="true"></i><span>high refresh</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="footer"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>Footer content</span></button>
+          </div>
+          <div class="admin-nav-group" role="group" aria-labelledby="admin-settings-label">
+          <span id="admin-settings-label" class="admin-nav-group-label">PREFERENCES</span>
+          <button class="admin-nav-item" type="button" data-admin-view="settings"><i data-lucide="settings-2" aria-hidden="true"></i><span>Store settings</span></button>
+          </div>
         </nav>
         <div class="sidebar-footer">
+          <div class="admin-account"><span class="admin-account-avatar" aria-hidden="true"><i data-lucide="user-round" aria-hidden="true"></i></span><div><strong>Store account</strong><span id="admin-user" class="admin-user"></span></div></div>
           <span class="connection-indicator"><i></i> Supabase connected</span>
           <button id="sign-out" class="admin-sign-out" type="button"><i data-lucide="log-out" aria-hidden="true"></i> Sign out</button>
         </div>
       </aside>
+      <div class="admin-sidebar-backdrop" aria-hidden="true"></div>
 
       <div class="admin-content-shell">
         <header class="admin-topbar">
-          <div class="admin-breadcrumb"><span>WEEXEY</span><i data-lucide="chevron-right" aria-hidden="true"></i><strong id="breadcrumb-current">Overview</strong></div>
+          <div class="admin-topbar-leading">
+            <button id="admin-menu-toggle" class="admin-icon-button" type="button" aria-label="Open navigation" aria-controls="admin-sidebar" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button>
+            <div class="admin-breadcrumb"><span>Workspace</span><i data-lucide="chevron-right" aria-hidden="true"></i><strong id="breadcrumb-current">Overview</strong></div>
+          </div>
           <div class="admin-topbar-actions">
-            <span id="admin-user" class="admin-user"></span>
+            <a class="admin-store-link" href="/" target="_blank" rel="noopener">View store <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
             <button id="admin-theme-toggle" class="admin-icon-button" type="button" aria-label="Toggle color theme"><i data-lucide="moon" aria-hidden="true"></i></button>
           </div>
         </header>
@@ -222,13 +240,138 @@
             </section>
           </section>
           <section class="admin-view" data-admin-panel="homepage-showcase" hidden>
-            <div class="admin-page-heading"><div><span class="admin-eyebrow">HOMEPAGE FEATURE</span><h1>Homepage spotlight</h1><p>Choose and order multiple products for the homepage feature carousel.</p></div><button id="add-home-spotlight" class="admin-primary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add product</button></div>
+            <div class="admin-page-heading"><div><span class="admin-eyebrow">HOMEPAGE FEATURE</span><h1>Homepage spotlight</h1><p>Choose and order multiple products for the homepage feature carousel.</p></div><div class="admin-heading-actions"><button id="edit-home-copy" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Edit homepage text</button><button id="add-home-spotlight" class="admin-primary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add product</button></div></div>
             <section class="admin-section homepage-showcase-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Product</th><th>Price</th><th>Offer</th><th>Schedule</th><th>Position</th><th>Status</th><th></th></tr></thead><tbody id="home-spotlights-body"></tbody></table><div id="home-spotlights-empty" class="admin-empty" hidden><i data-lucide="gallery-horizontal-end" aria-hidden="true"></i><strong>No spotlight products</strong><span>Add one or more products for the homepage feature.</span></div></div></section>
+          </section>
+          <section class="admin-view" data-admin-panel="high-refresh" hidden>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">HOMEPAGE ADVERTISING</span>
+                <h1>high refresh</h1>
+                <p>Manage the full-width homepage promotional banner carousel, images, links, schedule, and translations.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button class="admin-secondary-button" type="button" data-hr-reload>Reload</button>
+                <button class="admin-primary-button" type="button" data-hr-add-slide><i data-lucide="plus" aria-hidden="true"></i> Add banner slide</button>
+              </div>
+            </div>
+            <p class="admin-muted-copy" data-hr-live role="status">Loading banner status…</p>
+            <form id="high-refresh-form" class="admin-section high-refresh-editor" novalidate>
+              <div>
+                <h2>Banner slides &amp; preview</h2>
+                <p class="admin-muted-copy">Add one or more banner slides. Multiple active slides rotate every 4 seconds on the homepage.</p>
+                <p class="admin-muted-copy" data-hr-state role="status"></p>
+                <ol class="high-refresh-products" data-hr-products></ol>
+                <section class="high-refresh-live-preview" data-hr-preview aria-label="Banner slide preview">
+                  <div class="high-refresh-preview-stage">
+                    <img data-hr-preview-img alt="Banner preview" hidden />
+                    <div class="high-refresh-preview-overlay" data-hr-preview-overlay hidden>
+                      <h3 data-hr-preview-title></h3>
+                      <p data-hr-preview-text></p>
+                      <span class="high-refresh-preview-cta" data-hr-preview-button></span>
+                    </div>
+                  </div>
+                </section>
+                <div class="high-refresh-actions">
+                  <button class="admin-secondary-button" type="button" data-hr-action="save">Save draft</button>
+                  <button class="admin-primary-button" type="button" data-hr-action="publish">Publish banners</button>
+                </div>
+              </div>
+              <div data-hr-slide-editor>
+                <h2>Slide settings</h2>
+                <div class="admin-form-grid">
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="is_active" type="checkbox" checked />
+                    <span><strong>Active banner slide</strong><small>Turn off to pause this slide without deleting it.</small></span>
+                  </label>
+                  <label class="form-field-wide">
+                    Desktop banner image (upload or HTTPS URL)
+                    <input name="desktop_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                    <input name="image_url" type="url" maxlength="2048" placeholder="https://... or upload an image file above" />
+                    <small>JPEG, PNG, or WebP up to 10 MB. Recommended wide ratio (e.g. 1600×550).</small>
+                  </label>
+                  <label class="form-field-wide">
+                    Mobile banner image (optional)
+                    <input name="mobile_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                    <input name="mobile_image_url" type="url" maxlength="2048" placeholder="Optional mobile image URL or upload above" />
+                    <small>Used on screens 650px and narrower. Leave empty to use the desktop image.</small>
+                  </label>
+                  <label>
+                    Quick link target
+                    <select name="quick_target">
+                      <option value="">Custom or select below…</option>
+                      <option value="/products.html">All products</option>
+                      <option value="/products.html?filter=deals">All deals &amp; offers</option>
+                      <option value="/categories.html">All categories</option>
+                    </select>
+                  </label>
+                  <label>
+                    Destination URL (on click)
+                    <input name="destination_url" maxlength="2048" placeholder="/products.html?category=laptops or https://..." />
+                  </label>
+                  <label>
+                    Starts at (optional)
+                    <input name="starts_at" type="datetime-local" />
+                  </label>
+                  <label>
+                    Ends at (optional)
+                    <input name="ends_at" type="datetime-local" />
+                  </label>
+                  <label class="form-field-wide">
+                    Editing / preview language
+                    <select name="language">
+                      <option value="en">English (source)</option>
+                      <option value="ar">Arabic</option>
+                      <option value="fr">French</option>
+                      <option value="es">Spanish</option>
+                      <option value="zh">Simplified Chinese</option>
+                    </select>
+                  </label>
+                  <div class="form-field-wide admin-form-grid" data-hr-fields>
+                    <label class="form-field-wide">
+                      Banner headline (optional)
+                      <textarea name="title" rows="2" maxlength="600" placeholder="Leave headline, description, and button empty for a clean image-only banner"></textarea>
+                    </label>
+                    <label class="form-field-wide">
+                      Description (optional)
+                      <textarea name="text" rows="3" maxlength="4000" placeholder="Optional subtitle shown on the banner"></textarea>
+                    </label>
+                    <label class="form-field-wide">
+                      Button label (optional)
+                      <input name="eyebrow" maxlength="200" placeholder="Shop now" />
+                    </label>
+                  </div>
+                </div>
+                <div class="high-refresh-actions">
+                  <button class="admin-secondary-button" type="button" data-hr-action="translate">Generate translations (Azure)</button>
+                </div>
+              </div>
+              <p class="admin-feedback form-field-wide" data-hr-feedback role="status" hidden></p>
+            </form>
           </section>
           <div id="admin-toast" class="admin-toast" role="status" aria-live="polite"></div>
         </main>
       </div>
     </div>
+
+    <dialog id="home-copy-dialog" class="product-dialog" aria-labelledby="home-copy-title">
+      <form id="home-copy-form">
+        <header class="dialog-header"><div><span class="admin-eyebrow">MULTILINGUAL CONTENT</span><h2 id="home-copy-title">Homepage text</h2></div><button class="admin-icon-button" type="button" data-home-copy-close aria-label="Close homepage text editor"><i data-lucide="x" aria-hidden="true"></i></button></header>
+        <div class="dialog-body">
+          <p class="admin-muted-copy">Write in English, save a draft, then generate and review all four translations before publishing. Nothing goes live until you publish. Brand names, models, and numbers are protected during translation.</p>
+          <p id="home-copy-status" class="admin-muted-copy" role="status"></p>
+          <div class="home-copy-language-field"><label for="home-copy-language">Editing / preview language</label><select id="home-copy-language"><option value="en">English (source)</option><option value="ar">Arabic</option><option value="fr">French</option><option value="es">Spanish</option><option value="zh">Simplified Chinese</option></select></div>
+          <div id="home-copy-fields" class="admin-form-grid">
+            <label class="form-field-wide">Small heading (optional)<input name="eyebrow" maxlength="200" /><small>Leave empty in English to hide this heading in every language.</small></label>
+            <label class="form-field-wide">Main title (required)<textarea name="title" rows="3" maxlength="600" required></textarea></label>
+            <label class="form-field-wide">Description (optional)<textarea name="text" rows="5" maxlength="4000"></textarea><small>Leave empty in English to hide this description in every language.</small></label>
+          </div>
+          <section id="home-copy-preview" class="home-copy-preview" aria-label="Homepage text preview"><span data-home-copy-preview="eyebrow"></span><h3 data-home-copy-preview="title"></h3><p data-home-copy-preview="text"></p></section>
+          <p id="home-copy-feedback" class="admin-feedback" role="status" hidden></p>
+        </div>
+        <footer class="dialog-footer home-copy-actions"><button class="admin-secondary-button" type="button" data-home-copy-close>Close</button><span></span><button id="save-home-copy" class="admin-secondary-button" type="button">Save draft</button><button id="translate-home-copy" class="admin-secondary-button" type="button">Generate translations</button><button id="publish-home-copy" class="admin-primary-button" type="button">Publish</button></footer>
+      </form>
+    </dialog>
 
     <dialog id="homepage-showcase-dialog" class="product-dialog">
       <form id="homepage-showcase-form" method="dialog" novalidate>
@@ -264,6 +407,7 @@
             <button type="button" data-product-editor-target="product-benefits"><i data-lucide="badge-check" aria-hidden="true"></i><span>Benefits</span></button>
             <button type="button" data-product-editor-target="product-detail-images"><i data-lucide="images" aria-hidden="true"></i><span>Detail images</span></button>
             <button type="button" data-product-editor-target="product-specifications"><i data-lucide="list-checks" aria-hidden="true"></i><span>Specifications</span></button>
+            <button type="button" data-product-editor-target="product-showcase"><i data-lucide="sparkles" aria-hidden="true"></i><span>Studio &amp; Bento</span></button>
           </nav>
           <div class="product-editor-content" id="product-editor-content">
           <section class="product-editor-section" id="product-identity">
@@ -318,6 +462,54 @@
             <div class="specification-locale-panel" data-specification-locale="zh" hidden></div>
             <div class="specification-locale-panel" data-specification-locale="ar" dir="rtl" hidden></div>
           </section>
+          <section class="product-showcase-editor product-editor-section" id="product-showcase">
+            <div class="variant-editor-heading">
+              <div>
+                <h3>Studio &amp; Bento showcase (optional)</h3>
+                <p>Customize the 4 interactive studio tabs and Bento cards for this product. Leave any field empty to use the built-in smart defaults automatically.</p>
+              </div>
+              <button id="translate-product-showcase" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Translate with Azure</button>
+            </div>
+            <p id="product-showcase-feedback" class="admin-help" role="status" hidden></p>
+            <div class="admin-form-grid">
+              <fieldset class="product-value-field form-field-wide">
+                <legend>1. Craft &amp; Design</legend>
+                <div class="admin-form-grid">
+                  <label>Stat number (e.g. 15.5mm)<input name="showcase_design_stat" maxlength="40" placeholder="15.5mm" /></label>
+                  <label>Stat label (EN)<input name="showcase_design_label" maxlength="120" placeholder="Ultra-thin profile" /></label>
+                  <label class="form-field-wide">Headline (EN)<input name="showcase_design_title" maxlength="200" placeholder="Precision-crafted unibody that feels effortless." /></label>
+                  <label class="form-field-wide">Description (EN)<textarea name="showcase_design_desc" rows="2" maxlength="600" placeholder="Sculpted with clean lines, balanced weight distribution, and a durable anodized finish."></textarea></label>
+                </div>
+              </fieldset>
+              <fieldset class="product-value-field form-field-wide">
+                <legend>2. Pro Display</legend>
+                <div class="admin-form-grid">
+                  <label>Stat number (e.g. 120Hz)<input name="showcase_display_stat" maxlength="40" placeholder="120Hz" /></label>
+                  <label>Stat label (EN)<input name="showcase_display_label" maxlength="120" placeholder="Adaptive ProMotion" /></label>
+                  <label class="form-field-wide">Headline (EN)<input name="showcase_display_title" maxlength="200" placeholder="True-to-life brilliance from every angle." /></label>
+                  <label class="form-field-wide">Description (EN)<textarea name="showcase_display_desc" rows="2" maxlength="600" placeholder="Extreme dynamic range with deep blacks, P3 wide color gamut, and adaptive refresh rate."></textarea></label>
+                </div>
+              </fieldset>
+              <fieldset class="product-value-field form-field-wide">
+                <legend>3. Next-Gen Chip &amp; Performance</legend>
+                <div class="admin-form-grid">
+                  <label>Stat number (e.g. 3.4×)<input name="showcase_performance_stat" maxlength="40" placeholder="3.4×" /></label>
+                  <label>Stat label (EN)<input name="showcase_performance_label" maxlength="120" placeholder="Faster pro workflows" /></label>
+                  <label class="form-field-wide">Headline (EN)<input name="showcase_performance_title" maxlength="200" placeholder="Desktop-class speed that stays whisper-quiet." /></label>
+                  <label class="form-field-wide">Description (EN)<textarea name="showcase_performance_desc" rows="2" maxlength="600" placeholder="Render 8K timelines, compile massive projects, and multitask across pro workflows."></textarea></label>
+                </div>
+              </fieldset>
+              <fieldset class="product-value-field form-field-wide">
+                <legend>4. All-Day Power &amp; Battery</legend>
+                <div class="admin-form-grid">
+                  <label>Stat number (e.g. 22hrs)<input name="showcase_battery_stat" maxlength="40" placeholder="22hrs" /></label>
+                  <label>Stat label (EN)<input name="showcase_battery_label" maxlength="120" placeholder="Continuous playback" /></label>
+                  <label class="form-field-wide">Headline (EN)<input name="showcase_battery_title" maxlength="200" placeholder="Unplugged performance that outlasts your schedule." /></label>
+                  <label class="form-field-wide">Description (EN)<textarea name="showcase_battery_desc" rows="2" maxlength="600" placeholder="Intelligent power management delivers identical peak speed plugged in or on battery."></textarea></label>
+                </div>
+              </fieldset>
+            </div>
+          </section>
           <p id="product-form-error" class="admin-feedback" role="alert" hidden></p>
           </div>
         </div>
@@ -331,6 +523,12 @@
         <div class="dialog-body">
           <div class="admin-form-grid"><label>Category slug<input name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" required placeholder="smart-home" /></label><label>Sort order<input name="sort_order" type="number" step="1" value="0" required /></label></div>
           <label class="admin-inline-check"><input name="is_active" type="checkbox" checked /><span><strong>Category published</strong><small>Visible to customers</small></span></label>
+          <section class="category-cover-editor" aria-labelledby="category-cover-heading">
+            <div><h3 id="category-cover-heading">Category cover image</h3><p>Your cover is used on the homepage and category catalogs. Without one, a product image is used.</p></div>
+            <img id="category-cover-preview" alt="Category cover preview" hidden />
+            <label>Upload / replace cover<input name="cover_file" type="file" accept="image/jpeg,image/png,image/webp" /><small>JPEG, PNG, or WebP, up to 5 MB. Images fill the card and may be cropped.</small></label>
+            <button id="remove-category-cover" class="admin-secondary-button" type="button">Remove custom cover</button>
+          </section>
           <div class="translation-editor"><div class="translation-heading"><div><h3>Category content</h3><p>Names and descriptions by language</p></div><div class="locale-tabs" role="tablist" aria-label="Category language"><button class="is-active" type="button" data-locale-tab="en">EN</button><button type="button" data-locale-tab="fr">FR</button><button type="button" data-locale-tab="es">ES</button><button type="button" data-locale-tab="zh">中文</button><button type="button" data-locale-tab="ar">عربي</button></div></div>
             <div class="locale-panel is-active" data-locale-panel="en"><label>Name<input name="name_en" required /></label><label>Description<textarea name="description_en" rows="3"></textarea></label></div>
             <div class="locale-panel" data-locale-panel="fr" hidden><label>Nom<input name="name_fr" /></label><label>Description<textarea name="description_fr" rows="3"></textarea></label></div>
@@ -338,6 +536,13 @@
             <div class="locale-panel" data-locale-panel="zh" hidden><label>分类名称<input name="name_zh" /></label><label>分类描述<textarea name="description_zh" rows="3"></textarea></label></div>
             <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>اسم التصنيف<input name="name_ar" /></label><label>وصف التصنيف<textarea name="description_ar" rows="3"></textarea></label></div>
           </div>
+          <div class="category-translation-actions">
+            <button id="translate-category" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Generate translations</button>
+            <button id="review-category-translations" class="admin-secondary-button" type="button" hidden>Keep existing translations (reviewed)</button>
+          </div>
+          <p id="category-translation-status" class="admin-help" role="status"></p>
+          <p id="category-translation-feedback" class="admin-help" role="status"></p>
+          <p class="admin-help">Translation results stay in this editor until you save. Saving a published category updates the live site.</p>
           <p id="category-form-error" class="admin-feedback" role="alert" hidden></p>
         </div>
         <footer class="dialog-footer"><button id="delete-category" class="admin-danger-button" type="button" hidden><i data-lucide="trash-2" aria-hidden="true"></i> Delete</button><span></span><button class="admin-secondary-button" type="button" data-close-dialog>Cancel</button><button class="admin-primary-button" type="submit">Save category</button></footer>
@@ -400,66 +605,12 @@
       </form>
     </dialog>
 
-    <dialog id="promotion-dialog" class="product-dialog">
-      <form id="promotion-form" method="dialog" novalidate>
-        <header class="dialog-header"><div><span class="admin-eyebrow">MERCHANDISING</span><h2 id="promotion-dialog-title">Add offer</h2></div><button class="admin-icon-button" type="button" data-close-dialog aria-label="Close"><i data-lucide="x" aria-hidden="true"></i></button></header>
-        <div class="dialog-body">
-          <div class="admin-form-grid">
-            <label class="form-field-wide">Internal name<input name="name" required placeholder="Summer offer" /></label>
-            <label>Discount type<select name="discount_type"><option value="percentage">Percentage</option><option value="fixed_amount">Fixed amount</option></select></label>
-            <label>Discount value<input name="discount_value" type="number" min="0.01" step="0.01" required /></label>
-            <label>Coupon code<input name="coupon_code" placeholder="Optional" /></label>
-            <label>Minimum order (SAR)<input name="minimum_order" type="number" min="0" step="0.01" value="0" /></label>
-            <label>Starts at<input name="starts_at" type="datetime-local" /></label>
-            <label>Ends at<input name="ends_at" type="datetime-local" /></label>
-          </div>
-          <label class="admin-inline-check"><input name="is_active" type="checkbox" /> Offer is active</label>
-          <div class="translation-editor">
-            <div class="translation-heading"><div><h3>Customer-facing copy</h3><p>Offer title and description in each storefront language</p></div><div class="locale-tabs" role="tablist" aria-label="Offer language"><button class="is-active" type="button" data-locale-tab="en">EN</button><button type="button" data-locale-tab="fr">FR</button><button type="button" data-locale-tab="es">ES</button><button type="button" data-locale-tab="zh">中文</button><button type="button" data-locale-tab="ar">عربي</button></div></div>
-            <div class="locale-panel is-active" data-locale-panel="en"><label>Title<input name="title_en" required /></label><label>Description<textarea name="description_en" rows="3"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="fr" hidden><label>Titre<input name="title_fr" /></label><label>Description<textarea name="description_fr" rows="3"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="es" hidden><label>Título<input name="title_es" /></label><label>Descripción<textarea name="description_es" rows="3"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="zh" hidden><label>优惠标题<input name="title_zh" /></label><label>优惠描述<textarea name="description_zh" rows="3"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>عنوان العرض<input name="title_ar" /></label><label>وصف العرض<textarea name="description_ar" rows="3"></textarea></label></div>
-          </div>
-          <p id="promotion-form-error" class="admin-feedback" role="alert" hidden></p>
-        </div>
-        <footer class="dialog-footer"><button id="delete-promotion" class="admin-danger-button" type="button" hidden><i data-lucide="trash-2" aria-hidden="true"></i> Delete</button><span></span><button class="admin-secondary-button" type="button" data-close-dialog>Cancel</button><button class="admin-primary-button" type="submit">Save offer</button></footer>
-      </form>
-    </dialog>
-
-    <dialog id="banner-dialog" class="product-dialog">
-      <form id="banner-form" method="dialog" novalidate>
-        <header class="dialog-header"><div><span class="admin-eyebrow">STOREFRONT CONTENT</span><h2 id="banner-dialog-title">Add banner</h2></div><button class="admin-icon-button" type="button" data-close-dialog aria-label="Close"><i data-lucide="x" aria-hidden="true"></i></button></header>
-        <div class="dialog-body">
-          <div class="admin-form-grid">
-            <label>Internal name<input name="name" required placeholder="Homepage summer feature" /></label>
-            <label>Placement<select name="placement"><option value="home_hero">Homepage hero</option><option value="home_promo">Homepage offer</option><option value="mobile_promo">Mobile offer</option><option value="category">Category page</option></select></label>
-            <label class="form-field-wide">Destination URL<input name="destination_url" type="url" placeholder="https://… or /products.html" /></label>
-            <label class="form-field-wide">Image URL<input name="image_url" type="url" placeholder="Optional external image URL" /></label>
-            <label class="form-field-wide admin-upload">Upload banner image<input name="image_file" type="file" accept="image/png,image/jpeg,image/webp" /><small>PNG, JPEG, or WebP. Maximum 10 MB.</small></label>
-            <label>Starts at<input name="starts_at" type="datetime-local" /></label>
-            <label>Ends at<input name="ends_at" type="datetime-local" /></label>
-          </div>
-          <label class="admin-inline-check"><input name="is_active" type="checkbox" /> Banner is active</label>
-          <div class="translation-editor">
-            <div class="translation-heading"><div><h3>Banner copy</h3><p>Title, description, and button in each language</p></div><div class="locale-tabs" role="tablist" aria-label="Banner language"><button class="is-active" type="button" data-locale-tab="en">EN</button><button type="button" data-locale-tab="fr">FR</button><button type="button" data-locale-tab="es">ES</button><button type="button" data-locale-tab="zh">中文</button><button type="button" data-locale-tab="ar">عربي</button></div></div>
-            <div class="locale-panel is-active" data-locale-panel="en"><label>Title<input name="title_en" required /></label><label>Description<textarea name="description_en" rows="3"></textarea></label><label>Button label<input name="button_en" /></label></div>
-            <div class="locale-panel" data-locale-panel="fr" hidden><label>Titre<input name="title_fr" /></label><label>Description<textarea name="description_fr" rows="3"></textarea></label><label>Libellé du bouton<input name="button_fr" /></label></div>
-            <div class="locale-panel" data-locale-panel="es" hidden><label>Título<input name="title_es" /></label><label>Descripción<textarea name="description_es" rows="3"></textarea></label><label>Texto del botón<input name="button_es" /></label></div>
-            <div class="locale-panel" data-locale-panel="zh" hidden><label>横幅标题<input name="title_zh" /></label><label>横幅描述<textarea name="description_zh" rows="3"></textarea></label><label>按钮文字<input name="button_zh" /></label></div>
-            <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>عنوان البانر<input name="title_ar" /></label><label>وصف البانر<textarea name="description_ar" rows="3"></textarea></label><label>نص الزر<input name="button_ar" /></label></div>
-          </div>
-          <p id="banner-form-error" class="admin-feedback" role="alert" hidden></p>
-        </div>
-        <footer class="dialog-footer"><button id="delete-banner" class="admin-danger-button" type="button" hidden><i data-lucide="trash-2" aria-hidden="true"></i> Delete</button><span></span><button class="admin-secondary-button" type="button" data-close-dialog>Cancel</button><button class="admin-primary-button" type="submit">Save banner</button></footer>
-      </form>
-    </dialog>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="/js/supabase-config.js"></script>
     <script src="/js/product-options.js" defer></script>
-    <script src="/js/admin.js?v=3" defer></script>
+    <script src="/js/admin-home-copy.js?v=1" defer></script>
+    <script src="/js/admin-high-refresh.js?v=4" defer></script>
+    <script src="/js/admin.js?v=7" defer></script>
   </body>
 </html>

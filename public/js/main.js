@@ -81,6 +81,7 @@ const mobileViewportQuery = window.matchMedia("(max-width: 640px)");
 const reducedMotionQuery = window.matchMedia(
   "(prefers-reduced-motion: reduce)",
 );
+const categoryCarousel = setupCategoryCarousel();
 const featuredProducts = [
   {
     image:
@@ -282,17 +283,27 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
 
   const detailMode = showcase.bottom_detail || "description";
   const firstFeature = localized.features?.[0];
+  const categoryEntry = window.NoursData?.getCategories?.().find((item) => item.slug === product.category);
+  const categoryName = categoryEntry?.name_translations?.[currentLang] || categoryEntry?.name_translations?.en ||
+    localized.category || product.category;
+  const reviewCount = Number(product.reviews || 0);
+  const reviewText = {
+    ar: `${reviewCount} مراجعة`,
+    fr: `${reviewCount} avis`,
+    es: `${reviewCount} reseñas`,
+    zh: `${reviewCount} 条评价`,
+  }[currentLang] || `${reviewCount} reviews`;
   const bottomDetail = detailMode === "brand"
-    ? `${product.brand} · ${localized.category || product.category}`
+    ? `${product.brand} · ${categoryName}`
     : detailMode === "rating"
-      ? `${Number(product.rating || 0).toFixed(1)} ★ · ${Number(product.reviews || 0)} reviews`
+      ? `${Number(product.rating || 0).toFixed(1)} ★ · ${reviewText}`
       : detailMode === "feature"
         ? firstFeature || localized.description?.[currentLang] || localized.description?.en
         : localized.description?.[currentLang] || localized.description?.en || product.brand;
   bottomCard.querySelector("span").textContent = detailMode === "brand" ? copy.brand : detailMode === "rating" ? copy.rating : detailMode === "feature" ? copy.feature : copy.description;
   bottomCard.querySelector("strong").textContent = bottomDetail;
   bottomCard.querySelector("small").textContent = product.stock
-    ? `${localized.category || product.category}`
+    ? categoryName
     : (translations[currentLang]?.["tags.unavailable"] || "Out of stock");
   if (isTransitionEntrance && !reducedMotionQuery.matches) {
     const revealText = (element, delay = 0, duration = 1100) => {
@@ -354,6 +365,9 @@ function renderFeaturedProduct() {
   const heroVisual = document.querySelector(".hero-visual");
   const hero = document.querySelector(".hero");
   const spotlights = window.RUQO_HOME_SPOTLIGHTS;
+  if (spotlights === undefined && window.RUQO_SUPABASE_CONFIG?.url) {
+    return;
+  }
   if (!Array.isArray(spotlights) || !spotlights.length) {
     heroVisual.hidden = true;
     hero?.classList.add("has-no-showcase");
@@ -426,6 +440,154 @@ function syncHomepageCatalog() {
   renderFeaturedProduct();
 }
 
+function setupCategoryCarousel() {
+  const grid = document.querySelector("#categories .category-grid");
+  if (!grid) return null;
+  const carousel = document.createElement("div");
+  carousel.className = "category-carousel";
+  carousel.setAttribute("role", "region");
+  grid.before(carousel);
+  carousel.append(grid);
+  grid.id = "category-track";
+  grid.tabIndex = 0;
+  const controls = document.createElement("div");
+  controls.className = "category-carousel-controls";
+  const [previous, pause, next] = ["previous", "pause", "next"].map((action) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `category-carousel-button category-carousel-${action}`;
+    button.setAttribute("aria-controls", grid.id);
+    controls.append(button);
+    return button;
+  });
+  carousel.append(controls);
+  let timer;
+  let hovered = false;
+  let pressed = false;
+  let paused = false;
+  let visible = false;
+  let autoStep = 1;
+  let copy;
+
+  function setControlIcon(button, name) {
+    if (button.dataset.icon === name) return;
+    const paths = {
+      left: "m14 6-6 6 6 6",
+      right: "m10 6 6 6-6 6",
+      pause: "M9 5v14M15 5v14",
+      play: "m9 5 10 7-10 7Z",
+    };
+    button.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="${paths[name]}"/></svg>`;
+    button.dataset.icon = name;
+  }
+
+  function updateAutoplay() {
+    window.clearTimeout(timer);
+    setControlIcon(pause, paused ? "play" : "pause");
+    pause.setAttribute("aria-label", paused ? copy.play : copy.pause);
+    pause.title = paused ? copy.play : copy.pause;
+    pause.hidden = reducedMotionQuery.matches;
+    if (controls.hidden || paused || hovered || pressed || !visible ||
+        reducedMotionQuery.matches || document.visibilityState !== "visible" ||
+        carousel.contains(document.activeElement)) return;
+    timer = window.setTimeout(() => {
+      if (next.disabled) autoStep = -1;
+      else if (previous.disabled) autoStep = 1;
+      scrollCards(autoStep);
+      updateAutoplay();
+    }, 4000);
+  }
+
+  function updateNavigation() {
+    const bounds = grid.getBoundingClientRect();
+    const rtl = getComputedStyle(grid).direction === "rtl";
+    const first = grid.firstElementChild?.getBoundingClientRect();
+    const last = grid.lastElementChild?.getBoundingClientRect();
+    controls.hidden = grid.scrollWidth <= grid.clientWidth + 1;
+    previous.disabled = !first || (rtl ? first.right <= bounds.right + 1 : first.left >= bounds.left - 1);
+    next.disabled = !last || (rtl ? last.left >= bounds.left - 1 : last.right <= bounds.right + 1);
+    updateAutoplay();
+  }
+
+  function scrollCards(step) {
+    const cards = grid.children;
+    const stride = cards.length > 1 ? Math.abs(cards[1].offsetLeft - cards[0].offsetLeft) : grid.clientWidth;
+    grid.scrollBy({
+      left: step * stride * (getComputedStyle(grid).direction === "rtl" ? -1 : 1),
+      behavior: reducedMotionQuery.matches ? "auto" : "smooth",
+    });
+  }
+
+  function refresh() {
+    copy = {
+      en: { previous: "Previous categories", next: "Next categories", pause: "Pause category rotation", play: "Resume category rotation" },
+      ar: { previous: "التصنيفات السابقة", next: "التصنيفات التالية", pause: "إيقاف حركة التصنيفات", play: "استئناف حركة التصنيفات" },
+      fr: { previous: "Catégories précédentes", next: "Catégories suivantes", pause: "Mettre les catégories en pause", play: "Reprendre les catégories" },
+      es: { previous: "Categorías anteriores", next: "Categorías siguientes", pause: "Pausar las categorías", play: "Reanudar las categorías" },
+      zh: { previous: "上一组分类", next: "下一组分类", pause: "暂停分类轮播", play: "继续分类轮播" },
+    }[currentLang] || { previous: "Previous categories", next: "Next categories", pause: "Pause category rotation", play: "Resume category rotation" };
+    const title = document.querySelector("#categories h2")?.textContent || "Product Categories";
+    carousel.setAttribute("aria-label", title);
+    grid.setAttribute("aria-label", title);
+    const rtl = getComputedStyle(grid).direction === "rtl";
+    setControlIcon(previous, rtl ? "right" : "left");
+    setControlIcon(next, rtl ? "left" : "right");
+    for (const [button, label] of [[previous, copy.previous], [next, copy.next]]) {
+      button.setAttribute("aria-label", label);
+      button.title = label;
+    }
+    grid.scrollLeft = 0;
+    autoStep = 1;
+    updateNavigation();
+  }
+
+  previous.addEventListener("click", () => scrollCards(-1));
+  next.addEventListener("click", () => scrollCards(1));
+  pause.addEventListener("click", () => {
+    paused = !paused;
+    updateAutoplay();
+  });
+  grid.addEventListener("scroll", updateNavigation, { passive: true });
+  grid.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    scrollCards((event.key === "ArrowRight" ? 1 : -1) * (getComputedStyle(grid).direction === "rtl" ? -1 : 1));
+  });
+  carousel.addEventListener("pointerenter", (event) => {
+    if (event.pointerType !== "mouse") return;
+    hovered = true;
+    updateAutoplay();
+  });
+  carousel.addEventListener("pointerleave", () => {
+    hovered = false;
+    updateAutoplay();
+  });
+  carousel.addEventListener("pointerdown", () => {
+    pressed = true;
+    updateAutoplay();
+  });
+  const release = () => {
+    pressed = false;
+    updateAutoplay();
+  };
+  window.addEventListener("pointerup", release);
+  window.addEventListener("pointercancel", release);
+  carousel.addEventListener("focusin", updateAutoplay);
+  carousel.addEventListener("focusout", () => window.requestAnimationFrame(updateAutoplay));
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible") pressed = false;
+    updateAutoplay();
+  });
+  reducedMotionQuery.addEventListener("change", updateAutoplay);
+  new ResizeObserver(updateNavigation).observe(grid);
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting && entry.intersectionRatio >= 0.25;
+    updateAutoplay();
+  }, { threshold: 0.25 }).observe(grid);
+  refresh();
+  return { refresh };
+}
+
 function renderManagedCategories() {
   const categories = window.NoursData?.getCategories();
   const grid = document.querySelector(".category-grid");
@@ -453,12 +615,16 @@ function renderManagedCategories() {
     description.textContent = category.description_translations?.[currentLang] || category.description_translations?.en || translations[currentLang]?.[`cats.${category.slug}Text`] || "";
     const count = document.createElement("span");
     const countText = new Intl.NumberFormat(localeByLanguage[currentLang] || localeByLanguage.en).format(category.productCount);
-    count.textContent = currentLang === "ar" ? `${countText} منتجات` : `${countText} products`;
+    count.textContent = {
+      en: `${countText} products`, ar: `${countText} منتجات`, fr: `${countText} produits`,
+      es: `${countText} productos`, zh: `${countText} 件商品`,
+    }[currentLang] || `${countText} products`;
     content.append(heading, description, count);
     link.append(image, content);
     return link;
   });
   grid.replaceChildren(...cards);
+  categoryCarousel?.refresh();
 }
 
 function formatHomepagePrices() {
@@ -521,6 +687,30 @@ function bannerBackground(url) {
   }
 }
 
+function renderPublishedHomeCopy() {
+  const published = window.RUQO_HOME_COPY?.translations;
+  if (!published) return;
+  const copy = published[currentLang] || published.en;
+  if (!copy || typeof copy.title !== "string" || !copy.title.trim() ||
+      typeof copy.eyebrow !== "string" || typeof copy.text !== "string") {
+    console.warn("Published homepage copy is incomplete; retaining existing content.");
+    return;
+  }
+  for (const [field, selector] of Object.entries({
+    eyebrow: ".hero-copy .eyebrow",
+    title: ".hero-copy h1",
+    text: ".hero-copy > p",
+  })) {
+    const node = document.querySelector(selector);
+    if (!node) continue;
+    node.textContent = copy[field];
+    node.hidden = !copy[field].trim();
+    // Some hero badge styles explicitly set display and otherwise override [hidden].
+    if (node.hidden) node.style.setProperty("display", "none");
+    else node.style.removeProperty("display");
+  }
+}
+
 function renderManagedHomeBanners() {
   const banners = window.RUQO_STORE_BANNERS || [];
   const heroBanner = banners.find((banner) => banner.placement === "home_hero");
@@ -558,8 +748,10 @@ function renderManagedHomeBanners() {
       visual.classList.add("has-managed-image");
     }
   }
+  renderPublishedHomeCopy();
 }
 
+window.addEventListener("ruqo:home-copy-updated", renderManagedHomeBanners);
 reducedMotionQuery.addEventListener("change", updateFeaturedProductTimer);
 document.addEventListener("visibilitychange", updateFeaturedProductTimer);
 updateFeaturedProductTimer();
@@ -834,6 +1026,14 @@ if (languageSelect) {
     applyTranslations(currentLang);
   });
 }
+// Other language controls (mobile drawer, assistant) update the shared store; keep this page in sync.
+window.addEventListener("ruqo:language-updated", (event) => {
+  const next = event.detail?.language;
+  if (!next || next === currentLang) return;
+  currentLang = next;
+  if (languageSelect) languageSelect.value = next;
+  applyTranslations(currentLang);
+});
 window.addEventListener("ruqo:store-settings-updated", () => {
   window.RUQO_APPLY_FOOTER_SETTINGS?.(document.querySelector(".site-footer"), currentLang);
 });

@@ -123,6 +123,12 @@
   };
   const loginScreen = $("#login-screen");
   const adminApp = $("#admin-app");
+  const adminSidebar = $("#admin-sidebar");
+  const adminContentShell = $(".admin-content-shell");
+  const adminMenuToggle = $("#admin-menu-toggle");
+  const mobileNavigation = window.matchMedia("(max-width: 850px)");
+  let navigationOpen = false;
+  let contentWasInert = false;
   const loginForm = $("#login-form");
   const loginPassword = $("#login-password");
   const loginPasswordToggle = $("#login-password-toggle");
@@ -193,6 +199,11 @@
   let editingSlug = null;
   let originalProductGalleryImages = [];
   let editingCategorySlug = null;
+  let categorySources = {};
+  let categoryCoverObjectUrl = null;
+  let categoryCoverRemoved = false;
+  let categoryBusy = false;
+  let categoryDisabledControls = [];
   let editingSpotlightSlug = null;
   let editingPromotionId = null;
   let editingBannerId = null;
@@ -266,6 +277,82 @@
     return activeVariants.some((variant) => Number(variant.stock_quantity) > 0);
   }
 
+  function revealActiveNavigation() {
+    const navigation = $(".admin-navigation");
+    const active = navigation.querySelector(".admin-nav-item.is-active:not([hidden])");
+    if (!active || adminSidebar.inert) return;
+    const bounds = navigation.getBoundingClientRect();
+    const item = active.getBoundingClientRect();
+    if (item.top < bounds.top) navigation.scrollTop += item.top - bounds.top - 8;
+    else if (item.bottom > bounds.bottom) navigation.scrollTop += item.bottom - bounds.bottom + 8;
+  }
+
+  function setNavigationOpen(open, restoreFocus = true) {
+    const nextOpen = open && mobileNavigation.matches && !adminApp.hidden;
+    const wasOpen = navigationOpen;
+    if (nextOpen && !wasOpen) contentWasInert = adminContentShell.inert;
+    navigationOpen = nextOpen;
+    adminApp.classList.toggle("is-navigation-open", nextOpen);
+    document.body.classList.toggle("admin-navigation-open", nextOpen);
+    adminMenuToggle.setAttribute("aria-expanded", String(nextOpen));
+    adminSidebar.inert = mobileNavigation.matches && !nextOpen;
+    if (nextOpen) {
+      adminContentShell.inert = true;
+      adminSidebar.setAttribute("role", "dialog");
+      adminSidebar.setAttribute("aria-modal", "true");
+      $("#admin-menu-close").focus({ preventScroll: true });
+      revealActiveNavigation();
+    } else {
+      if (wasOpen) adminContentShell.inert = contentWasInert;
+      adminSidebar.removeAttribute("role");
+      adminSidebar.removeAttribute("aria-modal");
+      if (wasOpen && restoreFocus && !adminApp.hidden && mobileNavigation.matches) {
+        adminMenuToggle.focus({ preventScroll: true });
+      }
+    }
+  }
+
+  function bindNavigationShell() {
+    adminMenuToggle.addEventListener("click", () => setNavigationOpen(true));
+    $("#admin-menu-close").addEventListener("click", () => setNavigationOpen(false));
+    $(".admin-sidebar-backdrop").addEventListener("click", () => setNavigationOpen(false));
+    $("#sign-out").addEventListener("click", () => setNavigationOpen(false, false));
+    mobileNavigation.addEventListener("change", () => {
+      const focusWasInside = adminSidebar.contains(document.activeElement);
+      const wasOpen = navigationOpen;
+      setNavigationOpen(false, false);
+      if ((focusWasInside || wasOpen) && !adminApp.hidden) {
+        const target = mobileNavigation.matches
+          ? adminMenuToggle
+          : adminSidebar.querySelector('.admin-nav-item.is-active:not([hidden])');
+        target?.focus({ preventScroll: true });
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (!navigationOpen) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setNavigationOpen(false);
+      } else if (event.key === "Tab") {
+        const focusable = [...adminSidebar.querySelectorAll('a[href], button:not(:disabled), [tabindex="0"]')]
+          .filter((element) => element.getClientRects().length > 0 && !element.closest("[hidden]"));
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !adminSidebar.contains(document.activeElement))) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !adminSidebar.contains(document.activeElement))) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    });
+    new MutationObserver(() => {
+      if (adminApp.hidden) setNavigationOpen(false, false);
+    }).observe(adminApp, { attributes: true, attributeFilter: ["hidden"] });
+    setNavigationOpen(false, false);
+  }
+
   function setView(view) {
     const allowedViews = new Set(["overview"]);
     if (currentRoles.some((role) => ["owner", "admin", "catalog_manager"].includes(role))) {
@@ -283,6 +370,7 @@
       allowedViews.add("settings");
       allowedViews.add("footer");
       allowedViews.add("homepage-showcase");
+      allowedViews.add("high-refresh");
     }
     const selectedView = allowedViews.has(view) ? view : "overview";
     $$('[data-admin-panel]').forEach((panel) => {
@@ -294,6 +382,10 @@
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-current", active ? "page" : "false");
     });
+    $$(".admin-nav-group").forEach((group) => {
+      group.hidden = !group.querySelector("[data-admin-view]:not([hidden])");
+    });
+    revealActiveNavigation();
     $("#breadcrumb-current").textContent = {
       overview: "Overview",
       products: "Products",
@@ -306,7 +398,14 @@
       settings: "Store settings",
       footer: "Footer content",
       "homepage-showcase": "Homepage spotlight",
+      "high-refresh": "high refresh",
     }[selectedView];
+    if (navigationOpen) {
+      setNavigationOpen(false, false);
+      const heading = $(`[data-admin-panel="${selectedView}"] h1`);
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
   }
 
   async function requireCatalogRole(user) {
@@ -481,7 +580,7 @@
       { data: variantRows, error: variantError },
       { data: detailImageRows, error: detailImageError },
     ] = await Promise.all([
-        client.from("categories").select("slug, name_translations, description_translations, sort_order, is_active").order("sort_order"),
+        client.from("categories").select("slug, name_translations, description_translations, translation_sources, cover_storage_path, updated_at, sort_order, is_active").order("sort_order"),
         client.from("products").select("slug, category_slug, brand, name_translations, description_name_translations, description_translations, product_benefits, product_option_values, price, compare_at_price, sale_price, sale_starts_at, sale_ends_at, currency, badge, in_stock, is_active, is_featured, sort_order, external_image_url").order("sort_order", { ascending: false }),
         client.from("product_variants").select("variant_key, product_slug, option_group, option_value, option_values, option_label_translations, sku, price_adjustment, final_price, stock_quantity, is_active, sort_order").order("sort_order"),
         client.from("product_detail_images").select("id, product_slug, image_url, storage_path, sort_order").order("sort_order"),
@@ -651,7 +750,7 @@
     renderContactMessages();
     renderNewsletterSubscribers();
     $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
-      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out"))
+      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close"))
       .forEach((element) => { element.disabled = true; });
     window.lucide?.createIcons();
   }
@@ -2214,7 +2313,7 @@
     $("#category-dialog-title").textContent = "Add category";
     $("#delete-category").hidden = true;
     clearFormError(categoryError);
-    fillLocalizedFields(categoryForm, null, ["name_translations", "description_translations"]);
+    resetCategoryEditor(null);
     setLocale("en");
     categoryDialog.showModal();
   }
@@ -2231,16 +2330,161 @@
     $("#category-dialog-title").textContent = "Edit category";
     $("#delete-category").hidden = false;
     clearFormError(categoryError);
-    fillLocalizedFields(categoryForm, {
-      name_translations: category.name_translations,
-      description_translations: category.description_translations,
-    }, ["name_translations", "description_translations"]);
+    resetCategoryEditor(category);
     setLocale("en");
     categoryDialog.showModal();
   }
 
+  function categorySource() {
+    return {
+      name: categoryForm.elements.name_en.value.trim(),
+      description: categoryForm.elements.description_en.value.trim(),
+    };
+  }
+
+  function categoryReviewFields() {
+    const source = categorySource();
+    return languages.filter((language) => language !== "en").flatMap((language) =>
+      ["name", "description"].filter((field) =>
+        categoryForm.elements[`${field}_${language}`].value.trim() &&
+        categorySources[language]?.[field] !== source[field],
+      ).map((field) => ({ language, field })),
+    );
+  }
+
+  function updateCategoryTranslationStatus() {
+    const source = categorySource();
+    const stale = categoryReviewFields();
+    const missing = languages.filter((language) => language !== "en").flatMap((language) =>
+      ["name", "description"].filter((field) =>
+        source[field] && !categoryForm.elements[`${field}_${language}`].value.trim(),
+      ),
+    ).length;
+    $("#category-translation-status").textContent = stale.length
+      ? `Translations need review (changed English or unverified English fallback): ${stale.map(({ language, field }) => `${language.toUpperCase()} ${field}`).join(", ")}. Generate to replace these fields, edit them manually, or confirm keeping them.`
+      : `${missing} translation fields missing. Generate fills missing fields without replacing current-source corrections.`;
+    $("#review-category-translations").hidden = !stale.length;
+  }
+
+  function setCategoryBusy(busy) {
+    categoryBusy = busy;
+    categoryForm.setAttribute("aria-busy", String(busy));
+    if (busy) {
+      categoryDisabledControls = [...categoryForm.querySelectorAll("button, input, textarea")].map((node) => [node, node.disabled]);
+      categoryDisabledControls.forEach(([node]) => { node.disabled = true; });
+    } else {
+      categoryDisabledControls.forEach(([node, disabled]) => { node.disabled = disabled; });
+      categoryDisabledControls = [];
+    }
+  }
+
+  function revokeCategoryCoverPreview() {
+    if (categoryCoverObjectUrl) URL.revokeObjectURL(categoryCoverObjectUrl);
+    categoryCoverObjectUrl = null;
+  }
+
+  function renderCategoryCoverPreview() {
+    const preview = $("#category-cover-preview");
+    const category = categories.find((item) => item.slug === editingCategorySlug);
+    const url = categoryCoverObjectUrl || (!categoryCoverRemoved && category?.cover_storage_path
+      ? client.storage.from("category-images").getPublicUrl(category.cover_storage_path).data.publicUrl : "");
+    preview.hidden = !url;
+    if (url) preview.src = url;
+    else preview.removeAttribute("src");
+    $("#remove-category-cover").hidden = !url;
+  }
+
+  function resetCategoryEditor(category) {
+    revokeCategoryCoverPreview();
+    categoryCoverRemoved = false;
+    categorySources = {};
+    for (const language of languages) {
+      categorySources[language] = {};
+      for (const field of ["name", "description"]) {
+        const input = categoryForm.elements[`${field}_${language}`];
+        input.maxLength = field === "name" ? 200 : 4000;
+        input.value = category?.[`${field}_translations`]?.[language] ?? "";
+        const english = String(category?.[`${field}_translations`]?.en || "").trim();
+        categorySources[language][field] = category?.translation_sources?.[language]?.[field]
+          ?? (input.value.trim() && input.value.trim() !== english ? english : null);
+      }
+    }
+    $("#category-translation-feedback").textContent = "";
+    renderCategoryCoverPreview();
+    updateCategoryTranslationStatus();
+  }
+
+  async function generateCategoryTranslations() {
+    if (categoryBusy) return;
+    clearFormError(categoryError);
+    const source = categorySource();
+    if (!source.name || source.name.length > 200 || source.description.length > 4000) {
+      categoryError.textContent = "Enter an English name (up to 200 characters) and description (up to 4000).";
+      categoryError.hidden = false;
+      setLocale("en");
+      return;
+    }
+    const stale = categoryReviewFields();
+    const replaceStale = stale.length && window.confirm(
+      "Replace translations marked for review with translations of the current English text? Current-source corrections are kept. Cancel generates only missing fields.",
+    );
+    const translations = {};
+    const requested = [];
+    for (const language of languages.filter((value) => value !== "en")) {
+      translations[language] = {};
+      for (const field of ["name", "description"]) {
+        const outdated = replaceStale && stale.some((item) => item.language === language && item.field === field);
+        const text = categoryForm.elements[`${field}_${language}`].value.trim();
+        translations[language][field] = outdated ? "" : text;
+        if (outdated || (!text && source[field])) requested.push({ language, field });
+      }
+    }
+    if (!requested.length) {
+      $("#category-translation-feedback").textContent = "No missing fields to translate. Review any outdated translations before saving.";
+      return;
+    }
+    setCategoryBusy(true);
+    $("#category-translation-feedback").textContent = "Generating translations… Keep this editor open.";
+    try {
+      const { data, error } = await client.functions.invoke("translate-category", { body: { source, translations } });
+      if (error) {
+        let detail = "Translation failed. Nothing has been saved.";
+        if (error.context instanceof Response) {
+          try {
+            const body = await error.context.json();
+            if (typeof body.error === "string") detail = body.error;
+          } catch (parseError) {
+            console.warn("Could not read the category translation error response:", parseError.message);
+          }
+        }
+        throw new Error(detail);
+      }
+      if (JSON.stringify(source) !== JSON.stringify(categorySource())) throw new Error("English content changed. Generate translations again.");
+      for (const { language, field } of requested) {
+        const value = data?.translations?.[language]?.[field];
+        if (typeof value !== "string" || (field === "name" && !value.trim()) ||
+            value.length > (field === "name" ? 200 : 4000) || (source[field] && !value.trim())) {
+          throw new Error("Translation returned incomplete or oversized fields. Nothing has been saved.");
+        }
+      }
+      for (const { language, field } of requested) {
+        categoryForm.elements[`${field}_${language}`].value = data.translations[language][field];
+        categorySources[language][field] = source[field];
+      }
+      updateCategoryTranslationStatus();
+      $("#category-translation-feedback").textContent = "Translations generated. Review each language, then Save category to apply them.";
+    } catch (error) {
+      categoryError.textContent = error.message || "Could not translate this category.";
+      categoryError.hidden = false;
+      $("#category-translation-feedback").textContent = "Translation was not applied. Your current editor content is unchanged.";
+    } finally {
+      setCategoryBusy(false);
+    }
+  }
+
   async function saveCategory(event) {
     event.preventDefault();
+    if (categoryBusy) return;
     clearFormError(categoryError);
     const formData = new FormData(categoryForm);
     const slug = String(formData.get("slug") || "").trim().toLowerCase();
@@ -2252,43 +2496,213 @@
       return;
     }
     const translations = readLocalizedFields(categoryForm, ["name_translations", "description_translations"]);
-    for (const language of languages) {
-      translations.name_translations[language] ||= translations.name_translations.en;
-      translations.description_translations[language] ||= translations.description_translations.en;
+    if (categoryReviewFields().length) {
+      categoryError.textContent = "Review translations marked after English changes before saving. Edit, regenerate, or confirm keeping them.";
+      categoryError.hidden = false;
+      return;
     }
-    const submit = categoryForm.querySelector('[type="submit"]');
-    submit.disabled = true;
+    if (Object.entries(translations).some(([column, group]) =>
+      Object.values(group).some((text) => text.length > (column === "name_translations" ? 200 : 4000)))) {
+      categoryError.textContent = "Category names must be at most 200 characters and descriptions at most 4000.";
+      categoryError.hidden = false;
+      return;
+    }
+    const imageFile = formData.get("cover_file");
+    if (imageFile instanceof File && imageFile.size &&
+        (imageFile.size > 5 * 1024 * 1024 || !/^image\/(jpeg|png|webp)$/.test(imageFile.type))) {
+      categoryError.textContent = "Choose a JPEG, PNG, or WebP cover of 5 MB or less.";
+      categoryError.hidden = false;
+      return;
+    }
+    const previous = categories.find((item) => item.slug === editingCategorySlug);
+    if (editingCategorySlug && !previous) {
+      categoryError.textContent = "This category is no longer in the catalog. Reopen the editor before saving.";
+      categoryError.hidden = false;
+      return;
+    }
+    let uploadedPath = null;
+    let saved = false;
+    let cleanupWarning = false;
+    setCategoryBusy(true);
     try {
-      const { error } = await client.from("categories").upsert({
+      let coverPath = categoryCoverRemoved ? null : previous?.cover_storage_path || null;
+      if (imageFile instanceof File && imageFile.size) {
+        const extension = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[imageFile.type];
+        uploadedPath = `categories/${slug}/${crypto.randomUUID()}.${extension}`;
+        const { error } = await client.storage.from("category-images").upload(uploadedPath, imageFile, {
+          cacheControl: "3600", upsert: false, contentType: imageFile.type,
+        });
+        if (error) throw error;
+        coverPath = uploadedPath;
+      }
+      const payload = {
         slug,
         ...translations,
+        translation_sources: categorySources,
+        cover_storage_path: coverPath,
         sort_order: Number(formData.get("sort_order")) || 0,
         is_active: formData.get("is_active") === "on",
-      }, { onConflict: "slug" });
-      if (error) throw error;
+      };
+      if (editingCategorySlug) {
+        const { data, error } = await client.from("categories").update(payload).eq("slug", editingCategorySlug)
+          .eq("updated_at", previous.updated_at).select("slug").maybeSingle();
+        if (error) throw error;
+        if (!data) throw new Error("Another editor changed this category. Reopen it before saving.");
+      } else {
+        const { error } = await client.from("categories").insert(payload);
+        if (error) throw error;
+      }
+      saved = true;
+      if (previous?.cover_storage_path && previous.cover_storage_path !== coverPath) {
+        const { error } = await client.storage.from("category-images").remove([previous.cover_storage_path]);
+        if (error) {
+          console.error("Category saved, but old cover cleanup failed:", error.message);
+          cleanupWarning = true;
+        }
+      }
       categoryDialog.close();
       await loadCatalog();
-      showToast("Category saved.");
+      showToast(cleanupWarning ? "Category saved. The old cover could not be removed from storage." : "Category saved.");
     } catch (error) {
-      categoryError.textContent = error.message || "Could not save this category.";
-      categoryError.hidden = false;
+      if (uploadedPath && !saved) {
+        const { error: cleanupError } = await client.storage.from("category-images").remove([uploadedPath]);
+        if (cleanupError) {
+          console.error("Unused category cover cleanup failed:", cleanupError.message);
+          cleanupWarning = true;
+        }
+      }
+      if (saved) {
+        showToast("Category saved, but the catalog could not reload. Refresh the dashboard.");
+        console.error("Saved category catalog refresh failed:", error.message);
+      } else {
+        categoryError.textContent = `${error.message || "Could not save this category."}${cleanupWarning ? " The unused upload could not be removed from storage." : ""}`;
+        categoryError.hidden = false;
+      }
     } finally {
-      submit.disabled = false;
+      setCategoryBusy(false);
     }
   }
 
   async function deleteCategory() {
     if (!editingCategorySlug || !window.confirm("Delete this category? Products assigned to it must be moved first.")) return;
-    const { error } = await client.from("categories").delete().eq("slug", editingCategorySlug);
-    if (error) {
-      categoryError.textContent = error.message || "Could not delete this category.";
+    const category = categories.find((item) => item.slug === editingCategorySlug);
+    if (!category) {
+      categoryError.textContent = "This category is no longer in the catalog. Reopen the editor before deleting.";
       categoryError.hidden = false;
       return;
+    }
+    const { data, error } = await client.from("categories").delete().eq("slug", editingCategorySlug)
+      .eq("updated_at", category.updated_at).select("slug").maybeSingle();
+    if (error || !data) {
+      categoryError.textContent = error?.message || "The category changed or no longer exists. Reopen it before deleting.";
+      categoryError.hidden = false;
+      return;
+    }
+    let cleanupWarning = false;
+    if (category?.cover_storage_path) {
+      const { error: cleanupError } = await client.storage.from("category-images").remove([category.cover_storage_path]);
+      if (cleanupError) {
+        console.error("Deleted category cover cleanup failed:", cleanupError.message);
+        cleanupWarning = true;
+      }
     }
     categoryDialog.close();
     editingCategorySlug = null;
     await loadCatalog();
-    showToast("Category deleted.");
+    showToast(cleanupWarning ? "Category deleted. Its cover could not be removed from storage." : "Category deleted.");
+  }
+
+  const showcaseGroupIds = ["design", "display", "performance", "battery"];
+  let currentProductShowcase = {};
+
+  function setProductShowcaseFields(product) {
+    const raw = product?.product_option_values?._showcase;
+    currentProductShowcase = raw && typeof raw === "object" ? structuredClone(raw) : {};
+    const feedback = $("#product-showcase-feedback");
+    if (feedback) {
+      feedback.hidden = true;
+      feedback.textContent = "";
+    }
+    for (const group of showcaseGroupIds) {
+      const item = currentProductShowcase[group] || {};
+      const en = item.translations?.en || item.source || {};
+      productForm.elements[`showcase_${group}_stat`].value = item.stat || "";
+      productForm.elements[`showcase_${group}_label`].value = en.label || "";
+      productForm.elements[`showcase_${group}_title`].value = en.title || "";
+      productForm.elements[`showcase_${group}_desc`].value = en.desc || "";
+    }
+  }
+
+  function readProductShowcaseFields() {
+    const result = {};
+    for (const group of showcaseGroupIds) {
+      const stat = String(productForm.elements[`showcase_${group}_stat`]?.value || "").trim();
+      const label = String(productForm.elements[`showcase_${group}_label`]?.value || "").trim();
+      const title = String(productForm.elements[`showcase_${group}_title`]?.value || "").trim();
+      const desc = String(productForm.elements[`showcase_${group}_desc`]?.value || "").trim();
+      if (!stat && !label && !title && !desc) continue;
+      const existing = currentProductShowcase[group] || {};
+      const prevEn = existing.translations?.en || existing.source || {};
+      const translations = structuredClone(existing.translations || {});
+      translations.en = { label, title, desc };
+      // Clear stale translated fields if English source changed
+      for (const lang of ["ar", "fr", "es", "zh"]) {
+        if (!translations[lang]) continue;
+        if (prevEn.label !== label) delete translations[lang].label;
+        if (prevEn.title !== title) delete translations[lang].title;
+        if (prevEn.desc !== desc) delete translations[lang].desc;
+      }
+      result[group] = { stat, source: { label, title, desc }, translations };
+    }
+    return result;
+  }
+
+  async function translateProductShowcase() {
+    const feedback = $("#product-showcase-feedback");
+    const btn = $("#translate-product-showcase");
+    const current = readProductShowcaseFields();
+    const groupsToTranslate = showcaseGroupIds.filter((g) => {
+      const s = current[g]?.source;
+      return s && (s.label || s.title || s.desc);
+    });
+    if (!groupsToTranslate.length) {
+      feedback.textContent = "Enter at least one English field in Studio & Bento before translating.";
+      feedback.hidden = false;
+      return;
+    }
+    btn.disabled = true;
+    feedback.textContent = "Translating Studio & Bento cards with Azure…";
+    feedback.hidden = false;
+    try {
+      for (const group of groupsToTranslate) {
+        const entry = current[group];
+        const source = {
+          eyebrow: entry.source.label || "",
+          title: entry.source.title || "",
+          text: entry.source.desc || "",
+        };
+        const { data, error } = await client.functions.invoke("translate-high-refresh", {
+          body: { source, translations: {} },
+        });
+        if (error) throw error;
+        if (data?.translations) {
+          entry.translations ||= {};
+          for (const lang of ["ar", "fr", "es", "zh"]) {
+            entry.translations[lang] = {
+              label: data.translations[lang]?.eyebrow || "",
+              title: data.translations[lang]?.title || "",
+              desc: data.translations[lang]?.text || "",
+            };
+          }
+        }
+      }
+      currentProductShowcase = current;
+      feedback.textContent = "Translations generated for all 4 languages (AR / FR / ES / ZH). Click Save changes to apply.";
+    } catch (error) {
+      feedback.textContent = error.message || "Could not translate Studio & Bento fields.";
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   function openNewProduct() {
@@ -2304,6 +2718,7 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(categories[0]?.slug || "");
     setProductTranslations(null);
+    setProductShowcaseFields(null);
     renderProductDetailImages([]);
     originalProductGalleryImages = [];
     renderProductGalleryImages([]);
@@ -2366,6 +2781,7 @@
     $("#product-form-error").hidden = true;
     populateCategoryOptions(product.category_slug);
     setProductTranslations(product, features || [], specifications || [], product.product_benefits || []);
+    setProductShowcaseFields(product);
     generateProductCombinations();
     updateProductCurrencyLabels();
     window.lucide?.createIcons();
@@ -2861,6 +3277,11 @@
         imageUrl = client.storage.from("product-images").getPublicUrl(storagePath).data.publicUrl;
       }
 
+      const showcaseConfig = readProductShowcaseFields();
+      const storedOptionValues = Object.keys(showcaseConfig).length
+        ? { ...optionValues, _showcase: showcaseConfig }
+        : optionValues;
+
       const { error: productError } = await client.from("products").upsert({
         slug,
         category_slug: String(formData.get("category_slug")),
@@ -2869,7 +3290,7 @@
         description_name_translations: descriptionNameTranslations,
         description_translations: descriptionTranslations,
         product_benefits: productBenefits,
-        product_option_values: optionValues,
+        product_option_values: storedOptionValues,
         price,
         compare_at_price: compareAtPrice,
         currency: currencyCode,
@@ -3216,6 +3637,55 @@
     });
     $("#add-category").addEventListener("click", openNewCategory);
     categoryForm.addEventListener("submit", saveCategory);
+    $("#translate-category").addEventListener("click", generateCategoryTranslations);
+    $("#review-category-translations").addEventListener("click", () => {
+      const source = categorySource();
+      for (const { language, field } of categoryReviewFields()) categorySources[language][field] = source[field];
+      updateCategoryTranslationStatus();
+      $("#category-translation-feedback").textContent = "Existing translations kept as reviewed. Save category to apply changes.";
+    });
+    categoryForm.addEventListener("input", (event) => {
+      const match = /^(name|description)_(en|ar|fr|es|zh)$/.exec(event.target.name || "");
+      if (!match) return;
+      const [, field, language] = match;
+      if (language !== "en") categorySources[language][field] = categorySource()[field];
+      updateCategoryTranslationStatus();
+    });
+    categoryForm.elements.cover_file.addEventListener("change", () => {
+      clearFormError(categoryError);
+      const file = categoryForm.elements.cover_file.files?.[0];
+      if (file && (file.size > 5 * 1024 * 1024 || !/^image\/(jpeg|png|webp)$/.test(file.type))) {
+        categoryForm.elements.cover_file.value = "";
+        revokeCategoryCoverPreview();
+        renderCategoryCoverPreview();
+        categoryError.textContent = "Choose a JPEG, PNG, or WebP cover of 5 MB or less.";
+        categoryError.hidden = false;
+        return;
+      }
+      revokeCategoryCoverPreview();
+      if (file) {
+        categoryCoverRemoved = false;
+        categoryCoverObjectUrl = URL.createObjectURL(file);
+      }
+      renderCategoryCoverPreview();
+    });
+    $("#remove-category-cover").addEventListener("click", () => {
+      revokeCategoryCoverPreview();
+      categoryForm.elements.cover_file.value = "";
+      categoryCoverRemoved = true;
+      renderCategoryCoverPreview();
+    });
+    $("#category-cover-preview").addEventListener("error", () => {
+      const pending = Boolean(categoryCoverObjectUrl);
+      revokeCategoryCoverPreview();
+      if (pending) categoryForm.elements.cover_file.value = "";
+      $("#category-cover-preview").hidden = true;
+      categoryError.textContent = pending ? "This file could not be read as an image. Choose a valid JPEG, PNG, or WebP."
+        : "The saved category cover could not load. Replace or remove it.";
+      categoryError.hidden = false;
+    });
+    categoryDialog.addEventListener("cancel", (event) => { if (categoryBusy) event.preventDefault(); });
+    categoryDialog.addEventListener("close", revokeCategoryCoverPreview);
     $("#delete-category").addEventListener("click", deleteCategory);
     $$('[data-open-product]').forEach((button) => button.addEventListener("click", openNewProduct));
     $("#add-product-detail-image").addEventListener("click", addProductDetailImageRow);
@@ -3256,11 +3726,15 @@
       button.addEventListener("click", () => setLocale(button.dataset.localeTab)),
     );
     $$('[data-close-dialog]').forEach((button) =>
-      button.addEventListener("click", () => button.closest("dialog")?.close()),
+      button.addEventListener("click", () => {
+        const dialog = button.closest("dialog");
+        if (dialog === categoryDialog && categoryBusy) return;
+        dialog?.close();
+      }),
     );
     [productDialog, categoryDialog, promotionDialog, bannerDialog, homepageShowcaseDialog].forEach((dialog) =>
       dialog.addEventListener("click", (event) => {
-        if (event.target === dialog) dialog.close();
+        if (event.target === dialog && !(dialog === categoryDialog && categoryBusy)) dialog.close();
       }),
     );
     $("#generate-product-combinations").addEventListener("click", generateProductCombinations);
@@ -3277,6 +3751,7 @@
       });
     });
     productForm.addEventListener("submit", saveProduct);
+    $("#translate-product-showcase")?.addEventListener("click", translateProductShowcase);
     bindProductEditorNavigation();
     promotionForm.addEventListener("submit", savePromotion);
     bannerForm.addEventListener("submit", saveBanner);
@@ -3286,6 +3761,7 @@
   }
 
   async function start() {
+    bindNavigationShell();
     setTheme(readSavedTheme());
     if (isLocalDevMode) {
       try {
@@ -3308,6 +3784,8 @@
     client = clientFactory(config.url, config.publishableKey, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     });
+    window.RUQO_INIT_HOME_COPY_EDITOR(client);
+    window.RUQO_INIT_HIGH_REFRESH_EDITOR(client);
     bindEvents();
     const { data, error } = await client.auth.getSession();
     if (error) {

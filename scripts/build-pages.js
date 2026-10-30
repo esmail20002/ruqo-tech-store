@@ -11,6 +11,8 @@ const localOnlyPaths = new Set([
   path.join('css', 'experiments.css'),
   path.join('css', 'experiment-switcher.css'),
   path.join('js', 'experiments.js'),
+  // Local-only preview credentials; ignored by Git and never published.
+  path.join('js', 'admin-local-dev.js'),
 ]);
 
 async function copyAndRewrite(directory) {

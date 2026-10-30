@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <script src="/js/home-i18n.js?v=1"></script>
+    <script src="/js/home-i18n.js?v=3"></script>
     <script>
       (function () {
         try {
@@ -29,8 +29,8 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/styles.css?v=7" />
-    <link rel="stylesheet" href="/css/premium-experience.css?v=8" />
+    <link rel="stylesheet" href="/css/styles.css?v=8" />
+    <link rel="stylesheet" href="/css/premium-experience.css?v=17" />
     <link rel="stylesheet" href="/css/store-motion.css?v=2" />
   </head>
   <body data-page="home">
@@ -208,26 +208,25 @@
               <div class="product-art">
                 <img
                   class="featured-product-image"
-                  src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80"
-                  alt="ساعة ذكية"
+                  alt=""
                   loading="eager"
                 />
               </div>
               <div class="hero-showcase-price" aria-label="Featured product price">
-                <span class="hero-showcase-price-label">السعر</span>
-                <strong class="hero-showcase-price-value" data-price-sar="3299">3,299 ر.س</strong>
+                <span class="hero-showcase-price-label"></span>
+                <strong class="hero-showcase-price-value" data-price-sar="3299"></strong>
               </div>
             </div>
 
             <div class="mini-card floating-card card-one">
-              <span data-i18n="hero.card1.label">أداء متقدم</span>
-              <strong data-i18n="hero.card1.name">موبايل X15</strong>
-              <small data-i18n="hero.card1.price">من 2,799 ر.س</small>
+              <span></span>
+              <strong></strong>
+              <small></small>
             </div>
             <div class="mini-card floating-card card-two">
-              <span data-i18n="hero.card2.label">أحدث</span>
-              <strong>AirPods Max</strong>
-              <small data-i18n="hero.card2.offer">خصم 25%</small>
+              <span></span>
+              <strong></strong>
+              <small></small>
             </div>
           </div>
         </section>
@@ -345,28 +344,17 @@
           </div>
         </section>
 
-        <section class="experiment-editorial container reveal">
-          <div class="experiment-editorial-copy">
-            <span class="eyebrow" data-i18n="sections.whyUs">لماذا نحن</span>
-            <h2 data-i18n="sections.serviceTitle">خدمة تلبي احتياجاتك</h2>
-            <p data-i18n="features.consultingText">
-              اختيار مثالي من خبرائنا حسب احتياجك ومميزتك.
-            </p>
-            <div class="experiment-editorial-points">
-              <span><i data-lucide="badge-check" aria-hidden="true"></i><span data-i18n="features.warranty">ضمان موثوق</span></span>
-              <span><i data-lucide="truck" aria-hidden="true"></i><span data-i18n="features.fastDelivery">توصيل سريع</span></span>
-            </div>
-            <a href="/products.html" class="primary-btn" data-i18n="hero.ctaPrimary">تسوق الآن</a>
-          </div>
-          <div class="experiment-editorial-visual">
-            <img
-              src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1400&q=85"
-              alt=""
-              loading="lazy"
-            />
-            <div class="experiment-editorial-note">
-              <span data-i18n="sections.featured">منتجات مميزة</span>
-              <strong>01 / 04</strong>
+        <section class="experiment-editorial high-refresh-banner-section container reveal" id="high-refresh">
+          <div class="experiment-editorial-visual high-refresh-banner">
+            <div class="high-refresh-stage">
+              <a class="high-refresh-banner-link" data-hr-link>
+                <img
+                  class="high-refresh-banner-img"
+                  data-hr-image
+                  alt=""
+                  loading="eager"
+                />
+              </a>
             </div>
             <span class="experiment-editorial-orbit" aria-hidden="true"></span>
           </div>
@@ -716,13 +704,15 @@
       </footer>
     </div>
 
-    <script src="/js/store.js?v=6"></script>
-    <script src="/js/catalog-data.js"></script>
-    <script src="/js/main.js?v=5"></script>
+    <script src="/js/store.js?v=7"></script>
+    <script src="/js/catalog-data.js?v=3"></script>
+    <script src="/js/high-refresh-core.js?v=3"></script>
+    <script src="/js/high-refresh.js?v=5"></script>
+    <script src="/js/main.js?v=12"></script>
     <script src="/js/store-motion.js?v=1"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/js/supabase-config.js"></script>
-    <script defer src="/js/supabase-client.js?v=3"></script>
+    <script defer src="/js/supabase-client.js?v=7"></script>
   </body>
 </html>

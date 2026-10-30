@@ -1,3 +1,7 @@
+html {
+  overflow-x: clip;
+}
+
 body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher {
   display: flex;
   justify-content: center;

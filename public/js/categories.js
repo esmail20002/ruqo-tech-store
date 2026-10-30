@@ -324,7 +324,7 @@
         mediaLink.href = buildUrl(category);
         mediaLink.setAttribute("aria-label", `${base.browse}: ${name}`);
         const pictured = matches.filter((product) => product.image);
-        const mainImage = pictured[0]?.image || category.image;
+        const mainImage = category.coverImage || pictured[0]?.image || category.image;
         mediaLink.append(photo(mainImage, "catalog-category-media"));
         const body = element("div", "catalog-category-copy");
         const headingLink = element("a", "catalog-category-heading catalog-category-action");

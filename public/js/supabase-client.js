@@ -103,6 +103,22 @@
   };
   window.addEventListener("ruqo:language-updated", applyPublicStoreSettings);
   window.addEventListener("ruqo:store-settings-updated", applyPublicStoreSettings);
+  const readCache = (key) => {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const writeCache = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {}
+  };
+  if (window.RUQO_STORE_SETTINGS !== undefined) {
+    applyPublicStoreSettings();
+  }
   window.RUQO_STORE_SETTINGS_READY = client
     .from("store_settings")
     .select("setting_value")
@@ -119,6 +135,7 @@
       window.RUQO_BRAND_LOGO_URL = settings.logo_path
         ? client.storage.from("store-assets").getPublicUrl(settings.logo_path).data.publicUrl
         : null;
+      writeCache("ruqo-store-settings-cache-v1", { settings, logoUrl: window.RUQO_BRAND_LOGO_URL });
       applyPublicStoreSettings();
       window.dispatchEvent(new CustomEvent("ruqo:store-settings-updated", { detail: settings }));
       return settings;
@@ -127,6 +144,41 @@
       console.warn("Could not load public store settings; using built-in defaults.", error.message);
       return {};
     });
+  if (["home", "experiments"].includes(document.body.dataset.page)) {
+    window.RUQO_HIGH_REFRESH_READY = client.from("high_refresh_publications")
+      .select("revision,translations,product_slugs,image_url,slides").eq("id", "homepage").maybeSingle()
+      .then(({ data, error }) => {
+        if (error) throw error;
+        const next = data || null;
+        const changed = JSON.stringify(window.RUQO_HIGH_REFRESH) !== JSON.stringify(next);
+        window.RUQO_HIGH_REFRESH = next;
+        writeCache("ruqo-high-refresh-cache-v1", next);
+        if (changed) window.dispatchEvent(new CustomEvent("ruqo:high-refresh-updated"));
+        return next;
+      }).catch((error) => {
+        console.warn("Could not load high refresh; showing automatic recommendations.", error.message);
+        if (window.RUQO_HIGH_REFRESH === undefined) {
+          window.RUQO_HIGH_REFRESH = null;
+          window.dispatchEvent(new CustomEvent("ruqo:high-refresh-updated"));
+        }
+        return window.RUQO_HIGH_REFRESH;
+      });
+    window.RUQO_HOME_COPY_READY = client.from("home_copy_publications")
+      .select("revision, translations").eq("id", "homepage").maybeSingle()
+      .then(({ data, error }) => {
+        if (error) throw error;
+        const next = data || null;
+        const changed = JSON.stringify(window.RUQO_HOME_COPY) !== JSON.stringify(next);
+        window.RUQO_HOME_COPY = next;
+        writeCache("ruqo-home-copy-cache-v1", next);
+        if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-copy-updated"));
+        return next;
+      })
+      .catch((error) => {
+        console.warn("Could not load published homepage copy; retaining existing homepage content.", error.message);
+        return window.RUQO_HOME_COPY || null;
+      });
+  }
   window.RUQO_STORE_BANNERS_READY = client
     .from("banners")
     .select("id, name, placement, title_translations, description_translations, button_translations, image_path, mobile_image_path, destination_url, starts_at, ends_at, sort_order")
@@ -135,7 +187,7 @@
     .then(({ data, error }) => {
       if (error) throw error;
       const now = Date.now();
-      window.RUQO_STORE_BANNERS = (data || []).filter((banner) => {
+      const next = (data || []).filter((banner) => {
         const startsAt = banner.starts_at ? Date.parse(banner.starts_at) : null;
         const endsAt = banner.ends_at ? Date.parse(banner.ends_at) : null;
         return (startsAt === null || startsAt <= now) && (endsAt === null || endsAt > now);
@@ -152,13 +204,16 @@
             ? client.storage.from("banner-images").getPublicUrl(banner.mobile_image_path).data.publicUrl
             : "",
       }));
-      window.dispatchEvent(new CustomEvent("ruqo:store-banners-updated", { detail: window.RUQO_STORE_BANNERS }));
+      const changed = JSON.stringify(window.RUQO_STORE_BANNERS) !== JSON.stringify(next);
+      window.RUQO_STORE_BANNERS = next;
+      writeCache("ruqo-store-banners-cache-v1", next);
+      if (changed) window.dispatchEvent(new CustomEvent("ruqo:store-banners-updated", { detail: window.RUQO_STORE_BANNERS }));
       return window.RUQO_STORE_BANNERS;
     })
     .catch((error) => {
       console.warn("Could not load public banners; using built-in content.", error.message);
-      window.RUQO_STORE_BANNERS = [];
-      return [];
+      if (!Array.isArray(window.RUQO_STORE_BANNERS)) window.RUQO_STORE_BANNERS = [];
+      return window.RUQO_STORE_BANNERS;
     });
   window.RUQO_SUPABASE_READY = window.NoursData?.loadFromSupabase(client)
     .then((loaded) => {
@@ -177,16 +232,19 @@
       if (error) throw error;
       await window.RUQO_SUPABASE_READY;
       const products = window.NoursData?.products || [];
-      window.RUQO_HOME_SPOTLIGHTS = (data || []).map((item) => ({
+      const next = (data || []).map((item) => ({
         ...item,
         product: products.find((product) => product.slug === item.product_slug || product.id === item.product_slug),
       })).filter((item) => item.product?.is_active !== false);
-      window.dispatchEvent(new CustomEvent("ruqo:home-spotlights-updated", { detail: window.RUQO_HOME_SPOTLIGHTS }));
+      const changed = JSON.stringify(window.RUQO_HOME_SPOTLIGHTS) !== JSON.stringify(next);
+      window.RUQO_HOME_SPOTLIGHTS = next;
+      writeCache("ruqo-home-spotlights-cache-v1", next);
+      if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-spotlights-updated", { detail: window.RUQO_HOME_SPOTLIGHTS }));
       return window.RUQO_HOME_SPOTLIGHTS;
     })
     .catch((error) => {
       console.warn("Could not load homepage spotlight products.", error.message);
-      window.RUQO_HOME_SPOTLIGHTS = [];
-      return [];
+      if (!Array.isArray(window.RUQO_HOME_SPOTLIGHTS)) window.RUQO_HOME_SPOTLIGHTS = [];
+      return window.RUQO_HOME_SPOTLIGHTS;
     });
 })();

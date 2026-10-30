@@ -408,7 +408,7 @@ const footerCopy = {
     "footer.policy1": "Terms",
     "footer.policy2": "Returns",
     "footer.policy3": "Privacy",
-    "footer.rights": "© 2026 WEEXEY TECH. All rights reserved.",
+    "footer.rights": "© 2026 WEEXEY. All rights reserved.",
   },
   ar: {
     "footer.copy": "متجر إلكترونيات فاخر يجمع بين الأداء، التصميم، والثقة في كل طلب.",
@@ -427,7 +427,7 @@ const footerCopy = {
     "footer.policy1": "الشروط",
     "footer.policy2": "الاسترجاع",
     "footer.policy3": "الخصوصية",
-    "footer.rights": "© 2026 WEEXEY TECH. جميع الحقوق محفوظة.",
+    "footer.rights": "© 2026 WEEXEY. جميع الحقوق محفوظة.",
   },
   fr: {
     "footer.copy": "Une boutique high-tech premium qui allie performance, design et confiance.",
@@ -446,7 +446,7 @@ const footerCopy = {
     "footer.policy1": "Conditions",
     "footer.policy2": "Retours",
     "footer.policy3": "Confidentialité",
-    "footer.rights": "© 2026 WEEXEY TECH. Tous droits réservés.",
+    "footer.rights": "© 2026 WEEXEY. Tous droits réservés.",
   },
   es: {
     "footer.copy": "Una tienda premium de electrónica que combina rendimiento, diseño y confianza.",
@@ -465,7 +465,7 @@ const footerCopy = {
     "footer.policy1": "Condiciones",
     "footer.policy2": "Devoluciones",
     "footer.policy3": "Privacidad",
-    "footer.rights": "© 2026 WEEXEY TECH. Todos los derechos reservados.",
+    "footer.rights": "© 2026 WEEXEY. Todos los derechos reservados.",
   },
   zh: {
     "footer.copy": "汇集性能、设计与信赖的高端电子产品商店。",
@@ -484,7 +484,7 @@ const footerCopy = {
     "footer.policy1": "条款",
     "footer.policy2": "退货政策",
     "footer.policy3": "隐私",
-    "footer.rights": "© 2026 WEEXEY TECH。保留所有权利。",
+    "footer.rights": "© 2026 WEEXEY。保留所有权利。",
   },
 };
 Object.entries(copy).forEach(([language, strings]) => {
