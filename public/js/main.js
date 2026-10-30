@@ -1165,4 +1165,69 @@ document.querySelectorAll(".product-card").forEach((card) => {
   image.prepend(imageLink);
 });
 
+// Add studio icons to the 4 "Service built for you" feature cards
+const featureIcons = ["truck", "shield-check", "credit-card", "sparkles"];
+document.querySelectorAll(".feature-box").forEach((box, idx) => {
+  const top = box.querySelector(".feature-top");
+  if (!top || top.querySelector(".home-feature-icon")) return;
+  const iconBadge = document.createElement("span");
+  iconBadge.className = "home-feature-icon";
+  const i = document.createElement("i");
+  i.dataset.lucide = featureIcons[idx] || "sparkles";
+  i.setAttribute("aria-hidden", "true");
+  iconBadge.append(i);
+  top.append(iconBadge);
+});
+
+// Attach interactive cursor-following spotlight (--spot-x / --spot-y) and 3D tilt across homepage cards
+function bindHomeSpotlightMotion() {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const tiltCards = document.querySelectorAll([
+    ".hero-meta li",
+    ".glass-panel.highlight-card",
+    ".category-card",
+    "#high-refresh .high-refresh-stage",
+    ".product-card",
+    ".feature-box",
+    ".stat-item",
+    ".testimonial-card",
+  ].join(", "));
+  tiltCards.forEach((card) => {
+    if (card.dataset.homeSpotlightBound) return;
+    card.dataset.homeSpotlightBound = "true";
+    card.classList.add("home-spotlight-card");
+    card.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch" || reduced.matches) return;
+      const rect = card.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+      card.style.setProperty("--spot-x", `${(x * 100).toFixed(1)}%`);
+      card.style.setProperty("--spot-y", `${(y * 100).toFixed(1)}%`);
+      card.style.setProperty("--card-rx", `${((0.5 - y) * 4.5).toFixed(2)}deg`);
+      card.style.setProperty("--card-ry", `${((x - 0.5) * 5.5).toFixed(2)}deg`);
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--card-rx", "0deg");
+      card.style.setProperty("--card-ry", "0deg");
+    });
+  });
+
+  const containers = document.querySelectorAll(".promo-banner, .newsletter-box");
+  containers.forEach((box) => {
+    if (box.dataset.homeGlowBound) return;
+    box.dataset.homeGlowBound = "true";
+    box.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      const rect = box.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      box.style.setProperty("--spot-x", `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
+      box.style.setProperty("--spot-y", `${(((event.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
+    });
+  });
+}
+
+bindHomeSpotlightMotion();
+window.addEventListener("ruqo:catalog-updated", () => requestAnimationFrame(bindHomeSpotlightMotion));
+
 applyTranslations(currentLang);
