@@ -373,6 +373,7 @@ html[data-theme="dark"] .admin-login-aside { border-color: #3b3046; background: 
 }
 .variant-editor { display: grid; gap: 14px; padding: 15px 0; border-block: 1px solid var(--admin-border); }
 .variant-editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.product-editor-heading-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .variant-editor-heading h3 { margin: 0 0 3px; font-size: 0.82rem; }
 .variant-editor-heading p { margin: 0; color: var(--admin-muted); font-size: 0.65rem; line-height: 1.5; }
 .variant-editor-rows { display: grid; gap: 10px; }
@@ -397,6 +398,9 @@ html[data-theme="dark"] .admin-login-aside { border-color: #3b3046; background: 
 .product-quick-fact-number { color: var(--admin-muted); font-size: 0.7rem; font-weight: 800; white-space: nowrap; }
 .product-quick-fact-icon-field { display: grid; grid-template-columns: auto minmax(100px, 1fr); align-items: center; gap: 7px; color: var(--admin-text); font-size: 0.66rem; font-weight: 700; }
 .product-quick-fact-icon-field select { min-width: 0; min-height: 36px; padding: 6px 8px; border: 1px solid var(--admin-border); border-radius: 7px; background: var(--admin-surface); color: var(--admin-text); font: inherit; }
+.product-quick-fact-icon-field input[type="number"] { width: 92px; min-height: 36px; padding: 6px 8px; border: 1px solid var(--admin-border); border-radius: 7px; background: var(--admin-surface); color: var(--admin-text); font: inherit; }
+#product-performance-rows:empty::after { content: "No performance bars yet. Add a bar to get started."; }
+#product-box-rows:empty::after { content: "No box items yet. Add an item to get started."; }
 .product-quick-fact-actions { display: flex; align-items: center; gap: 5px; }
 .product-quick-fact-actions button { display: grid; width: 34px; min-height: 34px; place-items: center; padding: 0; border: 1px solid var(--admin-border); border-radius: 7px; background: var(--admin-surface); color: var(--admin-muted); cursor: pointer; }
 .product-quick-fact-actions button:hover:not(:disabled) { border-color: var(--admin-accent); color: var(--admin-accent-text); }

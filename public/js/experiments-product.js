@@ -555,11 +555,29 @@
     selectTab(0, false);
 
     // 2. Performance Meters & In-The-Box
+    const customPerformance = rawProduct?.product_option_values?._performance;
+    const perfHeadingLang = customPerformance?.headings?.[lang] || {};
+    const perfHeadingEn = customPerformance?.headings?.en || {};
+    const resolvedPerfEyebrow = String(perfHeadingLang.eyebrow || perfHeadingEn.eyebrow || t.performanceEyebrow).trim();
+    const resolvedPerfTitle = String(perfHeadingLang.title || perfHeadingEn.title || t.metersTitle).trim();
+    const resolvedMeters = Array.isArray(customPerformance?.meters)
+      ? customPerformance.meters.map((meter) => {
+          if (!meter || typeof meter !== "object") return null;
+          const mLang = meter.translations?.[lang] || {};
+          const mEn = meter.translations?.en || {};
+          const label = String(mLang.label || mEn.label || "").trim();
+          const note = String(mLang.note || mEn.note || "").trim();
+          const rawScore = Number(meter.score);
+          const score = Number.isFinite(rawScore) ? Math.min(100, Math.max(0, Math.round(rawScore))) : 95;
+          return label ? { label, score, note } : null;
+        }).filter(Boolean)
+      : t.meters;
+
     const metersCard = showcase.querySelector(".exp-meters-card");
-    metersCard.querySelector(".exp-showcase-eyebrow").textContent = t.performanceEyebrow;
-    metersCard.querySelector(".exp-meters-title").textContent = t.metersTitle;
+    metersCard.querySelector(".exp-showcase-eyebrow").textContent = resolvedPerfEyebrow;
+    metersCard.querySelector(".exp-meters-title").textContent = resolvedPerfTitle;
     const metersList = metersCard.querySelector(".exp-meters-list");
-    t.meters.forEach((meter) => {
+    resolvedMeters.forEach((meter) => {
       const row = document.createElement("div");
       row.className = "exp-meter-item";
       row.innerHTML = `
@@ -576,11 +594,27 @@
     });
     attachSpotlightTilt(metersCard);
 
+    const customBox = rawProduct?.product_option_values?._in_the_box;
+    const boxHeadingLang = customBox?.headings?.[lang] || {};
+    const boxHeadingEn = customBox?.headings?.en || {};
+    const resolvedBoxTitle = String(boxHeadingLang.title || boxHeadingEn.title || t.boxTitle).trim();
+    const resolvedBoxSub = String(boxHeadingLang.subtitle || boxHeadingEn.subtitle || t.boxSub).trim();
+    const resolvedBoxItems = Array.isArray(customBox?.items)
+      ? customBox.items.map((item) => {
+          if (!item || typeof item !== "object") return null;
+          const iLang = item.translations?.[lang] || {};
+          const iEn = item.translations?.en || {};
+          const name = String(iLang.name || iEn.name || "").trim();
+          const detail = String(iLang.detail || iEn.detail || "").trim();
+          return name ? { icon: item.icon || "package", name, detail } : null;
+        }).filter(Boolean)
+      : t.boxItems;
+
     const boxCard = showcase.querySelector(".exp-box-card");
-    boxCard.querySelector(".exp-box-title").textContent = t.boxTitle;
-    boxCard.querySelector(".exp-box-sub").textContent = t.boxSub;
+    boxCard.querySelector(".exp-box-title").textContent = resolvedBoxTitle;
+    boxCard.querySelector(".exp-box-sub").textContent = resolvedBoxSub;
     const boxGrid = boxCard.querySelector(".exp-box-grid");
-    t.boxItems.forEach((item) => {
+    resolvedBoxItems.forEach((item) => {
       const cell = document.createElement("div");
       cell.className = "exp-box-item";
       const iconWrap = document.createElement("span");

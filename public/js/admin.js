@@ -21,6 +21,112 @@
     { value: "audio-lines", label: "Audio" },
     { value: "sparkles", label: "General highlight" },
   ];
+  const productBoxItemIcons = [
+    { value: "laptop", label: "Laptop / Main device" },
+    { value: "smartphone", label: "Smartphone" },
+    { value: "tablet", label: "Tablet" },
+    { value: "watch", label: "Smartwatch" },
+    { value: "headphones", label: "Headphones / Audio" },
+    { value: "zap", label: "Power adapter / Charger" },
+    { value: "cable", label: "Cable" },
+    { value: "shield-check", label: "Warranty card" },
+    { value: "book-open", label: "User manual / Guide" },
+    { value: "package", label: "Accessory / Box" },
+    { value: "battery-charging", label: "Battery / Charging case" },
+    { value: "sparkles", label: "Special item" },
+  ];
+  const defaultProductPerformanceConfig = {
+    headings: {
+      en: { eyebrow: "PERFORMANCE & EFFICIENCY", title: "Real-world capability index" },
+      ar: { eyebrow: "الأداء والكفاءة", title: "مؤشر الكفاءة والأداء الفعلي" },
+      fr: { eyebrow: "PERFORMANCES ET EFFICACITÉ", title: "Indice de performance réelle" },
+      es: { eyebrow: "RENDIMIENTO Y EFICIENCIA", title: "Índice de capacidad real" },
+      zh: { eyebrow: "性能与效率", title: "综合性能指数" },
+    },
+    meters: [
+      {
+        score: 96,
+        translations: {
+          en: { label: "Multi-Core Compute", note: "96% faster than previous generation" },
+          ar: { label: "قوة المعالجة المتعددة", note: "أسرع بنسبة 96% مقارنة بالجيل السابق" },
+          fr: { label: "Puissance de calcul", note: "96 % plus rapide que la génération précédente" },
+          es: { label: "Potencia multinúcleo", note: "96 % más rápido que la generación anterior" },
+          zh: { label: "多核计算性能", note: "相比上一代提升 96%" },
+        },
+      },
+      {
+        score: 99,
+        translations: {
+          en: { label: "Display Color Accuracy", note: "100% P3 wide color · Factory calibrated" },
+          ar: { label: "دقة الألوان وسطوع الشاشة", note: "تغطية 100% لطيف P3 مع معايرة مصنعية" },
+          fr: { label: "Précision des couleurs", note: "Gamme P3 complète calibrée en usine" },
+          es: { label: "Precisión de color", note: "100 % gama P3 calibrada de fábrica" },
+          zh: { label: "色彩精准度与亮度", note: "100% P3 广色域 · 出厂校色" },
+        },
+      },
+      {
+        score: 94,
+        translations: {
+          en: { label: "Power Efficiency", note: "All-day battery with 50% fast charge in 30 min" },
+          ar: { label: "كفاءة الطاقة والبطارية", note: "شحن سريع يصل إلى 50% خلال 30 دقيقة" },
+          fr: { label: "Efficacité énergétique", note: "Charge rapide à 50 % en 30 minutes" },
+          es: { label: "Eficiencia energética", note: "Carga rápida al 50 % en 30 minutos" },
+          zh: { label: "能效与快充表现", note: "30 分钟可充至 50% 电量" },
+        },
+      },
+    ],
+  };
+  const defaultProductBoxConfig = {
+    headings: {
+      en: { title: "What’s in the box", subtitle: "Everything you need to start right away." },
+      ar: { title: "ماذا يوجد في العلبة؟", subtitle: "كل ما تحتاجه للانطلاق فور فتح الصندوق." },
+      fr: { title: "Contenu du coffret", subtitle: "Tout le nécessaire dès l’ouverture." },
+      es: { title: "Contenido de la caja", subtitle: "Todo listo para empezar desde el primer minuto." },
+      zh: { title: "包装盒内容", subtitle: "开箱即享完整配件。" },
+    },
+    items: [
+      {
+        icon: "laptop",
+        translations: {
+          en: { name: "Main Device", detail: "Factory sealed with protective wrap" },
+          ar: { name: "الجهاز الرئيسي", detail: "مغلف مصنعياً بغلاف الحماية الأصلي" },
+          fr: { name: "Appareil principal", detail: "Scellé en usine avec protection" },
+          es: { name: "Dispositivo principal", detail: "Sellado de fábrica con protección" },
+          zh: { name: "主机设备", detail: "原厂密封包装" },
+        },
+      },
+      {
+        icon: "zap",
+        translations: {
+          en: { name: "Fast Power Adapter", detail: "High-efficiency USB-C GaN charger" },
+          ar: { name: "محول طاقة فائق السرعة", detail: "شاحن USB-C عالي الكفاءة" },
+          fr: { name: "Adaptateur secteur rapide", detail: "Chargeur USB-C haute efficacité" },
+          es: { name: "Adaptador de carga rápida", detail: "Cargador USB-C de alta eficiencia" },
+          zh: { name: "快速电源适配器", detail: "高效 USB-C 充电器" },
+        },
+      },
+      {
+        icon: "cable",
+        translations: {
+          en: { name: "Braided Charge Cable", detail: "2m magnetic / USB-C woven cable" },
+          ar: { name: "كابل شحن مضفور", detail: "كابل متين بطول 2 متر مقاوم للتشابك" },
+          fr: { name: "Câble tressé", detail: "Câble haute résistance de 2 m" },
+          es: { name: "Cable trenzado", detail: "Cable resistente de 2 metros" },
+          zh: { name: "编织充电线", detail: "2 米耐用编织线材" },
+        },
+      },
+      {
+        icon: "shield-check",
+        translations: {
+          en: { name: "2-Year Warranty Card", detail: "Official WEEXEY coverage & guide" },
+          ar: { name: "بطاقة ضمان لمدة سنتين", detail: "ضمان WEEXEY الرسمي ودليل البدء السريع" },
+          fr: { name: "Garantie 2 ans", detail: "Couverture officielle WEEXEY" },
+          es: { name: "Garantía de 2 años", detail: "Cobertura oficial WEEXEY" },
+          zh: { name: "2 年官方保修卡", detail: "WEEXEY 官方质保与指南" },
+        },
+      },
+    ],
+  };
   const footerTextFields = [
     { key: "footer.copy", label: "Store description", multiline: true },
     { key: "footer.linksTitle", label: "Quick links heading" },
@@ -187,6 +293,10 @@
   const recentProductsBody = $("#recent-products-body");
   const productBenefitRows = $("#product-benefit-rows");
   const productQuickFactRows = $("#product-quick-fact-rows");
+  const productPerformanceHeadings = $("#product-performance-headings");
+  const productPerformanceRows = $("#product-performance-rows");
+  const productBoxHeadings = $("#product-box-headings");
+  const productBoxRows = $("#product-box-rows");
   const productDetailImageRows = $("#product-detail-image-rows");
   const productGalleryImageRows = $("#product-gallery-image-rows");
   const productColorPaletteElement = $("[data-product-color-palette]");
@@ -1858,6 +1968,546 @@
     setLocale(locale);
   }
 
+  function renderProductPerformanceHeadings(headings = defaultProductPerformanceConfig.headings) {
+    if (!productPerformanceHeadings) return;
+    productPerformanceHeadings.replaceChildren();
+    const header = document.createElement("div");
+    header.className = "product-quick-fact-header";
+    const number = document.createElement("span");
+    number.className = "product-quick-fact-number";
+    number.textContent = "Section headings";
+    header.append(number);
+
+    const localePanels = document.createElement("div");
+    localePanels.className = "product-quick-fact-locales";
+    for (const language of languages) {
+      const defaults = defaultProductPerformanceConfig.headings[language] || defaultProductPerformanceConfig.headings.en;
+      const translation = headings?.[language] || {};
+      const panel = document.createElement("div");
+      panel.className = "product-quick-fact-locale-panel";
+      panel.dataset.performanceLocale = language;
+      panel.dir = language === "ar" ? "rtl" : "ltr";
+      panel.hidden = language !== activeProductLocale();
+
+      const fields = document.createElement("div");
+      fields.className = "product-quick-fact-fields";
+      const eyebrowLabel = document.createElement("label");
+      eyebrowLabel.textContent = "Eyebrow heading";
+      const eyebrow = document.createElement("input");
+      eyebrow.maxLength = 100;
+      eyebrow.placeholder = defaults.eyebrow;
+      eyebrow.value = String(translation.eyebrow ?? defaults.eyebrow);
+      eyebrow.dataset.performanceEyebrow = "";
+      eyebrowLabel.append(eyebrow);
+
+      const titleLabel = document.createElement("label");
+      titleLabel.textContent = "Main heading";
+      const title = document.createElement("input");
+      title.maxLength = 160;
+      title.placeholder = defaults.title;
+      title.value = String(translation.title ?? defaults.title);
+      title.dataset.performanceTitle = "";
+      titleLabel.append(title);
+
+      fields.append(eyebrowLabel, titleLabel);
+      panel.append(fields);
+      localePanels.append(panel);
+    }
+    productPerformanceHeadings.append(header, localePanels);
+  }
+
+  function createProductPerformanceRow(meter = {}, position = 0, totalCount = 1) {
+    const row = document.createElement("fieldset");
+    row.className = "product-quick-fact-row product-performance-row";
+    row.dataset.performanceIndex = String(position);
+
+    const header = document.createElement("div");
+    header.className = "product-quick-fact-header";
+    const number = document.createElement("span");
+    number.className = "product-quick-fact-number";
+    number.textContent = `Bar ${position + 1}`;
+    const scoreLabel = document.createElement("label");
+    scoreLabel.className = "product-quick-fact-icon-field";
+    scoreLabel.append(document.createTextNode("Score (%)"));
+    const scoreInput = document.createElement("input");
+    scoreInput.type = "number";
+    scoreInput.min = "0";
+    scoreInput.max = "100";
+    scoreInput.step = "1";
+    const parsedScore = Number(meter.score);
+    scoreInput.value = String(Number.isFinite(parsedScore) ? Math.min(100, Math.max(0, Math.round(parsedScore))) : 95);
+    scoreInput.dataset.performanceScore = "";
+    scoreLabel.append(scoreInput);
+
+    const actions = document.createElement("div");
+    actions.className = "product-quick-fact-actions";
+    const createAction = (iconName, label, handler, disabled = false, danger = false) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.disabled = disabled;
+      button.classList.toggle("admin-danger-button", danger);
+      button.setAttribute("aria-label", label);
+      button.title = label;
+      button.innerHTML = `<i data-lucide="${iconName}" aria-hidden="true"></i>`;
+      button.addEventListener("click", handler);
+      return button;
+    };
+    actions.append(
+      createAction("arrow-up", "Move bar up", () => moveProductPerformanceMeter(position, -1), position === 0),
+      createAction("arrow-down", "Move bar down", () => moveProductPerformanceMeter(position, 1), position === totalCount - 1),
+      createAction("trash-2", "Remove bar", () => removeProductPerformanceMeter(position), false, true),
+    );
+    header.append(number, scoreLabel, actions);
+
+    const localePanels = document.createElement("div");
+    localePanels.className = "product-quick-fact-locales";
+    const translations = meter.translations && typeof meter.translations === "object" ? meter.translations : {};
+    for (const language of languages) {
+      const translation = translations[language] || {};
+      const panel = document.createElement("div");
+      panel.className = "product-quick-fact-locale-panel";
+      panel.dataset.performanceLocale = language;
+      panel.dir = language === "ar" ? "rtl" : "ltr";
+      panel.hidden = language !== activeProductLocale();
+
+      const fields = document.createElement("div");
+      fields.className = "product-quick-fact-fields";
+      const labelField = document.createElement("label");
+      labelField.textContent = "Metric title";
+      const labelInput = document.createElement("input");
+      labelInput.maxLength = 120;
+      labelInput.value = String(translation.label || "");
+      labelInput.dataset.performanceLabel = "";
+      labelField.append(labelInput);
+
+      const noteField = document.createElement("label");
+      noteField.textContent = "Subtitle / note";
+      const noteInput = document.createElement("input");
+      noteInput.maxLength = 240;
+      noteInput.value = String(translation.note || "");
+      noteInput.dataset.performanceNote = "";
+      noteField.append(noteInput);
+
+      fields.append(labelField, noteField);
+      panel.append(fields);
+      localePanels.append(panel);
+    }
+
+    row.append(header, localePanels);
+    return row;
+  }
+
+  function readProductPerformance() {
+    const headings = Object.fromEntries(languages.map((language) => {
+      const panel = productPerformanceHeadings?.querySelector(`[data-performance-locale="${language}"]`);
+      return [language, {
+        eyebrow: panel?.querySelector("[data-performance-eyebrow]")?.value.trim() || "",
+        title: panel?.querySelector("[data-performance-title]")?.value.trim() || "",
+      }];
+    }));
+    const meters = [...(productPerformanceRows?.querySelectorAll(".product-performance-row") || [])].map((row) => {
+      const rawScore = Number(row.querySelector("[data-performance-score]").value);
+      const score = Number.isFinite(rawScore) ? Math.min(100, Math.max(0, Math.round(rawScore))) : 95;
+      return {
+        score,
+        translations: Object.fromEntries(languages.map((language) => {
+          const panel = row.querySelector(`[data-performance-locale="${language}"]`);
+          return [language, {
+            label: panel?.querySelector("[data-performance-label]")?.value.trim() || "",
+            note: panel?.querySelector("[data-performance-note]")?.value.trim() || "",
+          }];
+        })),
+      };
+    });
+    return { headings, meters };
+  }
+
+  function renderProductPerformance(config = defaultProductPerformanceConfig) {
+    renderProductPerformanceHeadings(config?.headings || defaultProductPerformanceConfig.headings);
+    const meters = Array.isArray(config?.meters) ? config.meters : defaultProductPerformanceConfig.meters;
+    productPerformanceRows?.replaceChildren(...meters.map((meter, index) => createProductPerformanceRow(meter, index, meters.length)));
+    window.lucide?.createIcons();
+  }
+
+  function setProductPerformance(product) {
+    const feedback = $("#product-performance-feedback");
+    if (feedback) {
+      feedback.hidden = true;
+      feedback.textContent = "";
+    }
+    const configured = product?.product_option_values?._performance;
+    if (configured && typeof configured === "object") {
+      renderProductPerformance({
+        headings: configured.headings || defaultProductPerformanceConfig.headings,
+        meters: Array.isArray(configured.meters) ? configured.meters : defaultProductPerformanceConfig.meters,
+      });
+      return;
+    }
+    renderProductPerformance(structuredClone(defaultProductPerformanceConfig));
+  }
+
+  function addProductPerformanceMeter() {
+    const current = readProductPerformance();
+    const index = current.meters.length;
+    current.meters.push({
+      score: 95,
+      translations: Object.fromEntries(languages.map((language) => [language, { label: "", note: "" }])),
+    });
+    const locale = activeProductLocale();
+    renderProductPerformance(current);
+    setLocale(locale);
+    productPerformanceRows?.querySelector(`[data-performance-index="${index}"] [data-performance-locale="${locale}"] [data-performance-label]`)?.focus();
+  }
+
+  function removeProductPerformanceMeter(index) {
+    const current = readProductPerformance();
+    current.meters.splice(index, 1);
+    const locale = activeProductLocale();
+    renderProductPerformance(current);
+    setLocale(locale);
+  }
+
+  function moveProductPerformanceMeter(index, offset) {
+    const current = readProductPerformance();
+    const destination = index + offset;
+    if (destination < 0 || destination >= current.meters.length) return;
+    [current.meters[index], current.meters[destination]] = [current.meters[destination], current.meters[index]];
+    const locale = activeProductLocale();
+    renderProductPerformance(current);
+    setLocale(locale);
+  }
+
+  async function translateProductPerformance() {
+    const feedback = $("#product-performance-feedback");
+    const btn = $("#translate-product-performance");
+    const current = readProductPerformance();
+    const enHeading = current.headings.en || {};
+    const hasMeters = current.meters.some((m) => m.translations?.en?.label || m.translations?.en?.note);
+    if (!enHeading.eyebrow && !enHeading.title && !hasMeters) {
+      feedback.textContent = "Enter English headings or bars before translating.";
+      feedback.hidden = false;
+      return;
+    }
+    btn.disabled = true;
+    feedback.textContent = "Translating Performance & Efficiency with Azure…";
+    feedback.hidden = false;
+    try {
+      if (enHeading.eyebrow || enHeading.title) {
+        const { data, error } = await client.functions.invoke("translate-high-refresh", {
+          body: {
+            source: { eyebrow: enHeading.eyebrow || "", title: enHeading.title || "", text: "", badge: "" },
+            translations: {},
+          },
+        });
+        if (error) throw error;
+        if (data?.translations) {
+          for (const lang of ["ar", "fr", "es", "zh"]) {
+            current.headings[lang] = {
+              eyebrow: data.translations[lang]?.eyebrow || current.headings[lang]?.eyebrow || "",
+              title: data.translations[lang]?.title || current.headings[lang]?.title || "",
+            };
+          }
+        }
+      }
+      for (const meter of current.meters) {
+        const en = meter.translations?.en || {};
+        if (!en.label && !en.note) continue;
+        const { data, error } = await client.functions.invoke("translate-high-refresh", {
+          body: {
+            source: { title: en.label || "", text: en.note || "", eyebrow: "", badge: "" },
+            translations: {},
+          },
+        });
+        if (error) throw error;
+        if (data?.translations) {
+          for (const lang of ["ar", "fr", "es", "zh"]) {
+            meter.translations[lang] = {
+              label: data.translations[lang]?.title || meter.translations[lang]?.label || "",
+              note: data.translations[lang]?.text || meter.translations[lang]?.note || "",
+            };
+          }
+        }
+      }
+      const locale = activeProductLocale();
+      renderProductPerformance(current);
+      setLocale(locale);
+      feedback.textContent = "Translations generated for all 4 languages (AR / FR / ES / ZH). Click Save changes to apply.";
+    } catch (error) {
+      feedback.textContent = error.message || "Could not translate Performance & Efficiency fields.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function renderProductBoxHeadings(headings = defaultProductBoxConfig.headings) {
+    if (!productBoxHeadings) return;
+    productBoxHeadings.replaceChildren();
+    const header = document.createElement("div");
+    header.className = "product-quick-fact-header";
+    const number = document.createElement("span");
+    number.className = "product-quick-fact-number";
+    number.textContent = "Section headings";
+    header.append(number);
+
+    const localePanels = document.createElement("div");
+    localePanels.className = "product-quick-fact-locales";
+    for (const language of languages) {
+      const defaults = defaultProductBoxConfig.headings[language] || defaultProductBoxConfig.headings.en;
+      const translation = headings?.[language] || {};
+      const panel = document.createElement("div");
+      panel.className = "product-quick-fact-locale-panel";
+      panel.dataset.boxLocale = language;
+      panel.dir = language === "ar" ? "rtl" : "ltr";
+      panel.hidden = language !== activeProductLocale();
+
+      const fields = document.createElement("div");
+      fields.className = "product-quick-fact-fields";
+      const titleLabel = document.createElement("label");
+      titleLabel.textContent = "Main heading";
+      const title = document.createElement("input");
+      title.maxLength = 140;
+      title.placeholder = defaults.title;
+      title.value = String(translation.title ?? defaults.title);
+      title.dataset.boxTitle = "";
+      titleLabel.append(title);
+
+      const subtitleLabel = document.createElement("label");
+      subtitleLabel.textContent = "Subtitle";
+      const subtitle = document.createElement("input");
+      subtitle.maxLength = 240;
+      subtitle.placeholder = defaults.subtitle;
+      subtitle.value = String(translation.subtitle ?? defaults.subtitle);
+      subtitle.dataset.boxSubtitle = "";
+      subtitleLabel.append(subtitle);
+
+      fields.append(titleLabel, subtitleLabel);
+      panel.append(fields);
+      localePanels.append(panel);
+    }
+    productBoxHeadings.append(header, localePanels);
+  }
+
+  function createProductBoxRow(item = {}, position = 0, totalCount = 1) {
+    const row = document.createElement("fieldset");
+    row.className = "product-quick-fact-row product-box-row";
+    row.dataset.boxIndex = String(position);
+
+    const header = document.createElement("div");
+    header.className = "product-quick-fact-header";
+    const number = document.createElement("span");
+    number.className = "product-quick-fact-number";
+    number.textContent = `Item ${position + 1}`;
+    const iconLabel = document.createElement("label");
+    iconLabel.className = "product-quick-fact-icon-field";
+    iconLabel.append(document.createTextNode("Icon"));
+    const iconSelect = document.createElement("select");
+    iconSelect.dataset.boxIcon = "";
+    const selectedIcon = productBoxItemIcons.some((entry) => entry.value === item.icon) ? item.icon : "package";
+    for (const entry of productBoxItemIcons) {
+      const option = document.createElement("option");
+      option.value = entry.value;
+      option.textContent = entry.label;
+      option.selected = entry.value === selectedIcon;
+      iconSelect.append(option);
+    }
+    iconLabel.append(iconSelect);
+
+    const actions = document.createElement("div");
+    actions.className = "product-quick-fact-actions";
+    const createAction = (iconName, label, handler, disabled = false, danger = false) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.disabled = disabled;
+      button.classList.toggle("admin-danger-button", danger);
+      button.setAttribute("aria-label", label);
+      button.title = label;
+      button.innerHTML = `<i data-lucide="${iconName}" aria-hidden="true"></i>`;
+      button.addEventListener("click", handler);
+      return button;
+    };
+    actions.append(
+      createAction("arrow-up", "Move item up", () => moveProductBoxItem(position, -1), position === 0),
+      createAction("arrow-down", "Move item down", () => moveProductBoxItem(position, 1), position === totalCount - 1),
+      createAction("trash-2", "Remove item", () => removeProductBoxItem(position), false, true),
+    );
+    header.append(number, iconLabel, actions);
+
+    const localePanels = document.createElement("div");
+    localePanels.className = "product-quick-fact-locales";
+    const translations = item.translations && typeof item.translations === "object" ? item.translations : {};
+    for (const language of languages) {
+      const translation = translations[language] || {};
+      const panel = document.createElement("div");
+      panel.className = "product-quick-fact-locale-panel";
+      panel.dataset.boxLocale = language;
+      panel.dir = language === "ar" ? "rtl" : "ltr";
+      panel.hidden = language !== activeProductLocale();
+
+      const fields = document.createElement("div");
+      fields.className = "product-quick-fact-fields";
+      const nameField = document.createElement("label");
+      nameField.textContent = "Item name";
+      const nameInput = document.createElement("input");
+      nameInput.maxLength = 120;
+      nameInput.value = String(translation.name || "");
+      nameInput.dataset.boxItemName = "";
+      nameField.append(nameInput);
+
+      const detailField = document.createElement("label");
+      detailField.textContent = "Item description";
+      const detailInput = document.createElement("input");
+      detailInput.maxLength = 240;
+      detailInput.value = String(translation.detail || "");
+      detailInput.dataset.boxItemDetail = "";
+      detailField.append(detailInput);
+
+      fields.append(nameField, detailField);
+      panel.append(fields);
+      localePanels.append(panel);
+    }
+
+    row.append(header, localePanels);
+    return row;
+  }
+
+  function readProductBox() {
+    const headings = Object.fromEntries(languages.map((language) => {
+      const panel = productBoxHeadings?.querySelector(`[data-box-locale="${language}"]`);
+      return [language, {
+        title: panel?.querySelector("[data-box-title]")?.value.trim() || "",
+        subtitle: panel?.querySelector("[data-box-subtitle]")?.value.trim() || "",
+      }];
+    }));
+    const items = [...(productBoxRows?.querySelectorAll(".product-box-row") || [])].map((row) => ({
+      icon: row.querySelector("[data-box-icon]").value,
+      translations: Object.fromEntries(languages.map((language) => {
+        const panel = row.querySelector(`[data-box-locale="${language}"]`);
+        return [language, {
+          name: panel?.querySelector("[data-box-item-name]")?.value.trim() || "",
+          detail: panel?.querySelector("[data-box-item-detail]")?.value.trim() || "",
+        }];
+      })),
+    }));
+    return { headings, items };
+  }
+
+  function renderProductBox(config = defaultProductBoxConfig) {
+    renderProductBoxHeadings(config?.headings || defaultProductBoxConfig.headings);
+    const items = Array.isArray(config?.items) ? config.items : defaultProductBoxConfig.items;
+    productBoxRows?.replaceChildren(...items.map((item, index) => createProductBoxRow(item, index, items.length)));
+    window.lucide?.createIcons();
+  }
+
+  function setProductBox(product) {
+    const feedback = $("#product-box-feedback");
+    if (feedback) {
+      feedback.hidden = true;
+      feedback.textContent = "";
+    }
+    const configured = product?.product_option_values?._in_the_box;
+    if (configured && typeof configured === "object") {
+      renderProductBox({
+        headings: configured.headings || defaultProductBoxConfig.headings,
+        items: Array.isArray(configured.items) ? configured.items : defaultProductBoxConfig.items,
+      });
+      return;
+    }
+    renderProductBox(structuredClone(defaultProductBoxConfig));
+  }
+
+  function addProductBoxItem() {
+    const current = readProductBox();
+    const index = current.items.length;
+    current.items.push({
+      icon: "package",
+      translations: Object.fromEntries(languages.map((language) => [language, { name: "", detail: "" }])),
+    });
+    const locale = activeProductLocale();
+    renderProductBox(current);
+    setLocale(locale);
+    productBoxRows?.querySelector(`[data-box-index="${index}"] [data-box-locale="${locale}"] [data-box-item-name]`)?.focus();
+  }
+
+  function removeProductBoxItem(index) {
+    const current = readProductBox();
+    current.items.splice(index, 1);
+    const locale = activeProductLocale();
+    renderProductBox(current);
+    setLocale(locale);
+  }
+
+  function moveProductBoxItem(index, offset) {
+    const current = readProductBox();
+    const destination = index + offset;
+    if (destination < 0 || destination >= current.items.length) return;
+    [current.items[index], current.items[destination]] = [current.items[destination], current.items[index]];
+    const locale = activeProductLocale();
+    renderProductBox(current);
+    setLocale(locale);
+  }
+
+  async function translateProductBox() {
+    const feedback = $("#product-box-feedback");
+    const btn = $("#translate-product-box");
+    const current = readProductBox();
+    const enHeading = current.headings.en || {};
+    const hasItems = current.items.some((item) => item.translations?.en?.name || item.translations?.en?.detail);
+    if (!enHeading.title && !enHeading.subtitle && !hasItems) {
+      feedback.textContent = "Enter English headings or box items before translating.";
+      feedback.hidden = false;
+      return;
+    }
+    btn.disabled = true;
+    feedback.textContent = "Translating What’s in the box with Azure…";
+    feedback.hidden = false;
+    try {
+      if (enHeading.title || enHeading.subtitle) {
+        const { data, error } = await client.functions.invoke("translate-high-refresh", {
+          body: {
+            source: { title: enHeading.title || "", text: enHeading.subtitle || "", eyebrow: "", badge: "" },
+            translations: {},
+          },
+        });
+        if (error) throw error;
+        if (data?.translations) {
+          for (const lang of ["ar", "fr", "es", "zh"]) {
+            current.headings[lang] = {
+              title: data.translations[lang]?.title || current.headings[lang]?.title || "",
+              subtitle: data.translations[lang]?.text || current.headings[lang]?.subtitle || "",
+            };
+          }
+        }
+      }
+      for (const item of current.items) {
+        const en = item.translations?.en || {};
+        if (!en.name && !en.detail) continue;
+        const { data, error } = await client.functions.invoke("translate-high-refresh", {
+          body: {
+            source: { title: en.name || "", text: en.detail || "", eyebrow: "", badge: "" },
+            translations: {},
+          },
+        });
+        if (error) throw error;
+        if (data?.translations) {
+          for (const lang of ["ar", "fr", "es", "zh"]) {
+            item.translations[lang] = {
+              name: data.translations[lang]?.title || item.translations[lang]?.name || "",
+              detail: data.translations[lang]?.text || item.translations[lang]?.detail || "",
+            };
+          }
+        }
+      }
+      const locale = activeProductLocale();
+      renderProductBox(current);
+      setLocale(locale);
+      feedback.textContent = "Translations generated for all 4 languages (AR / FR / ES / ZH). Click Save changes to apply.";
+    } catch (error) {
+      feedback.textContent = error.message || "Could not translate What’s in the box fields.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
   function createProductBenefitRow(benefit, index) {
     const row = document.createElement("fieldset");
     row.className = "product-benefit-row";
@@ -2531,7 +3181,6 @@
   function setProductTranslations(product, features = [], specifications = [], benefits = []) {
     for (const language of ["en", "fr", "es", "zh", "ar"]) {
       productForm.elements[`name_${language}`].value = product?.name_translations?.[language] || "";
-      productForm.elements[`description_name_${language}`].value = product?.description_name_translations?.[language] || "";
       productForm.elements[`description_${language}`].value = product?.description_translations?.[language] || "";
       productForm.elements[`features_${language}`].value = features
         .filter((feature) => feature.language_code === language)
@@ -2566,6 +3215,12 @@
     });
     $$('[data-quick-fact-locale]').forEach((panel) => {
       panel.hidden = panel.dataset.quickFactLocale !== locale;
+    });
+    $$('[data-performance-locale]').forEach((panel) => {
+      panel.hidden = panel.dataset.performanceLocale !== locale;
+    });
+    $$('[data-box-locale]').forEach((panel) => {
+      panel.hidden = panel.dataset.boxLocale !== locale;
     });
     renderProductQuickFactPreview();
   }
@@ -3081,6 +3736,8 @@
     setProductTranslations(null);
     setProductShowcaseFields(null);
     setProductQuickFacts(null);
+    setProductPerformance(null);
+    setProductBox(null);
     renderProductDetailImages([]);
     originalProductGalleryImages = [];
     renderProductGalleryImages([]);
@@ -3145,6 +3802,8 @@
     setProductTranslations(product, features || [], specifications || [], product.product_benefits || []);
     setProductShowcaseFields(product);
     setProductQuickFacts(product);
+    setProductPerformance(product);
+    setProductBox(product);
     generateProductCombinations();
     updateProductCurrencyLabels();
     window.lucide?.createIcons();
@@ -3478,7 +4137,6 @@
     const formData = new FormData(productForm);
     const slug = String(formData.get("slug") || "").trim().toLowerCase();
     const englishName = String(formData.get("name_en") || "").trim();
-    const englishDescriptionName = String(formData.get("description_name_en") || "").trim();
     const price = Number(formData.get("price"));
     const currencyCode = String(formData.get("currency") || "SAR");
     const compareValue = String(formData.get("compare_at_price") || "").trim();
@@ -3496,12 +4154,6 @@
     }
     if (!["SAR", "USD", "EUR"].includes(currencyCode)) {
       showProductError("Choose a supported product currency.");
-      return;
-    }
-    if (!englishDescriptionName) {
-      showProductError("Enter an English description name.");
-      setLocale("en");
-      productForm.elements.description_name_en.focus();
       return;
     }
     if (compareAtPrice !== null && (!Number.isFinite(compareAtPrice) || compareAtPrice < price)) {
@@ -3642,12 +4294,10 @@
     let galleryImagesSaved = false;
     try {
       const nameTranslations = {};
-      const descriptionNameTranslations = {};
       const descriptionTranslations = {};
       const featuresByLanguage = {};
       for (const language of ["en", "fr", "es", "zh", "ar"]) {
         nameTranslations[language] = String(formData.get(`name_${language}`) || "").trim() || englishName;
-        descriptionNameTranslations[language] = String(formData.get(`description_name_${language}`) || "").trim() || englishDescriptionName;
         descriptionTranslations[language] = String(formData.get(`description_${language}`) || "").trim() || String(formData.get("description_en") || "").trim();
         featuresByLanguage[language] = String(formData.get(`features_${language}`) || "").split("\n").map((line) => line.trim()).filter(Boolean);
         if (!featuresByLanguage[language].length) featuresByLanguage[language] = String(formData.get("features_en") || "").split("\n").map((line) => line.trim()).filter(Boolean);
@@ -3685,9 +4335,13 @@
         showcaseConfig[group].image_url = boxPublicUrl;
         showcaseConfig[group].image_path = boxPath;
       }
+      const performanceConfig = readProductPerformance();
+      const boxConfig = readProductBox();
       const storedOptionValues = {
         ...optionValues,
         _quick_facts: quickFacts,
+        _performance: performanceConfig,
+        _in_the_box: boxConfig,
         ...(Object.keys(showcaseConfig).length ? { _showcase: showcaseConfig } : {}),
       };
 
@@ -3696,7 +4350,6 @@
         category_slug: String(formData.get("category_slug")),
         brand: String(formData.get("brand") || "").trim(),
         name_translations: nameTranslations,
-        description_name_translations: descriptionNameTranslations,
         description_translations: descriptionTranslations,
         product_benefits: productBenefits,
         product_option_values: storedOptionValues,
@@ -4169,6 +4822,10 @@
     );
     $("#generate-product-combinations").addEventListener("click", generateProductCombinations);
     $("#add-product-quick-fact").addEventListener("click", addProductQuickFact);
+    $("#add-product-performance-meter")?.addEventListener("click", addProductPerformanceMeter);
+    $("#translate-product-performance")?.addEventListener("click", translateProductPerformance);
+    $("#add-product-box-item")?.addEventListener("click", addProductBoxItem);
+    $("#translate-product-box")?.addEventListener("click", translateProductBox);
     productQuickFactRows.addEventListener("input", () => renderProductQuickFactPreview());
     productQuickFactRows.addEventListener("change", () => renderProductQuickFactPreview());
     productForm.elements.currency.addEventListener("change", updateProductCurrencyLabels);

@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=10" />
+    <link rel="stylesheet" href="/css/admin.css?v=11" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -817,13 +817,15 @@
             <span class="product-editor-nav-label">EDITOR SECTIONS</span>
             <button class="is-active" type="button" data-product-editor-target="product-identity" aria-current="location"><i data-lucide="panel-top" aria-hidden="true"></i><span>Product</span></button>
             <button type="button" data-product-editor-target="product-gallery-images"><i data-lucide="images" aria-hidden="true"></i><span>Gallery images</span></button>
-            <button type="button" data-product-editor-target="product-options"><i data-lucide="layers-2" aria-hidden="true"></i><span>Options</span></button>
             <button type="button" data-product-editor-target="product-copy"><i data-lucide="languages" aria-hidden="true"></i><span>Content</span></button>
-            <button type="button" data-product-editor-target="product-benefits"><i data-lucide="badge-check" aria-hidden="true"></i><span>Benefits</span></button>
-            <button type="button" data-product-editor-target="product-detail-images"><i data-lucide="images" aria-hidden="true"></i><span>Detail images</span></button>
-            <button type="button" data-product-editor-target="product-specifications"><i data-lucide="list-checks" aria-hidden="true"></i><span>Specifications</span></button>
             <button type="button" data-product-editor-target="product-quick-facts"><i data-lucide="layout-grid" aria-hidden="true"></i><span>Quick fact cards</span></button>
+            <button type="button" data-product-editor-target="product-options"><i data-lucide="layers-2" aria-hidden="true"></i><span>Options</span></button>
+            <button type="button" data-product-editor-target="product-benefits"><i data-lucide="badge-check" aria-hidden="true"></i><span>Benefits</span></button>
             <button type="button" data-product-editor-target="product-showcase"><i data-lucide="sparkles" aria-hidden="true"></i><span>Interactive studio</span></button>
+            <button type="button" data-product-editor-target="product-performance"><i data-lucide="gauge" aria-hidden="true"></i><span>Performance &amp; Efficiency</span></button>
+            <button type="button" data-product-editor-target="product-box"><i data-lucide="package" aria-hidden="true"></i><span>What’s in the box</span></button>
+            <button type="button" data-product-editor-target="product-specifications"><i data-lucide="list-checks" aria-hidden="true"></i><span>Specifications</span></button>
+            <button type="button" data-product-editor-target="product-detail-images"><i data-lucide="images" aria-hidden="true"></i><span>Detail images</span></button>
           </nav>
           <div class="product-editor-content" id="product-editor-content">
           <section class="product-editor-section" id="product-identity">
@@ -844,40 +846,13 @@
             <div class="variant-editor-heading"><div><h3>Gallery images</h3><p>Add extra product photos shown below the main image. These are separate from More Details images.</p><span id="product-gallery-image-count" class="admin-muted-copy">0 additional images</span></div><button id="add-product-gallery-image" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add image</button></div>
             <div id="product-gallery-image-rows" class="product-gallery-image-rows"></div>
           </section>
-          <section class="product-options-editor product-editor-section" id="product-options">
-            <div class="variant-editor-heading"><div><h3>Product options</h3><p>Select values for size, storage, color, and material. Combinations are generated from selected values.</p></div></div>
-            <div class="product-option-groups">
-              <fieldset class="product-value-field"><legend>Size</legend><div class="product-option-chips" data-option-chips="size"></div><div class="product-value-entry"><input type="text" data-option-entry="size" placeholder="Add a size" /><button type="button" data-add-option-value="size" aria-label="Add size" title="Add size"><i data-lucide="plus" aria-hidden="true"></i></button></div><textarea hidden rows="2" data-option-values="size"></textarea></fieldset>
-              <fieldset class="product-value-field"><legend>Storage</legend><div class="product-option-chips" data-option-chips="storage"></div><div class="product-value-entry"><input type="text" data-option-entry="storage" placeholder="Add storage" /><button type="button" data-add-option-value="storage" aria-label="Add storage" title="Add storage"><i data-lucide="plus" aria-hidden="true"></i></button></div><textarea hidden rows="2" data-option-values="storage"></textarea></fieldset>
-              <fieldset class="product-value-field"><legend>Material</legend><div class="product-option-chips" data-option-chips="material"></div><div class="product-value-entry"><input type="text" data-option-entry="material" placeholder="Add material" /><button type="button" data-add-option-value="material" aria-label="Add material" title="Add material"><i data-lucide="plus" aria-hidden="true"></i></button></div><textarea hidden rows="2" data-option-values="material"></textarea></fieldset>
-              <fieldset class="product-color-group"><legend>Color</legend><div class="product-color-palette" data-product-color-palette></div></fieldset>
-            </div>
-            <div class="product-combination-heading"><h4>Generated combinations</h4><button id="generate-product-combinations" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Generate combinations</button></div>
-            <div id="product-combination-rows" class="product-combination-rows"></div>
-          </section>
           <div class="translation-editor product-editor-section" id="product-copy"><div class="translation-heading"><div><h3>Product copy</h3><p>Names, descriptions, and feature bullets</p></div><div class="locale-tabs" role="tablist" aria-label="Product language"><button class="is-active" type="button" data-locale-tab="en">EN</button><button type="button" data-locale-tab="fr">FR</button><button type="button" data-locale-tab="es">ES</button><button type="button" data-locale-tab="zh">中文</button><button type="button" data-locale-tab="ar">عربي</button></div></div>
-            <div class="locale-panel is-active" data-locale-panel="en"><label>Name<input name="name_en" required /></label><label>Description name<textarea name="description_name_en" rows="2" required></textarea></label><label>Description<textarea name="description_en" rows="2"></textarea></label><label>Feature bullets<textarea name="features_en" rows="4" placeholder="One feature per line"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="fr" hidden><label>Nom<input name="name_fr" /></label><label>Nom de description<textarea name="description_name_fr" rows="2"></textarea></label><label>Description<textarea name="description_fr" rows="2"></textarea></label><label>Caractéristiques<textarea name="features_fr" rows="4" placeholder="One feature per line"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="es" hidden><label>Nombre<input name="name_es" /></label><label>Nombre de la descripción<textarea name="description_name_es" rows="2"></textarea></label><label>Descripción<textarea name="description_es" rows="2"></textarea></label><label>Características<textarea name="features_es" rows="4" placeholder="One feature per line"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="zh" hidden><label>商品名称<input name="name_zh" /></label><label>描述名称<textarea name="description_name_zh" rows="2"></textarea></label><label>商品描述<textarea name="description_zh" rows="2"></textarea></label><label>商品特色<textarea name="features_zh" rows="4" placeholder="One feature per line"></textarea></label></div>
-            <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>اسم المنتج<input name="name_ar" /></label><label>اسم الوصف<textarea name="description_name_ar" rows="2"></textarea></label><label>الوصف<textarea name="description_ar" rows="2"></textarea></label><label>الميزات<textarea name="features_ar" rows="4" placeholder="ميزة واحدة في كل سطر"></textarea></label></div>
+            <div class="locale-panel is-active" data-locale-panel="en"><label>Name<input name="name_en" required /></label><label>Description<textarea name="description_en" rows="2"></textarea></label><label>Feature bullets<textarea name="features_en" rows="4" placeholder="One feature per line"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="fr" hidden><label>Nom<input name="name_fr" /></label><label>Description<textarea name="description_fr" rows="2"></textarea></label><label>Caractéristiques<textarea name="features_fr" rows="4" placeholder="One feature per line"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="es" hidden><label>Nombre<input name="name_es" /></label><label>Descripción<textarea name="description_es" rows="2"></textarea></label><label>Características<textarea name="features_es" rows="4" placeholder="One feature per line"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="zh" hidden><label>商品名称<input name="name_zh" /></label><label>商品描述<textarea name="description_zh" rows="2"></textarea></label><label>商品特色<textarea name="features_zh" rows="4" placeholder="One feature per line"></textarea></label></div>
+            <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>اسم المنتج<input name="name_ar" /></label><label>الوصف<textarea name="description_ar" rows="2"></textarea></label><label>الميزات<textarea name="features_ar" rows="4" placeholder="ميزة واحدة في كل سطر"></textarea></label></div>
           </div>
-          <section class="benefit-editor product-editor-section" id="product-benefits">
-            <div class="variant-editor-heading"><div><h3>Product benefits</h3><p>Customize the three delivery, warranty, and returns cards for this product.</p></div></div>
-            <div id="product-benefit-rows" class="product-benefit-rows"></div>
-          </section>
-          <section class="product-detail-images-editor product-editor-section" id="product-detail-images">
-            <div class="variant-editor-heading"><div><h3>More details images</h3><p>Add up to 10 ordered detail images. Use a URL or upload an image for each row.</p><span id="product-detail-image-count" class="admin-muted-copy">0 / 10 images</span></div><button id="add-product-detail-image" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add image</button></div>
-            <div id="product-detail-image-rows" class="product-detail-image-rows"></div>
-          </section>
-          <section class="specification-editor product-editor-section" id="product-specifications">
-            <div class="variant-editor-heading"><div><h3>Detailed specifications</h3><p>Add a detail title with its description. Use the language tabs above to translate each row.</p></div><button id="add-product-specification" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add detail</button></div>
-            <div class="specification-locale-panel" data-specification-locale="en"></div>
-            <div class="specification-locale-panel" data-specification-locale="fr" hidden></div>
-            <div class="specification-locale-panel" data-specification-locale="es" hidden></div>
-            <div class="specification-locale-panel" data-specification-locale="zh" hidden></div>
-            <div class="specification-locale-panel" data-specification-locale="ar" dir="rtl" hidden></div>
-          </section>
           <section class="product-quick-facts-editor product-editor-section" id="product-quick-facts">
             <div class="variant-editor-heading">
               <div><h3>Quick fact cards</h3><p>Manage the cards shown near the product description. Add, remove, and reorder cards; use the language tabs above to translate them.</p></div>
@@ -889,11 +864,26 @@
               <div id="product-quick-fact-preview-grid" class="product-quick-fact-preview-grid"></div>
             </div>
           </section>
+          <section class="product-options-editor product-editor-section" id="product-options">
+            <div class="variant-editor-heading"><div><h3>Product options</h3><p>Select values for size, storage, color, and material. Combinations are generated from selected values.</p></div></div>
+            <div class="product-option-groups">
+              <fieldset class="product-value-field"><legend>Size</legend><div class="product-option-chips" data-option-chips="size"></div><div class="product-value-entry"><input type="text" data-option-entry="size" placeholder="Add a size" /><button type="button" data-add-option-value="size" aria-label="Add size" title="Add size"><i data-lucide="plus" aria-hidden="true"></i></button></div><textarea hidden rows="2" data-option-values="size"></textarea></fieldset>
+              <fieldset class="product-value-field"><legend>Storage</legend><div class="product-option-chips" data-option-chips="storage"></div><div class="product-value-entry"><input type="text" data-option-entry="storage" placeholder="Add storage" /><button type="button" data-add-option-value="storage" aria-label="Add storage" title="Add storage"><i data-lucide="plus" aria-hidden="true"></i></button></div><textarea hidden rows="2" data-option-values="storage"></textarea></fieldset>
+              <fieldset class="product-value-field"><legend>Material</legend><div class="product-option-chips" data-option-chips="material"></div><div class="product-value-entry"><input type="text" data-option-entry="material" placeholder="Add material" /><button type="button" data-add-option-value="material" aria-label="Add material" title="Add material"><i data-lucide="plus" aria-hidden="true"></i></button></div><textarea hidden rows="2" data-option-values="material"></textarea></fieldset>
+              <fieldset class="product-color-group"><legend>Color</legend><div class="product-color-palette" data-product-color-palette></div></fieldset>
+            </div>
+            <div class="product-combination-heading"><h4>Generated combinations</h4><button id="generate-product-combinations" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Generate combinations</button></div>
+            <div id="product-combination-rows" class="product-combination-rows"></div>
+          </section>
+          <section class="benefit-editor product-editor-section" id="product-benefits">
+            <div class="variant-editor-heading"><div><h3>Product benefits</h3><p>Customize the three delivery, warranty, and returns cards for this product.</p></div></div>
+            <div id="product-benefit-rows" class="product-benefit-rows"></div>
+          </section>
           <section class="product-showcase-editor product-editor-section" id="product-showcase">
             <div class="variant-editor-heading">
               <div>
-                <h3>Interactive studio &amp; product details (optional)</h3>
-                <p>Customize the 4 interactive studio tabs, performance highlights, and in-the-box content for this product. Leave any field empty to use the built-in defaults.</p>
+                <h3>Interactive studio (optional)</h3>
+                <p>Customize the 4 interactive studio tabs for this product. Leave any field empty to use the built-in defaults.</p>
               </div>
               <button id="translate-product-showcase" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Translate with Azure</button>
             </div>
@@ -980,6 +970,48 @@
                 </div>
               </fieldset>
             </div>
+          </section>
+          <section class="product-quick-facts-editor product-editor-section" id="product-performance">
+            <div class="variant-editor-heading">
+              <div>
+                <h3>Performance &amp; Efficiency</h3>
+                <p>Customize the section heading and percentage capability bars. Use the language tabs in Content to edit any language, or translate from English with Azure.</p>
+              </div>
+              <div class="product-editor-heading-actions">
+                <button id="translate-product-performance" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Translate with Azure</button>
+                <button id="add-product-performance-meter" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add bar</button>
+              </div>
+            </div>
+            <p id="product-performance-feedback" class="admin-help" role="status" hidden></p>
+            <div id="product-performance-headings" class="product-quick-fact-row"></div>
+            <div id="product-performance-rows" class="product-quick-fact-rows"></div>
+          </section>
+          <section class="product-quick-facts-editor product-editor-section" id="product-box">
+            <div class="variant-editor-heading">
+              <div>
+                <h3>What’s in the box</h3>
+                <p>Customize the box heading, subtitle, and included accessory cards. Use the language tabs in Content to edit any language, or translate from English with Azure.</p>
+              </div>
+              <div class="product-editor-heading-actions">
+                <button id="translate-product-box" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Translate with Azure</button>
+                <button id="add-product-box-item" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add item</button>
+              </div>
+            </div>
+            <p id="product-box-feedback" class="admin-help" role="status" hidden></p>
+            <div id="product-box-headings" class="product-quick-fact-row"></div>
+            <div id="product-box-rows" class="product-quick-fact-rows"></div>
+          </section>
+          <section class="specification-editor product-editor-section" id="product-specifications">
+            <div class="variant-editor-heading"><div><h3>Detailed specifications</h3><p>Add a detail title with its description. Use the language tabs above to translate each row.</p></div><button id="add-product-specification" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add detail</button></div>
+            <div class="specification-locale-panel" data-specification-locale="en"></div>
+            <div class="specification-locale-panel" data-specification-locale="fr" hidden></div>
+            <div class="specification-locale-panel" data-specification-locale="es" hidden></div>
+            <div class="specification-locale-panel" data-specification-locale="zh" hidden></div>
+            <div class="specification-locale-panel" data-specification-locale="ar" dir="rtl" hidden></div>
+          </section>
+          <section class="product-detail-images-editor product-editor-section" id="product-detail-images">
+            <div class="variant-editor-heading"><div><h3>More details images</h3><p>Add up to 10 ordered detail images. Use a URL or upload an image for each row.</p><span id="product-detail-image-count" class="admin-muted-copy">0 / 10 images</span></div><button id="add-product-detail-image" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add image</button></div>
+            <div id="product-detail-image-rows" class="product-detail-image-rows"></div>
           </section>
           <p id="product-form-error" class="admin-feedback" role="alert" hidden></p>
           </div>
@@ -1087,6 +1119,6 @@
     <script src="/js/admin-promo-banner.js?v=2" defer></script>
     <script src="/js/admin-features.js?v=1" defer></script>
     <script src="/js/admin-reviews.js?v=1" defer></script>
-    <script src="/js/admin.js?v=17" defer></script>
+    <script src="/js/admin.js?v=18" defer></script>
   </body>
 </html>
