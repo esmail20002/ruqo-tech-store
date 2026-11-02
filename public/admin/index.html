@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=7" />
+    <link rel="stylesheet" href="/css/admin.css?v=10" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -822,6 +822,7 @@
             <button type="button" data-product-editor-target="product-benefits"><i data-lucide="badge-check" aria-hidden="true"></i><span>Benefits</span></button>
             <button type="button" data-product-editor-target="product-detail-images"><i data-lucide="images" aria-hidden="true"></i><span>Detail images</span></button>
             <button type="button" data-product-editor-target="product-specifications"><i data-lucide="list-checks" aria-hidden="true"></i><span>Specifications</span></button>
+            <button type="button" data-product-editor-target="product-quick-facts"><i data-lucide="layout-grid" aria-hidden="true"></i><span>Quick fact cards</span></button>
             <button type="button" data-product-editor-target="product-showcase"><i data-lucide="sparkles" aria-hidden="true"></i><span>Interactive studio</span></button>
           </nav>
           <div class="product-editor-content" id="product-editor-content">
@@ -876,6 +877,17 @@
             <div class="specification-locale-panel" data-specification-locale="es" hidden></div>
             <div class="specification-locale-panel" data-specification-locale="zh" hidden></div>
             <div class="specification-locale-panel" data-specification-locale="ar" dir="rtl" hidden></div>
+          </section>
+          <section class="product-quick-facts-editor product-editor-section" id="product-quick-facts">
+            <div class="variant-editor-heading">
+              <div><h3>Quick fact cards</h3><p>Manage the cards shown near the product description. Add, remove, and reorder cards; use the language tabs above to translate them.</p></div>
+              <button id="add-product-quick-fact" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add card</button>
+            </div>
+            <div id="product-quick-fact-rows" class="product-quick-fact-rows"></div>
+            <div class="product-quick-fact-preview">
+              <span class="admin-eyebrow">LIVE PREVIEW</span>
+              <div id="product-quick-fact-preview-grid" class="product-quick-fact-preview-grid"></div>
+            </div>
           </section>
           <section class="product-showcase-editor product-editor-section" id="product-showcase">
             <div class="variant-editor-heading">
@@ -1075,6 +1087,6 @@
     <script src="/js/admin-promo-banner.js?v=2" defer></script>
     <script src="/js/admin-features.js?v=1" defer></script>
     <script src="/js/admin-reviews.js?v=1" defer></script>
-    <script src="/js/admin.js?v=14" defer></script>
+    <script src="/js/admin.js?v=17" defer></script>
   </body>
 </html>

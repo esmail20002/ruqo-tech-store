@@ -10,6 +10,17 @@
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
   const languages = ["en", "fr", "es", "zh", "ar"];
+  const productQuickFactIcons = [
+    { value: "ruler", label: "Dimensions & weight" },
+    { value: "monitor", label: "Display" },
+    { value: "camera", label: "Camera" },
+    { value: "plug-zap", label: "Ports & connectivity" },
+    { value: "cpu", label: "Processor" },
+    { value: "battery-charging", label: "Battery" },
+    { value: "hard-drive", label: "Storage" },
+    { value: "audio-lines", label: "Audio" },
+    { value: "sparkles", label: "General highlight" },
+  ];
   const footerTextFields = [
     { key: "footer.copy", label: "Store description", multiline: true },
     { key: "footer.linksTitle", label: "Quick links heading" },
@@ -175,6 +186,7 @@
   const productsBody = $("#products-body");
   const recentProductsBody = $("#recent-products-body");
   const productBenefitRows = $("#product-benefit-rows");
+  const productQuickFactRows = $("#product-quick-fact-rows");
   const productDetailImageRows = $("#product-detail-image-rows");
   const productGalleryImageRows = $("#product-gallery-image-rows");
   const productColorPaletteElement = $("[data-product-color-palette]");
@@ -1633,6 +1645,219 @@
     window.lucide?.createIcons();
   }
 
+  function activeProductLocale() {
+    return $('[data-locale-tab].is-active')?.dataset.localeTab || "en";
+  }
+
+  function createProductQuickFactRow(fact = {}, position = 0, totalCount = 1) {
+    const row = document.createElement("article");
+    row.className = "product-quick-fact-row";
+    row.dataset.quickFactIndex = String(position);
+    row.setAttribute("aria-label", `Card ${position + 1}`);
+
+    const header = document.createElement("div");
+    header.className = "product-quick-fact-header";
+    const number = document.createElement("span");
+    number.className = "product-quick-fact-number";
+    number.textContent = `Card ${position + 1}`;
+    const iconLabel = document.createElement("label");
+    iconLabel.className = "product-quick-fact-icon-field";
+    iconLabel.append(document.createTextNode("Icon"));
+    const iconSelect = document.createElement("select");
+    iconSelect.dataset.quickFactIcon = "";
+    const selectedIcon = productQuickFactIcons.some((item) => item.value === fact.icon) ? fact.icon : "sparkles";
+    for (const item of productQuickFactIcons) {
+      const option = document.createElement("option");
+      option.value = item.value;
+      option.textContent = item.label;
+      option.selected = item.value === selectedIcon;
+      iconSelect.append(option);
+    }
+    iconLabel.append(iconSelect);
+
+    const actions = document.createElement("div");
+    actions.className = "product-quick-fact-actions";
+    const createAction = (iconName, label, handler, disabled = false, danger = false) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.disabled = disabled;
+      button.classList.toggle("admin-danger-button", danger);
+      button.setAttribute("aria-label", label);
+      button.title = label;
+      button.innerHTML = `<i data-lucide="${iconName}" aria-hidden="true"></i>`;
+      button.addEventListener("click", handler);
+      return button;
+    };
+    actions.append(
+      createAction("arrow-up", "Move card up", () => moveProductQuickFact(position, -1), position === 0),
+      createAction("arrow-down", "Move card down", () => moveProductQuickFact(position, 1), position === totalCount - 1),
+      createAction("trash-2", "Remove card", () => removeProductQuickFact(position), false, true),
+    );
+    header.append(number, iconLabel, actions);
+
+    const localePanels = document.createElement("div");
+    localePanels.className = "product-quick-fact-locales";
+    const translations = fact.translations && typeof fact.translations === "object" ? fact.translations : {};
+    for (const language of languages) {
+      const translation = translations[language] || {};
+      const panel = document.createElement("div");
+      panel.className = "product-quick-fact-locale-panel";
+      panel.dataset.quickFactLocale = language;
+      panel.dir = language === "ar" ? "rtl" : "ltr";
+      panel.hidden = language !== "en";
+
+      const fields = document.createElement("div");
+      fields.className = "product-quick-fact-fields";
+      const titleLabel = document.createElement("label");
+      titleLabel.textContent = "Card title";
+      const title = document.createElement("input");
+      title.maxLength = 100;
+      title.value = String(translation.title || "");
+      title.dataset.quickFactTitle = "";
+      titleLabel.append(title);
+      const descriptionLabel = document.createElement("label");
+      descriptionLabel.textContent = "Card description";
+      const description = document.createElement("textarea");
+      description.rows = 2;
+      description.maxLength = 500;
+      description.value = String(translation.description || "");
+      description.dataset.quickFactDescription = "";
+      descriptionLabel.append(description);
+      fields.append(titleLabel, descriptionLabel);
+      panel.append(fields);
+      localePanels.append(panel);
+    }
+
+    row.append(header, localePanels);
+    return row;
+  }
+
+  function readProductQuickFacts() {
+    return [...productQuickFactRows.querySelectorAll(".product-quick-fact-row")].map((row) => ({
+      icon: row.querySelector("[data-quick-fact-icon]").value,
+      translations: Object.fromEntries(languages.map((language) => {
+        const panel = row.querySelector(`[data-quick-fact-locale="${language}"]`);
+        return [language, {
+          title: panel.querySelector("[data-quick-fact-title]").value.trim(),
+          description: panel.querySelector("[data-quick-fact-description]").value.trim(),
+        }];
+      })),
+    }));
+  }
+
+  function renderProductQuickFactPreview(facts = readProductQuickFacts()) {
+    const preview = $("#product-quick-fact-preview-grid");
+    if (!preview) return;
+    const language = activeProductLocale();
+    preview.dir = language === "ar" ? "rtl" : "ltr";
+    preview.replaceChildren();
+    facts.forEach((fact, index) => {
+      const translation = fact.translations?.[language] || {};
+      const english = fact.translations?.en || {};
+      const card = document.createElement("div");
+      card.className = "product-quick-fact-preview-card";
+      const heading = document.createElement("strong");
+      const iconName = productQuickFactIcons.some((item) => item.value === fact.icon) ? fact.icon : "sparkles";
+      const iconNode = document.createElement("i");
+      iconNode.dataset.lucide = iconName;
+      iconNode.setAttribute("aria-hidden", "true");
+      const title = document.createElement("span");
+      title.textContent = translation.title || english.title || `Card ${index + 1}`;
+      heading.append(iconNode, title);
+      const description = document.createElement("p");
+      description.textContent = translation.description || english.description || "Card description";
+      card.append(heading, description);
+      preview.append(card);
+    });
+    window.lucide?.createIcons();
+  }
+
+  function renderProductQuickFacts(facts = []) {
+    productQuickFactRows.replaceChildren(...facts.map((fact, index) => createProductQuickFactRow(fact, index, facts.length)));
+    window.lucide?.createIcons();
+    renderProductQuickFactPreview();
+  }
+
+  function legacyQuickFacts(description = "") {
+    return String(description).split(/\n|(?=•)/)
+      .map((line) => line.replace(/^\s*[•\-–]\s*/, "").trim())
+      .filter(Boolean)
+      .map((line) => {
+        const split = line.indexOf(":");
+        return split > 0 && split < 48
+          ? { title: line.slice(0, split).trim(), description: line.slice(split + 1).trim() }
+          : null;
+      })
+      .filter((fact) => fact?.title && fact.description);
+  }
+
+  function guessProductQuickFactIcon(title = "") {
+    if (/camera|كاميرا|port|منافذ|puerto|接口/i.test(title)) return /camera|كاميرا/i.test(title) ? "camera" : "plug-zap";
+    if (/display|screen|شاشة|écran|pantalla/i.test(title)) return "monitor";
+    if (/dimension|weight|size|الأبعاد|الوزن|poids|peso|尺寸|重量/i.test(title)) return "ruler";
+    if (/battery|بطارية|batería|电池/i.test(title)) return "battery-charging";
+    if (/chip|processor|cpu|معالج|procesador|芯片|处理器/i.test(title)) return "cpu";
+    if (/storage|memory|ram|ssd|تخزين|ذاكرة|almacenamiento|memoria|存储|内存/i.test(title)) return "hard-drive";
+    return "sparkles";
+  }
+
+  function setProductQuickFacts(product) {
+    const configuredFacts = product?.product_option_values?._quick_facts;
+    if (Array.isArray(configuredFacts)) {
+      renderProductQuickFacts(configuredFacts.filter((fact) => fact && typeof fact === "object"));
+      return;
+    }
+    const parsedByLanguage = Object.fromEntries(languages.map((language) => [
+      language,
+      legacyQuickFacts(
+        product?.description_name_translations?.[language]
+          || product?.description_name_translations?.en
+          || product?.description?.[language]
+          || "",
+      ),
+    ]));
+    const englishFacts = parsedByLanguage.en;
+    const facts = englishFacts.map((englishFact, index) => ({
+      icon: guessProductQuickFactIcon(englishFact.title),
+      translations: Object.fromEntries(languages.map((language) => {
+        const translation = parsedByLanguage[language][index] || {};
+        return [language, { title: translation.title || "", description: translation.description || "" }];
+      })),
+    }));
+    renderProductQuickFacts(facts);
+  }
+
+  function addProductQuickFact() {
+    const facts = readProductQuickFacts();
+    const index = facts.length;
+    facts.push({
+      icon: "sparkles",
+      translations: Object.fromEntries(languages.map((language) => [language, { title: "", description: "" }])),
+    });
+    const locale = activeProductLocale();
+    renderProductQuickFacts(facts);
+    setLocale(locale);
+    productQuickFactRows.querySelector(`[data-quick-fact-index="${index}"] [data-quick-fact-locale="${locale}"] [data-quick-fact-title]`)?.focus();
+  }
+
+  function removeProductQuickFact(index) {
+    const facts = readProductQuickFacts();
+    facts.splice(index, 1);
+    const locale = activeProductLocale();
+    renderProductQuickFacts(facts);
+    setLocale(locale);
+  }
+
+  function moveProductQuickFact(index, offset) {
+    const facts = readProductQuickFacts();
+    const destination = index + offset;
+    if (destination < 0 || destination >= facts.length) return;
+    [facts[index], facts[destination]] = [facts[destination], facts[index]];
+    const locale = activeProductLocale();
+    renderProductQuickFacts(facts);
+    setLocale(locale);
+  }
+
   function createProductBenefitRow(benefit, index) {
     const row = document.createElement("fieldset");
     row.className = "product-benefit-row";
@@ -2339,6 +2564,10 @@
     $$('[data-benefit-locale]').forEach((panel) => {
       panel.hidden = panel.dataset.benefitLocale !== locale;
     });
+    $$('[data-quick-fact-locale]').forEach((panel) => {
+      panel.hidden = panel.dataset.quickFactLocale !== locale;
+    });
+    renderProductQuickFactPreview();
   }
 
   function bindProductEditorNavigation() {
@@ -2851,6 +3080,7 @@
     populateCategoryOptions(categories[0]?.slug || "");
     setProductTranslations(null);
     setProductShowcaseFields(null);
+    setProductQuickFacts(null);
     renderProductDetailImages([]);
     originalProductGalleryImages = [];
     renderProductGalleryImages([]);
@@ -2914,6 +3144,7 @@
     populateCategoryOptions(product.category_slug);
     setProductTranslations(product, features || [], specifications || [], product.product_benefits || []);
     setProductShowcaseFields(product);
+    setProductQuickFacts(product);
     generateProductCombinations();
     updateProductCurrencyLabels();
     window.lucide?.createIcons();
@@ -3301,6 +3532,20 @@
         description: translatedSpecifications[position]?.description || englishSpecification.description,
       }))];
     }));
+    const quickFacts = readProductQuickFacts();
+    const incompleteQuickFactIndex = quickFacts.findIndex((fact) =>
+      !fact.translations.en.title || !fact.translations.en.description);
+    if (incompleteQuickFactIndex !== -1) {
+      showProductError("Each quick fact card needs an English title and description.");
+      setLocale("en");
+      const row = productQuickFactRows.querySelectorAll(".product-quick-fact-row")[incompleteQuickFactIndex];
+      row?.querySelector(
+        row.querySelector('[data-quick-fact-locale="en"] [data-quick-fact-title]').value.trim()
+          ? '[data-quick-fact-locale="en"] [data-quick-fact-description]'
+          : '[data-quick-fact-locale="en"] [data-quick-fact-title]',
+      ).focus();
+      return;
+    }
     const optionValues = readProductOptionValues();
     const optionSignature = JSON.stringify(optionValues);
     if (productCombinationRows.dataset.optionSignature !== optionSignature) {
@@ -3440,9 +3685,11 @@
         showcaseConfig[group].image_url = boxPublicUrl;
         showcaseConfig[group].image_path = boxPath;
       }
-      const storedOptionValues = Object.keys(showcaseConfig).length
-        ? { ...optionValues, _showcase: showcaseConfig }
-        : optionValues;
+      const storedOptionValues = {
+        ...optionValues,
+        _quick_facts: quickFacts,
+        ...(Object.keys(showcaseConfig).length ? { _showcase: showcaseConfig } : {}),
+      };
 
       const { error: productError } = await client.from("products").upsert({
         slug,
@@ -3921,6 +4168,9 @@
       }),
     );
     $("#generate-product-combinations").addEventListener("click", generateProductCombinations);
+    $("#add-product-quick-fact").addEventListener("click", addProductQuickFact);
+    productQuickFactRows.addEventListener("input", () => renderProductQuickFactPreview());
+    productQuickFactRows.addEventListener("change", () => renderProductQuickFactPreview());
     productForm.elements.currency.addEventListener("change", updateProductCurrencyLabels);
     $$('[data-add-option-value]').forEach((button) => {
       button.addEventListener("click", () => addProductOptionValue(button.dataset.addOptionValue));

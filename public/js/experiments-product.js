@@ -206,13 +206,34 @@
   function buildFacts(page) {
     const description = page.querySelector(".detail-description");
     if (!description || description.dataset.expFacts) return;
-    const items = description.textContent.split(/\n|(?=•)/).map((line) => line.replace(/^\s*[•\-–]\s*/, "").trim()).filter(Boolean)
-      .map((line) => {
-        const split = line.indexOf(":");
-        return split > 0 && split < 48 ? { label: line.slice(0, split).trim(), value: line.slice(split + 1).trim() } : null;
-      });
     description.dataset.expFacts = "checked";
-    if (items.length < 2 || items.some((item) => !item?.value)) return;
+    const slug = new URLSearchParams(location.search).get("id") || "macbook-pro";
+    const rawProduct = window.NoursData?.products?.find((item) => (item.slug || item.id) === slug);
+    const configuredFacts = rawProduct?.product_option_values?._quick_facts;
+    let items;
+    if (Array.isArray(configuredFacts)) {
+      const language = (document.documentElement.lang || "en").split("-")[0];
+      items = configuredFacts.map((fact) => {
+        if (!fact || typeof fact !== "object") return null;
+        const translation = fact.translations?.[language] || {};
+        const english = fact.translations?.en || {};
+        const iconName = iconRules.some(([, name]) => name === fact.icon) || fact.icon === "sparkles"
+          ? fact.icon : "sparkles";
+        const label = String(translation.title || english.title || "").trim();
+        const value = String(translation.description || english.description || "").trim();
+        return label && value ? { label, value, icon: iconName } : null;
+      }).filter(Boolean);
+    } else {
+      items = description.textContent.split(/\n|(?=•)/).map((line) => line.replace(/^\s*[•\-–]\s*/, "").trim()).filter(Boolean)
+        .map((line) => {
+          const split = line.indexOf(":");
+          return split > 0 && split < 48
+            ? { label: line.slice(0, split).trim(), value: line.slice(split + 1).trim() }
+            : null;
+        });
+      if (items.length < 2 || items.some((item) => !item?.value)) return;
+    }
+    if (!items.length) return;
     const section = document.createElement("section");
     section.className = "exp-key-facts";
     const heading = document.createElement("h2");
@@ -223,7 +244,7 @@
       const term = document.createElement("dt");
       const detail = document.createElement("dd");
       const rule = iconRules.find(([pattern]) => pattern.test(item.label));
-      term.append(icon(rule ? rule[1] : "sparkles"), document.createTextNode(item.label));
+      term.append(icon(item.icon || (rule ? rule[1] : "sparkles")), document.createTextNode(item.label));
       detail.textContent = item.value;
       card.append(term, detail);
       list.append(card);
