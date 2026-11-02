@@ -1255,6 +1255,7 @@ html[data-theme="dark"] body:is([data-product-design="premium"], [data-experimen
 
   body:is([data-product-design="premium"], [data-experiment-product="true"]) .product-rating-panel {
     position: static;
+    top: auto;
   }
 }
 

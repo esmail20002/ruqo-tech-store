@@ -1814,6 +1814,114 @@ section {
   min-height: 260px;
 }
 
+.promo-banner .promo-image {
+  display: block;
+  width: min(100%, 420px);
+  max-height: 340px;
+  border-radius: 24px;
+  object-fit: cover;
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.24);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.promo-banner .promo-image[hidden] {
+  display: none;
+}
+
+.promo-banner .promo-copy,
+.promo-banner .console-visual img {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.promo-banner .promo-copy .eyebrow[hidden],
+.promo-banner .promo-copy p[hidden],
+.promo-banner .promo-copy a[hidden] {
+  display: none !important;
+}
+
+.promo-banner .promo-copy.is-changing,
+.promo-banner .promo-image.is-changing,
+.promo-banner .console-visual img.is-changing {
+  opacity: 0;
+}
+
+.promo-banner[data-promo-transition="slide"] .promo-copy.is-changing {
+  transform: translateY(10px);
+}
+
+.promo-banner[data-promo-transition="slide"] .promo-image.is-changing,
+.promo-banner[data-promo-transition="slide"] .console-visual img.is-changing {
+  transform: translateY(10px);
+}
+
+.promo-banner .promo-controls[hidden] {
+  display: none;
+}
+
+.promo-banner .promo-controls {
+  position: absolute;
+  z-index: 2;
+  inset-inline-start: 50%;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateX(-50%);
+}
+
+.promo-banner .promo-arrow,
+.promo-banner .promo-dot {
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(15, 23, 42, 0.3);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.promo-banner .promo-arrow {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.promo-banner .promo-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.promo-banner .promo-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.promo-banner .promo-dot.is-active {
+  background: #fff;
+  transform: scale(1.2);
+}
+
+.promo-banner .promo-arrow:focus-visible,
+.promo-banner .promo-dot:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+html[data-theme] body:is([data-page="experiments"], [data-page="home"]) .promo-banner.has-custom-color {
+  background:
+    var(--promo-custom-gradient, linear-gradient(120deg, #30114d 0%, #6931a9 51%, #d5459b 100%)) padding-box,
+    linear-gradient(112deg, #a978d8 0%, #bc70c6 52%, #df70ac 100%) border-box;
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .promo-banner {
+  position: relative;
+}
+
 .console-visual {
   position: relative;
   width: min(100%, 320px);
@@ -1980,9 +2088,12 @@ section {
 .avatar {
   width: 44px;
   height: 44px;
+  display: block;
+  flex: 0 0 44px;
   border-radius: 50%;
   background-size: cover;
   background-position: center;
+  object-fit: cover;
 }
 
 .avatar-one {
@@ -2802,6 +2913,7 @@ section {
   .avatar {
     width: 34px;
     height: 34px;
+    flex-basis: 34px;
   }
 
   .author strong {

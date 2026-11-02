@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>LaserFlow experiment | WEEXEY</title>
+    <link rel="stylesheet" href="/css/styles.css?v=9" />
+    <link rel="stylesheet" href="/css/experiments.css?v=48" />
+    <link rel="stylesheet" href="/css/laser-flow.css?v=10" />
+  </head>
+  <body data-page="experiments" data-experiment-blank="true">
+    <nav class="experiment-switcher" aria-label="Experiment pages">
+      <a href="/experiments.html" data-experiment-label="home">Homepage experiment</a>
+      <a href="/experiments-product.html?id=macbook-pro" data-experiment-label="product">Product page experiment</a>
+      <a href="/experiments-laser.html" data-experiment-label="laser" aria-current="page">LaserFlow experiment</a>
+      <a href="/experiments-blank-4.html" data-experiment-label="blank4">Blank experiment 4</a>
+      <a href="/experiments-blank-5.html" data-experiment-label="blank5">Blank experiment 5</a>
+    </nav>
+    <main class="laser-demo">
+      <section class="laser-stage is-awaiting-launch" data-laser-flow aria-label="LaserFlow visual experiment">
+        <div class="laser-flow-container">
+          <canvas class="laser-flow-canvas" data-laser-canvas aria-hidden="true"></canvas>
+        </div>
+        <div class="laser-surface" data-laser-surface>
+          <div class="laser-surface-shockwave" aria-hidden="true"></div>
+          <div class="laser-surface-copy">
+            <span class="laser-copy-eyebrow">
+              <span class="laser-copy-eyebrow__dot" aria-hidden="true"></span>
+              WELCOME TO WEEXEY
+            </span>
+            <h1 class="laser-copy-headline" aria-label="Experience the Extraordinary">
+              <span class="laser-copy-word" style="--word-index: 0">Experience</span>
+              <span class="laser-copy-word" style="--word-index: 1">the</span>
+              <span class="laser-copy-word laser-copy-word--accent" style="--word-index: 2">Extraordinary</span>
+            </h1>
+            <p class="laser-copy-subline">
+              Next-generation flagship electronics crafted where precision meets light.
+            </p>
+          </div>
+        </div>
+
+        <!-- Center WEEXEY Brand Launch Emblem -->
+        <div class="laser-launch-wrap" data-laser-launch-wrap>
+          <button
+            type="button"
+            class="laser-launch-orb"
+            data-laser-launch
+            aria-label="تفعيل تجربة WEEXEY"
+          >
+            <span class="laser-launch-orb__halo" aria-hidden="true"></span>
+            <span class="laser-launch-orb__ring laser-launch-orb__ring--outer" aria-hidden="true"></span>
+            <span class="laser-launch-orb__ring laser-launch-orb__ring--inner" aria-hidden="true"></span>
+            <span class="laser-launch-orb__core" aria-hidden="true">
+              <!-- Official WEEXEY Twin-Spark Brand Icon -->
+              <svg
+                class="weexey-spark-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="62"
+                height="48"
+                viewBox="0 0 88 64"
+                fill="none"
+                aria-hidden="true"
+              >
+                <defs>
+                  <linearGradient id="weexeyBrandGrad" x1="6" y1="32" x2="84" y2="32" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#6b34d6" />
+                    <stop offset="48%" stop-color="#9e3ee0" />
+                    <stop offset="78%" stop-color="#d848a0" />
+                    <stop offset="100%" stop-color="#ff6289" />
+                  </linearGradient>
+                  <linearGradient id="weexeyRayGrad" x1="54" y1="8" x2="84" y2="56" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#be44cf" />
+                    <stop offset="55%" stop-color="#df4ca0" />
+                    <stop offset="100%" stop-color="#ff6688" />
+                  </linearGradient>
+                </defs>
+                <!-- Left Connected 4-Point Concave Star -->
+                <path
+                  class="weexey-spark-main"
+                  d="M27 6 H33 V15 C33 24.5 36.5 28 46 28 H55 V34 H46 C36.5 34 33 37.5 33 47 V56 H27 V47 C27 37.5 23.5 34 14 34 H5 V28 H14 C23.5 28 27 24.5 27 15 Z"
+                  fill="url(#weexeyBrandGrad)"
+                />
+                <!-- Right Detached Plus Rays (Top, Bottom, Right) -->
+                <rect
+                  class="weexey-spark-ray weexey-spark-ray--top"
+                  x="61"
+                  y="6"
+                  width="6"
+                  height="16"
+                  rx="1.2"
+                  fill="url(#weexeyRayGrad)"
+                />
+                <rect
+                  class="weexey-spark-ray weexey-spark-ray--bottom"
+                  x="61"
+                  y="40"
+                  width="6"
+                  height="16"
+                  rx="1.2"
+                  fill="url(#weexeyRayGrad)"
+                />
+                <rect
+                  class="weexey-spark-ray weexey-spark-ray--right"
+                  x="71"
+                  y="28"
+                  width="15"
+                  height="6"
+                  rx="1.2"
+                  fill="url(#weexeyRayGrad)"
+                />
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="laser-refresh-btn"
+          data-laser-refresh
+          aria-label="Refresh animation"
+          title="Replay animation"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            aria-hidden="true"
+          >
+            <path
+              d="M16.5 7.99976H18C19.4142 7.99976 20.1213 7.99976 20.5607 7.56042C21 7.12108 21 6.41397 21 4.99976V3.49976"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+            <path
+              d="M3 11.9998C3 7.02919 7.0293 2.99976 12 2.99976C15.571 2.99976 18.0948 4.73029 20 7.08347M21 11.9998C21 16.9703 16.9707 20.9998 12 20.9998C8.42904 20.9998 5.90524 19.2692 4 16.916"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+            <path
+              d="M7.5 15.9998H6C4.58579 15.9998 3.87868 15.9998 3.43934 16.4391C3 16.8784 3 17.5855 3 18.9998V20.4998"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </button>
+        <p class="laser-flow-error" data-laser-error role="status" hidden></p>
+      </section>
+
+      <!-- Floating Trigger Button -->
+      <button
+        type="button"
+        class="laser-fab"
+        data-laser-fab
+        aria-expanded="false"
+        aria-controls="laser-customize-panel"
+        aria-label="Open LaserFlow controls"
+        title="Customize LaserFlow"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
+        <span>Customize</span>
+      </button>
+
+      <!-- Floating Customize Panel -->
+      <aside
+        id="laser-customize-panel"
+        class="laser-customize-drawer"
+        data-laser-panel
+        aria-label="Customize LaserFlow"
+        hidden
+      >
+        <div class="laser-customize-header">
+          <h2 class="laser-customize-title">Customize</h2>
+          <div class="laser-customize-actions">
+            <button type="button" class="laser-action-btn" data-laser-reset>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+              <span>Reset</span>
+            </button>
+            <button
+              type="button"
+              class="laser-action-btn laser-close-btn"
+              data-laser-close
+              aria-label="Close customize panel"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="laser-customize-grid">
+          <!-- Preset -->
+          <div class="lf-control lf-control--select">
+            <span class="lf-control__label">Preset</span>
+            <div class="lf-select-wrap">
+              <select class="lf-select" data-lf-preset aria-label="Preset">
+                <option value="waterfall" selected>Waterfall</option>
+                <option value="classic">Classic</option>
+                <option value="cyber">Cyber Violet</option>
+                <option value="emerald">Emerald</option>
+                <option value="crimson">Crimson</option>
+                <option value="custom">Custom</option>
+              </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Color -->
+          <div class="lf-control lf-control--color">
+            <span class="lf-control__label">Color</span>
+            <div class="lf-color-group">
+              <label class="lf-color-swatch" data-lf-swatch style="background: #3847ff">
+                <input type="color" value="#3847ff" data-lf-color-picker aria-label="Pick laser color" />
+              </label>
+              <input
+                type="text"
+                class="lf-color-hex"
+                value="#3847ff"
+                maxlength="7"
+                spellcheck="false"
+                data-lf-color-hex
+                aria-label="Laser hex color"
+              />
+            </div>
+          </div>
+
+          <!-- Beam Position -->
+          <div class="lf-control lf-control--slider" data-lf-slider="beamPosition">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Beam Position</span>
+            <span class="lf-control__value" data-lf-val>0.5</span>
+            <input type="range" min="0.2" max="0.8" step="0.01" value="0.5" aria-label="Beam Position" />
+          </div>
+
+          <!-- Intensity -->
+          <div class="lf-control lf-control--slider" data-lf-slider="intensity">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Intensity</span>
+            <span class="lf-control__value" data-lf-val>1.4</span>
+            <input type="range" min="0.3" max="2" step="0.05" value="1.4" aria-label="Intensity" />
+          </div>
+
+          <!-- Beam Width -->
+          <div class="lf-control lf-control--slider" data-lf-slider="beamWidth">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Beam Width</span>
+            <span class="lf-control__value" data-lf-val>1.3</span>
+            <input type="range" min="0.4" max="3" step="0.05" value="1.3" aria-label="Beam Width" />
+          </div>
+
+          <!-- Flare -->
+          <div class="lf-control lf-control--slider" data-lf-slider="flare">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Flare</span>
+            <span class="lf-control__value" data-lf-val>1.15</span>
+            <input type="range" min="0.5" max="2" step="0.05" value="1.15" aria-label="Flare" />
+          </div>
+
+          <!-- Spread -->
+          <div class="lf-control lf-control--slider" data-lf-slider="spread">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Spread</span>
+            <span class="lf-control__value" data-lf-val>1.65</span>
+            <input type="range" min="0.4" max="2" step="0.05" value="1.65" aria-label="Spread" />
+          </div>
+
+          <!-- Spill -->
+          <div class="lf-control lf-control--slider" data-lf-slider="spill">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Spill</span>
+            <span class="lf-control__value" data-lf-val>1</span>
+            <input type="range" min="0" max="2" step="0.05" value="1" aria-label="Spill" />
+          </div>
+
+          <!-- Fog -->
+          <div class="lf-control lf-control--slider" data-lf-slider="fog">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Fog</span>
+            <span class="lf-control__value" data-lf-val>0.8</span>
+            <input type="range" min="0" max="2" step="0.05" value="0.8" aria-label="Fog" />
+          </div>
+
+          <!-- Dust -->
+          <div class="lf-control lf-control--slider" data-lf-slider="dust">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Dust</span>
+            <span class="lf-control__value" data-lf-val>1.4</span>
+            <input type="range" min="0" max="2" step="0.05" value="1.4" aria-label="Dust" />
+          </div>
+
+          <!-- Streaks -->
+          <div class="lf-control lf-control--slider" data-lf-slider="streaks">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Streaks</span>
+            <span class="lf-control__value" data-lf-val>1.5</span>
+            <input type="range" min="0" max="2" step="0.05" value="1.5" aria-label="Streaks" />
+          </div>
+
+          <!-- Dots -->
+          <div class="lf-control lf-control--slider" data-lf-slider="dots">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Dots</span>
+            <span class="lf-control__value" data-lf-val>0.6</span>
+            <input type="range" min="0" max="2" step="0.05" value="0.6" aria-label="Dots" />
+          </div>
+
+          <!-- Pulse -->
+          <div class="lf-control lf-control--slider" data-lf-slider="pulse">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Pulse</span>
+            <span class="lf-control__value" data-lf-val>1.15</span>
+            <input type="range" min="0" max="2" step="0.05" value="1.15" aria-label="Pulse" />
+          </div>
+
+          <!-- Speed -->
+          <div class="lf-control lf-control--slider" data-lf-slider="speed">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Speed</span>
+            <span class="lf-control__value" data-lf-val>1.5</span>
+            <input type="range" min="0" max="3" step="0.05" value="1.5" aria-label="Speed" />
+          </div>
+
+          <!-- Seed -->
+          <div class="lf-control lf-control--slider" data-lf-slider="seed">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Seed</span>
+            <span class="lf-control__value" data-lf-val>0</span>
+            <input type="range" min="0" max="20" step="1" value="0" aria-label="Seed" />
+          </div>
+
+          <!-- Reveal Radius -->
+          <div class="lf-control lf-control--slider" data-lf-slider="revealRadius" data-lf-unit="px">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Reveal Radius</span>
+            <span class="lf-control__value" data-lf-val>250px</span>
+            <input type="range" min="80" max="400" step="10" value="250" aria-label="Reveal Radius" />
+          </div>
+
+          <!-- Reveal Opacity -->
+          <div class="lf-control lf-control--slider" data-lf-slider="revealOpacity">
+            <div class="lf-slider-ticks" aria-hidden="true"></div>
+            <div class="lf-slider-fill" data-lf-fill></div>
+            <span class="lf-control__label">Reveal Opacity</span>
+            <span class="lf-control__value" data-lf-val>0.6</span>
+            <input type="range" min="0" max="1" step="0.05" value="0.6" aria-label="Reveal Opacity" />
+          </div>
+
+          <!-- Mouse Interaction -->
+          <div class="lf-control lf-control--toggle">
+            <span class="lf-control__label">Mouse Interaction</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked="true"
+              aria-label="Mouse Interaction"
+              class="lf-switch is-on"
+              data-lf-toggle="mouseInteraction"
+            >
+              <span class="lf-switch__thumb"></span>
+            </button>
+          </div>
+
+          <!-- Intro -->
+          <div class="lf-control lf-control--toggle">
+            <span class="lf-control__label">Intro</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked="true"
+              aria-label="Intro"
+              class="lf-switch is-on"
+              data-lf-toggle="intro"
+            >
+              <span class="lf-switch__thumb"></span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+    <script src="/js/experiments.js?v=7"></script>
+    <script src="/js/laser-flow.js?v=6"></script>
+  </body>
+</html>

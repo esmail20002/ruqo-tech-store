@@ -568,6 +568,10 @@ window.NoursHomeTranslations = {
     if (highRefreshCache !== undefined) window.RUQO_HIGH_REFRESH = highRefreshCache;
     const bannersCache = readJson("ruqo-store-banners-cache-v1");
     if (Array.isArray(bannersCache)) window.RUQO_STORE_BANNERS = bannersCache;
+    const featuresCache = readJson("ruqo-home-features-cache-v1");
+    if (featuresCache !== undefined) window.RUQO_HOME_FEATURES = featuresCache;
+    const reviewsCache = readJson("ruqo-home-reviews-cache-v1");
+    if (reviewsCache !== undefined) window.RUQO_HOME_REVIEWS = reviewsCache;
     const spotlightsCache = readJson("ruqo-home-spotlights-cache-v1");
     if (Array.isArray(spotlightsCache)) window.RUQO_HOME_SPOTLIGHTS = spotlightsCache;
     const categoriesCache = readJson("ruqo-categories-cache-v1");

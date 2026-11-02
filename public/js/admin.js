@@ -363,7 +363,9 @@
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("messages");
     if (currentRoles.some((role) => ["owner", "admin", "marketing_manager"].includes(role))) {
       allowedViews.add("promotions");
-      allowedViews.add("banners");
+      allowedViews.add("exclusive-deals");
+      allowedViews.add("features-stats");
+      allowedViews.add("reviews");
       allowedViews.add("audience");
     }
     if (currentRoles.some((role) => ["owner", "admin"].includes(role))) {
@@ -393,7 +395,9 @@
       orders: "Orders",
       messages: "Messages",
       promotions: "Offers",
-      banners: "Banners",
+      "exclusive-deals": "Exclusive deals",
+      "features-stats": "Features & stats",
+      reviews: "Customer reviews",
       audience: "Newsletter audience",
       settings: "Store settings",
       footer: "Footer content",
@@ -1234,25 +1238,54 @@
   }
 
   function renderContactMessages() {
-    const rows = contactMessages.map((message) => {
+    const counts = { new: 0, read: 0, resolved: 0 };
+    contactMessages.forEach((message) => {
+      if (["new", "read", "resolved"].includes(message.status)) counts[message.status] += 1;
+    });
+    $("#messages-count-new").textContent = String(counts.new);
+    $("#messages-count-read").textContent = String(counts.read);
+    $("#messages-count-resolved").textContent = String(counts.resolved);
+
+    const query = $("#messages-search").value.trim().toLowerCase();
+    const statusFilter = $("#messages-status-filter").value;
+    const fromValue = $("#messages-date-from").value;
+    const toValue = $("#messages-date-to").value;
+    const fromDate = fromValue ? new Date(`${fromValue}T00:00:00`) : null;
+    const toDate = toValue ? new Date(`${toValue}T23:59:59.999`) : null;
+    const invalidRange = fromDate && toDate && fromDate > toDate;
+    $("#messages-filter-feedback").hidden = !invalidRange;
+    $("#messages-filter-feedback").textContent = invalidRange ? "The start date must be on or before the end date." : "";
+
+    const filteredMessages = invalidRange ? [] : contactMessages.filter((message) => {
+      if (statusFilter !== "all" && message.status !== statusFilter) return false;
+      const receivedAt = new Date(message.created_at);
+      if (fromDate && receivedAt < fromDate) return false;
+      if (toDate && receivedAt > toDate) return false;
+      if (!query) return true;
+      return [message.customer_name, message.customer_email, message.message]
+        .some((value) => String(value || "").toLowerCase().includes(query));
+    });
+    const rows = filteredMessages.map((message) => {
       const row = document.createElement("tr");
       appendTextCell(row, formatDateTime(message.created_at));
       const customerCell = document.createElement("td");
       const name = document.createElement("strong");
-      name.textContent = message.customer_name;
+      name.textContent = message.customer_name || "—";
       const email = document.createElement("a");
-      email.href = `mailto:${message.customer_email}`;
-      email.textContent = message.customer_email;
+      email.textContent = message.customer_email || "—";
+      if (message.customer_email) email.href = `mailto:${message.customer_email}`;
       email.style.display = "block";
       customerCell.append(name, email);
       row.append(customerCell);
       const body = document.createElement("td");
-      body.textContent = message.message;
+      const preview = String(message.message || "").replace(/\s+/g, " ").trim();
+      body.textContent = preview.length > 120 ? `${preview.slice(0, 120)}…` : preview || "—";
       body.dir = message.language_code === "ar" ? "rtl" : "auto";
+      body.className = "messages-preview";
       row.append(body);
       const statusCell = document.createElement("td");
       const status = document.createElement("select");
-      status.setAttribute("aria-label", `Status for message from ${message.customer_name}`);
+      status.setAttribute("aria-label", `Status for message from ${message.customer_name || message.customer_email || "customer"}`);
       for (const value of ["new", "read", "resolved"]) {
         const option = document.createElement("option");
         option.value = value;
@@ -1263,24 +1296,64 @@
       status.addEventListener("change", () => updateContactMessageStatus(message, status.value, status));
       statusCell.append(status);
       row.append(statusCell);
+      const detailsCell = document.createElement("td");
+      const detailsButton = document.createElement("button");
+      detailsButton.className = "admin-secondary-button messages-details-button";
+      detailsButton.type = "button";
+      detailsButton.textContent = "View details";
+      detailsButton.setAttribute("aria-label", `View message from ${message.customer_name || message.customer_email || "customer"}`);
+      detailsButton.addEventListener("click", () => openContactMessageDetails(message));
+      detailsCell.append(detailsButton);
+      row.append(detailsCell);
       return row;
     });
     $("#messages-body").replaceChildren(...rows);
+    $("#messages-results-count").textContent = `Showing ${filteredMessages.length} of ${contactMessages.length} messages`;
     $("#messages-empty").hidden = contactMessages.length > 0;
+    $("#messages-no-results").hidden = contactMessages.length === 0 || filteredMessages.length > 0;
+  }
+
+  function openContactMessageDetails(message) {
+    const dialog = $("#message-detail-dialog");
+    dialog.dataset.messageId = String(message.id);
+    const email = message.customer_email || "";
+    $("#message-detail-title").textContent = message.customer_name || "Message details";
+    $("#message-detail-customer").textContent = message.customer_name || "—";
+    $("#message-detail-email").textContent = email || "—";
+    $("#message-detail-email").hidden = !email;
+    $("#message-detail-email").href = email ? `mailto:${email}` : "";
+    $("#message-detail-date").textContent = formatDateTime(message.created_at);
+    $("#message-detail-language").textContent = message.language_code || "Unknown";
+    $("#message-detail-status").textContent = message.status || "new";
+    const body = $("#message-detail-body");
+    body.textContent = message.message || "—";
+    body.dir = message.language_code === "ar" ? "rtl" : "auto";
+    const reply = $("#message-detail-reply");
+    reply.hidden = !email;
+    reply.href = email
+      ? `mailto:${email}?subject=${encodeURIComponent("Re: WEEXEY support request")}`
+      : "";
+    dialog.showModal();
   }
 
   async function updateContactMessageStatus(message, nextStatus, control) {
     const previousStatus = message.status;
     control.disabled = true;
-    const { error } = await client.from("contact_messages").update({ status: nextStatus }).eq("id", message.id);
-    if (error) {
-      control.value = previousStatus;
-      showToast(`Could not update message: ${error.message}`);
-    } else {
+    try {
+      const { error } = await client.from("contact_messages").update({ status: nextStatus }).eq("id", message.id);
+      if (error) throw error;
       message.status = nextStatus;
+      if ($("#message-detail-dialog").dataset.messageId === String(message.id)) {
+        $("#message-detail-status").textContent = nextStatus;
+      }
       showToast("Message status updated.");
+    } catch (error) {
+      message.status = previousStatus;
+      control.value = previousStatus;
+      showToast(`Could not update message: ${error?.message || "Unknown error"}`);
+    } finally {
+      renderContactMessages();
     }
-    control.disabled = false;
   }
 
   async function loadNewsletterSubscribers() {
@@ -1435,17 +1508,31 @@
   }
 
   async function loadBanners() {
-    const { data, error } = await client
+    let { data, error } = await client
       .from("banners")
-      .select("id, name, placement, title_translations, image_path, starts_at, ends_at, is_active")
+      .select("id, name, placement, title_translations, description_translations, button_translations, eyebrow_translations, image_path, destination_url, starts_at, ends_at, is_active, sort_order, background_color")
       .order("sort_order")
       .order("created_at", { ascending: false });
-    if (error) throw error;
+    if (error) {
+      const fallback = await client
+        .from("banners")
+        .select("id, name, placement, title_translations, description_translations, button_translations, image_path, destination_url, starts_at, ends_at, is_active, sort_order")
+        .order("sort_order")
+        .order("created_at", { ascending: false });
+      if (fallback.error) throw fallback.error;
+      data = (fallback.data || []).map((item) => ({
+        ...item,
+        eyebrow_translations: item.eyebrow_translations || {},
+        background_color: item.background_color || "#6931a9",
+      }));
+    }
     banners = data || [];
     renderBanners();
   }
 
   function renderBanners() {
+    const body = $("#banners-body");
+    if (!body) return;
     const rows = banners.map((banner) => {
       const row = document.createElement("tr");
       const name = document.createElement("td");
@@ -1458,6 +1545,7 @@
       name.append(strong, internal);
       row.append(name);
       appendTextCell(row, banner.placement.replaceAll("_", " "));
+      appendTextCell(row, String(Number(banner.sort_order) || 0));
       appendTextCell(row, `${formatDateTime(banner.starts_at)} – ${formatDateTime(banner.ends_at)}`);
       const state = document.createElement("td");
       const badge = document.createElement("span");
@@ -2614,8 +2702,34 @@
 
   const showcaseGroupIds = ["design", "display", "performance", "battery"];
   let currentProductShowcase = {};
+  let pendingShowcaseFiles = {};
+  let pendingShowcaseObjectUrls = {};
+
+  function revokeShowcaseObjectUrls() {
+    for (const url of Object.values(pendingShowcaseObjectUrls)) {
+      if (url) URL.revokeObjectURL(url);
+    }
+    pendingShowcaseFiles = {};
+    pendingShowcaseObjectUrls = {};
+  }
+
+  function updateShowcasePreview(group) {
+    const wrap = productForm.querySelector(`[data-showcase-preview-wrap="${group}"]`);
+    const img = productForm.querySelector(`[data-showcase-preview="${group}"]`);
+    if (!wrap || !img) return;
+    const url = pendingShowcaseObjectUrls[group]
+      || String(productForm.elements[`showcase_${group}_image_url`]?.value || "").trim();
+    if (url) {
+      img.src = url;
+      wrap.hidden = false;
+    } else {
+      img.removeAttribute("src");
+      wrap.hidden = true;
+    }
+  }
 
   function setProductShowcaseFields(product) {
+    revokeShowcaseObjectUrls();
     const raw = product?.product_option_values?._showcase;
     currentProductShowcase = raw && typeof raw === "object" ? structuredClone(raw) : {};
     const feedback = $("#product-showcase-feedback");
@@ -2626,33 +2740,49 @@
     for (const group of showcaseGroupIds) {
       const item = currentProductShowcase[group] || {};
       const en = item.translations?.en || item.source || {};
+      productForm.elements[`showcase_${group}_tab_name`].value = en.tabName || "";
       productForm.elements[`showcase_${group}_stat`].value = item.stat || "";
       productForm.elements[`showcase_${group}_label`].value = en.label || "";
       productForm.elements[`showcase_${group}_title`].value = en.title || "";
       productForm.elements[`showcase_${group}_desc`].value = en.desc || "";
+      productForm.elements[`showcase_${group}_image_url`].value = item.image_url || "";
+      if (productForm.elements[`showcase_${group}_file`]) {
+        productForm.elements[`showcase_${group}_file`].value = "";
+      }
+      updateShowcasePreview(group);
     }
   }
 
   function readProductShowcaseFields() {
     const result = {};
     for (const group of showcaseGroupIds) {
+      const tabName = String(productForm.elements[`showcase_${group}_tab_name`]?.value || "").trim();
       const stat = String(productForm.elements[`showcase_${group}_stat`]?.value || "").trim();
       const label = String(productForm.elements[`showcase_${group}_label`]?.value || "").trim();
       const title = String(productForm.elements[`showcase_${group}_title`]?.value || "").trim();
       const desc = String(productForm.elements[`showcase_${group}_desc`]?.value || "").trim();
-      if (!stat && !label && !title && !desc) continue;
+      const imageUrl = String(productForm.elements[`showcase_${group}_image_url`]?.value || "").trim();
+      const hasFile = pendingShowcaseFiles[group] instanceof File;
+      if (!tabName && !stat && !label && !title && !desc && !imageUrl && !hasFile) continue;
       const existing = currentProductShowcase[group] || {};
       const prevEn = existing.translations?.en || existing.source || {};
       const translations = structuredClone(existing.translations || {});
-      translations.en = { label, title, desc };
+      translations.en = { tabName, label, title, desc };
       // Clear stale translated fields if English source changed
       for (const lang of ["ar", "fr", "es", "zh"]) {
         if (!translations[lang]) continue;
+        if (prevEn.tabName !== tabName) delete translations[lang].tabName;
         if (prevEn.label !== label) delete translations[lang].label;
         if (prevEn.title !== title) delete translations[lang].title;
         if (prevEn.desc !== desc) delete translations[lang].desc;
       }
-      result[group] = { stat, source: { label, title, desc }, translations };
+      result[group] = {
+        stat,
+        image_url: imageUrl,
+        image_path: imageUrl === existing.image_url ? (existing.image_path || "") : "",
+        source: { tabName, label, title, desc },
+        translations,
+      };
     }
     return result;
   }
@@ -2663,7 +2793,7 @@
     const current = readProductShowcaseFields();
     const groupsToTranslate = showcaseGroupIds.filter((g) => {
       const s = current[g]?.source;
-      return s && (s.label || s.title || s.desc);
+      return s && (s.tabName || s.label || s.title || s.desc);
     });
     if (!groupsToTranslate.length) {
       feedback.textContent = "Enter at least one English field in Studio & Bento before translating.";
@@ -2677,6 +2807,7 @@
       for (const group of groupsToTranslate) {
         const entry = current[group];
         const source = {
+          badge: entry.source.tabName || "",
           eyebrow: entry.source.label || "",
           title: entry.source.title || "",
           text: entry.source.desc || "",
@@ -2689,6 +2820,7 @@
           entry.translations ||= {};
           for (const lang of ["ar", "fr", "es", "zh"]) {
             entry.translations[lang] = {
+              tabName: data.translations[lang]?.badge || "",
               label: data.translations[lang]?.eyebrow || "",
               title: data.translations[lang]?.title || "",
               desc: data.translations[lang]?.text || "",
@@ -2949,14 +3081,18 @@
     showToast("Offer deleted.");
   }
 
-  function openNewBanner() {
+  function openNewBanner(placement = "home_hero") {
     editingBannerId = null;
     bannerForm.reset();
+    bannerForm.elements.placement.value = placement;
+    bannerForm.elements.sort_order.value = String(
+      banners.reduce((max, banner) => Math.max(max, Number(banner.sort_order) || 0), -1) + 1,
+    );
     $("#banner-dialog-title").textContent = "Add banner";
     $("#save-banner").textContent = "Save banner";
     $("#delete-banner").hidden = true;
     clearFormError($("#banner-form-error"));
-    fillLocalizedFields(bannerForm, null, ["title_translations", "description_translations", "button_translations"]);
+    fillLocalizedFields(bannerForm, null, ["eyebrow_translations", "title_translations", "description_translations", "button_translations"]);
     setLocale("en");
     bannerDialog.showModal();
   }
@@ -2968,6 +3104,8 @@
     bannerForm.reset();
     bannerForm.elements.name.value = banner.name;
     bannerForm.elements.placement.value = banner.placement;
+    bannerForm.elements.sort_order.value = String(banner.sort_order ?? 0);
+    bannerForm.elements.background_color.value = banner.background_color || "#6931a9";
     bannerForm.elements.destination_url.value = banner.destination_url || "";
     bannerForm.elements.image_url.value = banner.image_path?.startsWith("http") ? banner.image_path : "";
     bannerForm.elements.starts_at.value = toLocalDateTime(banner.starts_at);
@@ -2978,10 +3116,11 @@
     $("#delete-banner").hidden = false;
     clearFormError($("#banner-form-error"));
     fillLocalizedFields(bannerForm, {
+      eyebrow_translations: banner.eyebrow_translations,
       title_translations: banner.title_translations,
       description_translations: banner.description_translations,
       button_translations: banner.button_translations,
-    }, ["title_translations", "description_translations", "button_translations"]);
+    }, ["eyebrow_translations", "title_translations", "description_translations", "button_translations"]);
     setLocale("en");
     bannerDialog.showModal();
   }
@@ -3029,7 +3168,7 @@
     submit.textContent = "Saving…";
     let uploadedPath = null;
     try {
-      const translations = readLocalizedFields(bannerForm, ["title_translations", "description_translations", "button_translations"]);
+      const translations = readLocalizedFields(bannerForm, ["eyebrow_translations", "title_translations", "description_translations", "button_translations"]);
       for (const group of Object.values(translations)) {
         for (const language of languages) group[language] ||= group.en;
       }
@@ -3051,13 +3190,20 @@
         placement: String(formData.get("placement")),
         ...translations,
         image_path: imagePath,
+        background_color: String(formData.get("background_color") || "#6931a9"),
+        sort_order: Math.max(0, Math.trunc(Number(formData.get("sort_order")) || 0)),
         destination_url: String(formData.get("destination_url") || "").trim() || null,
         starts_at: startsAt,
         ends_at: endsAt,
         is_active: formData.get("is_active") === "on",
         created_by: currentUser.id,
       };
-      const { error } = await client.from("banners").upsert(payload, { onConflict: "id" });
+      let { error } = await client.from("banners").upsert(payload, { onConflict: "id" });
+      if (error && /eyebrow_translations|background_color/i.test(error.message || "")) {
+        const { eyebrow_translations, background_color, ...legacyPayload } = payload;
+        const retry = await client.from("banners").upsert(legacyPayload, { onConflict: "id" });
+        error = retry.error;
+      }
       if (error) throw error;
       if (previousPath && previousPath.startsWith("banners/") && previousPath !== uploadedPath) {
         await client.storage.from("banner-images").remove([previousPath]);
@@ -3278,6 +3424,22 @@
       }
 
       const showcaseConfig = readProductShowcaseFields();
+      for (const group of showcaseGroupIds) {
+        const file = pendingShowcaseFiles[group];
+        if (!(file instanceof File && file.size > 0)) continue;
+        if (file.size > 10 * 1024 * 1024) throw new Error("Showcase box image must be 10 MB or smaller.");
+        if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error("Choose a PNG, JPEG, or WebP showcase image.");
+        const safeName = file.name.toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
+        const boxPath = `products/${slug}/showcase/${group}-${Date.now()}-${safeName}`;
+        const { error: boxUploadError } = await client.storage
+          .from("product-images")
+          .upload(boxPath, file, { cacheControl: "3600", upsert: false });
+        if (boxUploadError) throw boxUploadError;
+        const boxPublicUrl = client.storage.from("product-images").getPublicUrl(boxPath).data.publicUrl;
+        showcaseConfig[group] ||= { stat: "", source: { tabName: "", label: "", title: "", desc: "" }, translations: {} };
+        showcaseConfig[group].image_url = boxPublicUrl;
+        showcaseConfig[group].image_path = boxPath;
+      }
       const storedOptionValues = Object.keys(showcaseConfig).length
         ? { ...optionValues, _showcase: showcaseConfig }
         : optionValues;
@@ -3693,10 +3855,31 @@
     $("#refresh-products").addEventListener("click", loadCatalog);
     $("#refresh-orders").addEventListener("click", loadOrders);
     $("#refresh-messages").addEventListener("click", loadContactMessages);
+    const renderMessagesOnFilterChange = () => renderContactMessages();
+    $("#messages-search").addEventListener("input", renderMessagesOnFilterChange);
+    $("#messages-status-filter").addEventListener("change", renderMessagesOnFilterChange);
+    const messagesDateFrom = $("#messages-date-from");
+    const messagesDateTo = $("#messages-date-to");
+    const updateMessageDateBounds = () => {
+      messagesDateFrom.max = messagesDateTo.value;
+      messagesDateTo.min = messagesDateFrom.value;
+      renderContactMessages();
+    };
+    messagesDateFrom.addEventListener("change", updateMessageDateBounds);
+    messagesDateTo.addEventListener("change", updateMessageDateBounds);
+    const clearMessageFilters = () => {
+      $("#messages-search").value = "";
+      $("#messages-status-filter").value = "all";
+      messagesDateFrom.value = "";
+      messagesDateTo.value = "";
+      updateMessageDateBounds();
+    };
+    $("#messages-clear-filters").addEventListener("click", clearMessageFilters);
+    $$("[data-clear-message-filters]").forEach((button) => button.addEventListener("click", clearMessageFilters));
     $("#refresh-subscribers").addEventListener("click", loadNewsletterSubscribers);
     $("#add-home-spotlight").addEventListener("click", openNewHomepageSpotlight);
     $("#add-promotion").addEventListener("click", openNewPromotion);
-    $("#add-banner").addEventListener("click", openNewBanner);
+    $("#add-banner")?.addEventListener("click", () => openNewBanner());
     brandSettingsForm.addEventListener("submit", saveBrandSettings);
     footerSettingsForm.addEventListener("submit", saveFooterSettings);
     homepageShowcaseForm.addEventListener("submit", saveHomepageShowcase);
@@ -3752,12 +3935,40 @@
     });
     productForm.addEventListener("submit", saveProduct);
     $("#translate-product-showcase")?.addEventListener("click", translateProductShowcase);
+    for (const group of showcaseGroupIds) {
+      productForm.elements[`showcase_${group}_file`]?.addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size > 10 * 1024 * 1024) {
+          event.target.value = "";
+          showProductError("Choose a PNG, JPEG, or WebP showcase image of 10 MB or less.");
+          return;
+        }
+        if (pendingShowcaseObjectUrls[group]) URL.revokeObjectURL(pendingShowcaseObjectUrls[group]);
+        pendingShowcaseFiles[group] = file;
+        pendingShowcaseObjectUrls[group] = URL.createObjectURL(file);
+        updateShowcasePreview(group);
+      });
+      productForm.elements[`showcase_${group}_image_url`]?.addEventListener("input", () => {
+        updateShowcasePreview(group);
+      });
+      productForm.querySelector(`[data-showcase-clear-image="${group}"]`)?.addEventListener("click", () => {
+        if (pendingShowcaseObjectUrls[group]) URL.revokeObjectURL(pendingShowcaseObjectUrls[group]);
+        delete pendingShowcaseFiles[group];
+        delete pendingShowcaseObjectUrls[group];
+        if (productForm.elements[`showcase_${group}_file`]) productForm.elements[`showcase_${group}_file`].value = "";
+        if (productForm.elements[`showcase_${group}_image_url`]) productForm.elements[`showcase_${group}_image_url`].value = "";
+        updateShowcasePreview(group);
+      });
+    }
+    productDialog.addEventListener("close", revokeShowcaseObjectUrls);
     bindProductEditorNavigation();
     promotionForm.addEventListener("submit", savePromotion);
-    bannerForm.addEventListener("submit", saveBanner);
+    bannerForm?.addEventListener("submit", saveBanner);
+    $("#add-home-promo")?.addEventListener("click", () => openNewBanner("home_promo"));
     $("#delete-product").addEventListener("click", deleteProduct);
     $("#delete-promotion").addEventListener("click", deletePromotion);
-    $("#delete-banner").addEventListener("click", deleteBanner);
+    $("#delete-banner")?.addEventListener("click", deleteBanner);
   }
 
   async function start() {
@@ -3786,6 +3997,9 @@
     });
     window.RUQO_INIT_HOME_COPY_EDITOR(client);
     window.RUQO_INIT_HIGH_REFRESH_EDITOR(client);
+    window.RUQO_INIT_PROMO_BANNER_SETTINGS(client);
+    window.RUQO_INIT_FEATURES_EDITOR?.(client);
+    window.RUQO_INIT_REVIEWS_EDITOR?.(client);
     bindEvents();
     const { data, error } = await client.auth.getSession();
     if (error) {

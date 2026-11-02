@@ -2,7 +2,7 @@ html {
   overflow-x: clip;
 }
 
-body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher {
+body:is([data-page="experiments"], [data-experiment-product], [data-experiment-blank]) .experiment-switcher {
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -15,7 +15,7 @@ body:is([data-page="experiments"], [data-experiment-product]) .experiment-switch
   box-shadow: 0 12px 32px rgba(46, 25, 70, 0.08);
 }
 
-body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a {
+body:is([data-page="experiments"], [data-experiment-product], [data-experiment-blank]) .experiment-switcher a {
   display: inline-flex;
   min-height: 42px;
   flex: 1 1 0;
@@ -33,32 +33,894 @@ body:is([data-page="experiments"], [data-experiment-product]) .experiment-switch
   transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a:hover {
+body:is([data-page="experiments"], [data-experiment-product], [data-experiment-blank]) .experiment-switcher a:hover {
   color: var(--primary);
   background: rgba(115, 56, 198, 0.08);
 }
 
-body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a[aria-current="page"] {
+body:is([data-page="experiments"], [data-experiment-product], [data-experiment-blank]) .experiment-switcher a[aria-current="page"] {
   color: #fff;
   background: linear-gradient(120deg, var(--primary), var(--accent));
   box-shadow: 0 8px 20px rgba(115, 56, 198, 0.22);
 }
 
-body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a:focus-visible {
+body:is([data-page="experiments"], [data-experiment-product], [data-experiment-blank]) .experiment-switcher a:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 
+.experiment-blank-canvas {
+  min-height: calc(100vh - 120px);
+  padding: 24px 0 64px;
+}
+
+.crystalized-ball {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cb-lab-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.cb-stage-wrap {
+  position: relative;
+  height: 620px;
+  border-radius: 32px;
+  background: radial-gradient(circle at 50% 50%, #140a24 0%, #090511 75%, #05020a 100%);
+  border: 1px solid rgba(168, 85, 247, 0.24);
+  box-shadow: 0 32px 80px rgba(15, 6, 30, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.cb-stage-hint {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 9, 28, 0.72);
+  color: rgba(240, 230, 255, 0.82);
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.cb-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 32px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: 0 22px 54px rgba(46, 25, 70, 0.08);
+}
+
+.cb-controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cb-eyebrow {
+  display: block;
+  color: var(--primary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.cb-controls-header h2 {
+  margin: 4px 0 0;
+  font-size: 1.45rem;
+}
+
+.cb-reset-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font: 700 0.78rem "Cairo", sans-serif;
+  cursor: pointer;
+}
+
+.cb-presets-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.cb-preset-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font: 700 0.75rem "Cairo", sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cb-preset-chip.is-active {
+  border-color: transparent;
+  background: linear-gradient(125deg, #7338c6, #d848a0);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(115, 56, 198, 0.26);
+}
+
+.cb-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 12px;
+}
+
+.cb-control-field {
+  display: grid;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.cb-control-field > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cb-control-field strong {
+  color: var(--text);
+  font-family: "Manrope", sans-serif;
+}
+
+.cb-control-field input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
+.cb-control-field input[type="color"] {
+  width: 100%;
+  height: 36px;
+  padding: 2px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.cb-control-field select {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+@media (max-width: 960px) {
+  .cb-lab-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cb-stage-wrap {
+    height: 480px;
+  }
+}
+
+/* ==========================================================================
+   4 Homepage Integration Concepts Showcase (Blank Experiment Page)
+   ========================================================================== */
+
+.cb-showcase-stack {
+  display: grid;
+  gap: 54px;
+  margin-top: 56px;
+}
+
+.cb-concept-block {
+  display: grid;
+  gap: 22px;
+}
+
+.cb-concept-head {
+  display: grid;
+  gap: 6px;
+  max-width: 760px;
+}
+
+.cb-concept-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: linear-gradient(125deg, rgba(115, 56, 198, 0.14), rgba(216, 72, 160, 0.14));
+  color: var(--primary);
+  font: 800 0.74rem "Manrope", "Cairo", sans-serif;
+  letter-spacing: 0.08em;
+}
+
+.cb-concept-head h2 {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.5vw, 2.1rem);
+  color: var(--text);
+}
+
+.cb-concept-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Concept 1: Hero Product Energy Aura */
+.cb-concept-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: 32px;
+  padding: clamp(24px, 4vw, 44px);
+  border-radius: 34px;
+  border: 1px solid rgba(168, 85, 247, 0.22);
+  background: radial-gradient(circle at 75% 50%, #190d2c 0%, #0d0718 65%, #07040e 100%);
+  color: #fff;
+  box-shadow: 0 30px 76px rgba(18, 8, 36, 0.28);
+}
+
+.cb-hero-copy {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+
+.cb-hero-copy h3 {
+  margin: 0;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  color: #fff;
+  line-height: 1.1;
+}
+
+.cb-hero-copy p {
+  margin: 0;
+  color: rgba(240, 232, 255, 0.82);
+  line-height: 1.8;
+}
+
+.cb-hero-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.cb-aura-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.86);
+  font: 700 0.78rem "Cairo", sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cb-aura-btn.is-active {
+  border-color: transparent;
+  background: linear-gradient(125deg, #7338c6, #d848a0);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(115, 56, 198, 0.38);
+}
+
+.cb-hero-orb-stage {
+  position: relative;
+  height: 460px;
+  display: grid;
+  place-items: center;
+}
+
+.cb-hero-floating-product {
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.cb-hero-floating-product img {
+  width: min(290px, 68vw);
+  height: 210px;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+}
+
+.cb-hero-floating-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(16, 10, 28, 0.82);
+  color: #fff;
+  font-size: 0.84rem;
+  backdrop-filter: blur(14px);
+}
+
+.cb-hero-floating-tag strong {
+  color: #e9d5ff;
+  font-family: "Manrope", sans-serif;
+}
+
+/* Concept 2: Deals & Gaming Promo Banner */
+.cb-deals-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: 28px;
+  padding: clamp(28px, 4.5vw, 52px);
+  border-radius: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(125deg, #240c3d 0%, #4c1d82 52%, #9d2875 100%);
+  color: #fff;
+  box-shadow: 0 28px 70px rgba(76, 29, 130, 0.28);
+}
+
+.cb-deals-copy {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+
+.cb-deals-copy h3 {
+  margin: 0;
+  font-size: clamp(1.85rem, 3.2vw, 2.85rem);
+  line-height: 1.12;
+  color: #fff;
+}
+
+.cb-deals-copy p {
+  margin: 0 0 8px;
+  color: rgba(255, 245, 255, 0.88);
+  line-height: 1.8;
+}
+
+.cb-deals-orb-box {
+  position: relative;
+  height: 360px;
+  border-radius: 28px;
+  background: radial-gradient(circle at 50% 50%, rgba(18, 8, 32, 0.92), rgba(8, 4, 16, 0.96));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 24px 56px rgba(12, 4, 24, 0.45);
+  overflow: hidden;
+}
+
+.cb-deals-badge {
+  position: absolute;
+  top: 16px;
+  inset-inline-end: 16px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(125deg, #f25bd0, #7338c6);
+  color: #fff;
+  font: 900 0.8rem "Manrope", sans-serif;
+  box-shadow: 0 10px 24px rgba(242, 91, 208, 0.36);
+  pointer-events: none;
+}
+
+/* Concept 3: AI Shopping Assistant Portal */
+.cb-ai-portal {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  align-items: center;
+  gap: 32px;
+  padding: clamp(24px, 3.8vw, 40px);
+  border-radius: 34px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: 0 24px 60px rgba(46, 25, 70, 0.08);
+}
+
+.cb-ai-orb-trigger {
+  position: relative;
+  height: 290px;
+  border-radius: 28px;
+  background: radial-gradient(circle at 50% 50%, #150c28, #080411);
+  border: 1px solid rgba(148, 120, 255, 0.28);
+  cursor: pointer;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 20px 48px rgba(25, 12, 50, 0.28);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cb-ai-orb-trigger:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 26px 60px rgba(115, 56, 198, 0.34);
+}
+
+.cb-ai-core-label {
+  position: absolute;
+  z-index: 3;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(16, 10, 30, 0.72);
+  color: #fff;
+  font: 900 0.86rem "Manrope", sans-serif;
+  letter-spacing: 0.14em;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.cb-ai-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.cb-ai-copy h3 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 2.15rem);
+}
+
+.cb-ai-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.cb-ai-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.cb-ai-prompt-btn {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+  color: var(--text);
+  font: 700 0.82rem "Cairo", sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cb-ai-prompt-btn:hover {
+  border-color: transparent;
+  background: linear-gradient(125deg, #7338c6, #d848a0);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Concept 4: Store Stats & Milestones Orbit */
+.cb-stats-orbit {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  gap: 16px;
+  padding: 28px;
+  border-radius: 34px;
+  border: 1px solid rgba(168, 85, 247, 0.22);
+  background: radial-gradient(circle at 50% 50%, #190d2c 0%, #0b0615 80%);
+  color: #fff;
+  box-shadow: 0 28px 68px rgba(18, 8, 36, 0.26);
+}
+
+.cb-stat-card {
+  padding: 24px 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  text-align: center;
+  display: grid;
+  gap: 6px;
+  backdrop-filter: blur(12px);
+}
+
+.cb-stat-card strong {
+  background: linear-gradient(120deg, #e9d5ff, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font: 900 clamp(1.7rem, 2.6vw, 2.3rem) "Manrope", sans-serif;
+}
+
+.cb-stat-card span {
+  color: rgba(235, 225, 250, 0.82);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.cb-stats-center-orb {
+  position: relative;
+  height: 240px;
+  display: grid;
+  place-items: center;
+}
+
+.cb-stats-center-text {
+  position: absolute;
+  z-index: 3;
+  text-align: center;
+  pointer-events: none;
+  display: grid;
+  gap: 2px;
+}
+
+.cb-stats-center-text strong {
+  color: #fff;
+  font: 900 0.92rem "Manrope", sans-serif;
+  letter-spacing: 0.14em;
+}
+
+.cb-stats-center-text span {
+  color: rgba(233, 213, 255, 0.76);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+}
+
+/* ==========================================================================
+   Infinite Spiral 3D Helix Component Styles (Blank Experiment 2)
+   ========================================================================== */
+
+.spiral-mount {
+  width: 100%;
+  height: 100%;
+}
+
+.infinite-spiral {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.infinite-spiral__stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.infinite-spiral__item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: var(--infinite-spiral-card-width);
+  height: var(--infinite-spiral-card-height);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--infinite-spiral-card-radius);
+  background: rgb(255 255 255 / 0.08);
+  box-shadow: 0 18px 44px rgb(8 6 18 / 0.36);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+  text-decoration: none;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.infinite-spiral__item:hover {
+  border-color: rgba(216, 72, 160, 0.85);
+  box-shadow: 0 22px 52px rgba(115, 56, 198, 0.48);
+}
+
+.infinite-spiral__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-position: center;
+  user-select: none;
+}
+
+.infinite-spiral__badge {
+  position: absolute;
+  inset-inline: 8px;
+  bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(16, 10, 28, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font: 700 0.64rem "Manrope", "Cairo", sans-serif;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  backdrop-filter: blur(8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .infinite-spiral__item {
+    transition: none;
+  }
+}
+
+.spiral-stage-wrap {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.spiral-stage-wrap .cb-stage-hint {
+  border-color: var(--line);
+  background: var(--surface-strong);
+  color: var(--muted);
+  box-shadow: 0 12px 28px rgba(46, 25, 70, 0.08);
+}
+
+.sp-concept-hero {
+  background: var(--surface-strong) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--text) !important;
+  box-shadow: 0 24px 60px rgba(46, 25, 70, 0.08) !important;
+}
+
+.sp-concept-hero .cb-hero-copy h3 {
+  color: var(--text) !important;
+}
+
+.sp-concept-hero .cb-hero-copy p {
+  color: var(--muted) !important;
+}
+
+/* 4 Homepage Concepts for Infinite Spiral (Blank Experiment 2) */
+.sp-hero-helix-stage {
+  position: relative;
+  height: 480px;
+  border-radius: 28px;
+  background: transparent;
+  border: 0;
+  overflow: hidden;
+}
+
+.sp-hero-center-pill {
+  position: absolute;
+  bottom: 16px;
+  inset-inline-start: 16px;
+  z-index: 20;
+  display: grid;
+  gap: 2px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--text);
+  box-shadow: 0 14px 32px rgba(46, 25, 70, 0.1);
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+}
+
+.sp-hero-center-pill span {
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.sp-hero-center-pill strong {
+  font-size: 0.88rem;
+  font-family: "Manrope", sans-serif;
+}
+
+.sp-explorer-card {
+  padding: clamp(22px, 3.5vw, 36px);
+  border-radius: 34px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: 0 24px 60px rgba(46, 25, 70, 0.08);
+  display: grid;
+  gap: 20px;
+}
+
+.sp-explorer-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sp-explorer-top h3 {
+  margin: 4px 0 0;
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+}
+
+.sp-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sp-explorer-stage {
+  height: 460px;
+  border-radius: 28px;
+  background: transparent;
+  border: 0;
+  overflow: hidden;
+}
+
+.sp-deals-helix-box {
+  height: 390px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.sp-bestsellers-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: 32px;
+  padding: clamp(24px, 3.8vw, 42px);
+  border-radius: 34px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: 0 24px 60px rgba(46, 25, 70, 0.08);
+}
+
+.sp-bestsellers-helix {
+  height: 440px;
+  border-radius: 28px;
+  background: transparent;
+  border: 0;
+  overflow: hidden;
+}
+
+.sp-bestsellers-copy {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+}
+
+.sp-bestsellers-copy h3 {
+  margin: 0;
+  font-size: clamp(1.55rem, 2.6vw, 2.25rem);
+  line-height: 1.18;
+}
+
+.sp-bestsellers-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.sp-bestsellers-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin: 4px 0;
+}
+
+.sp-bestsellers-stats > div {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--primary) 5%, var(--surface));
+  display: grid;
+  gap: 4px;
+}
+
+.sp-bestsellers-stats strong {
+  background: linear-gradient(120deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font: 900 1.35rem "Manrope", sans-serif;
+}
+
+.sp-bestsellers-stats span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* 3D ModelViewer Category Grid (Blank Experiment 3) */
+.mv-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.mv-cat-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 28px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: 0 20px 48px rgba(46, 25, 70, 0.07);
+  text-align: center;
+}
+
+.mv-cat-canvas {
+  height: 230px;
+  width: 100%;
+  position: relative;
+}
+
+.mv-cat-info {
+  display: grid;
+  gap: 4px;
+}
+
+.mv-cat-info strong {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.mv-cat-info span {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (max-width: 960px) {
+  .mv-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 560px) {
-  body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher {
+  .mv-cards-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .cb-concept-hero,
+  .cb-deals-banner,
+  .cb-ai-portal,
+  .sp-bestsellers-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cb-stats-orbit {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cb-stats-center-orb {
+    grid-column: 1 / -1;
+    order: -1;
+    height: 260px;
+  }
+}
+
+@media (max-width: 760px) {
+  body:is([data-page="experiments"], [data-experiment-product], [data-experiment-blank]) .experiment-switcher {
     width: calc(100% - 24px);
     margin: 10px auto 16px;
     gap: 4px;
+    flex-wrap: wrap;
+    border-radius: 18px;
   }
 
-  body:is([data-page="experiments"], [data-experiment-product]) .experiment-switcher a {
-    min-height: 40px;
-    padding-inline: 10px;
-    font-size: 0.8rem;
+  body:is([data-page="experiments"], [data-experiment-product], [data-experiment-blank]) .experiment-switcher a {
+    min-height: 42px;
+    flex: 1 1 calc(33.333% - 4px);
+    max-width: none;
+    padding-inline: 4px;
+    font-size: 0.7rem;
   }
 }

@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=4" />
+    <link rel="stylesheet" href="/css/admin.css?v=7" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -110,7 +110,9 @@
           <div class="admin-nav-group" role="group" aria-labelledby="admin-storefront-label">
           <span id="admin-storefront-label" class="admin-nav-group-label">STOREFRONT</span>
           <button class="admin-nav-item" type="button" data-admin-view="promotions"><i data-lucide="badge-percent" aria-hidden="true"></i><span>Offers</span></button>
-          <button class="admin-nav-item" type="button" data-admin-view="banners"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>Banners</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="exclusive-deals"><i data-lucide="flame" aria-hidden="true"></i><span>Exclusive deals</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="features-stats"><i data-lucide="layout-grid" aria-hidden="true"></i><span>Features &amp; stats</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="reviews"><i data-lucide="message-circle-heart" aria-hidden="true"></i><span>Customer reviews</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="homepage-showcase"><i data-lucide="gallery-horizontal-end" aria-hidden="true"></i><span>Homepage spotlight</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="high-refresh"><i data-lucide="sparkles" aria-hidden="true"></i><span>high refresh</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="footer"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>Footer content</span></button>
@@ -181,7 +183,27 @@
 
           <section class="admin-view" data-admin-panel="messages" hidden>
             <div class="admin-page-heading"><div><span class="admin-eyebrow">CUSTOMER CARE</span><h1>Messages</h1><p>Support requests submitted from the storefront.</p></div><button id="refresh-messages" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh</button></div>
-            <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Received</th><th>Customer</th><th>Message</th><th>Status</th></tr></thead><tbody id="messages-body"></tbody></table><div id="messages-empty" class="admin-empty" hidden><i data-lucide="messages-square" aria-hidden="true"></i><strong>No messages yet</strong></div></div></section>
+            <section class="admin-stat-grid messages-stats" aria-label="Message counts">
+              <article class="admin-stat"><span>New</span><strong id="messages-count-new">0</strong><small>Need a first response</small></article>
+              <article class="admin-stat"><span>Read</span><strong id="messages-count-read">0</strong><small>Being followed up</small></article>
+              <article class="admin-stat"><span>Resolved</span><strong id="messages-count-resolved">0</strong><small>Completed conversations</small></article>
+            </section>
+            <section class="admin-section messages-section">
+              <div class="messages-toolbar">
+                <label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><input id="messages-search" type="search" placeholder="Search name, email, or message" aria-label="Search messages" /></label>
+                <label class="messages-filter-field"><span>Status</span><select id="messages-status-filter" aria-label="Filter by status"><option value="all">All statuses</option><option value="new">New</option><option value="read">Read</option><option value="resolved">Resolved</option></select></label>
+                <label class="messages-filter-field"><span>From</span><input id="messages-date-from" type="date" aria-label="Filter from date" /></label>
+                <label class="messages-filter-field"><span>To</span><input id="messages-date-to" type="date" aria-label="Filter to date" /></label>
+                <button id="messages-clear-filters" class="admin-secondary-button" type="button">Clear filters</button>
+              </div>
+              <p id="messages-filter-feedback" class="messages-filter-feedback" role="status" hidden></p>
+              <div class="messages-results-bar"><span id="messages-results-count" role="status">Showing 0 of 0 messages</span></div>
+              <div class="admin-table-wrap">
+                <table class="admin-table"><thead><tr><th>Received</th><th>Customer</th><th>Message</th><th>Status</th><th>Details</th></tr></thead><tbody id="messages-body"></tbody></table>
+                <div id="messages-empty" class="admin-empty" hidden><i data-lucide="messages-square" aria-hidden="true"></i><strong id="messages-empty-title">No messages yet</strong><span id="messages-empty-description">Messages sent through the storefront support form will appear here.</span></div>
+                <div id="messages-no-results" class="admin-empty" hidden><i data-lucide="search-x" aria-hidden="true"></i><strong>No matching messages</strong><span>Try changing your search or filters.</span><button class="admin-secondary-button" type="button" data-clear-message-filters>Clear filters</button></div>
+              </div>
+            </section>
           </section>
 
           <section class="admin-view" data-admin-panel="audience" hidden>
@@ -194,9 +216,385 @@
             <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Offer</th><th>Code</th><th>Discount</th><th>Schedule</th><th>Status</th><th></th></tr></thead><tbody id="promotions-body"></tbody></table><div id="promotions-empty" class="admin-empty" hidden><i data-lucide="badge-percent" aria-hidden="true"></i><strong>No offers configured</strong><span>Create an offer to schedule a discount.</span></div></div></section>
           </section>
 
-          <section class="admin-view" data-admin-panel="banners" hidden>
-            <div class="admin-page-heading"><div><span class="admin-eyebrow">STOREFRONT CONTENT</span><h1>Banners</h1><p>Schedule multilingual campaign banners across the store.</p></div><button id="add-banner" class="admin-primary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add banner</button></div>
-            <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Banner</th><th>Placement</th><th>Schedule</th><th>Status</th><th></th></tr></thead><tbody id="banners-body"></tbody></table><div id="banners-empty" class="admin-empty" hidden><i data-lucide="panels-top-left" aria-hidden="true"></i><strong>No banners configured</strong><span>Create a banner for the storefront.</span></div></div></section>
+          <section class="admin-view" data-admin-panel="exclusive-deals" hidden>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">STOREFRONT CONTENT</span>
+                <h1>Exclusive deals</h1>
+                <p>Manage the homepage Exclusive deals banner, offer slides, schedule, and 5-language translations.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button class="admin-secondary-button" type="button" data-ed-reload>Reload</button>
+                <button class="admin-primary-button" type="button" data-ed-add-slide><i data-lucide="plus" aria-hidden="true"></i> Add exclusive deal</button>
+              </div>
+            </div>
+            <p class="admin-muted-copy" data-ed-live role="status">Loading exclusive deals…</p>
+
+            <form id="homepage-promo-settings-form" class="admin-section admin-settings-form promo-banner-settings" novalidate>
+              <div class="admin-section-heading"><div><h2>Offer rotation &amp; transition</h2><p>When multiple active deals exist, they rotate automatically on the homepage.</p></div><button class="admin-primary-button" type="submit">Save rotation settings</button></div>
+              <div class="admin-form-grid">
+                <label>Automatic rotation<select name="interval_seconds"><option value="3">Every 3 seconds</option><option value="5" selected>Every 5 seconds</option><option value="7">Every 7 seconds</option><option value="10">Every 10 seconds</option><option value="15">Every 15 seconds</option></select><small>Visitors can also navigate with arrows and dots.</small></label>
+                <label>Transition effect<select name="transition_style"><option value="fade">Fade</option><option value="slide">Slide content only</option></select></label>
+              </div>
+              <p id="homepage-promo-settings-feedback" class="admin-feedback" role="status" hidden></p>
+            </form>
+
+            <form id="exclusive-deals-form" class="admin-section high-refresh-editor exclusive-deals-editor" novalidate>
+              <div>
+                <h2>Deal slides &amp; live preview</h2>
+                <p class="admin-muted-copy">Select a deal below to edit its image, schedule, and text, or add multiple rotating deals.</p>
+                <p class="admin-muted-copy" data-ed-state role="status"></p>
+                <ol class="high-refresh-products" data-ed-list></ol>
+
+                <!-- Exact Live Preview of the Exclusive Deals Banner -->
+                <section class="ed-live-preview-wrap" data-ed-preview aria-label="Exclusive deals live preview">
+                  <div class="ed-preview-banner" data-ed-preview-banner>
+                    <div class="ed-preview-copy">
+                      <span class="ed-preview-eyebrow" data-ed-preview-eyebrow>Exclusive deals</span>
+                      <h3 class="ed-preview-title" data-ed-preview-title>Up to 35% off gaming devices</h3>
+                      <p class="ed-preview-text" data-ed-preview-text>Enjoy premium performance with high-refresh displays and powerful gaming hardware.</p>
+                      <span class="ed-preview-btn" data-ed-preview-button>Claim offer</span>
+                    </div>
+                    <div class="ed-preview-visual">
+                      <div class="ed-preview-frame">
+                        <img
+                          data-ed-preview-img
+                          src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=85"
+                          alt="Exclusive deal preview"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <div class="high-refresh-actions">
+                  <button class="admin-primary-button" type="button" data-ed-action="save">
+                    <i data-lucide="check" aria-hidden="true"></i> Save &amp; publish deal
+                  </button>
+                  <button class="admin-danger-button" type="button" data-ed-action="delete">
+                    <i data-lucide="trash-2" aria-hidden="true"></i> Delete deal
+                  </button>
+                </div>
+              </div>
+
+              <div data-ed-slide-editor>
+                <h2>Deal settings &amp; schedule</h2>
+                <div class="admin-form-grid">
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="is_active" type="checkbox" checked />
+                    <span><strong>Active deal</strong><small>Turn off to pause this offer without deleting it.</small></span>
+                  </label>
+                  <label class="form-field-wide">
+                    Deal image (upload or HTTPS URL)
+                    <input name="image_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                    <input name="image_url" type="url" maxlength="2048" placeholder="https://... or upload an image file above" />
+                    <small>Shown inside the tilted frame on the right side of the banner (JPEG, PNG, or WebP up to 10 MB).</small>
+                  </label>
+                  <label>
+                    Quick link target
+                    <select name="quick_target">
+                      <option value="">Custom or select below…</option>
+                      <option value="/products.html?filter=deals">All deals &amp; offers</option>
+                      <option value="/products.html">All products</option>
+                      <option value="/categories.html">All categories</option>
+                    </select>
+                  </label>
+                  <label>
+                    Destination URL (on button click)
+                    <input name="destination_url" maxlength="2048" placeholder="/products.html?filter=deals or https://..." />
+                  </label>
+                  <label>
+                    Starts at (optional schedule)
+                    <input name="starts_at" type="datetime-local" />
+                  </label>
+                  <label>
+                    Ends at (optional schedule)
+                    <input name="ends_at" type="datetime-local" />
+                  </label>
+                  <label>
+                    Banner accent color
+                    <input name="background_color" type="color" value="#6931a9" />
+                  </label>
+                  <label>
+                    Editing / preview language
+                    <select name="language">
+                      <option value="en">English (source)</option>
+                      <option value="ar">Arabic (العربية)</option>
+                      <option value="fr">French (Français)</option>
+                      <option value="es">Spanish (Español)</option>
+                      <option value="zh">Simplified Chinese (中文)</option>
+                    </select>
+                  </label>
+                  <div class="form-field-wide admin-form-grid" data-ed-fields>
+                    <label class="form-field-wide">
+                      Small badge / eyebrow
+                      <input name="eyebrow" maxlength="200" placeholder="Exclusive deals" />
+                    </label>
+                    <label class="form-field-wide">
+                      Deal headline (required in English)
+                      <textarea name="title" rows="2" maxlength="600" placeholder="Up to 35% off gaming devices"></textarea>
+                    </label>
+                    <label class="form-field-wide">
+                      Description
+                      <textarea name="description" rows="3" maxlength="4000" placeholder="Enjoy premium performance with high-refresh displays and powerful gaming hardware."></textarea>
+                    </label>
+                    <label class="form-field-wide">
+                      Button label
+                      <input name="button" maxlength="200" placeholder="Claim offer" />
+                    </label>
+                  </div>
+                </div>
+                <div class="high-refresh-actions">
+                  <button class="admin-secondary-button" type="button" data-ed-action="translate">
+                    <i data-lucide="languages" aria-hidden="true"></i> Translate to all 5 languages (One Click)
+                  </button>
+                </div>
+              </div>
+              <p class="admin-feedback form-field-wide" data-ed-feedback role="status" hidden></p>
+            </form>
+          </section>
+          <section class="admin-view" data-admin-panel="features-stats" hidden>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">STOREFRONT CONTENT</span>
+                <h1>Features &amp; stats</h1>
+                <p>Manage the homepage "Why us" service cards and the stats strip, with 5-language translations.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button class="admin-secondary-button" type="button" data-fs-reload>Reload</button>
+              </div>
+            </div>
+            <p class="admin-muted-copy" data-fs-live role="status">Loading features section…</p>
+
+            <form id="features-section-form" class="admin-section high-refresh-editor features-stats-editor" novalidate>
+              <div>
+                <h2>Section content &amp; live preview</h2>
+                <p class="admin-muted-copy">Edit the heading, reorder or add cards and stats, then save to publish. Select an item from the lists to edit it on the right.</p>
+                <p class="admin-muted-copy" data-fs-state role="status"></p>
+
+                <div class="admin-form-grid">
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="visible" type="checkbox" checked />
+                    <span><strong>Show section on homepage</strong><small>Turn off to hide the service cards and stats strip without deleting their content.</small></span>
+                  </label>
+                  <label>
+                    Editing / preview language
+                    <select name="language">
+                      <option value="en">English (source)</option>
+                      <option value="ar">Arabic (العربية)</option>
+                      <option value="fr">French (Français)</option>
+                      <option value="es">Spanish (Español)</option>
+                      <option value="zh">Simplified Chinese (中文)</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="admin-form-grid" data-fs-heading-fields>
+                  <label>
+                    Small badge / eyebrow
+                    <input name="heading_eyebrow" maxlength="200" placeholder="Why us" />
+                  </label>
+                  <label>
+                    Section title
+                    <input name="heading_title" maxlength="300" placeholder="Service built for you" />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Feature cards</h3>
+                <ol class="high-refresh-products" data-fs-list-features></ol>
+                <button class="admin-secondary-button" type="button" data-fs-add-feature><i data-lucide="plus" aria-hidden="true"></i> Add feature card</button>
+
+                <h3 class="fs-subhead">Stats strip</h3>
+                <ol class="high-refresh-products" data-fs-list-stats></ol>
+                <button class="admin-secondary-button" type="button" data-fs-add-stat><i data-lucide="plus" aria-hidden="true"></i> Add stat</button>
+
+                <section class="fs-live-preview-wrap" data-fs-preview aria-label="Features section live preview">
+                  <div class="fs-preview-heading">
+                    <span class="fs-preview-eyebrow" data-fs-preview-eyebrow>Why us</span>
+                    <h3 class="fs-preview-title" data-fs-preview-title>Service built for you</h3>
+                  </div>
+                  <div class="fs-preview-grid" data-fs-preview-grid></div>
+                  <div class="fs-preview-stats" data-fs-preview-stats></div>
+                </section>
+
+                <div class="high-refresh-actions">
+                  <button class="admin-primary-button" type="button" data-fs-action="save">
+                    <i data-lucide="check" aria-hidden="true"></i> Save &amp; publish section
+                  </button>
+                  <button class="admin-danger-button" type="button" data-fs-action="reset">
+                    <i data-lucide="rotate-ccw" aria-hidden="true"></i> Reset to defaults
+                  </button>
+                </div>
+              </div>
+
+              <div data-fs-item-editor>
+                <h2 data-fs-item-editor-title>Card settings</h2>
+                <div class="admin-form-grid" data-fs-feature-fields>
+                  <label class="form-field-wide">
+                    Card title
+                    <input name="item_title" maxlength="200" placeholder="Fast delivery" />
+                  </label>
+                  <label class="form-field-wide">
+                    Card text
+                    <textarea name="item_text" rows="3" maxlength="1000" placeholder="Delivery across all cities within 48 hours with live updates."></textarea>
+                  </label>
+                </div>
+                <div class="admin-form-grid" data-fs-stat-fields hidden>
+                  <label>
+                    Value (shared across languages)
+                    <input name="item_value" maxlength="20" placeholder="12+" />
+                  </label>
+                  <label>
+                    Label
+                    <input name="item_label" maxlength="200" placeholder="years of experience" />
+                  </label>
+                </div>
+                <div class="high-refresh-actions">
+                  <button class="admin-secondary-button" type="button" data-fs-action="move-up">
+                    <i data-lucide="arrow-up" aria-hidden="true"></i> Move up
+                  </button>
+                  <button class="admin-secondary-button" type="button" data-fs-action="move-down">
+                    <i data-lucide="arrow-down" aria-hidden="true"></i> Move down
+                  </button>
+                  <button class="admin-danger-button" type="button" data-fs-action="delete-item">
+                    <i data-lucide="trash-2" aria-hidden="true"></i> Delete item
+                  </button>
+                </div>
+                <div class="high-refresh-actions">
+                  <button class="admin-secondary-button" type="button" data-fs-action="translate">
+                    <i data-lucide="languages" aria-hidden="true"></i> Translate to all 5 languages (One Click)
+                  </button>
+                </div>
+              </div>
+              <p class="admin-feedback form-field-wide" data-fs-feedback role="status" hidden></p>
+            </form>
+          </section>
+          <section class="admin-view" data-admin-panel="reviews" hidden>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">STOREFRONT CONTENT</span>
+                <h1>Customer reviews</h1>
+                <p>Manage the “What our customers say” section, customer photos, ratings, and 5-language translations.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button class="admin-secondary-button" type="button" data-rv-reload>Reload</button>
+                <button class="admin-primary-button" type="button" data-rv-add><i data-lucide="plus" aria-hidden="true"></i> Add review</button>
+              </div>
+            </div>
+            <p class="admin-muted-copy" data-rv-live role="status">Loading customer reviews…</p>
+
+            <form id="reviews-section-form" class="admin-section high-refresh-editor reviews-editor" novalidate>
+              <div>
+                <h2>Reviews &amp; live preview</h2>
+                <p class="admin-muted-copy">Select a review to edit. Reorder cards with the arrows; only active reviews appear in the storefront preview.</p>
+                <p class="admin-muted-copy" data-rv-state role="status"></p>
+
+                <div class="admin-form-grid">
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="visible" type="checkbox" checked />
+                    <span><strong>Show customer reviews section</strong><small>Hide the full section without deleting its content.</small></span>
+                  </label>
+                  <label>
+                    Editing / preview language
+                    <select name="language">
+                      <option value="en">English (source)</option>
+                      <option value="ar">Arabic (العربية)</option>
+                      <option value="fr">French (Français)</option>
+                      <option value="es">Spanish (Español)</option>
+                      <option value="zh">Simplified Chinese (中文)</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="admin-form-grid" data-rv-heading-fields>
+                  <label>
+                    Small badge / eyebrow
+                    <input name="eyebrow" maxlength="200" placeholder="Customer reviews" />
+                  </label>
+                  <label>
+                    Section title
+                    <input name="title" maxlength="300" placeholder="What our customers say" />
+                  </label>
+                </div>
+
+                <h3 class="rv-subhead">Customer reviews (up to 12)</h3>
+                <ol class="high-refresh-products" data-rv-list></ol>
+
+                <section class="rv-live-preview-wrap" data-rv-preview aria-label="Customer reviews live preview">
+                  <div class="rv-preview-heading">
+                    <span class="rv-preview-eyebrow" data-rv-preview-eyebrow>Customer reviews</span>
+                    <h3 class="rv-preview-title" data-rv-preview-title>What our customers say</h3>
+                  </div>
+                  <div class="rv-preview-grid" data-rv-preview-grid></div>
+                </section>
+
+                <div class="high-refresh-actions">
+                  <button class="admin-primary-button" type="button" data-rv-action="save">
+                    <i data-lucide="check" aria-hidden="true"></i> Save &amp; publish reviews
+                  </button>
+                  <button class="admin-danger-button" type="button" data-rv-action="reset">
+                    <i data-lucide="rotate-ccw" aria-hidden="true"></i> Reset to defaults
+                  </button>
+                </div>
+              </div>
+
+              <div data-rv-item-fields>
+                <h2 data-rv-item-title>Customer review settings</h2>
+                <div class="admin-form-grid">
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="is_active" type="checkbox" checked />
+                    <span><strong>Active review</strong><small>Turn off to pause this card without deleting it.</small></span>
+                  </label>
+                  <label class="form-field-wide">
+                    Customer name (same in every language)
+                    <input name="name" maxlength="100" placeholder="Customer name" />
+                  </label>
+                  <label>
+                    Rating
+                    <select name="rating">
+                      <option value="5">5 stars</option>
+                      <option value="4">4 stars</option>
+                      <option value="3">3 stars</option>
+                      <option value="2">2 stars</option>
+                      <option value="1">1 star</option>
+                    </select>
+                  </label>
+                  <label class="form-field-wide">
+                    Review text (required in English for active reviews)
+                    <textarea name="quote" rows="4" maxlength="1200" placeholder="Write the customer's review…"></textarea>
+                  </label>
+                  <label class="form-field-wide">
+                    Job title / role
+                    <input name="role" maxlength="200" placeholder="Graphic designer" />
+                  </label>
+                  <label class="form-field-wide">
+                    Customer photo (upload or HTTPS URL)
+                    <input name="avatar_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                    <input name="avatar_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
+                    <small>JPEG, PNG, or WebP up to 10 MB. Uploaded images use the public banner-images storage bucket.</small>
+                  </label>
+                  <div class="rv-avatar-preview-row form-field-wide">
+                    <img data-rv-avatar-preview alt="Customer photo preview" hidden />
+                    <button class="admin-secondary-button" type="button" data-rv-avatar-clear>Remove photo</button>
+                  </div>
+                </div>
+                <div class="high-refresh-actions">
+                  <button class="admin-secondary-button" type="button" data-rv-action="move-up">
+                    <i data-lucide="arrow-up" aria-hidden="true"></i> Move up
+                  </button>
+                  <button class="admin-secondary-button" type="button" data-rv-action="move-down">
+                    <i data-lucide="arrow-down" aria-hidden="true"></i> Move down
+                  </button>
+                  <button class="admin-danger-button" type="button" data-rv-action="delete">
+                    <i data-lucide="trash-2" aria-hidden="true"></i> Delete review
+                  </button>
+                </div>
+                <div class="high-refresh-actions">
+                  <button class="admin-secondary-button" type="button" data-rv-action="translate">
+                    <i data-lucide="languages" aria-hidden="true"></i> Translate to all 5 languages (One Click)
+                  </button>
+                </div>
+              </div>
+              <p class="admin-feedback form-field-wide" data-rv-feedback role="status" hidden></p>
+            </form>
           </section>
           <section class="admin-view" data-admin-panel="settings" hidden>
             <div class="admin-page-heading"><div><span class="admin-eyebrow">STORE IDENTITY</span><h1>Store settings</h1><p>Manage the public brand, contact details, and delivery threshold.</p></div></div>
@@ -373,6 +771,23 @@
       </form>
     </dialog>
 
+    <dialog id="message-detail-dialog" class="product-dialog message-detail-dialog" aria-labelledby="message-detail-title">
+      <form method="dialog">
+        <header class="dialog-header"><div><span class="admin-eyebrow">CUSTOMER CARE</span><h2 id="message-detail-title">Message details</h2></div><button class="admin-icon-button" type="submit" aria-label="Close message details"><i data-lucide="x" aria-hidden="true"></i></button></header>
+        <div class="dialog-body">
+          <dl class="message-detail-meta">
+            <div><dt>Customer</dt><dd id="message-detail-customer"></dd></div>
+            <div><dt>Email</dt><dd><a id="message-detail-email"></a></dd></div>
+            <div><dt>Received</dt><dd id="message-detail-date"></dd></div>
+            <div><dt>Language</dt><dd id="message-detail-language"></dd></div>
+            <div><dt>Status</dt><dd id="message-detail-status"></dd></div>
+          </dl>
+          <section class="message-detail-content"><h3>Message</h3><p id="message-detail-body"></p></section>
+        </div>
+        <footer class="dialog-footer"><button class="admin-secondary-button" type="submit">Close</button><span></span><a id="message-detail-reply" class="admin-primary-button">Reply by email</a></footer>
+      </form>
+    </dialog>
+
     <dialog id="homepage-showcase-dialog" class="product-dialog">
       <form id="homepage-showcase-form" method="dialog" novalidate>
         <header class="dialog-header"><div><span class="admin-eyebrow">HOMEPAGE FEATURE</span><h2 id="home-showcase-dialog-title">Add product to spotlight</h2></div><button class="admin-icon-button" type="button" data-close-dialog aria-label="Close"><i data-lucide="x" aria-hidden="true"></i></button></header>
@@ -475,37 +890,81 @@
               <fieldset class="product-value-field form-field-wide">
                 <legend>1. Craft &amp; Design</legend>
                 <div class="admin-form-grid">
+                  <label>Box / Tab name (EN)<input name="showcase_design_tab_name" maxlength="100" placeholder="Craft &amp; Design" /></label>
                   <label>Stat number (e.g. 15.5mm)<input name="showcase_design_stat" maxlength="40" placeholder="15.5mm" /></label>
-                  <label>Stat label (EN)<input name="showcase_design_label" maxlength="120" placeholder="Ultra-thin profile" /></label>
+                  <label class="form-field-wide">Stat label (EN)<input name="showcase_design_label" maxlength="120" placeholder="Ultra-thin profile" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_design_title" maxlength="200" placeholder="Precision-crafted unibody that feels effortless." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_design_desc" rows="2" maxlength="600" placeholder="Sculpted with clean lines, balanced weight distribution, and a durable anodized finish."></textarea></label>
+                  <div class="form-field-wide product-showcase-image-field">
+                    <label>Box image (upload or HTTPS URL)
+                      <input name="showcase_design_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                      <input name="showcase_design_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
+                    </label>
+                    <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="design" hidden>
+                      <img data-showcase-preview="design" alt="Box 1 preview" />
+                      <button type="button" class="admin-text-button" data-showcase-clear-image="design">Remove custom image</button>
+                    </div>
+                  </div>
                 </div>
               </fieldset>
               <fieldset class="product-value-field form-field-wide">
                 <legend>2. Pro Display</legend>
                 <div class="admin-form-grid">
+                  <label>Box / Tab name (EN)<input name="showcase_display_tab_name" maxlength="100" placeholder="Pro Display" /></label>
                   <label>Stat number (e.g. 120Hz)<input name="showcase_display_stat" maxlength="40" placeholder="120Hz" /></label>
-                  <label>Stat label (EN)<input name="showcase_display_label" maxlength="120" placeholder="Adaptive ProMotion" /></label>
+                  <label class="form-field-wide">Stat label (EN)<input name="showcase_display_label" maxlength="120" placeholder="Adaptive ProMotion" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_display_title" maxlength="200" placeholder="True-to-life brilliance from every angle." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_display_desc" rows="2" maxlength="600" placeholder="Extreme dynamic range with deep blacks, P3 wide color gamut, and adaptive refresh rate."></textarea></label>
+                  <div class="form-field-wide product-showcase-image-field">
+                    <label>Box image (upload or HTTPS URL)
+                      <input name="showcase_display_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                      <input name="showcase_display_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
+                    </label>
+                    <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="display" hidden>
+                      <img data-showcase-preview="display" alt="Box 2 preview" />
+                      <button type="button" class="admin-text-button" data-showcase-clear-image="display">Remove custom image</button>
+                    </div>
+                  </div>
                 </div>
               </fieldset>
               <fieldset class="product-value-field form-field-wide">
                 <legend>3. Next-Gen Chip &amp; Performance</legend>
                 <div class="admin-form-grid">
+                  <label>Box / Tab name (EN)<input name="showcase_performance_tab_name" maxlength="100" placeholder="Next-Gen Chip" /></label>
                   <label>Stat number (e.g. 3.4×)<input name="showcase_performance_stat" maxlength="40" placeholder="3.4×" /></label>
-                  <label>Stat label (EN)<input name="showcase_performance_label" maxlength="120" placeholder="Faster pro workflows" /></label>
+                  <label class="form-field-wide">Stat label (EN)<input name="showcase_performance_label" maxlength="120" placeholder="Faster pro workflows" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_performance_title" maxlength="200" placeholder="Desktop-class speed that stays whisper-quiet." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_performance_desc" rows="2" maxlength="600" placeholder="Render 8K timelines, compile massive projects, and multitask across pro workflows."></textarea></label>
+                  <div class="form-field-wide product-showcase-image-field">
+                    <label>Box image (upload or HTTPS URL)
+                      <input name="showcase_performance_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                      <input name="showcase_performance_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
+                    </label>
+                    <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="performance" hidden>
+                      <img data-showcase-preview="performance" alt="Box 3 preview" />
+                      <button type="button" class="admin-text-button" data-showcase-clear-image="performance">Remove custom image</button>
+                    </div>
+                  </div>
                 </div>
               </fieldset>
               <fieldset class="product-value-field form-field-wide">
                 <legend>4. All-Day Power &amp; Battery</legend>
                 <div class="admin-form-grid">
+                  <label>Box / Tab name (EN)<input name="showcase_battery_tab_name" maxlength="100" placeholder="All-Day Power" /></label>
                   <label>Stat number (e.g. 22hrs)<input name="showcase_battery_stat" maxlength="40" placeholder="22hrs" /></label>
-                  <label>Stat label (EN)<input name="showcase_battery_label" maxlength="120" placeholder="Continuous playback" /></label>
+                  <label class="form-field-wide">Stat label (EN)<input name="showcase_battery_label" maxlength="120" placeholder="Continuous playback" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_battery_title" maxlength="200" placeholder="Unplugged performance that outlasts your schedule." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_battery_desc" rows="2" maxlength="600" placeholder="Intelligent power management delivers identical peak speed plugged in or on battery."></textarea></label>
+                  <div class="form-field-wide product-showcase-image-field">
+                    <label>Box image (upload or HTTPS URL)
+                      <input name="showcase_battery_file" type="file" accept="image/jpeg,image/png,image/webp" />
+                      <input name="showcase_battery_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
+                    </label>
+                    <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="battery" hidden>
+                      <img data-showcase-preview="battery" alt="Box 4 preview" />
+                      <button type="button" class="admin-text-button" data-showcase-clear-image="battery">Remove custom image</button>
+                    </div>
+                  </div>
                 </div>
               </fieldset>
             </div>
@@ -584,6 +1043,8 @@
           <div class="admin-form-grid">
             <label>Internal name<input name="name" required placeholder="Homepage seasonal campaign" /></label>
             <label>Placement<select name="placement"><option value="home_hero">Homepage hero</option><option value="home_promo">Homepage offer</option><option value="mobile_promo">Mobile offer</option><option value="category">Category page</option></select></label>
+            <label>Display order<input name="sort_order" type="number" min="0" step="1" value="0" /><small>Lower numbers appear first.</small></label>
+            <label>Banner background<input name="background_color" type="color" value="#6931a9" /></label>
             <label class="form-field-wide">Destination URL<input name="destination_url" type="url" placeholder="Optional link" /></label>
             <label class="form-field-wide">Image URL<input name="image_url" type="url" placeholder="Optional external image" /></label>
             <label class="form-field-wide admin-upload">Upload banner image<input name="image_file" type="file" accept="image/png,image/jpeg,image/webp" /><small>PNG, JPEG, or WebP. Maximum 10 MB.</small></label>
@@ -593,11 +1054,11 @@
           <label class="admin-inline-check"><input name="is_active" type="checkbox" /><span><strong>Banner active</strong><small>Visible during its scheduled period</small></span></label>
           <div class="translation-editor">
             <div class="translation-heading"><div><h3>Banner copy</h3><p>Title, description, and button by language</p></div><div class="locale-tabs" role="tablist" aria-label="Banner language"><button class="is-active" type="button" data-locale-tab="en">EN</button><button type="button" data-locale-tab="fr">FR</button><button type="button" data-locale-tab="es">ES</button><button type="button" data-locale-tab="zh">中文</button><button type="button" data-locale-tab="ar">عربي</button></div></div>
-            <div class="locale-panel is-active" data-locale-panel="en"><label>Title<input name="title_en" required /></label><label>Description<textarea name="description_en" rows="3"></textarea></label><label>Button label<input name="button_en" /></label></div>
-            <div class="locale-panel" data-locale-panel="fr" hidden><label>Titre<input name="title_fr" /></label><label>Description<textarea name="description_fr" rows="3"></textarea></label><label>Libellé du bouton<input name="button_fr" /></label></div>
-            <div class="locale-panel" data-locale-panel="es" hidden><label>Título<input name="title_es" /></label><label>Descripción<textarea name="description_es" rows="3"></textarea></label><label>Texto del botón<input name="button_es" /></label></div>
-            <div class="locale-panel" data-locale-panel="zh" hidden><label>横幅标题<input name="title_zh" /></label><label>横幅描述<textarea name="description_zh" rows="3"></textarea></label><label>按钮文字<input name="button_zh" /></label></div>
-            <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>عنوان البانر<input name="title_ar" /></label><label>وصف البانر<textarea name="description_ar" rows="3"></textarea></label><label>نص الزر<input name="button_ar" /></label></div>
+            <div class="locale-panel is-active" data-locale-panel="en"><label>Small heading<input name="eyebrow_en" /></label><label>Title<input name="title_en" required /></label><label>Description<textarea name="description_en" rows="3"></textarea></label><label>Button label<input name="button_en" /></label></div>
+            <div class="locale-panel" data-locale-panel="fr" hidden><label>Petit titre<input name="eyebrow_fr" /></label><label>Titre<input name="title_fr" /></label><label>Description<textarea name="description_fr" rows="3"></textarea></label><label>Libellé du bouton<input name="button_fr" /></label></div>
+            <div class="locale-panel" data-locale-panel="es" hidden><label>Texto pequeño<input name="eyebrow_es" /></label><label>Título<input name="title_es" /></label><label>Descripción<textarea name="description_es" rows="3"></textarea></label><label>Texto del botón<input name="button_es" /></label></div>
+            <div class="locale-panel" data-locale-panel="zh" hidden><label>小标题<input name="eyebrow_zh" /></label><label>横幅标题<input name="title_zh" /></label><label>横幅描述<textarea name="description_zh" rows="3"></textarea></label><label>按钮文字<input name="button_zh" /></label></div>
+            <div class="locale-panel" data-locale-panel="ar" dir="rtl" hidden><label>النص الصغير<input name="eyebrow_ar" /></label><label>عنوان البانر<input name="title_ar" /></label><label>وصف البانر<textarea name="description_ar" rows="3"></textarea></label><label>نص الزر<input name="button_ar" /></label></div>
           </div>
           <p id="banner-form-error" class="admin-feedback" role="alert" hidden></p>
         </div>
@@ -611,6 +1072,9 @@
     <script src="/js/product-options.js" defer></script>
     <script src="/js/admin-home-copy.js?v=1" defer></script>
     <script src="/js/admin-high-refresh.js?v=4" defer></script>
-    <script src="/js/admin.js?v=7" defer></script>
+    <script src="/js/admin-promo-banner.js?v=2" defer></script>
+    <script src="/js/admin-features.js?v=1" defer></script>
+    <script src="/js/admin-reviews.js?v=1" defer></script>
+    <script src="/js/admin.js?v=13" defer></script>
   </body>
 </html>

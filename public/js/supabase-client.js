@@ -179,11 +179,21 @@
         return window.RUQO_HOME_COPY || null;
       });
   }
-  window.RUQO_STORE_BANNERS_READY = client
-    .from("banners")
-    .select("id, name, placement, title_translations, description_translations, button_translations, image_path, mobile_image_path, destination_url, starts_at, ends_at, sort_order")
-    .eq("is_active", true)
-    .order("sort_order")
+  const queryPublicBanners = async () => {
+    const full = await client
+      .from("banners")
+      .select("id, name, placement, eyebrow_translations, title_translations, description_translations, button_translations, image_path, mobile_image_path, destination_url, starts_at, ends_at, sort_order, background_color")
+      .eq("is_active", true)
+      .order("sort_order");
+    if (!full.error) return full;
+    return client
+      .from("banners")
+      .select("id, name, placement, title_translations, description_translations, button_translations, image_path, mobile_image_path, destination_url, starts_at, ends_at, sort_order")
+      .eq("is_active", true)
+      .order("sort_order");
+  };
+
+  window.RUQO_STORE_BANNERS_READY = queryPublicBanners()
     .then(({ data, error }) => {
       if (error) throw error;
       const now = Date.now();
@@ -193,6 +203,8 @@
         return (startsAt === null || startsAt <= now) && (endsAt === null || endsAt > now);
       }).map((banner) => ({
         ...banner,
+        eyebrow_translations: banner.eyebrow_translations || {},
+        background_color: banner.background_color || "#6931a9",
         image_url: banner.image_path?.startsWith("http")
           ? banner.image_path
           : banner.image_path
@@ -214,6 +226,106 @@
       console.warn("Could not load public banners; using built-in content.", error.message);
       if (!Array.isArray(window.RUQO_STORE_BANNERS)) window.RUQO_STORE_BANNERS = [];
       return window.RUQO_STORE_BANNERS;
+    });
+  const readLocalPromoSettings = () => {
+    try {
+      const raw = localStorage.getItem("ruqo-home-promo-settings-v1");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed && [3, 5, 7, 10, 15].includes(Number(parsed.interval_seconds)) && ["fade", "slide"].includes(parsed.transition_style)) {
+        return {
+          interval_seconds: Number(parsed.interval_seconds),
+          transition_style: parsed.transition_style,
+        };
+      }
+    } catch (_) {}
+    return null;
+  };
+  window.RUQO_HOME_PROMO_SETTINGS_READY = client
+    .from("homepage_promo_settings")
+    .select("interval_seconds, transition_style")
+    .eq("id", "homepage")
+    .maybeSingle()
+    .then(({ data, error }) => {
+      if (error) throw error;
+      const fallback = readLocalPromoSettings();
+      const next = {
+        interval_seconds: data?.interval_seconds || fallback?.interval_seconds || 5,
+        transition_style: data?.transition_style || fallback?.transition_style || "fade",
+      };
+      window.RUQO_HOME_PROMO_SETTINGS = next;
+      window.dispatchEvent(new CustomEvent("ruqo:home-promo-settings-updated", { detail: next }));
+      return next;
+    })
+    .catch(() => {
+      const fallback = readLocalPromoSettings() || { interval_seconds: 5, transition_style: "fade" };
+      window.RUQO_HOME_PROMO_SETTINGS = fallback;
+      window.dispatchEvent(new CustomEvent("ruqo:home-promo-settings-updated", { detail: fallback }));
+      return fallback;
+    });
+  const readLocalFeaturesSection = () => {
+    try {
+      const raw = localStorage.getItem("ruqo-home-features-v1");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.keys(parsed).length ? parsed : null;
+    } catch (_) {}
+    return null;
+  };
+  window.RUQO_HOME_FEATURES_READY = client
+    .from("homepage_sections")
+    .select("data")
+    .eq("key", "features")
+    .maybeSingle()
+    .then(({ data, error }) => {
+      if (error) throw error;
+      const row = data?.data;
+      const next = row && typeof row === "object" && !Array.isArray(row) && Object.keys(row).length
+        ? row
+        : readLocalFeaturesSection();
+      const changed = JSON.stringify(window.RUQO_HOME_FEATURES || null) !== JSON.stringify(next || null);
+      window.RUQO_HOME_FEATURES = next || null;
+      writeCache("ruqo-home-features-cache-v1", window.RUQO_HOME_FEATURES);
+      if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-features-updated", { detail: window.RUQO_HOME_FEATURES }));
+      return window.RUQO_HOME_FEATURES;
+    })
+    .catch((error) => {
+      console.warn("Could not load the homepage features section; using built-in content.", error?.message);
+      if (window.RUQO_HOME_FEATURES === undefined) window.RUQO_HOME_FEATURES = readLocalFeaturesSection();
+      window.dispatchEvent(new CustomEvent("ruqo:home-features-updated", { detail: window.RUQO_HOME_FEATURES }));
+      return window.RUQO_HOME_FEATURES;
+    });
+  const readLocalReviewsSection = () => {
+    try {
+      const raw = localStorage.getItem("ruqo-home-reviews-v1");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.keys(parsed).length ? parsed : null;
+    } catch (_) {}
+    return null;
+  };
+  window.RUQO_HOME_REVIEWS_READY = client
+    .from("homepage_sections")
+    .select("data")
+    .eq("key", "reviews")
+    .maybeSingle()
+    .then(({ data, error }) => {
+      if (error) throw error;
+      const row = data?.data;
+      const next = row && typeof row === "object" && !Array.isArray(row) && Object.keys(row).length
+        ? row
+        : readLocalReviewsSection();
+      const changed = JSON.stringify(window.RUQO_HOME_REVIEWS || null) !== JSON.stringify(next || null);
+      window.RUQO_HOME_REVIEWS = next || null;
+      writeCache("ruqo-home-reviews-cache-v1", window.RUQO_HOME_REVIEWS);
+      if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-reviews-updated", { detail: window.RUQO_HOME_REVIEWS }));
+      return window.RUQO_HOME_REVIEWS;
+    })
+    .catch((error) => {
+      console.warn("Could not load the homepage reviews section; using built-in content.", error?.message);
+      if (window.RUQO_HOME_REVIEWS === undefined) window.RUQO_HOME_REVIEWS = readLocalReviewsSection();
+      window.dispatchEvent(new CustomEvent("ruqo:home-reviews-updated", { detail: window.RUQO_HOME_REVIEWS }));
+      return window.RUQO_HOME_REVIEWS;
     });
   window.RUQO_SUPABASE_READY = window.NoursData?.loadFromSupabase(client)
     .then((loaded) => {

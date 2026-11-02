@@ -539,21 +539,25 @@
       const custom = customShowcase[tab.id];
       if (!custom || typeof custom !== "object") {
         return {
+          tabName: tab.label,
           badge: tab.badge,
           title: tab.title,
           desc: tab.desc,
           stat: `${tab.statNum}${tab.statSuffix}`,
           statLabel: tab.statLabel,
+          imageUrl: "",
         };
       }
       const trans = custom.translations?.[lang] || custom.translations?.en || custom.source || {};
       const enSource = custom.translations?.en || custom.source || {};
       return {
+        tabName: (trans.tabName || enSource.tabName || "").trim() || tab.label,
         badge: tab.badge,
         title: (trans.title || enSource.title || "").trim() || tab.title,
         desc: (trans.desc || enSource.desc || "").trim() || tab.desc,
         stat: String(custom.stat || "").trim() || `${tab.statNum}${tab.statSuffix}`,
         statLabel: (trans.label || enSource.label || "").trim() || tab.statLabel,
+        imageUrl: String(custom.image_url || "").trim(),
       };
     };
 
@@ -645,9 +649,9 @@
       descEl.textContent = resolved.desc;
       statNumEl.textContent = resolved.stat;
       statLabelEl.textContent = resolved.statLabel;
-      studioPill.textContent = `${localizedProduct?.name || "WEEXEY Pro"} · ${tabData.label}`;
+      studioPill.textContent = `${localizedProduct?.name || "WEEXEY Pro"} · ${resolved.tabName}`;
 
-      const nextImg = images[index % images.length] || images[0];
+      const nextImg = resolved.imageUrl || images[index % images.length] || images[0];
       studioImg.src = nextImg;
       studioImg.alt = headingEl.textContent;
       studioStage.dataset.visualMode = tabData.id;
@@ -665,11 +669,12 @@
     };
 
     t.tabs.forEach((tab, idx) => {
+      const resolved = resolveTabCopy(tab);
       const btn = document.createElement("button");
       btn.type = "button";
       btn.role = "tab";
       btn.className = "exp-studio-tab";
-      btn.append(icon(tab.icon), document.createTextNode(tab.label));
+      btn.append(icon(tab.icon), document.createTextNode(resolved.tabName));
       btn.addEventListener("click", () => selectTab(idx, true));
       tabList.append(btn);
     });
@@ -766,10 +771,11 @@
       });
 
       const resolved = resolveTabCopy(tab);
-      modalImg.src = imgUrl;
+      const modalImgUrl = resolved.imageUrl || imgUrl;
+      modalImg.src = modalImgUrl;
       modalImg.alt = resolved.title;
       modalBadge.textContent = resolved.badge;
-      modalProduct.textContent = `${localizedProduct?.name || "WEEXEY"} · ${tab.label}`;
+      modalProduct.textContent = `${localizedProduct?.name || "WEEXEY"} · ${resolved.tabName}`;
       modalKicker.textContent = specInfo.kicker;
       modalTitle.textContent = resolved.title;
       modalStory.textContent = customShowcase[tab.id] ? `${resolved.desc} ${specInfo.story}` : specInfo.story;
@@ -816,11 +822,12 @@
     };
 
     t.tabs.forEach((tab, idx) => {
+      const resolved = resolveTabCopy(tab);
       const pill = document.createElement("button");
       pill.type = "button";
       pill.role = "tab";
       pill.className = "exp-bento-modal-pill";
-      pill.append(icon(tab.icon), document.createTextNode(tab.label));
+      pill.append(icon(tab.icon), document.createTextNode(resolved.tabName));
       pill.addEventListener("click", () => renderModalSlide(idx, true));
       modalPills.append(pill);
     });
@@ -845,12 +852,13 @@
     };
 
     t.tabs.forEach((tab, idx) => {
+      const resolved = resolveTabCopy(tab);
       const card = document.createElement("article");
       card.className = `exp-bento-card exp-bento-${idx + 1}`;
       card.tabIndex = 0;
       card.setAttribute("role", "button");
       card.setAttribute("aria-haspopup", "dialog");
-      const imgUrl = images[(idx + 1) % images.length] || images[0];
+      const imgUrl = resolved.imageUrl || images[(idx + 1) % images.length] || images[0];
       card.innerHTML = `
         <div class="exp-bento-media">
           <img src="${imgUrl}" alt="" loading="lazy" />
@@ -866,8 +874,7 @@
         </div>
       `;
       // Match each card's heading and description to its specialty (Design, Display, Chip, Battery)
-      const resolved = resolveTabCopy(tab);
-      card.querySelector(".exp-bento-tag").append(icon(tab.icon), document.createTextNode(tab.label));
+      card.querySelector(".exp-bento-tag").append(icon(tab.icon), document.createTextNode(resolved.tabName));
       card.querySelector("h4").textContent = resolved.title;
       card.querySelector("p").textContent = resolved.desc;
       attachSpotlightTilt(card);

@@ -413,8 +413,11 @@ function syncHomepageCatalog() {
     if (!product) return;
     const localized = catalog.localizeProduct(product, currentLang);
     link.textContent = localized.name;
-    card.querySelector(".product-info p").textContent =
-      localized.description[currentLang] || localized.description.en;
+    const descNode = card.querySelector(".product-info p");
+    if (descNode) {
+      descNode.textContent =
+        localized.description[currentLang] || localized.description.en;
+    }
     card.querySelector(".product-meta .rating").textContent =
       `★★★★★ ${Number(product.rating).toFixed(1)}`;
     const price = card.querySelector("[data-price-sar]");
@@ -714,7 +717,6 @@ function renderPublishedHomeCopy() {
 function renderManagedHomeBanners() {
   const banners = window.RUQO_STORE_BANNERS || [];
   const heroBanner = banners.find((banner) => banner.placement === "home_hero");
-  const promoBanner = banners.find((banner) => banner.placement === "home_promo");
   if (heroBanner) {
     const hero = document.querySelector(".hero");
     const eyebrow = hero?.querySelector(".hero-copy .eyebrow");
@@ -731,20 +733,6 @@ function renderManagedHomeBanners() {
     const visual = hero?.querySelector(".hero-visual");
     if (visual && heroBanner.image_url) {
       visual.style.backgroundImage = bannerBackground(heroBanner.image_url);
-      visual.classList.add("has-managed-image");
-    }
-  }
-  const promo = document.querySelector("#deals");
-  if (promoBanner && promo) {
-    promo.querySelector(".promo-copy .eyebrow").textContent = currentLang === "ar" ? "عرض المتجر" : "STORE OFFER";
-    promo.querySelector(".promo-copy h2").textContent = bannerText(promoBanner, "title_translations");
-    promo.querySelector(".promo-copy p").textContent = bannerText(promoBanner, "description_translations");
-    const button = promo.querySelector(".promo-copy a");
-    button.textContent = bannerText(promoBanner, "button_translations", currentLang === "ar" ? "تسوق الآن" : "Shop now");
-    button.href = promoBanner.destination_url || "/products.html";
-    const visual = promo.querySelector(".promo-visual");
-    if (visual && promoBanner.image_url) {
-      visual.style.backgroundImage = bannerBackground(promoBanner.image_url);
       visual.classList.add("has-managed-image");
     }
   }

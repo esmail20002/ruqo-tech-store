@@ -8,9 +8,15 @@ const transformExtensions = new Set(['.html', '.js', '.css']);
 const localOnlyPaths = new Set([
   'experiments.html',
   'experiments-product.html',
+  'experiments-laser.html',
+  'experiments-blank-4.html',
+  'experiments-blank-5.html',
   path.join('css', 'experiments.css'),
   path.join('css', 'experiment-switcher.css'),
   path.join('js', 'experiments.js'),
+  path.join('js', 'crystalized-ball.mjs'),
+  path.join('js', 'infinite-spiral.mjs'),
+  path.join('js', 'model-viewer-3d.mjs'),
   // Local-only preview credentials; ignored by Git and never published.
   path.join('js', 'admin-local-dev.js'),
 ]);

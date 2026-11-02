@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <script src="/js/home-i18n.js?v=3"></script>
+    <script src="/js/home-i18n.js?v=4"></script>
     <script>
       if (!["localhost", "127.0.0.1", "::1"].includes(location.hostname)) {
         location.replace("/");
@@ -35,10 +35,155 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/styles.css?v=8" />
-    <link rel="stylesheet" href="/css/experiments.css?v=40" />
+    <link rel="stylesheet" href="/css/styles.css?v=11" />
+    <link rel="stylesheet" href="/css/experiments.css?v=48" />
+    <link rel="stylesheet" href="/css/laser-flow.css?v=10" />
+    <link rel="stylesheet" href="/css/experiment-home-laser.css?v=4" />
   </head>
-  <body data-page="experiments">
+  <body data-page="experiments" class="is-gate-locked">
+    <!-- Full-Screen Exclusive LaserFlow Gate (Covers 100vw x 100vh) -->
+    <aside class="home-laser-gate" data-laser-gate aria-label="WEEXEY Opening Gate">
+      <div class="laser-stage is-awaiting-launch" data-laser-flow>
+        <div class="laser-flow-container">
+          <canvas class="laser-flow-canvas" data-laser-canvas aria-hidden="true"></canvas>
+        </div>
+        <div class="laser-surface" data-laser-surface>
+          <div class="laser-surface-shockwave" aria-hidden="true"></div>
+          <div class="laser-surface-copy">
+            <span class="laser-copy-eyebrow">
+              <span class="laser-copy-eyebrow__dot" aria-hidden="true"></span>
+              WELCOME TO WEEXEY
+            </span>
+            <h2 class="laser-copy-headline" aria-label="Experience the Extraordinary">
+              <span class="laser-copy-word" style="--word-index: 0">Experience</span>
+              <span class="laser-copy-word" style="--word-index: 1">the</span>
+              <span class="laser-copy-word laser-copy-word--accent" style="--word-index: 2">Extraordinary</span>
+            </h2>
+            <p class="laser-copy-subline">
+              Next-generation flagship electronics crafted where precision meets light.
+            </p>
+            <div class="laser-copy-actions">
+              <button type="button" class="laser-enter-store-btn" data-laser-enter-store>
+                <span class="laser-enter-store-btn__glow" aria-hidden="true"></span>
+                <span class="laser-enter-store-btn__label">Enter Store</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center WEEXEY Brand Launch Emblem -->
+        <div class="laser-launch-wrap" data-laser-launch-wrap>
+          <button
+            type="button"
+            class="laser-launch-orb"
+            data-laser-launch
+            aria-label="تفعيل تجربة WEEXEY"
+          >
+            <span class="laser-launch-orb__halo" aria-hidden="true"></span>
+            <span class="laser-launch-orb__ring laser-launch-orb__ring--outer" aria-hidden="true"></span>
+            <span class="laser-launch-orb__ring laser-launch-orb__ring--inner" aria-hidden="true"></span>
+            <span class="laser-launch-orb__core" aria-hidden="true">
+              <svg
+                class="weexey-spark-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="62"
+                height="48"
+                viewBox="0 0 88 64"
+                fill="none"
+                aria-hidden="true"
+              >
+                <defs>
+                  <linearGradient id="homeWeexeyBrandGrad" x1="6" y1="32" x2="84" y2="32" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#6b34d6" />
+                    <stop offset="48%" stop-color="#9e3ee0" />
+                    <stop offset="78%" stop-color="#d848a0" />
+                    <stop offset="100%" stop-color="#ff6289" />
+                  </linearGradient>
+                  <linearGradient id="homeWeexeyRayGrad" x1="54" y1="8" x2="84" y2="56" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#be44cf" />
+                    <stop offset="55%" stop-color="#df4ca0" />
+                    <stop offset="100%" stop-color="#ff6688" />
+                  </linearGradient>
+                </defs>
+                <path
+                  class="weexey-spark-main"
+                  d="M27 6 H33 V15 C33 24.5 36.5 28 46 28 H55 V34 H46 C36.5 34 33 37.5 33 47 V56 H27 V47 C27 37.5 23.5 34 14 34 H5 V28 H14 C23.5 28 27 24.5 27 15 Z"
+                  fill="url(#homeWeexeyBrandGrad)"
+                />
+                <rect
+                  class="weexey-spark-ray weexey-spark-ray--top"
+                  x="61"
+                  y="6"
+                  width="6"
+                  height="16"
+                  rx="1.2"
+                  fill="url(#homeWeexeyRayGrad)"
+                />
+                <rect
+                  class="weexey-spark-ray weexey-spark-ray--bottom"
+                  x="61"
+                  y="40"
+                  width="6"
+                  height="16"
+                  rx="1.2"
+                  fill="url(#homeWeexeyRayGrad)"
+                />
+                <rect
+                  class="weexey-spark-ray weexey-spark-ray--right"
+                  x="71"
+                  y="28"
+                  width="15"
+                  height="6"
+                  rx="1.2"
+                  fill="url(#homeWeexeyRayGrad)"
+                />
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="laser-refresh-btn"
+          data-laser-refresh
+          aria-label="Refresh animation"
+          title="Replay animation"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            aria-hidden="true"
+          >
+            <path
+              d="M16.5 7.99976H18C19.4142 7.99976 20.1213 7.99976 20.5607 7.56042C21 7.12108 21 6.41397 21 4.99976V3.49976"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+            <path
+              d="M3 11.9998C3 7.02919 7.0293 2.99976 12 2.99976C15.571 2.99976 18.0948 4.73029 20 7.08347M21 11.9998C21 16.9703 16.9707 20.9998 12 20.9998C8.42904 20.9998 5.90524 19.2692 4 16.916"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+            <path
+              d="M7.5 15.9998H6C4.58579 15.9998 3.87868 15.9998 3.43934 16.4391C3 16.8784 3 17.5855 3 18.9998V20.4998"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </button>
+        <p class="laser-flow-error" data-laser-error role="status" hidden></p>
+      </div>
+    </aside>
+
     <div class="page-shell">
       <header class="topbar">
         <div class="container topbar-inner">
@@ -135,6 +280,9 @@
       <nav class="experiment-switcher" aria-label="Experiment pages">
         <a href="/experiments.html" data-experiment-label="home" aria-current="page"></a>
         <a href="/experiments-product.html?id=macbook-pro" data-experiment-label="product"></a>
+        <a href="/experiments-laser.html" data-experiment-label="laser"></a>
+        <a href="/experiments-blank-4.html" data-experiment-label="blank4"></a>
+        <a href="/experiments-blank-5.html" data-experiment-label="blank5"></a>
       </nav>
 
       <div class="mobile-ad-shell">
@@ -164,7 +312,7 @@
       </div>
 
       <main>
-        <section class="hero container reveal">
+        <section id="flagship-store" class="hero container reveal">
           <div class="hero-copy">
             <span class="eyebrow" data-i18n="hero.eyebrow"
               >تكنولوجيا مستقبلية</span
@@ -396,7 +544,6 @@
                   <h3>
                     <a href="/product.html?id=macbook-pro">MacBook Pro M4</a>
                   </h3>
-                  <p data-i18n="products.macbook">14 بوصة - شريحة M4</p>
                 </div>
                 <div class="product-meta">
                   <span class="rating">★★★★★ 4.9</span>
@@ -414,7 +561,6 @@
                   <h3>
                     <a href="/product.html?id=galaxy-s25">Samsung S25 Ultra</a>
                   </h3>
-                  <p data-i18n="products.s25">بشاشة 6.9 إنش</p>
                 </div>
                 <div class="product-meta">
                   <span class="rating">★★★★★ 4.8</span>
@@ -432,7 +578,6 @@
                   <h3>
                     <a href="/product.html?id=airpods-pro">AirPods Pro</a>
                   </h3>
-                  <p data-i18n="products.airpods">إلغاء ضجيج احترافي</p>
                 </div>
                 <div class="product-meta">
                   <span class="rating">★★★★★ 4.9</span>
@@ -450,7 +595,6 @@
                   <h3>
                     <a href="/product.html?id=galaxy-watch">Galaxy Watch 7</a>
                   </h3>
-                  <p data-i18n="products.watch">مراقبة صحية متقدمة</p>
                 </div>
                 <div class="product-meta">
                   <span class="rating">★★★★★ 4.7</span>
@@ -479,6 +623,7 @@
             >
           </div>
           <div class="promo-visual">
+            <img class="promo-image" data-promo-image alt="" hidden />
             <div class="console-visual">
               <img
                 src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=85"
@@ -486,6 +631,11 @@
                 loading="lazy"
               />
             </div>
+          </div>
+          <div class="promo-controls" data-promo-controls role="group" aria-label="Homepage offers" hidden>
+            <button type="button" class="promo-arrow" data-promo-prev aria-label="Previous offer">‹</button>
+            <div class="promo-dots" data-promo-dots></div>
+            <button type="button" class="promo-arrow" data-promo-next aria-label="Next offer">›</button>
           </div>
         </section>
 
@@ -724,11 +874,15 @@
     <script src="/js/catalog-data.js?v=3"></script>
     <script src="/js/high-refresh-core.js?v=3"></script>
     <script src="/js/high-refresh.js?v=5"></script>
+    <script src="/js/promo-banner.js?v=2"></script>
+    <script src="/js/features-section.js?v=1"></script>
+    <script src="/js/reviews-section.js?v=1"></script>
     <script src="/js/main.js?v=13"></script>
-    <script src="/js/experiments.js?v=2"></script>
+    <script src="/js/laser-flow.js?v=7"></script>
+    <script src="/js/experiments.js?v=12"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/js/supabase-config.js"></script>
-    <script defer src="/js/supabase-client.js?v=7"></script>
+    <script defer src="/js/supabase-client.js?v=10"></script>
   </body>
 </html>
