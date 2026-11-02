@@ -113,7 +113,7 @@ The new `RUQO` cloud project is created in the existing Supabase organization, l
 supabase db push
 ```
 
-The applied migrations create the schema, RLS policies, `product-images` bucket, four categories, and public storefront defaults. The latest migration adds ordered product-detail images, separate from the primary gallery. Run `supabase migration list` to compare local and remote migration versions.
+The applied migrations create the schema, RLS policies, `product-images` bucket, four categories, and public storefront defaults. The product-detail image migration adds ordered images separate from the primary gallery. The product-review-votes migration adds authenticated, one-vote-per-user feedback with public aggregate counts; apply it with `supabase db push --linked` after reviewing `supabase db push --linked --dry-run`. Run `supabase migration list` to compare local and remote migration versions.
 
 ## Import the current storefront catalog
 

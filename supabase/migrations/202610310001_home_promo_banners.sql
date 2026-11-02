@@ -4,7 +4,7 @@ alter table public.banners
   add column eyebrow_translations jsonb not null default '{}'::jsonb
     check (jsonb_typeof(eyebrow_translations) = 'object'),
   add column background_color text not null default '#6931a9'
-    check (background_color ~ '^#[0-9A-Fa-F]{6}$');
+    check (background_color ~ '^#[0-9A-Fa-f]{6}$');
 
 create table public.homepage_promo_settings (
   id text primary key default 'homepage' check (id = 'homepage'),

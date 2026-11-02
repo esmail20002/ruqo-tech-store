@@ -12,7 +12,24 @@
   let checkoutCouponMessage = "";
   let checkoutCouponMessageIsError = false;
   let selectedReviewPhotos = [];
+  let reviewVoteAuthClient = null;
   let aboutRevealObserver = null;
+  function getReviewVoteAuthClient() {
+    const config = window.RUQO_SUPABASE_CONFIG;
+    const createClient = window.supabase?.createClient;
+    if (!config?.url || !config?.publishableKey || !createClient) return null;
+    if (!reviewVoteAuthClient) {
+      reviewVoteAuthClient = createClient(config.url, config.publishableKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          storageKey: "ruqo-review-vote-auth-token",
+        },
+      });
+    }
+    return reviewVoteAuthClient;
+  }
   function parseReviewPhotos(raw) {
     if (!raw) return [];
     if (Array.isArray(raw)) return raw.filter(Boolean);
@@ -445,7 +462,7 @@
     es: { footerCopy: "Una tienda de electrónica premium que combina rendimiento, diseño y confianza.", footerLinks: "Enlaces rápidos", footerNew: "Novedades", footerCategories: "Categorías", footerOffers: "Ofertas", footerSupport: "Ayuda", footerPayment: "Pago seguro", footerFastShipping: "Envío rápido", footerContactUs: "Contáctanos", footerContact: "Contacto", footerLegal: "Información legal", footerReturns: "Devoluciones", footerLocation: "Riad - Arabia Saudí" },
     zh: { footerCopy: "臻选电子产品，兼顾性能、设计与安心服务。", footerLinks: "快捷链接", footerNew: "新品上架", footerCategories: "商品分类", footerOffers: "优惠活动", footerSupport: "客户支持", footerPayment: "安全支付", footerFastShipping: "快速配送", footerContactUs: "联系我们", footerContact: "联系方式", footerLegal: "法律信息", footerReturns: "退货政策", footerLocation: "沙特阿拉伯利雅得" },
   };
-  const t = { ...(text[language] || text.en), ...supplementalText[language], ...footerText[language] };
+  let t;
   const reviewPhotoMessages = {
     en: { photoTooLarge: "Choose an image smaller than 8 MB.", photoType: "Please choose an image file." },
     ar: { photoTooLarge: "اختر صورة أقل من 8 ميغابايت.", photoType: "اختر ملف صورة." },
@@ -467,6 +484,104 @@
     es: { open: "Ver todas las reseñas", close: "Cerrar reseñas" },
     zh: { open: "查看全部评价", close: "关闭评价" },
   }[language] || { open: "View all reviews", close: "Close reviews" };
+  const reviewVoteMessages = {
+    en: {
+      like: "Helpful",
+      dislike: "Not helpful",
+      signInTitle: "Sign in to rate this review",
+      signInDescription: "Sign in or create an account with your email. We’ll send you a secure link.",
+      email: "Email address",
+      sendLink: "Send sign-in link",
+      close: "Not now",
+      linkSent: "Check your inbox for the sign-in link, then return here to vote.",
+      signInFailed: "We couldn’t send the sign-in link. Please try again.",
+      loadFailed: "Review votes are temporarily unavailable.",
+      voteFailed: "We couldn’t save your vote. Please try again.",
+      accountBody: "Profile details and order history stay in this browser. Review voting uses a secure email account and stores your votes with the review service.",
+      privacyBody: "This store saves wishlists, bags, profiles, preferences, and order history in your browser. Review-vote accounts and votes are securely stored by the sign-in and review services. The contact form does not send messages.",
+    },
+    ar: {
+      like: "مفيد",
+      dislike: "غير مفيد",
+      signInTitle: "سجّل الدخول لتقييم هذا التعليق",
+      signInDescription: "سجّل الدخول أو أنشئ حسابًا ببريدك الإلكتروني، وسنرسل إليك رابطًا آمنًا.",
+      email: "البريد الإلكتروني",
+      sendLink: "إرسال رابط الدخول",
+      close: "ليس الآن",
+      linkSent: "تحقق من بريدك لفتح رابط الدخول، ثم عُد إلى هنا للتصويت.",
+      signInFailed: "تعذر إرسال رابط الدخول. حاول مرة أخرى.",
+      loadFailed: "التصويت على التعليقات غير متاح مؤقتًا.",
+      voteFailed: "تعذر حفظ تصويتك. حاول مرة أخرى.",
+      accountBody: "تبقى بيانات الملف الشخصي وسجل الطلبات في هذا المتصفح. يتطلب التصويت على التعليقات حسابًا آمنًا بالبريد الإلكتروني، وتُحفظ الأصوات مع خدمة التعليقات.",
+      privacyBody: "يحفظ المتجر قوائم الرغبات والسلة والملف الشخصي والتفضيلات وسجل الطلبات في متصفحك. تُحفظ حسابات التصويت وأصوات التعليقات بأمان لدى خدمات تسجيل الدخول والتعليقات. لا يرسل نموذج التواصل الرسائل.",
+    },
+    fr: {
+      like: "Utile",
+      dislike: "Pas utile",
+      signInTitle: "Connectez-vous pour évaluer cet avis",
+      signInDescription: "Connectez-vous ou créez un compte avec votre e-mail. Nous vous enverrons un lien sécurisé.",
+      email: "Adresse e-mail",
+      sendLink: "Envoyer le lien de connexion",
+      close: "Pas maintenant",
+      linkSent: "Consultez votre boîte de réception, puis revenez ici pour voter.",
+      signInFailed: "Impossible d’envoyer le lien. Veuillez réessayer.",
+      loadFailed: "Les votes sont temporairement indisponibles.",
+      voteFailed: "Impossible d’enregistrer votre vote. Veuillez réessayer.",
+      accountBody: "Les coordonnées du profil et l’historique des commandes restent dans ce navigateur. Le vote utilise un compte e-mail sécurisé et les votes sont conservés avec le service d’avis.",
+      privacyBody: "Les favoris, le panier, le profil, les préférences et l’historique des commandes sont enregistrés dans votre navigateur. Les comptes de vote et les votes sont stockés en toute sécurité par les services de connexion et d’avis. Le formulaire de contact n’envoie pas de messages.",
+    },
+    es: {
+      like: "Útil",
+      dislike: "No útil",
+      signInTitle: "Inicia sesión para valorar esta reseña",
+      signInDescription: "Inicia sesión o crea una cuenta con tu correo. Te enviaremos un enlace seguro.",
+      email: "Correo electrónico",
+      sendLink: "Enviar enlace de acceso",
+      close: "Ahora no",
+      linkSent: "Revisa tu correo y vuelve aquí después de abrir el enlace para votar.",
+      signInFailed: "No se pudo enviar el enlace. Inténtalo de nuevo.",
+      loadFailed: "Los votos no están disponibles temporalmente.",
+      voteFailed: "No se pudo guardar tu voto. Inténtalo de nuevo.",
+      accountBody: "Los datos del perfil y el historial de pedidos permanecen en este navegador. Para votar se usa una cuenta segura por correo y los votos se guardan con el servicio de reseñas.",
+      privacyBody: "La lista de deseos, la cesta, el perfil, las preferencias y el historial de pedidos se guardan en tu navegador. Las cuentas y los votos de reseñas se almacenan de forma segura en los servicios de acceso y reseñas. El formulario de contacto no envía mensajes.",
+    },
+    zh: {
+      like: "有帮助",
+      dislike: "没有帮助",
+      signInTitle: "登录后评价此评论",
+      signInDescription: "使用电子邮箱登录或创建账户，我们会发送安全登录链接。",
+      email: "电子邮箱",
+      sendLink: "发送登录链接",
+      close: "暂不登录",
+      linkSent: "请查收登录链接，完成登录后返回此处投票。",
+      signInFailed: "登录链接发送失败，请重试。",
+      loadFailed: "投票暂时不可用。",
+      voteFailed: "投票保存失败，请重试。",
+      accountBody: "个人资料和订单记录保存在此浏览器中。评价投票使用安全的邮箱账户，投票会保存在评价服务中。",
+      privacyBody: "心愿单、购物袋、个人资料、偏好和订单记录保存在浏览器中。评价账户和投票由登录与评价服务安全保存。联系表单不会发送消息。",
+    },
+  }[language] || {
+    like: "Helpful",
+    dislike: "Not helpful",
+    signInTitle: "Sign in to rate this review",
+    signInDescription: "Sign in or create an account with your email. We’ll send you a secure link.",
+    email: "Email address",
+    sendLink: "Send sign-in link",
+    close: "Not now",
+    linkSent: "Check your inbox for the sign-in link, then return here to vote.",
+    signInFailed: "We couldn’t send the sign-in link. Please try again.",
+    loadFailed: "Review votes are temporarily unavailable.",
+    voteFailed: "We couldn’t save your vote. Please try again.",
+    accountBody: "Profile details and order history stay in this browser. Review voting uses a secure email account and stores your votes with the review service.",
+    privacyBody: "This store saves wishlists, bags, profiles, preferences, and order history in your browser. Review-vote accounts and votes are securely stored by the sign-in and review services. The contact form does not send messages.",
+  };
+  t = {
+    ...(text[language] || text.en),
+    ...supplementalText[language],
+    ...footerText[language],
+    accountBody: reviewVoteMessages.accountBody,
+    privacyBody: reviewVoteMessages.privacyBody,
+  };
   const currencyRates = { SAR: 1, USD: 1 / 3.75, EUR: 0.245 };
   const localeByLanguage = {
     en: "en-SA",
@@ -1111,6 +1226,12 @@
       .map(localizeProduct);
     const reviewKey = `nours-reviews-${product.id}`;
     const reviews = store.read(reviewKey, []);
+    const client = window.RUQO_SUPABASE;
+    const reviewVoteClient = getReviewVoteAuthClient();
+    const reviewVoteSummaries = new Map();
+    const pendingReviewVotes = new Set();
+    let reviewVotesLoaded = false;
+    let reviewVoteUserId = null;
     let reviewsLoading = Boolean(window.RUQO_SUPABASE);
     const reviewTotal = product.reviews + reviews.length;
     const reviewScore =
@@ -1433,11 +1554,28 @@
     reviewsDialog.className = "review-list-dialog";
     reviewsDialog.setAttribute("aria-labelledby", "all-product-reviews-title");
     reviewsDialog.innerHTML = `<header class="review-dialog-header"><h2 id="all-product-reviews-title">${reviewUi.written}</h2><button type="button" class="commerce-icon-button" data-close-reviews aria-label="${reviewDialogLabels.close}" title="${reviewDialogLabels.close}">${icon("x")}</button></header>`;
+    const reviewVoteStatus = document.createElement("p");
+    reviewVoteStatus.className = "review-vote-status";
+    reviewVoteStatus.setAttribute("role", "status");
+    const dialogVoteStatus = document.createElement("p");
+    dialogVoteStatus.className = "review-vote-status";
+    dialogVoteStatus.setAttribute("role", "status");
+    const setReviewVoteStatus = (message) => {
+      reviewVoteStatus.textContent = message;
+      dialogVoteStatus.textContent = message;
+      reviewVoteStatus.hidden = !message;
+      dialogVoteStatus.hidden = !message;
+    };
     const dialogEntries = document.createElement("div");
     dialogEntries.className = "review-entries review-dialog-entries";
-    reviewsDialog.append(reviewTools, dialogEntries);
-    root.append(reviewsDialog);
-    reviewList.replaceChildren(reviewHeader, openReviewsButton, reviewEntries);
+    reviewsDialog.append(reviewTools, dialogVoteStatus, dialogEntries);
+    const reviewVoteLoginDialog = document.createElement("dialog");
+    reviewVoteLoginDialog.className = "review-vote-login-dialog";
+    reviewVoteLoginDialog.dir = language === "ar" ? "rtl" : "ltr";
+    reviewVoteLoginDialog.setAttribute("aria-labelledby", "review-vote-login-title");
+    reviewVoteLoginDialog.innerHTML = `<form class="review-vote-login-form"><h2 id="review-vote-login-title">${escapeHtml(reviewVoteMessages.signInTitle)}</h2><p>${escapeHtml(reviewVoteMessages.signInDescription)}</p><label for="review-vote-email">${escapeHtml(reviewVoteMessages.email)}</label><input id="review-vote-email" type="email" name="email" autocomplete="email" maxlength="254" required /><p class="review-vote-login-feedback" role="status" aria-live="polite"></p><div class="review-vote-login-actions"><button class="commerce-button" type="submit">${escapeHtml(reviewVoteMessages.sendLink)}</button><button class="commerce-button-secondary" type="button" data-close-review-vote-login>${escapeHtml(reviewVoteMessages.close)}</button></div></form>`;
+    root.append(reviewsDialog, reviewVoteLoginDialog);
+    reviewList.replaceChildren(reviewHeader, openReviewsButton, reviewVoteStatus, reviewEntries);
     openReviewsButton.addEventListener("click", () => reviewsDialog.showModal());
     reviewsDialog.querySelector("[data-close-reviews]").addEventListener("click", () => reviewsDialog.close());
     reviewsDialog.addEventListener("keydown", (event) => {
@@ -1452,6 +1590,131 @@
         if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) reviewsDialog.close();
       }
     });
+    reviewVoteLoginDialog.querySelector("[data-close-review-vote-login]").addEventListener("click", () => reviewVoteLoginDialog.close());
+    const reviewVoteLoginForm = reviewVoteLoginDialog.querySelector("form");
+    const reviewVoteLoginFeedback = reviewVoteLoginDialog.querySelector(".review-vote-login-feedback");
+    reviewVoteLoginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!reviewVoteLoginForm.reportValidity()) return;
+      const submitButton = reviewVoteLoginForm.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+      reviewVoteLoginFeedback.textContent = "";
+      try {
+        if (!reviewVoteClient) throw new Error("Supabase authentication is not configured.");
+        const { error } = await reviewVoteClient.auth.signInWithOtp({
+          email: reviewVoteLoginForm.elements.email.value.trim(),
+          options: {
+            emailRedirectTo: location.href,
+            shouldCreateUser: true,
+          },
+        });
+        if (error) throw error;
+        reviewVoteLoginFeedback.textContent = reviewVoteMessages.linkSent;
+      } catch (error) {
+        console.warn("Could not send product review sign-in link.", error.message);
+        reviewVoteLoginFeedback.textContent = reviewVoteMessages.signInFailed;
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+    const updateReviewVoteButtons = (reviewId) => {
+      const summary = reviewVoteSummaries.get(reviewId) || { likes: 0, dislikes: 0, userVote: null };
+      root.querySelectorAll(".review-vote-button").forEach((button) => {
+        if (button.dataset.reviewId !== reviewId) return;
+        const value = Number(button.dataset.reviewVote);
+        const count = value === 1 ? summary.likes : summary.dislikes;
+        const displayedCount = reviewVotesLoaded
+          ? count.toLocaleString(localeByLanguage[language] || localeByLanguage.en)
+          : "–";
+        const selected = summary.userVote === value;
+        button.disabled = !reviewVotesLoaded || pendingReviewVotes.has(reviewId);
+        button.classList.toggle("is-selected", selected);
+        button.setAttribute("aria-pressed", String(selected));
+        button.setAttribute("aria-label", `${value === 1 ? reviewVoteMessages.like : reviewVoteMessages.dislike}: ${displayedCount}`);
+        button.querySelector(".review-vote-count").textContent = displayedCount;
+      });
+    };
+    const loadReviewVoteSummaries = async (reviewIds) => {
+      if (!reviewVoteClient) throw new Error("Supabase authentication is not configured.");
+      const { data: sessionData, error: userError } = await reviewVoteClient.auth.getSession();
+      if (userError) throw userError;
+      reviewVoteUserId = sessionData.session?.user?.id || null;
+      const { data, error } = await reviewVoteClient.rpc("get_product_review_vote_summaries", {
+        p_review_ids: reviewIds,
+      });
+      if (error) throw error;
+      (data || []).forEach((summary) => {
+        reviewVoteSummaries.set(summary.review_id, {
+          likes: Number(summary.like_count) || 0,
+          dislikes: Number(summary.dislike_count) || 0,
+          userVote: summary.user_vote === null ? null : Number(summary.user_vote),
+        });
+      });
+      reviewVotesLoaded = true;
+      setReviewVoteStatus("");
+      reviewIds.forEach(updateReviewVoteButtons);
+    };
+    const castReviewVote = async (reviewId, value) => {
+      if (!reviewVoteClient) {
+        setReviewVoteStatus(reviewVoteMessages.loadFailed);
+        return;
+      }
+      let previous;
+      let optimisticApplied = false;
+      try {
+        const { data: sessionData, error: userError } = await reviewVoteClient.auth.getSession();
+        if (userError) throw userError;
+        const user = sessionData.session?.user;
+        if (!user) {
+          reviewVoteLoginFeedback.textContent = "";
+          reviewVoteLoginDialog.showModal();
+          return;
+        }
+        if (reviewVoteUserId !== user.id) {
+          const visibleReviewIds = reviews.filter((review) => review.published && review.id).map((review) => review.id);
+          await loadReviewVoteSummaries(visibleReviewIds);
+        }
+        previous = reviewVoteSummaries.get(reviewId) || { likes: 0, dislikes: 0, userVote: null };
+        const nextVote = previous.userVote === value ? null : value;
+        const optimistic = { ...previous };
+        if (previous.userVote === 1) optimistic.likes = Math.max(0, optimistic.likes - 1);
+        if (previous.userVote === -1) optimistic.dislikes = Math.max(0, optimistic.dislikes - 1);
+        if (nextVote === 1) optimistic.likes += 1;
+        if (nextVote === -1) optimistic.dislikes += 1;
+        optimistic.userVote = nextVote;
+        reviewVoteSummaries.set(reviewId, optimistic);
+        optimisticApplied = true;
+        pendingReviewVotes.add(reviewId);
+        updateReviewVoteButtons(reviewId);
+
+        const result = nextVote === null
+          ? await reviewVoteClient.from("product_review_votes")
+            .delete()
+            .eq("product_review_id", reviewId)
+            .eq("user_id", user.id)
+          : await reviewVoteClient.from("product_review_votes")
+            .upsert({
+              product_review_id: reviewId,
+              user_id: user.id,
+              vote_value: nextVote,
+            }, { onConflict: "product_review_id,user_id" });
+        if (result.error) throw result.error;
+        reviewVoteUserId = user.id;
+        try {
+          await loadReviewVoteSummaries([reviewId]);
+        } catch (refreshError) {
+          console.warn("Could not refresh product review vote totals.", refreshError.message);
+          setReviewVoteStatus(reviewVoteMessages.loadFailed);
+        }
+      } catch (error) {
+        if (optimisticApplied) reviewVoteSummaries.set(reviewId, previous);
+        console.warn("Could not save product review vote.", error.message);
+        setReviewVoteStatus(reviewVoteMessages.voteFailed);
+      } finally {
+        pendingReviewVotes.delete(reviewId);
+        updateReviewVoteButtons(reviewId);
+      }
+    };
     const renderReviewEntries = (reviewEntries, preview = false) => {
       const selectedRating = preview ? "all" : reviewTools.querySelector("[data-review-filter]").value;
       const sortOrder = preview ? "newest" : reviewTools.querySelector("[data-review-sort]").value;
@@ -1538,8 +1801,31 @@
           });
           card.append(gallery);
         }
+        if (client && review.id && review.published) {
+          const voteControls = document.createElement("div");
+          voteControls.className = "review-vote-controls";
+          [
+            { value: 1, iconName: "thumbs-up", label: reviewVoteMessages.like },
+            { value: -1, iconName: "thumbs-down", label: reviewVoteMessages.dislike },
+          ].forEach(({ value, iconName, label }) => {
+            const button = document.createElement("button");
+            button.className = "review-vote-button";
+            button.type = "button";
+            button.dataset.reviewId = review.id;
+            button.dataset.reviewVote = String(value);
+            button.setAttribute("aria-label", label);
+            button.setAttribute("aria-pressed", "false");
+            button.disabled = !reviewVotesLoaded;
+            button.innerHTML = `${icon(iconName)}<span class="review-vote-count">–</span>`;
+            button.addEventListener("click", () => void castReviewVote(review.id, value));
+            voteControls.append(button);
+          });
+          card.append(voteControls);
+          updateReviewVoteButtons(review.id);
+        }
         reviewEntries.append(card);
       }
+      window.lucide?.createIcons();
       reviewEntries.scrollTo({ left: 0, behavior: "auto" });
     };
     const renderLocalReviews = () => {
@@ -1548,7 +1834,6 @@
     };
     reviewTools.querySelectorAll("select").forEach((select) => select.addEventListener("change", renderLocalReviews));
     renderLocalReviews();
-    const client = window.RUQO_SUPABASE;
     if (!client) {
       reviewsLoading = false;
       reviewHeader.querySelector("p").textContent = language === "ar" ? "المراجعات المحفوظة على هذا الجهاز" : "Reviews saved on this device";
@@ -1635,6 +1920,17 @@
             });
           });
           reviews.splice(0, reviews.length, ...[...merged.values()].sort((left, right) => String(right.date || "").localeCompare(String(left.date || ""))));
+          const voteReviewIds = reviews.filter((review) => review.published && review.id).map((review) => review.id);
+          if (voteReviewIds.length) {
+            try {
+              await loadReviewVoteSummaries(voteReviewIds);
+            } catch (voteError) {
+              console.warn("Could not load product review vote totals.", voteError.message);
+              setReviewVoteStatus(reviewVoteMessages.loadFailed);
+            }
+          } else {
+            reviewVotesLoaded = true;
+          }
         } catch (error) {
           console.warn("Could not load shared product reviews.", error.message);
           reviewHeader.querySelector("p").textContent = reviewMessages.unavailable;
