@@ -83,8 +83,8 @@ body:is([data-page="experiments"], [data-page="home"]):not([data-experiment-blan
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  margin-top: 14px;
+  gap: 12px;
+  margin-top: 6px;
   pointer-events: auto;
   opacity: 0;
   transform: translate3d(0, 22px, 0) scale(0.95);
@@ -167,6 +167,16 @@ body:is([data-page="experiments"], [data-page="home"]):not([data-experiment-blan
   .home-laser-gate .laser-surface {
     left: 8%;
     right: 8%;
-    top: 48%;
+    top: 44%;
+  }
+
+  .home-laser-gate .laser-surface-copy {
+    gap: 10px;
+    padding: 12px 20px 96px;
+    transform: translateY(-28px);
+  }
+
+  .home-laser-gate .laser-copy-actions {
+    margin-top: 4px;
   }
 }

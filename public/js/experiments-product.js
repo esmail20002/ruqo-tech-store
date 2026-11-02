@@ -630,9 +630,24 @@
     attachSpotlightTilt(boxCard);
 
     // 4. Interactive FAQ Accordion
-    showcase.querySelector(".exp-faq-title").textContent = t.faqTitle;
+    const customFaq = rawProduct?.product_option_values?._faqs;
+    const faqHeadingLang = customFaq?.headings?.[lang] || {};
+    const faqHeadingEn = customFaq?.headings?.en || {};
+    const resolvedFaqTitle = String(faqHeadingLang.title || faqHeadingEn.title || t.faqTitle).trim();
+    const resolvedFaqs = Array.isArray(customFaq?.items)
+      ? customFaq.items.map((item) => {
+          if (!item || typeof item !== "object") return null;
+          const fLang = item.translations?.[lang] || {};
+          const fEn = item.translations?.en || {};
+          const q = String(fLang.q || fEn.q || "").trim();
+          const a = String(fLang.a || fEn.a || "").trim();
+          return q && a ? { q, a } : null;
+        }).filter(Boolean)
+      : t.faqs;
+
+    showcase.querySelector(".exp-faq-title").textContent = resolvedFaqTitle;
     const faqList = showcase.querySelector(".exp-faq-list");
-    t.faqs.forEach((faq, idx) => {
+    resolvedFaqs.forEach((faq, idx) => {
       const details = document.createElement("details");
       details.className = "exp-faq-item";
       if (idx === 0) details.open = true;

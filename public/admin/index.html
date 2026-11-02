@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=11" />
+    <link rel="stylesheet" href="/css/admin.css?v=13" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -209,6 +209,27 @@
           <section class="admin-view" data-admin-panel="audience" hidden>
             <div class="admin-page-heading"><div><span class="admin-eyebrow">CUSTOMER RELATIONSHIPS</span><h1>Newsletter audience</h1><p>Review and manage email subscriptions.</p></div><button id="refresh-subscribers" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh</button></div>
             <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Email</th><th>Subscribed</th><th>Status</th></tr></thead><tbody id="subscribers-body"></tbody></table><div id="subscribers-empty" class="admin-empty" hidden><i data-lucide="users-round" aria-hidden="true"></i><strong>No subscribers yet</strong></div></div></section>
+
+            <div class="admin-page-heading audience-reviews-heading">
+              <div>
+                <span class="admin-eyebrow">PRODUCT MODERATION</span>
+                <h2>Product reviews &amp; comments</h2>
+                <p>Inspect customer comments grouped by product, hide inappropriate comments, or permanently delete abusive reviews.</p>
+              </div>
+              <button id="refresh-product-reviews" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh comments</button>
+            </div>
+            <section class="admin-section">
+              <div class="audience-reviews-toolbar">
+                <label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><input id="audience-reviews-search" type="search" placeholder="Search product, reviewer name, or comment text…" /></label>
+                <label class="admin-inline-check audience-reviews-toggle"><input id="audience-show-empty-products" type="checkbox" /><span><strong>Show products without comments</strong></span></label>
+              </div>
+              <div id="audience-product-reviews-grid" class="audience-product-reviews-grid"></div>
+              <div id="audience-product-reviews-empty" class="admin-empty" hidden>
+                <i data-lucide="message-square-off" aria-hidden="true"></i>
+                <strong>No product comments found</strong>
+                <span>Customer reviews submitted on product pages will appear here grouped by product.</span>
+              </div>
+            </section>
           </section>
 
           <section class="admin-view" data-admin-panel="promotions" hidden>
@@ -824,6 +845,7 @@
             <button type="button" data-product-editor-target="product-showcase"><i data-lucide="sparkles" aria-hidden="true"></i><span>Interactive studio</span></button>
             <button type="button" data-product-editor-target="product-performance"><i data-lucide="gauge" aria-hidden="true"></i><span>Performance &amp; Efficiency</span></button>
             <button type="button" data-product-editor-target="product-box"><i data-lucide="package" aria-hidden="true"></i><span>What’s in the box</span></button>
+            <button type="button" data-product-editor-target="product-faq"><i data-lucide="circle-help" aria-hidden="true"></i><span>FAQ</span></button>
             <button type="button" data-product-editor-target="product-specifications"><i data-lucide="list-checks" aria-hidden="true"></i><span>Specifications</span></button>
             <button type="button" data-product-editor-target="product-detail-images"><i data-lucide="images" aria-hidden="true"></i><span>Detail images</span></button>
           </nav>
@@ -1001,6 +1023,21 @@
             <div id="product-box-headings" class="product-quick-fact-row"></div>
             <div id="product-box-rows" class="product-quick-fact-rows"></div>
           </section>
+          <section class="product-quick-facts-editor product-editor-section" id="product-faq">
+            <div class="variant-editor-heading">
+              <div>
+                <h3>Frequently Asked Questions</h3>
+                <p>Customize the FAQ heading and expandable questions and answers. Use the language tabs in Content to edit any language, or translate from English with Azure.</p>
+              </div>
+              <div class="product-editor-heading-actions">
+                <button id="translate-product-faq" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Translate with Azure</button>
+                <button id="add-product-faq-item" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add question</button>
+              </div>
+            </div>
+            <p id="product-faq-feedback" class="admin-help" role="status" hidden></p>
+            <div id="product-faq-headings" class="product-quick-fact-row"></div>
+            <div id="product-faq-rows" class="product-quick-fact-rows"></div>
+          </section>
           <section class="specification-editor product-editor-section" id="product-specifications">
             <div class="variant-editor-heading"><div><h3>Detailed specifications</h3><p>Add a detail title with its description. Use the language tabs above to translate each row.</p></div><button id="add-product-specification" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add detail</button></div>
             <div class="specification-locale-panel" data-specification-locale="en"></div>
@@ -1119,6 +1156,6 @@
     <script src="/js/admin-promo-banner.js?v=2" defer></script>
     <script src="/js/admin-features.js?v=1" defer></script>
     <script src="/js/admin-reviews.js?v=1" defer></script>
-    <script src="/js/admin.js?v=18" defer></script>
+    <script src="/js/admin.js?v=20" defer></script>
   </body>
 </html>

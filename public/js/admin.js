@@ -127,6 +127,44 @@
       },
     ],
   };
+  const defaultProductFaqConfig = {
+    headings: {
+      en: { title: "Frequently Asked Questions" },
+      ar: { title: "الأسئلة الشائعة حول المنتج" },
+      fr: { title: "Questions fréquentes" },
+      es: { title: "Preguntas frecuentes" },
+      zh: { title: "常见问题解答" },
+    },
+    items: [
+      {
+        translations: {
+          en: { q: "Is this product covered by an official warranty?", a: "Yes. Every device includes a full 2-year WEEXEY warranty covering manufacturing defects and hardware support." },
+          ar: { q: "هل يشمل المنتج ضماناً رسمياً؟", a: "نعم، يأتي كل جهاز مع ضمان WEEXEY الرسمي لمدة سنتين يشمل عيوب التصنيع والدعم الفني." },
+          fr: { q: "Ce produit bénéficie-t-il d’une garantie officielle ?", a: "Oui, chaque appareil inclut une garantie officielle WEEXEY de 2 ans." },
+          es: { q: "¿Incluye garantía oficial?", a: "Sí, todos los productos cuentan con 2 años de garantía oficial WEEXEY." },
+          zh: { q: "该产品包含官方保修吗？", a: "是的，每台设备均享有 WEEXEY 2 年官方质保。" },
+        },
+      },
+      {
+        translations: {
+          en: { q: "How fast is delivery and can I track my order?", a: "Orders dispatch within 24 hours and arrive in 1–2 business days with live SMS and account tracking." },
+          ar: { q: "كم يستغرق التوصيل وكيف أتابع طلبي؟", a: "يتم شحن الطلبات خلال 24 ساعة وتصل خلال 1–2 يوم عمل مع تتبع فوري." },
+          fr: { q: "Quels sont les délais de livraison ?", a: "Expédition sous 24 h et livraison en 1 à 2 jours ouvrés avec suivi." },
+          es: { q: "¿Cuánto tarda el envío?", a: "Entrega rápida en 1–2 días laborables con seguimiento en tiempo real." },
+          zh: { q: "配送速度如何？可以追踪订单吗？", a: "订单将在 24 小时内发出，1-2 个工作日送达并支持实时追踪。" },
+        },
+      },
+      {
+        translations: {
+          en: { q: "Can I return or exchange the device if I change my mind?", a: "Absolutely. You have a 7-day return window for sealed or like-new items with all original accessories." },
+          ar: { q: "هل يمكنني استرجاع أو استبدال المنتج؟", a: "بالتأكيد، لديك 7 أيام للاسترجاع أو الاستبدال بشرط بقاء المنتج بحالته الأصلية مع جميع ملحقاته." },
+          fr: { q: "Puis-je retourner ou échanger le produit ?", a: "Oui, vous disposez de 7 jours pour retourner un article dans son état d’origine." },
+          es: { q: "¿Puedo devolver el producto?", a: "Sí, dispones de 7 días para devoluciones con todos los accesorios originales." },
+          zh: { q: "支持退换货吗？", a: "支持 7 天无理由退换，需保持包装与配件完好。" },
+        },
+      },
+    ],
+  };
   const footerTextFields = [
     { key: "footer.copy", label: "Store description", multiline: true },
     { key: "footer.linksTitle", label: "Quick links heading" },
@@ -297,6 +335,8 @@
   const productPerformanceRows = $("#product-performance-rows");
   const productBoxHeadings = $("#product-box-headings");
   const productBoxRows = $("#product-box-rows");
+  const productFaqHeadings = $("#product-faq-headings");
+  const productFaqRows = $("#product-faq-rows");
   const productDetailImageRows = $("#product-detail-image-rows");
   const productGalleryImageRows = $("#product-gallery-image-rows");
   const productColorPaletteElement = $("[data-product-color-palette]");
@@ -313,6 +353,7 @@
   let promotions = [];
   let banners = [];
   let newsletterSubscribers = [];
+  let audienceProductReviews = [];
   let homepageSpotlights = [];
   let brandSettings = {};
   let footerDraft = {};
@@ -741,6 +782,7 @@
     renderCatalog();
     renderCategories();
     renderHomepageSpotlights();
+    renderAudienceProductReviews();
   }
 
   function canManage(roles) {
@@ -753,7 +795,7 @@
     if (canManage(["owner", "admin", "order_manager"])) tasks.push(loadOrders());
     if (canManage(["owner", "admin", "order_manager"])) tasks.push(loadContactMessages());
     if (canManage(["owner", "admin", "marketing_manager"])) {
-      tasks.push(loadPromotions(), loadBanners(), loadNewsletterSubscribers());
+      tasks.push(loadPromotions(), loadBanners(), loadNewsletterSubscribers(), loadAudienceProductReviews());
     }
     if (canManage(["owner", "admin"])) tasks.push(loadBrandSettings(), loadHomepageSpotlights());
     const results = await Promise.allSettled(tasks);
@@ -843,6 +885,10 @@
     banners = [{ id: "local-banner-1", name: "Demo campaign", placement: "home_promo", title_translations: { en: "Demo campaign" }, image_path: null, starts_at: null, ends_at: null, is_active: true }];
     contactMessages = [{ id: "local-message-1", customer_name: "Demo Customer", customer_email: "customer@example.com", message: "Sample support message for local preview.", language_code: "en", status: "new", created_at: new Date().toISOString() }];
     newsletterSubscribers = [{ email: "subscriber@example.com", is_active: true, subscribed_at: new Date().toISOString() }];
+    audienceProductReviews = [
+      { id: "local-review-1", product_slug: "macbook-pro", reviewer_name: "Ahmad S.", rating: 5, review_text: "Outstanding build quality and battery life.", photo_url: null, is_visible: true, created_at: new Date().toISOString() },
+      { id: "local-review-2", product_slug: "galaxy-s25", reviewer_name: "Sara M.", rating: 4, review_text: "Fast performance and great camera zoom.", photo_url: null, is_visible: true, created_at: new Date(Date.now() - 3600000).toISOString() },
+    ];
     brandSettings = {
       store_name: "WEEXEY",
       logo_path: null,
@@ -875,6 +921,7 @@
     renderBanners();
     renderContactMessages();
     renderNewsletterSubscribers();
+    renderAudienceProductReviews();
     $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
       .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close"))
       .forEach((element) => { element.disabled = true; });
@@ -1523,6 +1570,258 @@
     });
     $("#subscribers-body").replaceChildren(...rows);
     $("#subscribers-empty").hidden = newsletterSubscribers.length > 0;
+  }
+
+  function parseAdminReviewPhotos(rawPhotoUrl) {
+    if (!rawPhotoUrl) return [];
+    const text = String(rawPhotoUrl).trim();
+    if (!text) return [];
+    if (text.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed)) return parsed.map((url) => String(url || "").trim()).filter(Boolean);
+      } catch {}
+    }
+    return [text];
+  }
+
+  function extractReviewStoragePath(url) {
+    const marker = "/storage/v1/object/public/product-review-photos/";
+    const idx = String(url || "").indexOf(marker);
+    if (idx === -1) return null;
+    return decodeURIComponent(String(url).slice(idx + marker.length).split("?")[0]);
+  }
+
+  async function loadAudienceProductReviews() {
+    const { data, error } = await client
+      .from("product_reviews")
+      .select("id, product_slug, reviewer_name, rating, review_text, photo_url, is_visible, created_at")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    if (error) throw error;
+    audienceProductReviews = data || [];
+    renderAudienceProductReviews();
+  }
+
+  async function toggleAudienceProductReviewVisibility(review, button) {
+    if (localDemoMode) return;
+    const nextVisible = !review.is_visible;
+    button.disabled = true;
+    try {
+      const { error } = await client
+        .from("product_reviews")
+        .update({ is_visible: nextVisible })
+        .eq("id", review.id);
+      if (error) throw error;
+      review.is_visible = nextVisible;
+      renderAudienceProductReviews();
+      showToast(nextVisible ? "Comment is now visible on the product page." : "Comment hidden from the product page.");
+    } catch (error) {
+      showToast(`Could not update comment: ${error.message || "Unknown error"}`);
+      button.disabled = false;
+    }
+  }
+
+  async function deleteAudienceProductReview(review, button) {
+    if (localDemoMode) return;
+    if (!window.confirm(`Delete the comment by "${review.reviewer_name}" permanently?`)) return;
+    button.disabled = true;
+    try {
+      const storagePaths = parseAdminReviewPhotos(review.photo_url)
+        .map(extractReviewStoragePath)
+        .filter(Boolean);
+      if (storagePaths.length) {
+        await client.storage.from("product-review-photos").remove(storagePaths);
+      }
+      const { error } = await client
+        .from("product_reviews")
+        .delete()
+        .eq("id", review.id);
+      if (error) throw error;
+      audienceProductReviews = audienceProductReviews.filter((item) => item.id !== review.id);
+      renderAudienceProductReviews();
+      showToast("Comment deleted permanently.");
+    } catch (error) {
+      showToast(`Could not delete comment: ${error.message || "Unknown error"}`);
+      button.disabled = false;
+    }
+  }
+
+  function renderAudienceProductReviews() {
+    const grid = $("#audience-product-reviews-grid");
+    const empty = $("#audience-product-reviews-empty");
+    if (!grid || !empty) return;
+
+    const query = ($("#audience-reviews-search")?.value || "").trim().toLowerCase();
+    const showEmptyProducts = Boolean($("#audience-show-empty-products")?.checked);
+
+    const reviewsBySlug = new Map();
+    for (const review of audienceProductReviews) {
+      if (!reviewsBySlug.has(review.product_slug)) reviewsBySlug.set(review.product_slug, []);
+      reviewsBySlug.get(review.product_slug).push(review);
+    }
+
+    const productMap = new Map(products.map((product) => [product.slug, product]));
+    for (const slug of reviewsBySlug.keys()) {
+      if (!productMap.has(slug)) {
+        productMap.set(slug, {
+          slug,
+          brand: "Store product",
+          name_translations: { en: slug },
+          external_image_url: defaultLightLogoUrl,
+        });
+      }
+    }
+
+    const groups = [...productMap.values()]
+      .map((product) => {
+        const allReviews = reviewsBySlug.get(product.slug) || [];
+        const productName = translateName(product);
+        const productMatches = !query
+          || [productName, product.slug, product.brand || ""].join(" ").toLowerCase().includes(query);
+        const matchingReviews = query && !productMatches
+          ? allReviews.filter((review) =>
+              [review.reviewer_name, review.review_text].join(" ").toLowerCase().includes(query))
+          : allReviews;
+        return { product, productName, allReviews, matchingReviews, productMatches };
+      })
+      .filter((group) => {
+        if (query) return group.matchingReviews.length > 0 || (group.productMatches && (showEmptyProducts || group.allReviews.length > 0));
+        return showEmptyProducts || group.allReviews.length > 0;
+      })
+      .sort((a, b) => b.allReviews.length - a.allReviews.length || a.productName.localeCompare(b.productName));
+
+    const boxes = groups.map(({ product, productName, allReviews, matchingReviews }) => {
+      const box = document.createElement("article");
+      box.className = "audience-product-review-box";
+
+      const head = document.createElement("header");
+      head.className = "audience-product-review-box-head";
+
+      const prodWrap = document.createElement("div");
+      prodWrap.className = "audience-product-review-product";
+      const thumb = document.createElement("img");
+      thumb.src = product.external_image_url || defaultLightLogoUrl;
+      thumb.alt = productName;
+      const meta = document.createElement("div");
+      meta.className = "audience-product-review-product-meta";
+      const title = document.createElement("strong");
+      title.textContent = productName;
+      const sub = document.createElement("small");
+      sub.textContent = `${product.brand || "WEEXEY"} · ${product.slug}`;
+      meta.append(title, sub);
+      prodWrap.append(thumb, meta);
+
+      const stats = document.createElement("div");
+      stats.className = "audience-product-review-stats";
+      if (allReviews.length) {
+        const avg = allReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / allReviews.length;
+        const ratingBadge = document.createElement("span");
+        ratingBadge.className = "audience-product-review-rating";
+        ratingBadge.textContent = `★ ${avg.toFixed(1)}`;
+        stats.append(ratingBadge);
+      }
+      const countBadge = document.createElement("span");
+      countBadge.className = "audience-product-review-count";
+      countBadge.textContent = `${allReviews.length} comment${allReviews.length === 1 ? "" : "s"}`;
+      stats.append(countBadge);
+
+      head.append(prodWrap, stats);
+      box.append(head);
+
+      const list = document.createElement("div");
+      list.className = "audience-product-review-list";
+
+      if (!matchingReviews.length) {
+        const note = document.createElement("p");
+        note.className = "audience-product-review-empty-note";
+        note.textContent = "No customer comments on this product yet.";
+        list.append(note);
+      } else {
+        for (const review of matchingReviews) {
+          const item = document.createElement("div");
+          item.className = `audience-review-item${review.is_visible === false ? " is-hidden-review" : ""}`;
+
+          const top = document.createElement("div");
+          top.className = "audience-review-item-top";
+
+          const author = document.createElement("div");
+          author.className = "audience-review-author";
+          const reviewerName = document.createElement("strong");
+          reviewerName.textContent = review.reviewer_name || "Customer";
+          const reviewMeta = document.createElement("div");
+          reviewMeta.className = "audience-review-meta";
+          const stars = document.createElement("span");
+          stars.className = "audience-review-stars";
+          const ratingCount = Math.min(5, Math.max(1, Number(review.rating) || 5));
+          stars.textContent = "★".repeat(ratingCount) + "☆".repeat(5 - ratingCount);
+          const dateSpan = document.createElement("span");
+          dateSpan.textContent = formatDateTime(review.created_at);
+          const visibilityBadge = document.createElement("span");
+          visibilityBadge.className = `admin-status ${review.is_visible === false ? "is-draft" : "is-published"}`;
+          visibilityBadge.textContent = review.is_visible === false ? "Hidden" : "Visible";
+          reviewMeta.append(stars, dateSpan, visibilityBadge);
+          author.append(reviewerName, reviewMeta);
+
+          const actions = document.createElement("div");
+          actions.className = "audience-review-actions";
+
+          const toggleBtn = document.createElement("button");
+          toggleBtn.type = "button";
+          toggleBtn.className = "admin-row-action";
+          toggleBtn.title = review.is_visible === false ? "Show comment on product page" : "Hide comment from product page";
+          toggleBtn.setAttribute("aria-label", toggleBtn.title);
+          toggleBtn.innerHTML = `<i data-lucide="${review.is_visible === false ? "eye" : "eye-off"}" aria-hidden="true"></i>`;
+          toggleBtn.addEventListener("click", () => toggleAudienceProductReviewVisibility(review, toggleBtn));
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "admin-row-action is-danger";
+          deleteBtn.title = "Delete comment permanently";
+          deleteBtn.setAttribute("aria-label", `Delete comment by ${review.reviewer_name}`);
+          deleteBtn.innerHTML = '<i data-lucide="trash-2" aria-hidden="true"></i>';
+          deleteBtn.addEventListener("click", () => deleteAudienceProductReview(review, deleteBtn));
+
+          actions.append(toggleBtn, deleteBtn);
+          top.append(author, actions);
+
+          const bodyText = document.createElement("p");
+          bodyText.className = "audience-review-text";
+          bodyText.textContent = review.review_text || "";
+
+          item.append(top, bodyText);
+
+          const photos = parseAdminReviewPhotos(review.photo_url);
+          if (photos.length) {
+            const photoRow = document.createElement("div");
+            photoRow.className = "audience-review-photos";
+            for (const photoUrl of photos) {
+              const link = document.createElement("a");
+              link.href = photoUrl;
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              const img = document.createElement("img");
+              img.src = photoUrl;
+              img.alt = `Review photo by ${review.reviewer_name}`;
+              img.loading = "lazy";
+              link.append(img);
+              photoRow.append(link);
+            }
+            item.append(photoRow);
+          }
+
+          list.append(item);
+        }
+      }
+
+      box.append(list);
+      return box;
+    });
+
+    grid.replaceChildren(...boxes);
+    grid.hidden = boxes.length === 0;
+    empty.hidden = boxes.length > 0;
+    window.lucide?.createIcons();
   }
 
   function renderOrders() {
@@ -2508,6 +2807,250 @@
     }
   }
 
+  function renderProductFaqHeadings(headings = defaultProductFaqConfig.headings) {
+    if (!productFaqHeadings) return;
+    productFaqHeadings.replaceChildren();
+    const header = document.createElement("div");
+    header.className = "product-quick-fact-header";
+    const number = document.createElement("span");
+    number.className = "product-quick-fact-number";
+    number.textContent = "Section heading";
+    header.append(number);
+
+    const localePanels = document.createElement("div");
+    localePanels.className = "product-quick-fact-locales";
+    for (const language of languages) {
+      const defaults = defaultProductFaqConfig.headings[language] || defaultProductFaqConfig.headings.en;
+      const translation = headings?.[language] || {};
+      const panel = document.createElement("div");
+      panel.className = "product-quick-fact-locale-panel";
+      panel.dataset.faqLocale = language;
+      panel.dir = language === "ar" ? "rtl" : "ltr";
+      panel.hidden = language !== activeProductLocale();
+
+      const fields = document.createElement("div");
+      fields.className = "product-quick-fact-fields is-single-field";
+      const titleLabel = document.createElement("label");
+      titleLabel.textContent = "FAQ card heading";
+      const title = document.createElement("input");
+      title.maxLength = 160;
+      title.placeholder = defaults.title;
+      title.value = String(translation.title ?? defaults.title);
+      title.dataset.faqTitle = "";
+      titleLabel.append(title);
+
+      fields.append(titleLabel);
+      panel.append(fields);
+      localePanels.append(panel);
+    }
+    productFaqHeadings.append(header, localePanels);
+  }
+
+  function createProductFaqRow(item = {}, position = 0, totalCount = 1) {
+    const row = document.createElement("fieldset");
+    row.className = "product-quick-fact-row product-faq-row";
+    row.dataset.faqIndex = String(position);
+
+    const header = document.createElement("div");
+    header.className = "product-quick-fact-header";
+    const number = document.createElement("span");
+    number.className = "product-quick-fact-number";
+    number.textContent = `Question ${position + 1}`;
+    const spacer = document.createElement("span");
+
+    const actions = document.createElement("div");
+    actions.className = "product-quick-fact-actions";
+    const createAction = (iconName, label, handler, disabled = false, danger = false) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.disabled = disabled;
+      button.classList.toggle("admin-danger-button", danger);
+      button.setAttribute("aria-label", label);
+      button.title = label;
+      button.innerHTML = `<i data-lucide="${iconName}" aria-hidden="true"></i>`;
+      button.addEventListener("click", handler);
+      return button;
+    };
+    actions.append(
+      createAction("arrow-up", "Move question up", () => moveProductFaqItem(position, -1), position === 0),
+      createAction("arrow-down", "Move question down", () => moveProductFaqItem(position, 1), position === totalCount - 1),
+      createAction("trash-2", "Remove question", () => removeProductFaqItem(position), false, true),
+    );
+    header.append(number, spacer, actions);
+
+    const localePanels = document.createElement("div");
+    localePanels.className = "product-quick-fact-locales";
+    const translations = item.translations && typeof item.translations === "object" ? item.translations : {};
+    for (const language of languages) {
+      const translation = translations[language] || {};
+      const panel = document.createElement("div");
+      panel.className = "product-quick-fact-locale-panel";
+      panel.dataset.faqLocale = language;
+      panel.dir = language === "ar" ? "rtl" : "ltr";
+      panel.hidden = language !== activeProductLocale();
+
+      const fields = document.createElement("div");
+      fields.className = "product-quick-fact-fields";
+      const questionField = document.createElement("label");
+      questionField.textContent = "Question";
+      const questionInput = document.createElement("input");
+      questionInput.maxLength = 220;
+      questionInput.value = String(translation.q || "");
+      questionInput.dataset.faqQuestion = "";
+      questionField.append(questionInput);
+
+      const answerField = document.createElement("label");
+      answerField.textContent = "Answer";
+      const answerInput = document.createElement("textarea");
+      answerInput.rows = 2;
+      answerInput.maxLength = 600;
+      answerInput.value = String(translation.a || "");
+      answerInput.dataset.faqAnswer = "";
+      answerField.append(answerInput);
+
+      fields.append(questionField, answerField);
+      panel.append(fields);
+      localePanels.append(panel);
+    }
+
+    row.append(header, localePanels);
+    return row;
+  }
+
+  function readProductFaq() {
+    const headings = Object.fromEntries(languages.map((language) => {
+      const panel = productFaqHeadings?.querySelector(`[data-faq-locale="${language}"]`);
+      return [language, {
+        title: panel?.querySelector("[data-faq-title]")?.value.trim() || "",
+      }];
+    }));
+    const items = [...(productFaqRows?.querySelectorAll(".product-faq-row") || [])].map((row) => ({
+      translations: Object.fromEntries(languages.map((language) => {
+        const panel = row.querySelector(`[data-faq-locale="${language}"]`);
+        return [language, {
+          q: panel?.querySelector("[data-faq-question]")?.value.trim() || "",
+          a: panel?.querySelector("[data-faq-answer]")?.value.trim() || "",
+        }];
+      })),
+    }));
+    return { headings, items };
+  }
+
+  function renderProductFaq(config = defaultProductFaqConfig) {
+    renderProductFaqHeadings(config?.headings || defaultProductFaqConfig.headings);
+    const items = Array.isArray(config?.items) ? config.items : defaultProductFaqConfig.items;
+    productFaqRows?.replaceChildren(...items.map((item, index) => createProductFaqRow(item, index, items.length)));
+    window.lucide?.createIcons();
+  }
+
+  function setProductFaq(product) {
+    const feedback = $("#product-faq-feedback");
+    if (feedback) {
+      feedback.hidden = true;
+      feedback.textContent = "";
+    }
+    const configured = product?.product_option_values?._faqs;
+    if (configured && typeof configured === "object") {
+      renderProductFaq({
+        headings: configured.headings || defaultProductFaqConfig.headings,
+        items: Array.isArray(configured.items) ? configured.items : defaultProductFaqConfig.items,
+      });
+      return;
+    }
+    renderProductFaq(structuredClone(defaultProductFaqConfig));
+  }
+
+  function addProductFaqItem() {
+    const current = readProductFaq();
+    const index = current.items.length;
+    current.items.push({
+      translations: Object.fromEntries(languages.map((language) => [language, { q: "", a: "" }])),
+    });
+    const locale = activeProductLocale();
+    renderProductFaq(current);
+    setLocale(locale);
+    productFaqRows?.querySelector(`[data-faq-index="${index}"] [data-faq-locale="${locale}"] [data-faq-question]`)?.focus();
+  }
+
+  function removeProductFaqItem(index) {
+    const current = readProductFaq();
+    current.items.splice(index, 1);
+    const locale = activeProductLocale();
+    renderProductFaq(current);
+    setLocale(locale);
+  }
+
+  function moveProductFaqItem(index, offset) {
+    const current = readProductFaq();
+    const destination = index + offset;
+    if (destination < 0 || destination >= current.items.length) return;
+    [current.items[index], current.items[destination]] = [current.items[destination], current.items[index]];
+    const locale = activeProductLocale();
+    renderProductFaq(current);
+    setLocale(locale);
+  }
+
+  async function translateProductFaq() {
+    const feedback = $("#product-faq-feedback");
+    const btn = $("#translate-product-faq");
+    const current = readProductFaq();
+    const enHeading = current.headings.en || {};
+    const hasItems = current.items.some((item) => item.translations?.en?.q || item.translations?.en?.a);
+    if (!enHeading.title && !hasItems) {
+      feedback.textContent = "Enter an English heading or FAQ item before translating.";
+      feedback.hidden = false;
+      return;
+    }
+    btn.disabled = true;
+    feedback.textContent = "Translating Frequently Asked Questions with Azure…";
+    feedback.hidden = false;
+    try {
+      if (enHeading.title) {
+        const { data, error } = await client.functions.invoke("translate-high-refresh", {
+          body: {
+            source: { title: enHeading.title || "", text: "", eyebrow: "", badge: "" },
+            translations: {},
+          },
+        });
+        if (error) throw error;
+        if (data?.translations) {
+          for (const lang of ["ar", "fr", "es", "zh"]) {
+            current.headings[lang] = {
+              title: data.translations[lang]?.title || current.headings[lang]?.title || "",
+            };
+          }
+        }
+      }
+      for (const item of current.items) {
+        const en = item.translations?.en || {};
+        if (!en.q && !en.a) continue;
+        const { data, error } = await client.functions.invoke("translate-high-refresh", {
+          body: {
+            source: { title: en.q || "", text: en.a || "", eyebrow: "", badge: "" },
+            translations: {},
+          },
+        });
+        if (error) throw error;
+        if (data?.translations) {
+          for (const lang of ["ar", "fr", "es", "zh"]) {
+            item.translations[lang] = {
+              q: data.translations[lang]?.title || item.translations[lang]?.q || "",
+              a: data.translations[lang]?.text || item.translations[lang]?.a || "",
+            };
+          }
+        }
+      }
+      const locale = activeProductLocale();
+      renderProductFaq(current);
+      setLocale(locale);
+      feedback.textContent = "Translations generated for all 4 languages (AR / FR / ES / ZH). Click Save changes to apply.";
+    } catch (error) {
+      feedback.textContent = error.message || "Could not translate FAQ fields.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
   function createProductBenefitRow(benefit, index) {
     const row = document.createElement("fieldset");
     row.className = "product-benefit-row";
@@ -3222,6 +3765,9 @@
     $$('[data-box-locale]').forEach((panel) => {
       panel.hidden = panel.dataset.boxLocale !== locale;
     });
+    $$('[data-faq-locale]').forEach((panel) => {
+      panel.hidden = panel.dataset.faqLocale !== locale;
+    });
     renderProductQuickFactPreview();
   }
 
@@ -3738,6 +4284,7 @@
     setProductQuickFacts(null);
     setProductPerformance(null);
     setProductBox(null);
+    setProductFaq(null);
     renderProductDetailImages([]);
     originalProductGalleryImages = [];
     renderProductGalleryImages([]);
@@ -3804,6 +4351,7 @@
     setProductQuickFacts(product);
     setProductPerformance(product);
     setProductBox(product);
+    setProductFaq(product);
     generateProductCombinations();
     updateProductCurrencyLabels();
     window.lucide?.createIcons();
@@ -4337,11 +4885,13 @@
       }
       const performanceConfig = readProductPerformance();
       const boxConfig = readProductBox();
+      const faqConfig = readProductFaq();
       const storedOptionValues = {
         ...optionValues,
         _quick_facts: quickFacts,
         _performance: performanceConfig,
         _in_the_box: boxConfig,
+        _faqs: faqConfig,
         ...(Object.keys(showcaseConfig).length ? { _showcase: showcaseConfig } : {}),
       };
 
@@ -4777,6 +5327,9 @@
     $("#messages-clear-filters").addEventListener("click", clearMessageFilters);
     $$("[data-clear-message-filters]").forEach((button) => button.addEventListener("click", clearMessageFilters));
     $("#refresh-subscribers").addEventListener("click", loadNewsletterSubscribers);
+    $("#refresh-product-reviews")?.addEventListener("click", loadAudienceProductReviews);
+    $("#audience-reviews-search")?.addEventListener("input", renderAudienceProductReviews);
+    $("#audience-show-empty-products")?.addEventListener("change", renderAudienceProductReviews);
     $("#add-home-spotlight").addEventListener("click", openNewHomepageSpotlight);
     $("#add-promotion").addEventListener("click", openNewPromotion);
     $("#add-banner")?.addEventListener("click", () => openNewBanner());
@@ -4826,6 +5379,8 @@
     $("#translate-product-performance")?.addEventListener("click", translateProductPerformance);
     $("#add-product-box-item")?.addEventListener("click", addProductBoxItem);
     $("#translate-product-box")?.addEventListener("click", translateProductBox);
+    $("#add-product-faq-item")?.addEventListener("click", addProductFaqItem);
+    $("#translate-product-faq")?.addEventListener("click", translateProductFaq);
     productQuickFactRows.addEventListener("input", () => renderProductQuickFactPreview());
     productQuickFactRows.addEventListener("change", () => renderProductQuickFactPreview());
     productForm.elements.currency.addEventListener("change", updateProductCurrencyLabels);
