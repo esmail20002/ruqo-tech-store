@@ -822,7 +822,7 @@
             <button type="button" data-product-editor-target="product-benefits"><i data-lucide="badge-check" aria-hidden="true"></i><span>Benefits</span></button>
             <button type="button" data-product-editor-target="product-detail-images"><i data-lucide="images" aria-hidden="true"></i><span>Detail images</span></button>
             <button type="button" data-product-editor-target="product-specifications"><i data-lucide="list-checks" aria-hidden="true"></i><span>Specifications</span></button>
-            <button type="button" data-product-editor-target="product-showcase"><i data-lucide="sparkles" aria-hidden="true"></i><span>Studio &amp; Bento</span></button>
+            <button type="button" data-product-editor-target="product-showcase"><i data-lucide="sparkles" aria-hidden="true"></i><span>Interactive studio</span></button>
           </nav>
           <div class="product-editor-content" id="product-editor-content">
           <section class="product-editor-section" id="product-identity">
@@ -880,8 +880,8 @@
           <section class="product-showcase-editor product-editor-section" id="product-showcase">
             <div class="variant-editor-heading">
               <div>
-                <h3>Studio &amp; Bento showcase (optional)</h3>
-                <p>Customize the 4 interactive studio tabs and Bento cards for this product. Leave any field empty to use the built-in smart defaults automatically.</p>
+                <h3>Interactive studio &amp; product details (optional)</h3>
+                <p>Customize the 4 interactive studio tabs, performance highlights, and in-the-box content for this product. Leave any field empty to use the built-in defaults.</p>
               </div>
               <button id="translate-product-showcase" class="admin-secondary-button" type="button"><i data-lucide="languages" aria-hidden="true"></i> Translate with Azure</button>
             </div>
@@ -890,18 +890,18 @@
               <fieldset class="product-value-field form-field-wide">
                 <legend>1. Craft &amp; Design</legend>
                 <div class="admin-form-grid">
-                  <label>Box / Tab name (EN)<input name="showcase_design_tab_name" maxlength="100" placeholder="Craft &amp; Design" /></label>
+                  <label>Studio tab name (EN)<input name="showcase_design_tab_name" maxlength="100" placeholder="Craft &amp; Design" /></label>
                   <label>Stat number (e.g. 15.5mm)<input name="showcase_design_stat" maxlength="40" placeholder="15.5mm" /></label>
                   <label class="form-field-wide">Stat label (EN)<input name="showcase_design_label" maxlength="120" placeholder="Ultra-thin profile" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_design_title" maxlength="200" placeholder="Precision-crafted unibody that feels effortless." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_design_desc" rows="2" maxlength="600" placeholder="Sculpted with clean lines, balanced weight distribution, and a durable anodized finish."></textarea></label>
                   <div class="form-field-wide product-showcase-image-field">
-                    <label>Box image (upload or HTTPS URL)
+                    <label>Studio image (upload or HTTPS URL)
                       <input name="showcase_design_file" type="file" accept="image/jpeg,image/png,image/webp" />
                       <input name="showcase_design_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
                     </label>
                     <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="design" hidden>
-                      <img data-showcase-preview="design" alt="Box 1 preview" />
+                      <img data-showcase-preview="design" alt="Design studio image preview" />
                       <button type="button" class="admin-text-button" data-showcase-clear-image="design">Remove custom image</button>
                     </div>
                   </div>
@@ -910,18 +910,18 @@
               <fieldset class="product-value-field form-field-wide">
                 <legend>2. Pro Display</legend>
                 <div class="admin-form-grid">
-                  <label>Box / Tab name (EN)<input name="showcase_display_tab_name" maxlength="100" placeholder="Pro Display" /></label>
+                  <label>Studio tab name (EN)<input name="showcase_display_tab_name" maxlength="100" placeholder="Pro Display" /></label>
                   <label>Stat number (e.g. 120Hz)<input name="showcase_display_stat" maxlength="40" placeholder="120Hz" /></label>
                   <label class="form-field-wide">Stat label (EN)<input name="showcase_display_label" maxlength="120" placeholder="Adaptive ProMotion" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_display_title" maxlength="200" placeholder="True-to-life brilliance from every angle." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_display_desc" rows="2" maxlength="600" placeholder="Extreme dynamic range with deep blacks, P3 wide color gamut, and adaptive refresh rate."></textarea></label>
                   <div class="form-field-wide product-showcase-image-field">
-                    <label>Box image (upload or HTTPS URL)
+                    <label>Studio image (upload or HTTPS URL)
                       <input name="showcase_display_file" type="file" accept="image/jpeg,image/png,image/webp" />
                       <input name="showcase_display_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
                     </label>
                     <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="display" hidden>
-                      <img data-showcase-preview="display" alt="Box 2 preview" />
+                      <img data-showcase-preview="display" alt="Display studio image preview" />
                       <button type="button" class="admin-text-button" data-showcase-clear-image="display">Remove custom image</button>
                     </div>
                   </div>
@@ -930,18 +930,18 @@
               <fieldset class="product-value-field form-field-wide">
                 <legend>3. Next-Gen Chip &amp; Performance</legend>
                 <div class="admin-form-grid">
-                  <label>Box / Tab name (EN)<input name="showcase_performance_tab_name" maxlength="100" placeholder="Next-Gen Chip" /></label>
+                  <label>Studio tab name (EN)<input name="showcase_performance_tab_name" maxlength="100" placeholder="Next-Gen Chip" /></label>
                   <label>Stat number (e.g. 3.4×)<input name="showcase_performance_stat" maxlength="40" placeholder="3.4×" /></label>
                   <label class="form-field-wide">Stat label (EN)<input name="showcase_performance_label" maxlength="120" placeholder="Faster pro workflows" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_performance_title" maxlength="200" placeholder="Desktop-class speed that stays whisper-quiet." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_performance_desc" rows="2" maxlength="600" placeholder="Render 8K timelines, compile massive projects, and multitask across pro workflows."></textarea></label>
                   <div class="form-field-wide product-showcase-image-field">
-                    <label>Box image (upload or HTTPS URL)
+                    <label>Studio image (upload or HTTPS URL)
                       <input name="showcase_performance_file" type="file" accept="image/jpeg,image/png,image/webp" />
                       <input name="showcase_performance_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
                     </label>
                     <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="performance" hidden>
-                      <img data-showcase-preview="performance" alt="Box 3 preview" />
+                      <img data-showcase-preview="performance" alt="Performance studio image preview" />
                       <button type="button" class="admin-text-button" data-showcase-clear-image="performance">Remove custom image</button>
                     </div>
                   </div>
@@ -950,18 +950,18 @@
               <fieldset class="product-value-field form-field-wide">
                 <legend>4. All-Day Power &amp; Battery</legend>
                 <div class="admin-form-grid">
-                  <label>Box / Tab name (EN)<input name="showcase_battery_tab_name" maxlength="100" placeholder="All-Day Power" /></label>
+                  <label>Studio tab name (EN)<input name="showcase_battery_tab_name" maxlength="100" placeholder="All-Day Power" /></label>
                   <label>Stat number (e.g. 22hrs)<input name="showcase_battery_stat" maxlength="40" placeholder="22hrs" /></label>
                   <label class="form-field-wide">Stat label (EN)<input name="showcase_battery_label" maxlength="120" placeholder="Continuous playback" /></label>
                   <label class="form-field-wide">Headline (EN)<input name="showcase_battery_title" maxlength="200" placeholder="Unplugged performance that outlasts your schedule." /></label>
                   <label class="form-field-wide">Description (EN)<textarea name="showcase_battery_desc" rows="2" maxlength="600" placeholder="Intelligent power management delivers identical peak speed plugged in or on battery."></textarea></label>
                   <div class="form-field-wide product-showcase-image-field">
-                    <label>Box image (upload or HTTPS URL)
+                    <label>Studio image (upload or HTTPS URL)
                       <input name="showcase_battery_file" type="file" accept="image/jpeg,image/png,image/webp" />
                       <input name="showcase_battery_image_url" type="url" maxlength="2048" placeholder="https://... or upload an image above" />
                     </label>
                     <div class="product-showcase-preview-wrap" data-showcase-preview-wrap="battery" hidden>
-                      <img data-showcase-preview="battery" alt="Box 4 preview" />
+                      <img data-showcase-preview="battery" alt="Battery studio image preview" />
                       <button type="button" class="admin-text-button" data-showcase-clear-image="battery">Remove custom image</button>
                     </div>
                   </div>
@@ -1075,6 +1075,6 @@
     <script src="/js/admin-promo-banner.js?v=2" defer></script>
     <script src="/js/admin-features.js?v=1" defer></script>
     <script src="/js/admin-reviews.js?v=1" defer></script>
-    <script src="/js/admin.js?v=13" defer></script>
+    <script src="/js/admin.js?v=14" defer></script>
   </body>
 </html>

@@ -17,8 +17,7 @@
         { id: "performance", icon: "cpu", label: "Next-Gen Chip", badge: "Neural Engine", title: "Desktop-class speed that stays whisper-quiet.", desc: "Render 8K timelines, compile massive projects, and multitask across pro workflows without thermal throttling.", statNum: "3.4", statSuffix: "×", statLabel: "Faster pro workflows" },
         { id: "battery", icon: "battery-charging", label: "All-Day Power", badge: "Fast Charge", title: "Unplugged performance that outlasts your schedule.", desc: "Intelligent power management delivers identical peak speed whether you are plugged in or working on the go.", statNum: "22", statSuffix: "hrs", statLabel: "Continuous playback" },
       ],
-      bentoEyebrow: "ARCHITECTURE & BENCHMARKS",
-      bentoTitle: "Built to outperform.",
+      performanceEyebrow: "PERFORMANCE & EFFICIENCY",
       metersTitle: "Real-world capability index",
       meters: [
         { label: "Multi-Core Compute", score: 96, note: "96% faster than previous generation" },
@@ -53,8 +52,7 @@
         { id: "performance", icon: "cpu", label: "الأداء والمعالج", badge: "محرك ذكاء اصطناعي", title: "سرعة فائقة بهدوء تام دون تنازلات.", desc: "شغّل أثقل البرامج والمشاريع الاحترافية وتعدد المهام بكفاءة عالية واستقرار حراري مذهل.", statNum: "3.4", statSuffix: "×", statLabel: "أداء أسرع للمحترفين" },
         { id: "battery", icon: "battery-charging", label: "البطارية والشحن", badge: "شحن فائق السرعة", title: "طاقة ترافقك طوال اليوم بدون توقف.", desc: "إدارة طاقة ذكية تمنحك نفس الأداء الكامل سواء كنت متصلاً بالشاحن أو أثناء التنقل.", statNum: "22", statSuffix: "ساعة", statLabel: "تشغيل متواصل" },
       ],
-      bentoEyebrow: "الهندسة ومؤشرات الأداء",
-      bentoTitle: "أرقام تتحدث عن القوة.",
+      performanceEyebrow: "الأداء والكفاءة",
       metersTitle: "مؤشر الكفاءة والأداء الفعلي",
       meters: [
         { label: "قوة المعالجة المتعددة", score: 96, note: "أسرع بنسبة 96% مقارنة بالجيل السابق" },
@@ -89,8 +87,7 @@
         { id: "performance", icon: "cpu", label: "Puce Nouvelle Gén.", badge: "Moteur Neural", title: "Une vitesse fulgurante dans un silence absolu.", desc: "Montage haute résolution et multitâche intensif sans ralentissement.", statNum: "3.4", statSuffix: "×", statLabel: "Plus rapide" },
         { id: "battery", icon: "battery-charging", label: "Autonomie", badge: "Charge Rapide", title: "Une endurance qui suit votre rythme toute la journée.", desc: "Gestion intelligente de l’énergie pour des performances maximales même sur batterie.", statNum: "22", statSuffix: "h", statLabel: "Lecture continue" },
       ],
-      bentoEyebrow: "ARCHITECTURE & PERFORMANCES",
-      bentoTitle: "Conçu pour surpasser.",
+      performanceEyebrow: "PERFORMANCES ET EFFICACITÉ",
       metersTitle: "Indice de performance réelle",
       meters: [
         { label: "Puissance de calcul", score: 96, note: "96 % plus rapide que la génération précédente" },
@@ -125,8 +122,7 @@
         { id: "performance", icon: "cpu", label: "Chip de Nueva Gen.", badge: "Motor Neuronal", title: "Velocidad profesional y silenciosa.", desc: "Edita vídeo pesado y ejecuta multitarea exigente sin esfuerzo.", statNum: "3.4", statSuffix: "×", statLabel: "Más rápido" },
         { id: "battery", icon: "battery-charging", label: "Batería Todo el Día", badge: "Carga Rápida", title: "Potencia sin cables durante toda tu jornada.", desc: "Rendimiento máximo constante conectado o en movilidad.", statNum: "22", statSuffix: "h", statLabel: "Autonomía continua" },
       ],
-      bentoEyebrow: "ARQUITECTURA Y RENDIMIENTO",
-      bentoTitle: "Creado para superar límites.",
+      performanceEyebrow: "RENDIMIENTO Y EFICIENCIA",
       metersTitle: "Índice de capacidad real",
       meters: [
         { label: "Potencia multinúcleo", score: 96, note: "96 % más rápido que la generación anterior" },
@@ -161,8 +157,7 @@
         { id: "performance", icon: "cpu", label: "新一代芯片", badge: "神经网络引擎", title: "桌面级强劲性能，依然静谧冷静。", desc: "轻松应对高负载创作与多任务处理。", statNum: "3.4", statSuffix: "×", statLabel: "专业性能提升" },
         { id: "battery", icon: "battery-charging", label: "全天候续航", badge: "快速充电", title: "持久电力，全天随行无忧。", desc: "智能电源管理让离电状态同样保持巅峰速度。", statNum: "22", statSuffix: "小时", statLabel: "持久续航" },
       ],
-      bentoEyebrow: "架构与性能指标",
-      bentoTitle: "为超越而生。",
+      performanceEyebrow: "性能与效率",
       metersTitle: "综合性能指数",
       meters: [
         { label: "多核计算性能", score: 96, note: "相比上一代提升 96%" },
@@ -195,144 +190,6 @@
     [/port|connect|wi-?fi|bluetooth|منافذ|اتصال|puertos|conexi|接口|连接/i, "plug-zap"],
     [/sound|audio|صوت|son|sonido|音/i, "audio-lines"],
   ];
-  const deepDiveData = {
-    en: {
-      explore: "Deep dive",
-      close: "Close details",
-      prev: "Previous feature",
-      next: "Next feature",
-      highlightsLabel: "Engineering highlights",
-      specsLabel: "Specialized metrics",
-      cards: {
-        design: {
-          kicker: "AEROSPACE UNIBODY ARCHITECTURE",
-          story: "Machined from a single block of high-grade recycled aluminum, the enclosure achieves extraordinary structural rigidity while staying feather-light. A micro-blasted anodized seal repels fingerprints, and laser-cut acoustic vents blend invisibly into the hinge.",
-          metrics: [
-            { value: "100%", label: "Recycled aerospace aluminum" },
-            { value: "15.5mm", label: "Precision thin profile" },
-            { value: "3×", label: "Anodized scratch resistance" },
-          ],
-          bullets: [
-            "CNC-milled unibody chassis eliminates flex and creaks under heavy travel.",
-            "Force-balanced hinge opens smoothly with a single finger and holds any angle.",
-            "Thermal-conductive bottom plate dissipates heat silently without fan noise.",
-          ],
-        },
-        display: {
-          kicker: "EXTREME DYNAMIC RANGE DISPLAY",
-          story: "Over 10,000 mini-LEDs grouped into individually controlled local dimming zones deliver reference-grade contrast. Whether grading HDR cinema or working under direct sunlight, colors stay razor-sharp and true to life.",
-          metrics: [
-            { value: "1,600 nits", label: "Peak HDR brightness" },
-            { value: "1,000,000:1", label: "True contrast ratio" },
-            { value: "120Hz", label: "ProMotion adaptive refresh" },
-          ],
-          bullets: [
-            "10-bit P3 wide color depth reveals over a billion subtle color gradations.",
-            "Adaptive refresh dynamically scales from 24Hz to 120Hz to match your content.",
-            "Anti-reflective optical coating cuts glare by 75% in bright studio lighting.",
-          ],
-        },
-        performance: {
-          kicker: "NEXT-GENERATION SILICON & NEURAL ENGINE",
-          story: "Built on a second-generation 3-nanometer process, the unified architecture pairs high-bandwidth memory directly with the CPU, GPU, and 16-core Neural Engine—turning complex 3D rendering, AI models, and code compilation into instant tasks.",
-          metrics: [
-            { value: "3.4×", label: "Faster 3D & pro rendering" },
-            { value: "38 TOPS", label: "Dedicated AI Neural Engine" },
-            { value: "400GB/s", label: "Unified memory bandwidth" },
-          ],
-          bullets: [
-            "Hardware-accelerated ray tracing and mesh shading for studio-grade 3D graphics.",
-            "Zero-throttle thermal envelope keeps sustained performance identical on battery.",
-            "Dedicated media engines handle multiple streams of 8K ProRes video effortlessly.",
-          ],
-        },
-        battery: {
-          kicker: "INTELLIGENT ALL-DAY POWER SYSTEM",
-          story: "High-density cobalt-optimized battery cells work in concert with silicon-level power gating. Idle cores sleep in microseconds, stretching a single charge across transcontinental flights and full workdays.",
-          metrics: [
-            { value: "22 hrs", label: "Continuous video & work" },
-            { value: "50%", label: "Fast charge in 30 minutes" },
-            { value: "1,000+", label: "Full charge health cycles" },
-          ],
-          bullets: [
-            "Smart adaptive charging learns your daily routine to preserve long-term cell health.",
-            "Magnetic quick-release and universal USB-C Power Delivery charging support.",
-            "Unplugged peak performance—zero speed drop when disconnected from power.",
-          ],
-        },
-      },
-    },
-    ar: {
-      explore: "اكتشف التخصص",
-      close: "إغلاق النافذة",
-      prev: "الميزة السابقة",
-      next: "الميزة التالية",
-      highlightsLabel: "أبرز الابتكارات الهندسية",
-      specsLabel: "الأرقام التخصصية الدقيقة",
-      cards: {
-        design: {
-          kicker: "هندسة الهيكل المعدني المتكامل",
-          story: "صُنع الهيكل من قطعة واحدة من ألمنيوم الطائرات الفاخر ليمنحك صلابة استثنائية مع وزن خفيف وملمس حريري. كما تمت معالجة السطح بطبقة مؤكسدة دقيقة تقاوم البصمات والخدوش اليومية بكفاءة عالية.",
-          metrics: [
-            { value: "100%", label: "ألمنيوم فائق النقاء" },
-            { value: "15.5 مم", label: "نحافة هندسية متوازنة" },
-            { value: "3×", label: "مقاومة أعلى للخدوش" },
-          ],
-          bullets: [
-            "تصنيع CNC متكامل يمنع أي انحناء أو اهتزاز أثناء التنقل والعمل المكثف.",
-            "مفصل متوازن يفتح بإصبع واحد بسلاسة ويثبت الشاشة عند أي زاوية بدقة.",
-            "توزيع حراري ذكي عبر الهيكل يحافظ على برودة الجهاز وهدوئه التام.",
-          ],
-        },
-        display: {
-          kicker: "شاشة النطاق الديناميكي الفائق XDR",
-          story: "أكثر من 10,000 وحدة إضاءة دقيقة تتحكم في التعتيم المحلي لإنتاج لون أسود عميق وسطوع مبهر. سواء كنت تصمم محتوى سينمائياً أو تعمل تحت إضاءة قوية، ستشاهد ألواناً واقعية من كل زاوية.",
-          metrics: [
-            { value: "1600 شمعة", label: "أقصى سطوع HDR" },
-            { value: "1,000,000:1", label: "نسبة التباين الحقيقي" },
-            { value: "120Hz", label: "تحديث متكيف ProMotion" },
-          ],
-          bullets: [
-            "عمق لوني P3 يعرض أكثر من مليار درجة لونية بدقة معايرة المصنع.",
-            "معدل تحديث ذكي يتكيف تلقائياً من 24Hz إلى 120Hz حسب حركة المحتوى.",
-            "طبقة بصرية مضادة للانعكاس تقلل التوهج بنسبة 75% لراحة العين.",
-          ],
-        },
-        performance: {
-          kicker: "شريحة الجيل الجديد ومحرك الذكاء الاصطناعي",
-          story: "معمارية متطورة بدقة 3 نانومتر تدمج المعالج الرئيسي ومعالج الرسوميات والذاكرة الموحدة فائقة السرعة في شريحة واحدة، لتحويل الرندرة ثلاثية الأبعاد والبرمجة والمونتاج الثقيل إلى مهام فورية.",
-          metrics: [
-            { value: "3.4×", label: "سرعة معالجة ورندرة أعلى" },
-            { value: "38 TOPS", label: "قوة محرك الذكاء الاصطناعي" },
-            { value: "400GB/s", label: "نطاق الذاكرة الموحدة" },
-          ],
-          bullets: [
-            "تتبع أشعة مسرّع بالعتاد لرسوميات ثلاثية الأبعاد فائقة الواقعية.",
-            "ثبات كامل في الأداء الأقصى دون هبوط في السرعة مع ضغط العمل الطويل.",
-            "محركات وسائط مخصصة لتشغيل وتحرير عدة مسارات فيديو 8K في وقت واحد.",
-          ],
-        },
-        battery: {
-          kicker: "منظومة الطاقة الذكية طوال اليوم",
-          story: "خلايا بطارية عالية الكثافة تعمل بتناغم مع إدارة الطاقة في المعالج، حيث تتوقف الأنوية غير النشطة خلال أجزاء من الألف من الثانية لتمنحك يوماً كاملاً من العمل المتواصل بشحنة واحدة.",
-          metrics: [
-            { value: "22 ساعة", label: "تشغيل وعمل متواصل" },
-            { value: "50%", label: "شحن سريع خلال 30 دقيقة" },
-            { value: "1000+", label: "دورة شحن بعمر طويل" },
-          ],
-          bullets: [
-            "شحن ذكي يتعلم نمط استخدامك اليومي للحفاظ على صحة البطارية لسنوات.",
-            "دعم الشحن المغناطيسي السريع أو عبر منافذ USB-C الشاملة.",
-            "نفس السرعة القصوى الكاملة سواء كان الجهاز متصلاً بالشاحن أو على البطارية.",
-          ],
-        },
-      },
-    },
-  };
-  const getDeepDive = () => {
-    const lang = (document.documentElement.lang || "en").split("-")[0];
-    return deepDiveData[lang] || deepDiveData.en;
-  };
   const text = () => copy[(document.documentElement.lang || "en").split("-")[0]] || copy.en;
   const icon = (name) => {
     const node = document.createElement("i");
@@ -591,10 +448,6 @@
         </div>
       </div>
 
-      <div class="exp-bento-section exp-reveal">
-        <div class="exp-bento-grid"></div>
-      </div>
-
       <div class="exp-performance-cinema exp-reveal">
         <div class="exp-meters-card">
           <span class="exp-showcase-eyebrow"></span>
@@ -680,217 +533,9 @@
     });
     selectTab(0, false);
 
-    // 2. Bento Grid (4 visual feature cards with images & specialized deep-dive modal)
-    const bentoGrid = showcase.querySelector(".exp-bento-grid");
-    const dd = getDeepDive();
-
-    let modal = document.querySelector(".exp-bento-modal");
-    if (!modal) {
-      modal = document.createElement("dialog");
-      modal.className = "exp-bento-modal";
-      document.body.append(modal);
-      modal.addEventListener("click", (event) => {
-        if (event.target === modal) modal.close();
-      });
-    }
-    modal.innerHTML = `
-      <div class="exp-bento-modal-shell">
-        <header class="exp-bento-modal-top">
-          <div class="exp-bento-modal-pills" role="tablist"></div>
-          <button type="button" class="exp-bento-modal-close" aria-label="${dd.close}">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-          </button>
-        </header>
-        <div class="exp-bento-modal-body">
-          <div class="exp-bento-modal-visual">
-            <img class="exp-bento-modal-img" alt="" />
-            <div class="exp-bento-modal-caption">
-              <span class="exp-bento-modal-badge"></span>
-              <strong class="exp-bento-modal-product"></strong>
-            </div>
-          </div>
-          <div class="exp-bento-modal-copy">
-            <span class="exp-bento-modal-kicker"></span>
-            <h3 class="exp-bento-modal-title"></h3>
-            <p class="exp-bento-modal-story"></p>
-            <div class="exp-bento-modal-section">
-              <h4 class="exp-bento-modal-subhead" data-dd-specs-head></h4>
-              <div class="exp-bento-modal-metrics"></div>
-            </div>
-            <div class="exp-bento-modal-section">
-              <h4 class="exp-bento-modal-subhead" data-dd-highlights-head></h4>
-              <ul class="exp-bento-modal-bullets"></ul>
-            </div>
-          </div>
-        </div>
-        <footer class="exp-bento-modal-footer">
-          <button type="button" class="exp-bento-modal-nav" data-dd-prev>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span></span>
-          </button>
-          <span class="exp-bento-modal-counter" dir="ltr"></span>
-          <button type="button" class="exp-bento-modal-nav" data-dd-next>
-            <span></span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </footer>
-      </div>
-    `;
-
-    const modalPills = modal.querySelector(".exp-bento-modal-pills");
-    const modalImg = modal.querySelector(".exp-bento-modal-img");
-    const modalBadge = modal.querySelector(".exp-bento-modal-badge");
-    const modalProduct = modal.querySelector(".exp-bento-modal-product");
-    const modalKicker = modal.querySelector(".exp-bento-modal-kicker");
-    const modalTitle = modal.querySelector(".exp-bento-modal-title");
-    const modalStory = modal.querySelector(".exp-bento-modal-story");
-    const modalMetrics = modal.querySelector(".exp-bento-modal-metrics");
-    const modalBullets = modal.querySelector(".exp-bento-modal-bullets");
-    const modalCounter = modal.querySelector(".exp-bento-modal-counter");
-    const prevBtn = modal.querySelector("[data-dd-prev]");
-    const nextBtn = modal.querySelector("[data-dd-next]");
-    modal.querySelector("[data-dd-specs-head]").textContent = dd.specsLabel;
-    modal.querySelector("[data-dd-highlights-head]").textContent = dd.highlightsLabel;
-    prevBtn.querySelector("span").textContent = dd.prev;
-    nextBtn.querySelector("span").textContent = dd.next;
-    modal.querySelector(".exp-bento-modal-close").addEventListener("click", () => modal.close());
-
-    let modalIndex = 0;
-    const renderModalSlide = (idx, animate = true) => {
-      modalIndex = ((idx % t.tabs.length) + t.tabs.length) % t.tabs.length;
-      const tab = t.tabs[modalIndex];
-      const specInfo = dd.cards[tab.id] || dd.cards.design;
-      const imgUrl = images[(modalIndex + 1) % images.length] || images[0];
-      const featureHeadline = productFeatures[modalIndex] || tab.title;
-      const productSpecRow = productSpecs[modalIndex];
-
-      [...modalPills.children].forEach((pill, pillIdx) => {
-        const active = pillIdx === modalIndex;
-        pill.classList.toggle("is-active", active);
-        pill.setAttribute("aria-selected", String(active));
-      });
-
-      const resolved = resolveTabCopy(tab);
-      const modalImgUrl = resolved.imageUrl || imgUrl;
-      modalImg.src = modalImgUrl;
-      modalImg.alt = resolved.title;
-      modalBadge.textContent = resolved.badge;
-      modalProduct.textContent = `${localizedProduct?.name || "WEEXEY"} · ${resolved.tabName}`;
-      modalKicker.textContent = specInfo.kicker;
-      modalTitle.textContent = resolved.title;
-      modalStory.textContent = customShowcase[tab.id] ? `${resolved.desc} ${specInfo.story}` : specInfo.story;
-      modalCounter.textContent = `0${modalIndex + 1} / 0${t.tabs.length}`;
-
-      modalMetrics.replaceChildren(...specInfo.metrics.map((m) => {
-        const box = document.createElement("div");
-        box.className = "exp-bento-metric";
-        const strong = document.createElement("strong");
-        strong.textContent = m.value;
-        const span = document.createElement("span");
-        span.textContent = m.label;
-        box.append(strong, span);
-        return box;
-      }));
-
-      const bullets = [...specInfo.bullets];
-      if (productSpecRow?.description && !bullets.includes(productSpecRow.description)) {
-        bullets[0] = `${productSpecRow.title ? `${productSpecRow.title}: ` : ""}${productSpecRow.description}`;
-      }
-      modalBullets.replaceChildren(...bullets.map((line) => {
-        const li = document.createElement("li");
-        const dot = document.createElement("span");
-        dot.className = "exp-bento-bullet-dot";
-        dot.textContent = "✦";
-        const txt = document.createElement("span");
-        txt.textContent = line;
-        li.append(dot, txt);
-        return li;
-      }));
-
-      selectTab(modalIndex, false);
-
-      if (animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        modalImg.animate(
-          [{ opacity: 0.35, transform: "scale(1.05)" }, { opacity: 1, transform: "scale(1)" }],
-          { duration: 420, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-        );
-        modal.querySelector(".exp-bento-modal-copy").animate(
-          [{ opacity: 0, transform: "translateY(14px)" }, { opacity: 1, transform: "translateY(0)" }],
-          { duration: 360, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-        );
-      }
-    };
-
-    t.tabs.forEach((tab, idx) => {
-      const resolved = resolveTabCopy(tab);
-      const pill = document.createElement("button");
-      pill.type = "button";
-      pill.role = "tab";
-      pill.className = "exp-bento-modal-pill";
-      pill.append(icon(tab.icon), document.createTextNode(resolved.tabName));
-      pill.addEventListener("click", () => renderModalSlide(idx, true));
-      modalPills.append(pill);
-    });
-    prevBtn.addEventListener("click", () => renderModalSlide(modalIndex - 1, true));
-    nextBtn.addEventListener("click", () => renderModalSlide(modalIndex + 1, true));
-
-    const openBentoModal = (idx) => {
-      renderModalSlide(idx, false);
-      refreshIcons();
-      if (!modal.open) {
-        modal.showModal();
-        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          modal.querySelector(".exp-bento-modal-shell").animate(
-            [
-              { opacity: 0, transform: "translateY(26px) scale(0.95)" },
-              { opacity: 1, transform: "translateY(0) scale(1)" },
-            ],
-            { duration: 420, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
-          );
-        }
-      }
-    };
-
-    t.tabs.forEach((tab, idx) => {
-      const resolved = resolveTabCopy(tab);
-      const card = document.createElement("article");
-      card.className = `exp-bento-card exp-bento-${idx + 1}`;
-      card.tabIndex = 0;
-      card.setAttribute("role", "button");
-      card.setAttribute("aria-haspopup", "dialog");
-      const imgUrl = resolved.imageUrl || images[(idx + 1) % images.length] || images[0];
-      card.innerHTML = `
-        <div class="exp-bento-media">
-          <img src="${imgUrl}" alt="" loading="lazy" />
-          <span class="exp-bento-plus" aria-hidden="true">
-            <span class="exp-bento-plus-label">${dd.explore}</span>
-            <span class="exp-bento-plus-icon">+</span>
-          </span>
-        </div>
-        <div class="exp-bento-content">
-          <span class="exp-bento-tag"></span>
-          <h4></h4>
-          <p></p>
-        </div>
-      `;
-      // Match each card's heading and description to its specialty (Design, Display, Chip, Battery)
-      card.querySelector(".exp-bento-tag").append(icon(tab.icon), document.createTextNode(resolved.tabName));
-      card.querySelector("h4").textContent = resolved.title;
-      card.querySelector("p").textContent = resolved.desc;
-      attachSpotlightTilt(card);
-      card.addEventListener("click", () => openBentoModal(idx));
-      card.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          openBentoModal(idx);
-        }
-      });
-      bentoGrid.append(card);
-    });
-
-    // 3. Performance Meters & In-The-Box
+    // 2. Performance Meters & In-The-Box
     const metersCard = showcase.querySelector(".exp-meters-card");
-    metersCard.querySelector(".exp-showcase-eyebrow").textContent = t.bentoEyebrow;
+    metersCard.querySelector(".exp-showcase-eyebrow").textContent = t.performanceEyebrow;
     metersCard.querySelector(".exp-meters-title").textContent = t.metersTitle;
     const metersList = metersCard.querySelector(".exp-meters-list");
     t.meters.forEach((meter) => {

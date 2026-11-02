@@ -2796,12 +2796,12 @@
       return s && (s.tabName || s.label || s.title || s.desc);
     });
     if (!groupsToTranslate.length) {
-      feedback.textContent = "Enter at least one English field in Studio & Bento before translating.";
+      feedback.textContent = "Enter at least one English field in the interactive studio before translating.";
       feedback.hidden = false;
       return;
     }
     btn.disabled = true;
-    feedback.textContent = "Translating Studio & Bento cards with Azure…";
+    feedback.textContent = "Translating interactive studio fields with Azure…";
     feedback.hidden = false;
     try {
       for (const group of groupsToTranslate) {
@@ -2831,7 +2831,7 @@
       currentProductShowcase = current;
       feedback.textContent = "Translations generated for all 4 languages (AR / FR / ES / ZH). Click Save changes to apply.";
     } catch (error) {
-      feedback.textContent = error.message || "Could not translate Studio & Bento fields.";
+      feedback.textContent = error.message || "Could not translate interactive studio fields.";
     } finally {
       btn.disabled = false;
     }
@@ -3427,7 +3427,7 @@
       for (const group of showcaseGroupIds) {
         const file = pendingShowcaseFiles[group];
         if (!(file instanceof File && file.size > 0)) continue;
-        if (file.size > 10 * 1024 * 1024) throw new Error("Showcase box image must be 10 MB or smaller.");
+        if (file.size > 10 * 1024 * 1024) throw new Error("Studio image must be 10 MB or smaller.");
         if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error("Choose a PNG, JPEG, or WebP showcase image.");
         const safeName = file.name.toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
         const boxPath = `products/${slug}/showcase/${group}-${Date.now()}-${safeName}`;
