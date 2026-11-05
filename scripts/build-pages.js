@@ -11,6 +11,7 @@ const localOnlyPaths = new Set([
   'experiments-laser.html',
   'experiments-blank-4.html',
   'experiments-blank-5.html',
+  'experiments-lunae.html',
   path.join('css', 'experiments.css'),
   path.join('css', 'experiment-switcher.css'),
   path.join('js', 'experiments.js'),

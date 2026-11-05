@@ -359,7 +359,80 @@ function renderManagedFeaturedProduct(card, isTransitionEntrance = false) {
   return true;
 }
 
+function syncLunaeFeaturedCard() {
+  const lunaeCards = document.querySelectorAll("[data-wx-featured-card]");
+  if (!lunaeCards.length) return;
+
+  const customHero = window.RUQO_HOME_LUNAE_HERO;
+  const forcedSlug = String(customHero?.cards?.card3?.product_slug || "").trim();
+  const spotlights = window.RUQO_HOME_SPOTLIGHTS || [];
+  let product = null;
+
+  if (forcedSlug && window.NoursData?.products?.length) {
+    product = window.NoursData.products.find(
+      (item) => item.slug === forcedSlug || item.id === forcedSlug,
+    );
+  }
+  if (!product && spotlights.length) {
+    const idx = managedSpotlightIndex % spotlights.length;
+    const showcase = spotlights[idx];
+    product =
+      showcase.product ||
+      window.NoursData?.products?.find(
+        (item) => item.slug === showcase.product_slug || item.id === showcase.product_slug,
+      );
+  }
+  if (!product && window.NoursData?.products?.length) {
+    product = window.NoursData.products[featuredProductIndex % window.NoursData.products.length];
+  }
+  if (!product) return;
+
+  const localized = window.NoursData?.localizeProduct
+    ? window.NoursData.localizeProduct(product, currentLang)
+    : product;
+  const slug = product.slug || product.id || "macbook-pro";
+  const saleActive = Boolean(product.timedSaleActive);
+  const regularPrice = Number(product.regularPrice ?? product.price);
+  const salePrice = Number(product.salePrice);
+  const discountPercent =
+    saleActive && regularPrice > 0
+      ? Math.round((1 - salePrice / regularPrice) * 100)
+      : 0;
+
+  const customCard3Badge = String(
+    customHero?.cards?.card3?.badge?.[currentLang] ||
+      customHero?.cards?.card3?.badge?.en ||
+      "",
+  ).trim();
+
+  const badgeText = saleActive
+    ? `${discountPercent}% OFF`
+    : customCard3Badge ||
+      translations[currentLang]?.["lunae.card3.badge"] ||
+      translations[currentLang]?.["tags.featured"] ||
+      "Best Seller";
+
+  lunaeCards.forEach((cardEl) => {
+    cardEl.setAttribute("href", `/product.html?id=${encodeURIComponent(slug)}`);
+    const imgEl = cardEl.querySelector("[data-wx-featured-img]");
+    const brandEl = cardEl.querySelector("[data-wx-featured-brand]");
+    const nameEl = cardEl.querySelector("[data-wx-featured-name]");
+    const priceEl = cardEl.querySelector("[data-wx-featured-price]");
+    const badgeEl = cardEl.querySelector("[data-wx-featured-badge]");
+
+    if (imgEl && product.image) {
+      imgEl.src = product.image;
+      imgEl.alt = localized.name || product.name || "";
+    }
+    if (brandEl) brandEl.textContent = product.brand || "WEEXEY";
+    if (nameEl) nameEl.textContent = localized.name || product.name || "";
+    if (priceEl) priceEl.textContent = formatShowcasePrice(product.price);
+    if (badgeEl) badgeEl.textContent = badgeText;
+  });
+}
+
 function renderFeaturedProduct() {
+  syncLunaeFeaturedCard();
   const card = document.querySelector(".highlight-card");
   if (!card) return;
   const heroVisual = document.querySelector(".hero-visual");
@@ -403,6 +476,7 @@ function renderFeaturedProduct() {
 function syncHomepageCatalog() {
   const catalog = window.NoursData;
   renderManagedCategories();
+  syncLunaeFeaturedCard();
   if (!catalog?.products?.length) return;
   const dictionary = translations[currentLang] || translations.en || {};
   document.querySelectorAll(".product-grid .product-card").forEach((card) => {
@@ -750,6 +824,7 @@ window.addEventListener("ruqo:home-spotlights-updated", () => {
   updateFeaturedProductTimer();
 });
 window.addEventListener("ruqo:store-settings-updated", renderFeaturedProduct);
+window.addEventListener("ruqo:home-lunae-hero-updated", syncLunaeFeaturedCard);
 window.addEventListener("ruqo:store-banners-updated", () => {
   renderManagedHomeBanners();
   renderMobileAd();

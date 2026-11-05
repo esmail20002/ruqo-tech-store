@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <script src="/js/home-i18n.js?v=4"></script>
+    <script src="/js/home-i18n.js?v=8"></script>
     <script>
       (function () {
         try {
@@ -26,149 +26,291 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/styles.css?v=11" />
+    <link rel="stylesheet" href="/css/styles.css?v=12" />
     <link rel="stylesheet" href="/css/premium-experience.css?v=19" />
     <link rel="stylesheet" href="/css/store-motion.css?v=2" />
-    <link rel="stylesheet" href="/css/laser-flow.css?v=11" />
-    <link rel="stylesheet" href="/css/experiment-home-laser.css?v=6" />
-    <script>
-      (function () {
-        try {
-          if (sessionStorage.getItem("weexey-laser-gate-seen") !== "1") {
-            document.documentElement.classList.add("is-gate-locked");
-          }
-        } catch (_) {
-          document.documentElement.classList.add("is-gate-locked");
-        }
-      })();
-    </script>
+    <link rel="stylesheet" href="/css/experiments-lunae.css?v=18" />
   </head>
-  <body data-page="home" class="is-gate-locked">
-    <script>
-      try {
-        if (sessionStorage.getItem("weexey-laser-gate-seen") === "1") {
-          document.body.classList.remove("is-gate-locked");
-        }
-      } catch (_) {}
-    </script>
-    <!-- Full-Screen Exclusive LaserFlow Gate (Once per session on Homepage) -->
-    <aside
-      class="home-laser-gate"
-      data-laser-gate
-      data-laser-session-key="weexey-laser-gate-seen"
-      aria-label="WEEXEY Opening Gate"
-    >
-      <div class="laser-stage is-awaiting-launch" data-laser-flow>
-        <div class="laser-flow-container">
-          <canvas class="laser-flow-canvas" data-laser-canvas aria-hidden="true"></canvas>
-        </div>
-        <div class="laser-surface" data-laser-surface>
-          <div class="laser-surface-shockwave" aria-hidden="true"></div>
-          <div class="laser-surface-copy">
-            <span class="laser-copy-eyebrow">
-              <span class="laser-copy-eyebrow__dot" aria-hidden="true"></span>
-              WELCOME TO WEEXEY
-            </span>
-            <h2 class="laser-copy-headline" aria-label="Experience the Extraordinary">
-              <span class="laser-copy-word" style="--word-index: 0">Experience</span>
-              <span class="laser-copy-word" style="--word-index: 1">the</span>
-              <span class="laser-copy-word laser-copy-word--accent" style="--word-index: 2">Extraordinary</span>
-            </h2>
-            <p class="laser-copy-subline">
-              Next-generation flagship electronics crafted where precision meets light.
-            </p>
-            <div class="laser-copy-actions">
-              <button type="button" class="laser-enter-store-btn" data-laser-enter-store>
-                <span class="laser-enter-store-btn__glow" aria-hidden="true"></span>
-                <span class="laser-enter-store-btn__label">Enter Store</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </button>
+  <body data-page="home" class="is-lunae-header-hidden">
+    <div class="page-shell">
+      <section
+        class="lunae-sequence"
+        dir="ltr"
+        data-lunae-sequence
+        aria-label="WEEXEY scroll-driven flagship hero"
+      >
+        <div class="lunae-stage" data-lunae-stage data-theme-phase="intro">
+          <canvas class="lunae-canvas" data-lunae-canvas aria-hidden="true"></canvas>
+          <div class="lunae-backdrop-tint" data-lunae-tint aria-hidden="true"></div>
+
+          <!-- Intro cue while camera is inside the eye -->
+          <div class="lunae-intro-cue" data-lunae-intro hidden>
+            <span class="lunae-intro-cue__dot" aria-hidden="true"></span>
+            <span class="lunae-intro-cue__text" data-lunae-intro-text>SCROLL TO AWAKEN WEEXEY VISION</span>
+            <span class="lunae-intro-cue__frame" data-lunae-frame-count>07 / 50</span>
+          </div>
+
+          <!-- Main Hero Overlay Grid (matches reference layout) -->
+          <div class="wx-hero-overlay" data-lunae-overlay>
+            <div class="wx-hero-grid">
+              <!-- TOP-LEFT STORE BRAND LOGO -->
+              <a href="/" class="wx-hero-brand" data-reveal-item="brand" aria-label="WEEXEY">
+                <img class="wx-hero-brand__logo" src="/images/new/li.png" alt="WEEXEY" />
+              </a>
+
+              <!-- LEFT COLUMN -->
+              <div class="wx-hero-left">
+                <div class="wx-hero-main-copy">
+                  <!-- Eyebrow pill + tagline -->
+                  <div class="wx-eyebrow-row" data-reveal-item="eyebrow">
+                    <span class="wx-pill-badge">
+                      <span class="wx-pill-dot" aria-hidden="true"></span>
+                      AI-Powered Flagship
+                    </span>
+                    <span class="wx-eyebrow-sub">Real-time intelligence. Smarter devices.</span>
+                  </div>
+
+                  <!-- Display Headline -->
+                  <h1 class="wx-headline" data-reveal-item="headline">
+                    <span class="wx-headline__dark">Visualize</span>
+                    <span class="wx-headline__dark">Your Tech</span>
+                    <span class="wx-headline__gradient">in Motion</span>
+                  </h1>
+
+                  <!-- Description -->
+                  <p class="wx-description" data-reveal-item="description">
+                    WEEXEY brings flagship performance, neural audio, and precision optics into a
+                    living visual experience — crafted for a smarter tomorrow.
+                  </p>
+
+                  <!-- CTA Row -->
+                  <div class="wx-actions-row" data-reveal-item="actions">
+                    <a href="/products.html" class="wx-btn-primary">
+                      <span>Explore Store</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14"></path>
+                        <path d="m12 5 7 7-7 7"></path>
+                      </svg>
+                    </a>
+
+                    <button type="button" class="wx-btn-video" data-wx-replay aria-label="Replay intro">
+                      <span class="wx-btn-video__circle" aria-hidden="true">
+                        <svg class="wx-btn-video__icon-replay" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
+                          <path d="M3 3v5h5"></path>
+                        </svg>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Bottom Left Stats -->
+                <div class="wx-stats-bar" data-reveal-item="stats">
+                  <div class="wx-stat-item">
+                    <div class="wx-stat-icon" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L14.6 9.4L22 12L14.6 14.6L12 22L9.4 14.6L2 12L9.4 9.4L12 2Z" stroke="#9B4DFF" stroke-width="1.7" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                    <div class="wx-stat-value"><span data-stat-counter="10" data-stat-suffix="K+">10K+</span></div>
+                    <div class="wx-stat-label">Active Users</div>
+                  </div>
+
+                  <div class="wx-stat-divider" aria-hidden="true"></div>
+
+                  <div class="wx-stat-item">
+                    <div class="wx-stat-icon" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="6" r="2" fill="#9B4DFF"/>
+                        <circle cx="6.5" cy="15.5" r="2" fill="#9B4DFF"/>
+                        <circle cx="17.5" cy="15.5" r="2" fill="#9B4DFF"/>
+                        <circle cx="12" cy="12" r="1.4" fill="#C77DFF"/>
+                        <path d="M12 8v2.6M10.8 12.8L8.2 14.5M13.2 12.8l2.6 1.7" stroke="#9B4DFF" stroke-width="1.4" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                    <div class="wx-stat-value"><span data-stat-decimal="99.9" data-stat-suffix="%">99.9%</span></div>
+                    <div class="wx-stat-label">Uptime</div>
+                  </div>
+
+                  <div class="wx-stat-divider" aria-hidden="true"></div>
+
+                  <div class="wx-stat-item">
+                    <div class="wx-stat-icon" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="9" stroke="#9B4DFF" stroke-width="1.6"/>
+                        <ellipse cx="12" cy="12" rx="4.2" ry="9" stroke="#9B4DFF" stroke-width="1.5"/>
+                        <path d="M3.5 9.5h17M3.5 14.5h17" stroke="#9B4DFF" stroke-width="1.4" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                    <div class="wx-stat-value"><span data-stat-counter="150" data-stat-suffix="+">150+</span></div>
+                    <div class="wx-stat-label">Countries</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CENTER FLOATING ORB CTA -->
+              <a href="/products.html" class="wx-floating-orb" data-reveal-item="orb" aria-label="Explore The Platform">
+                <span class="wx-floating-orb__ring wx-floating-orb__ring--outer" aria-hidden="true"></span>
+                <span class="wx-floating-orb__ring wx-floating-orb__ring--inner" aria-hidden="true"></span>
+                <span class="wx-floating-orb__core">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5.14v14l11-7-11-7z"></path>
+                  </svg>
+                  <span>Explore<br />The Platform</span>
+                </span>
+              </a>
+
+              <!-- RIGHT COLUMN: 2 STORE HIGHLIGHT CARDS -->
+              <aside class="wx-cards-stack" aria-label="Store highlights">
+                <!-- Card 1: Customer Satisfaction -->
+                <a href="#reviews" class="wx-glass-card" data-reveal-card="0">
+                  <header class="wx-card-header">
+                    <span class="wx-card-title">
+                      <span class="wx-card-icon" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                      </span>
+                      <span data-i18n="lunae.card1.title">Customer Rating</span>
+                    </span>
+                    <span class="wx-card-chevron" aria-hidden="true">›</span>
+                  </header>
+                  <div class="wx-card-body wx-card-body--split">
+                    <div class="wx-brain-cloud" aria-hidden="true">
+                      <svg viewBox="0 0 130 82" class="wx-brain-cloud__svg">
+                        <defs>
+                          <radialGradient id="cloudGlow1" cx="45%" cy="40%" r="55%">
+                            <stop offset="0%" stop-color="#FFE6FA" />
+                            <stop offset="45%" stop-color="#E598FF" />
+                            <stop offset="80%" stop-color="#9A5BFF" />
+                            <stop offset="100%" stop-color="#7B68EE" stop-opacity="0.15" />
+                          </radialGradient>
+                          <radialGradient id="cloudGlow2" cx="62%" cy="60%" r="50%">
+                            <stop offset="0%" stop-color="#FFF0F8" />
+                            <stop offset="50%" stop-color="#FF7CE5" />
+                            <stop offset="100%" stop-color="#8A3FFC" stop-opacity="0" />
+                          </radialGradient>
+                          <filter id="softBlur" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="2.2" />
+                          </filter>
+                        </defs>
+                        <ellipse cx="64" cy="46" rx="46" ry="24" fill="url(#cloudGlow1)" filter="url(#softBlur)" />
+                        <path d="M36 48c-8-2-13-9-11-17 2-7 9-12 17-11 4-7 13-11 22-9 8-5 19-3 24 4 9 0 16 7 16 15 0 9-8 16-18 16-4 6-13 9-21 7-6 4-15 3-20-2-3 1-6 0-9-3z" fill="url(#cloudGlow1)" />
+                        <circle cx="52" cy="34" r="16" fill="url(#cloudGlow2)" opacity="0.85" />
+                        <circle cx="74" cy="38" r="15" fill="url(#cloudGlow2)" opacity="0.75" />
+                        <path d="M45 28c6-4 14-4 20 1M62 24c7-2 15 1 18 7M40 42c7 3 16 2 23-2M64 49c6 2 14 0 19-5" stroke="rgba(255,255,255,0.55)" stroke-width="1.3" stroke-linecap="round" fill="none" />
+                      </svg>
+                    </div>
+                    <div class="wx-card-metric-side">
+                      <span class="wx-metric-label" data-i18n="lunae.card1.label">Excellent</span>
+                      <strong class="wx-metric-value" data-card-number="98" data-card-suffix="%">98%</strong>
+                      <span class="wx-card-subnote" data-i18n="lunae.card1.sub">4.9 ★ Verified</span>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- Card 2: Fast Delivery & Golden Warranty -->
+                <a href="/products.html?filter=deals" class="wx-glass-card" data-reveal-card="1">
+                  <header class="wx-card-header">
+                    <span class="wx-card-title">
+                      <span class="wx-card-icon" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                          <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                      </span>
+                      <span data-i18n="lunae.card2.title">Express &amp; Warranty</span>
+                    </span>
+                    <span class="wx-card-chevron" aria-hidden="true">›</span>
+                  </header>
+                  <div class="wx-card-body wx-card-body--wave">
+                    <div class="wx-wave-chart" aria-hidden="true">
+                      <svg viewBox="0 0 175 68" preserveAspectRatio="none" class="wx-wave-svg">
+                        <defs>
+                          <linearGradient id="waveAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#9B4DFF" stop-opacity="0.34" />
+                            <stop offset="100%" stop-color="#9B4DFF" stop-opacity="0.0" />
+                          </linearGradient>
+                        </defs>
+                        <line x1="8" y1="14" x2="8" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="48" y1="14" x2="48" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="88" y1="14" x2="88" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="128" y1="14" x2="128" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="166" y1="14" x2="166" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <path
+                          data-wave-area
+                          d="M2 46 C 16 32, 24 27, 36 33 C 48 39, 55 43, 66 35 C 76 28, 82 47, 94 40 C 106 33, 112 12, 122 14 C 132 16, 138 42, 149 34 C 158 27, 165 36, 173 43 L 173 64 L 2 64 Z"
+                          fill="url(#waveAreaGrad)"
+                        />
+                        <path
+                          data-wave-line
+                          d="M2 46 C 16 32, 24 27, 36 33 C 48 39, 55 43, 66 35 C 76 28, 82 47, 94 40 C 106 33, 112 12, 122 14 C 132 16, 138 42, 149 34 C 158 27, 165 36, 173 43"
+                          fill="none"
+                          stroke="#8B3DFF"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                    </div>
+                    <div class="wx-card-metric-side">
+                      <span class="wx-metric-label" data-i18n="lunae.card2.label">Fast Delivery</span>
+                      <strong class="wx-metric-value" data-card-number="24" data-card-suffix="h">24h</strong>
+                      <span class="wx-card-subnote" data-i18n="lunae.card2.sub">2-Year Warranty</span>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- Card 3: Featured Product Spotlight -->
+                <a
+                  href="/product.html?id=macbook-pro"
+                  class="wx-glass-card wx-glass-card--product"
+                  data-reveal-card="2"
+                  data-wx-featured-card
+                >
+                  <header class="wx-card-header">
+                    <span class="wx-card-title">
+                      <span class="wx-card-icon" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                          <path d="M3 6h18"></path>
+                          <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                      </span>
+                      <span data-i18n="lunae.card3.title" data-wx-featured-title>Featured Product</span>
+                    </span>
+                    <span class="wx-card-chevron" aria-hidden="true">›</span>
+                  </header>
+                  <div class="wx-card-body wx-card-body--product">
+                    <div class="wx-product-thumb-wrap">
+                      <img
+                        class="wx-product-thumb"
+                        data-wx-featured-img
+                        src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&amp;fit=crop&amp;w=400&amp;q=80"
+                        alt="MacBook Pro 14 M4"
+                        loading="eager"
+                      />
+                    </div>
+                    <div class="wx-product-meta">
+                      <span class="wx-product-brand" data-wx-featured-brand>Apple</span>
+                      <strong class="wx-product-name" data-wx-featured-name>MacBook Pro 14 M4</strong>
+                      <div class="wx-product-price-row">
+                        <strong class="wx-product-price" data-wx-featured-price>$1,333.33</strong>
+                        <span class="wx-card-subnote" data-wx-featured-badge data-i18n="lunae.card3.badge">Best Seller</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </aside>
             </div>
           </div>
+
+          <p class="lunae-status" data-lunae-status role="status" aria-live="polite" hidden></p>
         </div>
+      </section>
 
-        <!-- Center WEEXEY Brand Launch Emblem -->
-        <div class="laser-launch-wrap" data-laser-launch-wrap>
-          <button
-            type="button"
-            class="laser-launch-orb"
-            data-laser-launch
-            aria-label="تفعيل تجربة WEEXEY"
-          >
-            <span class="laser-launch-orb__halo" aria-hidden="true"></span>
-            <span class="laser-launch-orb__ring laser-launch-orb__ring--outer" aria-hidden="true"></span>
-            <span class="laser-launch-orb__ring laser-launch-orb__ring--inner" aria-hidden="true"></span>
-            <span class="laser-launch-orb__core" aria-hidden="true">
-              <svg
-                class="weexey-spark-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="62"
-                height="48"
-                viewBox="0 0 88 64"
-                fill="none"
-                aria-hidden="true"
-              >
-                <defs>
-                  <linearGradient id="mainHomeWeexeyBrandGrad" x1="6" y1="32" x2="84" y2="32" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stop-color="#6b34d6" />
-                    <stop offset="48%" stop-color="#9e3ee0" />
-                    <stop offset="78%" stop-color="#d848a0" />
-                    <stop offset="100%" stop-color="#ff6289" />
-                  </linearGradient>
-                  <linearGradient id="mainHomeWeexeyRayGrad" x1="54" y1="8" x2="84" y2="56" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stop-color="#be44cf" />
-                    <stop offset="55%" stop-color="#df4ca0" />
-                    <stop offset="100%" stop-color="#ff6688" />
-                  </linearGradient>
-                </defs>
-                <path
-                  class="weexey-spark-main"
-                  d="M27 6 H33 V15 C33 24.5 36.5 28 46 28 H55 V34 H46 C36.5 34 33 37.5 33 47 V56 H27 V47 C27 37.5 23.5 34 14 34 H5 V28 H14 C23.5 28 27 24.5 27 15 Z"
-                  fill="url(#mainHomeWeexeyBrandGrad)"
-                />
-                <rect
-                  class="weexey-spark-ray weexey-spark-ray--top"
-                  x="61"
-                  y="6"
-                  width="6"
-                  height="16"
-                  rx="1.2"
-                  fill="url(#mainHomeWeexeyRayGrad)"
-                />
-                <rect
-                  class="weexey-spark-ray weexey-spark-ray--bottom"
-                  x="61"
-                  y="40"
-                  width="6"
-                  height="16"
-                  rx="1.2"
-                  fill="url(#mainHomeWeexeyRayGrad)"
-                />
-                <rect
-                  class="weexey-spark-ray weexey-spark-ray--right"
-                  x="71"
-                  y="28"
-                  width="15"
-                  height="6"
-                  rx="1.2"
-                  fill="url(#mainHomeWeexeyRayGrad)"
-                />
-              </svg>
-            </span>
-          </button>
-        </div>
-
-        <p class="laser-flow-error" data-laser-error role="status" hidden></p>
-      </div>
-    </aside>
-
-    <div class="page-shell">
       <header class="topbar">
         <div class="container topbar-inner">
           <div class="topbar-texts">
@@ -853,12 +995,12 @@
     <script src="/js/promo-banner.js?v=2"></script>
     <script src="/js/features-section.js?v=1"></script>
     <script src="/js/reviews-section.js?v=1"></script>
-    <script src="/js/main.js?v=13"></script>
-    <script src="/js/laser-flow.js?v=7"></script>
+    <script src="/js/main.js?v=15"></script>
+    <script src="/js/experiments-lunae.js?v=21"></script>
     <script src="/js/store-motion.js?v=1"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/js/supabase-config.js"></script>
-    <script defer src="/js/supabase-client.js?v=10"></script>
+    <script defer src="/js/supabase-client.js?v=12"></script>
   </body>
 </html>

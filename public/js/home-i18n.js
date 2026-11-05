@@ -109,6 +109,15 @@ window.NoursHomeTranslations = {
     "footer.policy1": "الشروط",
     "footer.policy2": "السياسة",
     "footer.policy3": "الخصوصية",
+    "lunae.card1.title": "تقييم العملاء",
+    "lunae.card1.label": "ممتاز",
+    "lunae.card1.sub": "4.9 ★ موثق",
+    "lunae.card2.title": "التوصيل والضمان",
+    "lunae.card2.label": "توصيل سريع",
+    "lunae.card2.sub": "ضمان ذهبي سنتين",
+    "lunae.card3.title": "منتج مميز",
+    "lunae.card3.badge": "الأكثر مبيعًا",
+    "lunae.replay": "إعادة",
   },
   en: {
     "topbar.shipping": "Free delivery over 299 SAR",
@@ -225,6 +234,15 @@ window.NoursHomeTranslations = {
     "footer.policy1": "Terms",
     "footer.policy2": "Policy",
     "footer.policy3": "Privacy",
+    "lunae.card1.title": "Customer Rating",
+    "lunae.card1.label": "Excellent",
+    "lunae.card1.sub": "4.9 ★ Verified",
+    "lunae.card2.title": "Express & Warranty",
+    "lunae.card2.label": "Fast Delivery",
+    "lunae.card2.sub": "2-Year Warranty",
+    "lunae.card3.title": "Featured Product",
+    "lunae.card3.badge": "Best Seller",
+    "lunae.replay": "Replay",
   },
   fr: {
     "topbar.shipping": "Livraison offerte dès 299 SAR",
@@ -328,6 +346,15 @@ window.NoursHomeTranslations = {
     "footer.policy1": "Conditions",
     "footer.policy2": "Retours",
     "footer.policy3": "Confidentialité",
+    "lunae.card1.title": "Avis Clients",
+    "lunae.card1.label": "Excellent",
+    "lunae.card1.sub": "4.9 ★ Vérifié",
+    "lunae.card2.title": "Livraison & Garantie",
+    "lunae.card2.label": "Livraison rapide",
+    "lunae.card2.sub": "Garantie 2 ans",
+    "lunae.card3.title": "Produit à la une",
+    "lunae.card3.badge": "Meilleure vente",
+    "lunae.replay": "Rejouer",
   },
   es: {
     "topbar.shipping": "Envío gratis a partir de 299 SAR",
@@ -431,6 +458,15 @@ window.NoursHomeTranslations = {
     "footer.policy1": "Condiciones",
     "footer.policy2": "Devoluciones",
     "footer.policy3": "Privacidad",
+    "lunae.card1.title": "Valoración",
+    "lunae.card1.label": "Excelente",
+    "lunae.card1.sub": "4.9 ★ Verificado",
+    "lunae.card2.title": "Envío y Garantía",
+    "lunae.card2.label": "Envío rápido",
+    "lunae.card2.sub": "2 años de garantía",
+    "lunae.card3.title": "Producto destacado",
+    "lunae.card3.badge": "Más vendido",
+    "lunae.replay": "Repetir",
   },
   zh: {
     "topbar.shipping": "订单满 299 SAR 免运费",
@@ -534,6 +570,15 @@ window.NoursHomeTranslations = {
     "footer.policy1": "条款",
     "footer.policy2": "退货政策",
     "footer.policy3": "隐私",
+    "lunae.card1.title": "客户评分",
+    "lunae.card1.label": "极佳",
+    "lunae.card1.sub": "4.9 ★ 官方认证",
+    "lunae.card2.title": "极速配送与保修",
+    "lunae.card2.label": "极速送达",
+    "lunae.card2.sub": "2年官方质保",
+    "lunae.card3.title": "精选商品",
+    "lunae.card3.badge": "热销爆款",
+    "lunae.replay": "重播",
   },
 };
 
@@ -572,6 +617,8 @@ window.NoursHomeTranslations = {
     if (featuresCache !== undefined) window.RUQO_HOME_FEATURES = featuresCache;
     const reviewsCache = readJson("ruqo-home-reviews-cache-v1");
     if (reviewsCache !== undefined) window.RUQO_HOME_REVIEWS = reviewsCache;
+    const lunaeHeroCache = readJson("ruqo-home-lunae-hero-cache-v1") ?? readJson("ruqo-home-lunae-hero-v1");
+    if (lunaeHeroCache !== undefined) window.RUQO_HOME_LUNAE_HERO = lunaeHeroCache;
     const spotlightsCache = readJson("ruqo-home-spotlights-cache-v1");
     if (Array.isArray(spotlightsCache)) window.RUQO_HOME_SPOTLIGHTS = spotlightsCache;
     const categoriesCache = readJson("ruqo-categories-cache-v1");

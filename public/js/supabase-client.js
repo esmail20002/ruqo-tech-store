@@ -73,7 +73,8 @@
   window.RUQO_APPLY_FOOTER_SETTINGS = (footerRoot, language) => {
     if (!footerRoot) return;
     const footerSettings = window.RUQO_STORE_SETTINGS?.footer || {};
-    const localizedText = footerSettings.translations?.[language] || {};
+    const locale = String(language || "en").split("-")[0];
+    const localizedText = footerSettings.translations?.[locale] || {};
     const storeName = window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY";
     footerRoot.querySelectorAll("[data-footer-label]").forEach((node) => {
       const text = localizedText[node.dataset.footerLabel];
@@ -100,6 +101,102 @@
         console.warn("Ignoring an invalid footer URL.", error.message);
       }
     });
+    if (!Array.isArray(footerSettings.sections)) return;
+    const footerGrid = footerRoot.querySelector(".footer-grid");
+    const intro = footerGrid?.firstElementChild;
+    if (!footerGrid || !intro) return;
+
+    footerGrid.replaceChildren(intro);
+    footerGrid.style.setProperty("--footer-section-count", String(footerSettings.sections.length));
+    const fallbackLocation = {
+      en: "Riyadh - Kingdom of Saudi Arabia",
+      ar: "الرياض - المملكة العربية السعودية",
+      fr: "Riyad, Arabie saoudite",
+      es: "Riad, Arabia Saudí",
+      zh: "沙特阿拉伯利雅得",
+    };
+    const storeSettings = window.RUQO_STORE_SETTINGS || {};
+    const safeHref = (value) => {
+      const href = String(value || "").trim();
+      if (!href || href.startsWith("//")) return "";
+      if (!/^[a-z][a-z\d+.-]*:/i.test(href)) return href;
+      try {
+        const url = new URL(href);
+        return ["https:", "mailto:", "tel:"].includes(url.protocol)
+          && !url.username && !url.password ? href : "";
+      } catch {
+        return "";
+      }
+    };
+    for (const section of footerSettings.sections) {
+      const column = document.createElement("div");
+      const heading = document.createElement("h4");
+      const titleKey = String(section.titleKey || "");
+      const title = String(section.titles?.[locale]
+        || localizedText[titleKey]
+        || section.titles?.en
+        || section.titles?.ar
+        || "");
+      heading.textContent = title.replace(/\b(?:RUQO|WEEXEY)(?:\s+TECH)?\b/gi, () => storeName);
+      if (titleKey) {
+        heading.dataset.footerLabel = titleKey;
+        heading.dataset.i18n = titleKey;
+      }
+      column.append(heading);
+      const list = document.createElement("ul");
+      if (section.id === "legal") list.className = "footer-policies";
+
+      if (section.type === "contact") {
+        const phone = storeSettings.support_phone || "+966 50 000 0000";
+        const email = storeSettings.support_email || "hello@noursstore.com";
+        const phoneLink = document.createElement("a");
+        phoneLink.href = `tel:${phone.replace(/[^\d+]/g, "")}`;
+        phoneLink.textContent = phone;
+        phoneLink.dataset.storeContact = "phone";
+        const phoneItem = document.createElement("li");
+        phoneItem.append(phoneLink);
+        list.append(phoneItem);
+
+        const emailLink = document.createElement("a");
+        emailLink.href = `mailto:${email}`;
+        emailLink.textContent = email;
+        emailLink.dataset.storeContact = "email";
+        const emailItem = document.createElement("li");
+        emailItem.append(emailLink);
+        list.append(emailItem);
+
+        const locationItem = document.createElement("li");
+        locationItem.textContent = localizedText["footer.location"] || fallbackLocation[locale] || fallbackLocation.en;
+        locationItem.dataset.footerLabel = "footer.location";
+        list.append(locationItem);
+      } else {
+        for (const link of Array.isArray(section.links) ? section.links : []) {
+          const href = safeHref(link.href);
+          if (!href) {
+            console.warn("Ignoring an invalid footer URL.");
+            continue;
+          }
+          const item = document.createElement("li");
+          const anchor = document.createElement("a");
+          const labelKey = String(link.labelKey || "");
+          const label = String(link.labels?.[locale]
+            || localizedText[labelKey]
+            || link.labels?.en
+            || link.labels?.ar
+            || "");
+          anchor.href = href;
+          anchor.textContent = label.replace(/\b(?:RUQO|WEEXEY)(?:\s+TECH)?\b/gi, () => storeName);
+          if (labelKey) {
+            anchor.dataset.footerLabel = labelKey;
+            anchor.dataset.i18n = labelKey;
+          }
+          item.append(anchor);
+          list.append(item);
+        }
+      }
+      column.append(list);
+      footerGrid.append(column);
+    }
   };
   window.addEventListener("ruqo:language-updated", applyPublicStoreSettings);
   window.addEventListener("ruqo:store-settings-updated", applyPublicStoreSettings);
@@ -326,6 +423,38 @@
       if (window.RUQO_HOME_REVIEWS === undefined) window.RUQO_HOME_REVIEWS = readLocalReviewsSection();
       window.dispatchEvent(new CustomEvent("ruqo:home-reviews-updated", { detail: window.RUQO_HOME_REVIEWS }));
       return window.RUQO_HOME_REVIEWS;
+    });
+  const readLocalLunaeHeroSection = () => {
+    try {
+      const raw = localStorage.getItem("ruqo-home-lunae-hero-v1") || localStorage.getItem("ruqo-home-lunae-hero-cache-v1");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.keys(parsed).length ? parsed : null;
+    } catch (_) {}
+    return null;
+  };
+  window.RUQO_HOME_LUNAE_HERO_READY = client
+    .from("homepage_sections")
+    .select("data")
+    .eq("key", "lunae_hero")
+    .maybeSingle()
+    .then(({ data, error }) => {
+      if (error) throw error;
+      const row = data?.data;
+      const next = row && typeof row === "object" && !Array.isArray(row) && Object.keys(row).length
+        ? row
+        : readLocalLunaeHeroSection();
+      const changed = JSON.stringify(window.RUQO_HOME_LUNAE_HERO || null) !== JSON.stringify(next || null);
+      window.RUQO_HOME_LUNAE_HERO = next || null;
+      writeCache("ruqo-home-lunae-hero-cache-v1", window.RUQO_HOME_LUNAE_HERO);
+      if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-lunae-hero-updated", { detail: window.RUQO_HOME_LUNAE_HERO }));
+      return window.RUQO_HOME_LUNAE_HERO;
+    })
+    .catch((error) => {
+      console.warn("Could not load the homepage Lunae HERO section; using built-in content.", error?.message);
+      if (window.RUQO_HOME_LUNAE_HERO === undefined) window.RUQO_HOME_LUNAE_HERO = readLocalLunaeHeroSection();
+      window.dispatchEvent(new CustomEvent("ruqo:home-lunae-hero-updated", { detail: window.RUQO_HOME_LUNAE_HERO }));
+      return window.RUQO_HOME_LUNAE_HERO;
     });
   window.RUQO_SUPABASE_READY = window.NoursData?.loadFromSupabase(client)
     .then((loaded) => {

@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=13" />
+    <link rel="stylesheet" href="/css/admin.css?v=15" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -109,6 +109,7 @@
           </div>
           <div class="admin-nav-group" role="group" aria-labelledby="admin-storefront-label">
           <span id="admin-storefront-label" class="admin-nav-group-label">STOREFRONT</span>
+          <button class="admin-nav-item" type="button" data-admin-view="hero"><i data-lucide="wand-sparkles" aria-hidden="true"></i><span>HERO</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="promotions"><i data-lucide="badge-percent" aria-hidden="true"></i><span>Offers</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="exclusive-deals"><i data-lucide="flame" aria-hidden="true"></i><span>Exclusive deals</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="features-stats"><i data-lucide="layout-grid" aria-hidden="true"></i><span>Features &amp; stats</span></button>
@@ -372,6 +373,256 @@
                 </div>
               </div>
               <p class="admin-feedback form-field-wide" data-ed-feedback role="status" hidden></p>
+            </form>
+          </section>
+          <section class="admin-view" data-admin-panel="hero" hidden>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">STOREFRONT CONTENT</span>
+                <h1>HERO</h1>
+                <p>Manage all texts, glass cards, bottom stats, and intro behavior of the flagship scroll hero across 5 languages.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button class="admin-secondary-button" type="button" data-hero-reload><i data-lucide="refresh-cw" aria-hidden="true"></i> Reload</button>
+              </div>
+            </div>
+            <p class="admin-muted-copy" data-hero-live role="status">Loading HERO configuration…</p>
+
+            <form id="hero-section-form" class="admin-section high-refresh-editor hero-admin-editor" novalidate>
+              <div>
+                <h2>Hero copy, behavior &amp; live preview</h2>
+                <p class="admin-muted-copy">Customize the main headline, eyebrow badge, buttons, intro behavior, glass cards, and bottom statistics.</p>
+                <p class="admin-muted-copy" data-hero-state role="status"></p>
+
+                <div class="admin-form-grid">
+                  <label>
+                    Editing / preview language
+                    <select name="language">
+                      <option value="en">English (source)</option>
+                      <option value="ar">Arabic (العربية)</option>
+                      <option value="fr">French (Français)</option>
+                      <option value="es">Spanish (Español)</option>
+                      <option value="zh">Simplified Chinese (中文)</option>
+                    </select>
+                  </label>
+                  <label>
+                    Intro presentation mode
+                    <select name="intro_mode">
+                      <option value="once_per_session">Once per session (skip on refresh)</option>
+                      <option value="always">Play on every page load</option>
+                      <option value="skip">Always open locked at final frame</option>
+                    </select>
+                  </label>
+                  <label class="admin-inline-check">
+                    <input name="show_orb" type="checkbox" checked />
+                    <span><strong>Show center floating orb</strong><small>Display the floating circle button on desktop</small></span>
+                  </label>
+                  <label class="admin-inline-check">
+                    <input name="show_stats" type="checkbox" checked />
+                    <span><strong>Show bottom stats bar</strong><small>Display the 3 bottom statistics on desktop</small></span>
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Main Hero Texts &amp; Buttons</h3>
+                <div class="admin-form-grid" data-hero-copy-fields>
+                  <label>
+                    Eyebrow badge pill
+                    <input name="pill_badge" maxlength="120" placeholder="AI-Powered Flagship" />
+                  </label>
+                  <label>
+                    Eyebrow subtitle
+                    <input name="eyebrow_sub" maxlength="200" placeholder="Real-time intelligence. Smarter devices." />
+                  </label>
+                  <label>
+                    Headline line 1 (dark)
+                    <input name="headline_line1" maxlength="120" placeholder="Visualize" />
+                  </label>
+                  <label>
+                    Headline line 2 (dark)
+                    <input name="headline_line2" maxlength="120" placeholder="Your Tech" />
+                  </label>
+                  <label class="form-field-wide">
+                    Headline line 3 (purple gradient)
+                    <input name="headline_gradient" maxlength="120" placeholder="in Motion" />
+                  </label>
+                  <label class="form-field-wide">
+                    Description paragraph
+                    <textarea name="description" rows="3" maxlength="600" placeholder="WEEXEY brings flagship performance, neural audio, and precision optics into a living visual experience — crafted for a smarter tomorrow."></textarea>
+                  </label>
+                  <label>
+                    Primary button text
+                    <input name="primary_btn_text" maxlength="100" placeholder="Explore Store" />
+                  </label>
+                  <label>
+                    Primary button link
+                    <input name="primary_btn_href" maxlength="240" placeholder="/products.html" />
+                  </label>
+                  <label>
+                    Floating orb text
+                    <input name="orb_text" maxlength="100" placeholder="Explore The Platform" />
+                  </label>
+                  <label>
+                    Floating orb link
+                    <input name="orb_href" maxlength="240" placeholder="/products.html" />
+                  </label>
+                </div>
+
+                <section class="fs-live-preview-wrap hero-live-preview-wrap" data-hero-preview aria-label="Hero live preview">
+                  <div class="hero-preview-grid">
+                    <div class="hero-preview-left">
+                      <div class="hero-preview-eyebrow">
+                        <span class="hero-preview-pill" data-hero-prev-pill>AI-Powered Flagship</span>
+                        <span class="hero-preview-sub" data-hero-prev-sub>Real-time intelligence. Smarter devices.</span>
+                      </div>
+                      <h3 class="hero-preview-headline">
+                        <span data-hero-prev-h1>Visualize</span>
+                        <span data-hero-prev-h2>Your Tech</span>
+                        <em data-hero-prev-h3>in Motion</em>
+                      </h3>
+                      <p class="hero-preview-desc" data-hero-prev-desc></p>
+                      <div class="hero-preview-actions">
+                        <span class="hero-preview-btn" data-hero-prev-btn>Explore Store →</span>
+                      </div>
+                      <div class="hero-preview-stats" data-hero-prev-stats></div>
+                    </div>
+                    <div class="hero-preview-cards" data-hero-prev-cards></div>
+                  </div>
+                </section>
+
+                <div class="high-refresh-actions">
+                  <button class="admin-primary-button" type="button" data-hero-action="save">
+                    <i data-lucide="check" aria-hidden="true"></i> Save &amp; publish HERO
+                  </button>
+                  <button class="admin-secondary-button" type="button" data-hero-action="translate">
+                    <i data-lucide="languages" aria-hidden="true"></i> Translate to all 5 languages
+                  </button>
+                  <button class="admin-danger-button" type="button" data-hero-action="reset">
+                    <i data-lucide="rotate-ccw" aria-hidden="true"></i> Reset to defaults
+                  </button>
+                </div>
+              </div>
+
+              <div data-hero-right-editor>
+                <h2>Glass Cards &amp; Bottom Stats</h2>
+                <p class="admin-muted-copy">Edit the 3 right-side glassmorphic cards and the 3 bottom counter statistics.</p>
+
+                <h3 class="fs-subhead">Card 1 — Customer Rating (Cloud Visual)</h3>
+                <div class="admin-form-grid" data-hero-card1-fields>
+                  <label>
+                    Card 1 title
+                    <input name="c1_title" maxlength="120" placeholder="Customer Rating" />
+                  </label>
+                  <label>
+                    Metric label
+                    <input name="c1_label" maxlength="100" placeholder="Excellent" />
+                  </label>
+                  <label>
+                    Number (counter)
+                    <input name="c1_number" type="number" step="1" min="0" max="99999" placeholder="98" />
+                  </label>
+                  <label>
+                    Suffix (e.g. %)
+                    <input name="c1_suffix" maxlength="20" placeholder="%" />
+                  </label>
+                  <label>
+                    Subnote pill badge
+                    <input name="c1_sub" maxlength="100" placeholder="4.9 ★ Verified" />
+                  </label>
+                  <label>
+                    Click destination link
+                    <input name="c1_href" maxlength="240" placeholder="#reviews" />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Card 2 — Express &amp; Warranty (Wave Visual)</h3>
+                <div class="admin-form-grid" data-hero-card2-fields>
+                  <label>
+                    Card 2 title
+                    <input name="c2_title" maxlength="120" placeholder="Express &amp; Warranty" />
+                  </label>
+                  <label>
+                    Metric label
+                    <input name="c2_label" maxlength="100" placeholder="Fast Delivery" />
+                  </label>
+                  <label>
+                    Number (counter)
+                    <input name="c2_number" type="number" step="1" min="0" max="99999" placeholder="24" />
+                  </label>
+                  <label>
+                    Suffix (e.g. h)
+                    <input name="c2_suffix" maxlength="20" placeholder="h" />
+                  </label>
+                  <label>
+                    Subnote pill badge
+                    <input name="c2_sub" maxlength="100" placeholder="2-Year Warranty" />
+                  </label>
+                  <label>
+                    Click destination link
+                    <input name="c2_href" maxlength="240" placeholder="/products.html?filter=deals" />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Card 3 — Featured Product (Desktop Card)</h3>
+                <div class="admin-form-grid" data-hero-card3-fields>
+                  <label>
+                    Card 3 title
+                    <input name="c3_title" maxlength="120" placeholder="Featured Product" />
+                  </label>
+                  <label>
+                    Badge text
+                    <input name="c3_badge" maxlength="100" placeholder="Best Seller" />
+                  </label>
+                  <label class="form-field-wide">
+                    Product source
+                    <select name="c3_product_slug" data-hero-product-select>
+                      <option value="">Automatic (Sync with Homepage Spotlight / Catalog)</option>
+                    </select>
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Bottom Statistics Bar (3 Counters)</h3>
+                <div class="admin-form-grid" data-hero-stats-fields>
+                  <label>
+                    Stat 1 number
+                    <input name="s1_value" type="number" step="0.1" placeholder="10" />
+                  </label>
+                  <label>
+                    Stat 1 suffix
+                    <input name="s1_suffix" maxlength="20" placeholder="K+" />
+                  </label>
+                  <label class="form-field-wide">
+                    Stat 1 label
+                    <input name="s1_label" maxlength="120" placeholder="Active Users" />
+                  </label>
+
+                  <label>
+                    Stat 2 number
+                    <input name="s2_value" type="number" step="0.1" placeholder="99.9" />
+                  </label>
+                  <label>
+                    Stat 2 suffix
+                    <input name="s2_suffix" maxlength="20" placeholder="%" />
+                  </label>
+                  <label class="form-field-wide">
+                    Stat 2 label
+                    <input name="s2_label" maxlength="120" placeholder="Uptime" />
+                  </label>
+
+                  <label>
+                    Stat 3 number
+                    <input name="s3_value" type="number" step="0.1" placeholder="150" />
+                  </label>
+                  <label>
+                    Stat 3 suffix
+                    <input name="s3_suffix" maxlength="20" placeholder="+" />
+                  </label>
+                  <label class="form-field-wide">
+                    Stat 3 label
+                    <input name="s3_label" maxlength="120" placeholder="Countries" />
+                  </label>
+                </div>
+              </div>
+              <p class="admin-feedback form-field-wide" data-hero-feedback role="status" hidden></p>
             </form>
           </section>
           <section class="admin-view" data-admin-panel="features-stats" hidden>
@@ -651,8 +902,11 @@
                 </label>
                 <div class="admin-section-heading"><div><h2>Footer text</h2><p>Leave a field blank to use its built-in translation.</p></div></div>
                 <div id="footer-text-fields" class="admin-form-grid"></div>
-                <div class="admin-section-heading"><div><h2>Footer link destinations</h2><p>Use a site path such as /support.html#payment or a secure https:// URL.</p></div></div>
-                <div id="footer-link-fields" class="admin-form-grid"></div>
+                <div class="admin-section-heading">
+                  <div><h2>Footer sections and links</h2><p>Edit each heading, link label, and destination. Drag sections or links to change their order.</p></div>
+                  <button id="add-footer-section" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add section</button>
+                </div>
+                <div id="footer-sections" class="footer-section-manager"></div>
                 <p id="footer-settings-error" class="admin-feedback" role="alert" hidden></p>
                 <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save footer content</button></div>
               </form>
@@ -1156,6 +1410,7 @@
     <script src="/js/admin-promo-banner.js?v=2" defer></script>
     <script src="/js/admin-features.js?v=1" defer></script>
     <script src="/js/admin-reviews.js?v=1" defer></script>
-    <script src="/js/admin.js?v=20" defer></script>
+    <script src="/js/admin-hero.js?v=1" defer></script>
+    <script src="/js/admin.js?v=22" defer></script>
   </body>
 </html>

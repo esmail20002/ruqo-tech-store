@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <script src="/js/home-i18n.js?v=4"></script>
+    <script src="/js/home-i18n.js?v=8"></script>
     <script>
       if (!["localhost", "127.0.0.1", "::1"].includes(location.hostname)) {
         location.replace("/");
@@ -32,159 +32,291 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/styles.css?v=11" />
+    <link rel="stylesheet" href="/css/styles.css?v=12" />
     <link rel="stylesheet" href="/css/experiments.css?v=48" />
-    <link rel="stylesheet" href="/css/laser-flow.css?v=11" />
-    <link rel="stylesheet" href="/css/experiment-home-laser.css?v=6" />
+    <link rel="stylesheet" href="/css/experiments-lunae.css?v=18" />
+    <link rel="stylesheet" href="/css/experiments-lunae-page.css?v=3" />
   </head>
-  <body data-page="experiments" class="is-gate-locked">
-    <!-- Full-Screen Exclusive LaserFlow Gate (Covers 100vw x 100vh) -->
-    <aside class="home-laser-gate" data-laser-gate aria-label="WEEXEY Opening Gate">
-      <div class="laser-stage is-awaiting-launch" data-laser-flow>
-        <div class="laser-flow-container">
-          <canvas class="laser-flow-canvas" data-laser-canvas aria-hidden="true"></canvas>
-        </div>
-        <div class="laser-surface" data-laser-surface>
-          <div class="laser-surface-shockwave" aria-hidden="true"></div>
-          <div class="laser-surface-copy">
-            <span class="laser-copy-eyebrow">
-              <span class="laser-copy-eyebrow__dot" aria-hidden="true"></span>
-              WELCOME TO WEEXEY
-            </span>
-            <h2 class="laser-copy-headline" aria-label="Experience the Extraordinary">
-              <span class="laser-copy-word" style="--word-index: 0">Experience</span>
-              <span class="laser-copy-word" style="--word-index: 1">the</span>
-              <span class="laser-copy-word laser-copy-word--accent" style="--word-index: 2">Extraordinary</span>
-            </h2>
-            <p class="laser-copy-subline">
-              Next-generation flagship electronics crafted where precision meets light.
-            </p>
-            <div class="laser-copy-actions">
-              <button type="button" class="laser-enter-store-btn" data-laser-enter-store>
-                <span class="laser-enter-store-btn__glow" aria-hidden="true"></span>
-                <span class="laser-enter-store-btn__label">Enter Store</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </button>
+  <body data-page="experiments" class="is-lunae-header-hidden">
+    <div class="page-shell">
+      <section
+        class="lunae-sequence"
+        dir="ltr"
+        data-lunae-sequence
+        aria-label="WEEXEY scroll-driven flagship hero"
+      >
+        <div class="lunae-stage" data-lunae-stage data-theme-phase="intro">
+          <canvas class="lunae-canvas" data-lunae-canvas aria-hidden="true"></canvas>
+          <div class="lunae-backdrop-tint" data-lunae-tint aria-hidden="true"></div>
+
+          <!-- Intro cue while camera is inside the eye -->
+          <div class="lunae-intro-cue" data-lunae-intro hidden>
+            <span class="lunae-intro-cue__dot" aria-hidden="true"></span>
+            <span class="lunae-intro-cue__text" data-lunae-intro-text>SCROLL TO AWAKEN WEEXEY VISION</span>
+            <span class="lunae-intro-cue__frame" data-lunae-frame-count>07 / 50</span>
+          </div>
+
+          <!-- Main Hero Overlay Grid (matches reference layout) -->
+          <div class="wx-hero-overlay" data-lunae-overlay>
+            <div class="wx-hero-grid">
+              <!-- TOP-LEFT STORE BRAND LOGO -->
+              <a href="/" class="wx-hero-brand" data-reveal-item="brand" aria-label="WEEXEY">
+                <img class="wx-hero-brand__logo" src="/images/new/li.png" alt="WEEXEY" />
+              </a>
+
+              <!-- LEFT COLUMN -->
+              <div class="wx-hero-left">
+                <div class="wx-hero-main-copy">
+                  <!-- Eyebrow pill + tagline -->
+                  <div class="wx-eyebrow-row" data-reveal-item="eyebrow">
+                    <span class="wx-pill-badge">
+                      <span class="wx-pill-dot" aria-hidden="true"></span>
+                      AI-Powered Flagship
+                    </span>
+                    <span class="wx-eyebrow-sub">Real-time intelligence. Smarter devices.</span>
+                  </div>
+
+                  <!-- Display Headline -->
+                  <h1 class="wx-headline" data-reveal-item="headline">
+                    <span class="wx-headline__dark">Visualize</span>
+                    <span class="wx-headline__dark">Your Tech</span>
+                    <span class="wx-headline__gradient">in Motion</span>
+                  </h1>
+
+                  <!-- Description -->
+                  <p class="wx-description" data-reveal-item="description">
+                    WEEXEY brings flagship performance, neural audio, and precision optics into a
+                    living visual experience — crafted for a smarter tomorrow.
+                  </p>
+
+                  <!-- CTA Row -->
+                  <div class="wx-actions-row" data-reveal-item="actions">
+                    <a href="/products.html" class="wx-btn-primary">
+                      <span>Explore Store</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14"></path>
+                        <path d="m12 5 7 7-7 7"></path>
+                      </svg>
+                    </a>
+
+                    <button type="button" class="wx-btn-video" data-wx-replay aria-label="Replay intro">
+                      <span class="wx-btn-video__circle" aria-hidden="true">
+                        <svg class="wx-btn-video__icon-replay" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
+                          <path d="M3 3v5h5"></path>
+                        </svg>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Bottom Left Stats -->
+                <div class="wx-stats-bar" data-reveal-item="stats">
+                  <div class="wx-stat-item">
+                    <div class="wx-stat-icon" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L14.6 9.4L22 12L14.6 14.6L12 22L9.4 14.6L2 12L9.4 9.4L12 2Z" stroke="#9B4DFF" stroke-width="1.7" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                    <div class="wx-stat-value"><span data-stat-counter="10" data-stat-suffix="K+">10K+</span></div>
+                    <div class="wx-stat-label">Active Users</div>
+                  </div>
+
+                  <div class="wx-stat-divider" aria-hidden="true"></div>
+
+                  <div class="wx-stat-item">
+                    <div class="wx-stat-icon" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="6" r="2" fill="#9B4DFF"/>
+                        <circle cx="6.5" cy="15.5" r="2" fill="#9B4DFF"/>
+                        <circle cx="17.5" cy="15.5" r="2" fill="#9B4DFF"/>
+                        <circle cx="12" cy="12" r="1.4" fill="#C77DFF"/>
+                        <path d="M12 8v2.6M10.8 12.8L8.2 14.5M13.2 12.8l2.6 1.7" stroke="#9B4DFF" stroke-width="1.4" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                    <div class="wx-stat-value"><span data-stat-decimal="99.9" data-stat-suffix="%">99.9%</span></div>
+                    <div class="wx-stat-label">Uptime</div>
+                  </div>
+
+                  <div class="wx-stat-divider" aria-hidden="true"></div>
+
+                  <div class="wx-stat-item">
+                    <div class="wx-stat-icon" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="9" stroke="#9B4DFF" stroke-width="1.6"/>
+                        <ellipse cx="12" cy="12" rx="4.2" ry="9" stroke="#9B4DFF" stroke-width="1.5"/>
+                        <path d="M3.5 9.5h17M3.5 14.5h17" stroke="#9B4DFF" stroke-width="1.4" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                    <div class="wx-stat-value"><span data-stat-counter="150" data-stat-suffix="+">150+</span></div>
+                    <div class="wx-stat-label">Countries</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CENTER FLOATING ORB CTA -->
+              <a href="/products.html" class="wx-floating-orb" data-reveal-item="orb" aria-label="Explore The Platform">
+                <span class="wx-floating-orb__ring wx-floating-orb__ring--outer" aria-hidden="true"></span>
+                <span class="wx-floating-orb__ring wx-floating-orb__ring--inner" aria-hidden="true"></span>
+                <span class="wx-floating-orb__core">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5.14v14l11-7-11-7z"></path>
+                  </svg>
+                  <span>Explore<br />The Platform</span>
+                </span>
+              </a>
+
+              <!-- RIGHT COLUMN: 2 STORE HIGHLIGHT CARDS -->
+              <aside class="wx-cards-stack" aria-label="Store highlights">
+                <!-- Card 1: Customer Satisfaction -->
+                <a href="#reviews" class="wx-glass-card" data-reveal-card="0">
+                  <header class="wx-card-header">
+                    <span class="wx-card-title">
+                      <span class="wx-card-icon" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                      </span>
+                      <span data-i18n="lunae.card1.title">Customer Rating</span>
+                    </span>
+                    <span class="wx-card-chevron" aria-hidden="true">›</span>
+                  </header>
+                  <div class="wx-card-body wx-card-body--split">
+                    <div class="wx-brain-cloud" aria-hidden="true">
+                      <svg viewBox="0 0 130 82" class="wx-brain-cloud__svg">
+                        <defs>
+                          <radialGradient id="cloudGlow1" cx="45%" cy="40%" r="55%">
+                            <stop offset="0%" stop-color="#FFE6FA" />
+                            <stop offset="45%" stop-color="#E598FF" />
+                            <stop offset="80%" stop-color="#9A5BFF" />
+                            <stop offset="100%" stop-color="#7B68EE" stop-opacity="0.15" />
+                          </radialGradient>
+                          <radialGradient id="cloudGlow2" cx="62%" cy="60%" r="50%">
+                            <stop offset="0%" stop-color="#FFF0F8" />
+                            <stop offset="50%" stop-color="#FF7CE5" />
+                            <stop offset="100%" stop-color="#8A3FFC" stop-opacity="0" />
+                          </radialGradient>
+                          <filter id="softBlur" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="2.2" />
+                          </filter>
+                        </defs>
+                        <ellipse cx="64" cy="46" rx="46" ry="24" fill="url(#cloudGlow1)" filter="url(#softBlur)" />
+                        <path d="M36 48c-8-2-13-9-11-17 2-7 9-12 17-11 4-7 13-11 22-9 8-5 19-3 24 4 9 0 16 7 16 15 0 9-8 16-18 16-4 6-13 9-21 7-6 4-15 3-20-2-3 1-6 0-9-3z" fill="url(#cloudGlow1)" />
+                        <circle cx="52" cy="34" r="16" fill="url(#cloudGlow2)" opacity="0.85" />
+                        <circle cx="74" cy="38" r="15" fill="url(#cloudGlow2)" opacity="0.75" />
+                        <path d="M45 28c6-4 14-4 20 1M62 24c7-2 15 1 18 7M40 42c7 3 16 2 23-2M64 49c6 2 14 0 19-5" stroke="rgba(255,255,255,0.55)" stroke-width="1.3" stroke-linecap="round" fill="none" />
+                      </svg>
+                    </div>
+                    <div class="wx-card-metric-side">
+                      <span class="wx-metric-label" data-i18n="lunae.card1.label">Excellent</span>
+                      <strong class="wx-metric-value" data-card-number="98" data-card-suffix="%">98%</strong>
+                      <span class="wx-card-subnote" data-i18n="lunae.card1.sub">4.9 ★ Verified</span>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- Card 2: Fast Delivery & Golden Warranty -->
+                <a href="/products.html?filter=deals" class="wx-glass-card" data-reveal-card="1">
+                  <header class="wx-card-header">
+                    <span class="wx-card-title">
+                      <span class="wx-card-icon" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                          <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                      </span>
+                      <span data-i18n="lunae.card2.title">Express &amp; Warranty</span>
+                    </span>
+                    <span class="wx-card-chevron" aria-hidden="true">›</span>
+                  </header>
+                  <div class="wx-card-body wx-card-body--wave">
+                    <div class="wx-wave-chart" aria-hidden="true">
+                      <svg viewBox="0 0 175 68" preserveAspectRatio="none" class="wx-wave-svg">
+                        <defs>
+                          <linearGradient id="waveAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#9B4DFF" stop-opacity="0.34" />
+                            <stop offset="100%" stop-color="#9B4DFF" stop-opacity="0.0" />
+                          </linearGradient>
+                        </defs>
+                        <line x1="8" y1="14" x2="8" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="48" y1="14" x2="48" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="88" y1="14" x2="88" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="128" y1="14" x2="128" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <line x1="166" y1="14" x2="166" y2="60" stroke="rgba(145,120,180,0.16)" stroke-dasharray="2 3" />
+                        <path
+                          data-wave-area
+                          d="M2 46 C 16 32, 24 27, 36 33 C 48 39, 55 43, 66 35 C 76 28, 82 47, 94 40 C 106 33, 112 12, 122 14 C 132 16, 138 42, 149 34 C 158 27, 165 36, 173 43 L 173 64 L 2 64 Z"
+                          fill="url(#waveAreaGrad)"
+                        />
+                        <path
+                          data-wave-line
+                          d="M2 46 C 16 32, 24 27, 36 33 C 48 39, 55 43, 66 35 C 76 28, 82 47, 94 40 C 106 33, 112 12, 122 14 C 132 16, 138 42, 149 34 C 158 27, 165 36, 173 43"
+                          fill="none"
+                          stroke="#8B3DFF"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                    </div>
+                    <div class="wx-card-metric-side">
+                      <span class="wx-metric-label" data-i18n="lunae.card2.label">Fast Delivery</span>
+                      <strong class="wx-metric-value" data-card-number="24" data-card-suffix="h">24h</strong>
+                      <span class="wx-card-subnote" data-i18n="lunae.card2.sub">2-Year Warranty</span>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- Card 3: Featured Product Spotlight -->
+                <a
+                  href="/product.html?id=macbook-pro"
+                  class="wx-glass-card wx-glass-card--product"
+                  data-reveal-card="2"
+                  data-wx-featured-card
+                >
+                  <header class="wx-card-header">
+                    <span class="wx-card-title">
+                      <span class="wx-card-icon" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                          <path d="M3 6h18"></path>
+                          <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                      </span>
+                      <span data-i18n="lunae.card3.title" data-wx-featured-title>Featured Product</span>
+                    </span>
+                    <span class="wx-card-chevron" aria-hidden="true">›</span>
+                  </header>
+                  <div class="wx-card-body wx-card-body--product">
+                    <div class="wx-product-thumb-wrap">
+                      <img
+                        class="wx-product-thumb"
+                        data-wx-featured-img
+                        src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&amp;fit=crop&amp;w=400&amp;q=80"
+                        alt="MacBook Pro 14 M4"
+                        loading="eager"
+                      />
+                    </div>
+                    <div class="wx-product-meta">
+                      <span class="wx-product-brand" data-wx-featured-brand>Apple</span>
+                      <strong class="wx-product-name" data-wx-featured-name>MacBook Pro 14 M4</strong>
+                      <div class="wx-product-price-row">
+                        <strong class="wx-product-price" data-wx-featured-price>$1,333.33</strong>
+                        <span class="wx-card-subnote" data-wx-featured-badge data-i18n="lunae.card3.badge">Best Seller</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </aside>
             </div>
           </div>
+
+          <p class="lunae-status" data-lunae-status role="status" aria-live="polite" hidden></p>
         </div>
+      </section>
 
-        <!-- Center WEEXEY Brand Launch Emblem -->
-        <div class="laser-launch-wrap" data-laser-launch-wrap>
-          <button
-            type="button"
-            class="laser-launch-orb"
-            data-laser-launch
-            aria-label="تفعيل تجربة WEEXEY"
-          >
-            <span class="laser-launch-orb__halo" aria-hidden="true"></span>
-            <span class="laser-launch-orb__ring laser-launch-orb__ring--outer" aria-hidden="true"></span>
-            <span class="laser-launch-orb__ring laser-launch-orb__ring--inner" aria-hidden="true"></span>
-            <span class="laser-launch-orb__core" aria-hidden="true">
-              <svg
-                class="weexey-spark-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="62"
-                height="48"
-                viewBox="0 0 88 64"
-                fill="none"
-                aria-hidden="true"
-              >
-                <defs>
-                  <linearGradient id="homeWeexeyBrandGrad" x1="6" y1="32" x2="84" y2="32" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stop-color="#6b34d6" />
-                    <stop offset="48%" stop-color="#9e3ee0" />
-                    <stop offset="78%" stop-color="#d848a0" />
-                    <stop offset="100%" stop-color="#ff6289" />
-                  </linearGradient>
-                  <linearGradient id="homeWeexeyRayGrad" x1="54" y1="8" x2="84" y2="56" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stop-color="#be44cf" />
-                    <stop offset="55%" stop-color="#df4ca0" />
-                    <stop offset="100%" stop-color="#ff6688" />
-                  </linearGradient>
-                </defs>
-                <path
-                  class="weexey-spark-main"
-                  d="M27 6 H33 V15 C33 24.5 36.5 28 46 28 H55 V34 H46 C36.5 34 33 37.5 33 47 V56 H27 V47 C27 37.5 23.5 34 14 34 H5 V28 H14 C23.5 28 27 24.5 27 15 Z"
-                  fill="url(#homeWeexeyBrandGrad)"
-                />
-                <rect
-                  class="weexey-spark-ray weexey-spark-ray--top"
-                  x="61"
-                  y="6"
-                  width="6"
-                  height="16"
-                  rx="1.2"
-                  fill="url(#homeWeexeyRayGrad)"
-                />
-                <rect
-                  class="weexey-spark-ray weexey-spark-ray--bottom"
-                  x="61"
-                  y="40"
-                  width="6"
-                  height="16"
-                  rx="1.2"
-                  fill="url(#homeWeexeyRayGrad)"
-                />
-                <rect
-                  class="weexey-spark-ray weexey-spark-ray--right"
-                  x="71"
-                  y="28"
-                  width="15"
-                  height="6"
-                  rx="1.2"
-                  fill="url(#homeWeexeyRayGrad)"
-                />
-              </svg>
-            </span>
-          </button>
-        </div>
-
-        <button
-          type="button"
-          class="laser-refresh-btn"
-          data-laser-refresh
-          aria-label="Refresh animation"
-          title="Replay animation"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            aria-hidden="true"
-          >
-            <path
-              d="M16.5 7.99976H18C19.4142 7.99976 20.1213 7.99976 20.5607 7.56042C21 7.12108 21 6.41397 21 4.99976V3.49976"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            ></path>
-            <path
-              d="M3 11.9998C3 7.02919 7.0293 2.99976 12 2.99976C15.571 2.99976 18.0948 4.73029 20 7.08347M21 11.9998C21 16.9703 16.9707 20.9998 12 20.9998C8.42904 20.9998 5.90524 19.2692 4 16.916"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            ></path>
-            <path
-              d="M7.5 15.9998H6C4.58579 15.9998 3.87868 15.9998 3.43934 16.4391C3 16.8784 3 17.5855 3 18.9998V20.4998"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            ></path>
-          </svg>
-        </button>
-        <p class="laser-flow-error" data-laser-error role="status" hidden></p>
-      </div>
-    </aside>
-
-    <div class="page-shell">
       <header class="topbar">
         <div class="container topbar-inner">
           <div class="topbar-texts">
@@ -277,12 +409,13 @@
         </div>
       </header>
 
-      <nav class="experiment-switcher" aria-label="Experiment pages">
+      <nav class="experiment-switcher" aria-label="Experiment pages" hidden>
         <a href="/experiments.html" data-experiment-label="home" aria-current="page"></a>
         <a href="/experiments-product.html?id=macbook-pro" data-experiment-label="product"></a>
         <a href="/experiments-laser.html" data-experiment-label="laser"></a>
         <a href="/experiments-blank-4.html" data-experiment-label="blank4"></a>
         <a href="/experiments-blank-5.html" data-experiment-label="blank5"></a>
+        <a href="/experiments-lunae.html" data-experiment-label="lunae"></a>
       </nav>
 
       <div class="mobile-ad-shell">
@@ -311,482 +444,666 @@
       <div class="mobile-ad-controls" hidden></div>
       </div>
 
-      <main>
-        <section id="flagship-store" class="hero container reveal">
-          <div class="hero-copy">
-            <span class="eyebrow" data-i18n="hero.eyebrow"
-              >تكنولوجيا مستقبلية</span
-            >
-            <h1 data-i18n="hero.title">أحدث الأجهزة. تجربة شراء أنيقة.</h1>
-            <p data-i18n="hero.text">
-              اكتشف أجهزة ذكية عالية الأداء، أمان متقدم، وتصميم فاخر مصمم للعالم
-              العصري. من الهواتف واللابتوبات إلى الأجهزة المنزلية، كل منتج
-              اخترناه بعناية لتليق بطموحاتك.
-            </p>
-
-            <div class="cta-group">
-              <a
-                href="/products.html"
-                class="primary-btn"
-                data-i18n="hero.ctaPrimary"
-                >تسوق الآن</a
-              >
-              <a
-                href="/products.html?filter=deals"
-                class="secondary-btn"
-                data-i18n="hero.ctaSecondary"
-                >استعرض العروض</a
-              >
+      <main class="lx-main" dir="ltr">
+        <!-- SECTION 1: NEURAL TELEMETRY BENTO GRID (Directly in Hero Glass Card Style) -->
+        <section id="neural-bento" class="lx-section">
+          <div class="lx-section-header">
+            <div class="lx-section-header__copy">
+              <div class="lx-eyebrow-row">
+                <span class="lx-pill-badge">
+                  <span class="lx-pill-dot" aria-hidden="true"></span>
+                  Neural Architecture
+                </span>
+                <span class="lx-eyebrow-sub">Adaptive sensory computing in real time.</span>
+              </div>
+              <h2 class="lx-section-title">
+                Engineered Around <span class="lx-gradient-text">Human Intelligence</span>
+              </h2>
+              <p class="lx-section-desc">
+                Every WEEXEY flagship device is calibrated through live neural telemetry — balancing acoustic calm, optical precision, and effortless performance.
+              </p>
             </div>
-
-            <ul class="hero-meta" aria-label="مميزات المتجر">
-              <li>
-                <strong>+50,000</strong
-                ><span data-i18n="hero.meta1">عميل راضي</span>
-              </li>
-              <li>
-                <strong>24/7</strong><span data-i18n="hero.meta2">دعم فني</span>
-              </li>
-              <li>
-                <strong>2</strong
-                ><span data-i18n="hero.meta3">يوم توصيل سريع</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="hero-visual" aria-label="عرض المنتجات المميزة" data-experiment-hero>
-            <div class="glass-panel highlight-card">
-              <div class="hero-offer-strip">
-                <span class="product-badge">أفضل مبيعات</span>
-                <aside class="featured-countdown-ribbon" aria-label="Timed offer countdown" hidden>
-                  <span class="featured-countdown-label"></span>
-                  <strong class="featured-countdown-value" aria-live="off"></strong>
-                </aside>
-              </div>
-              <div class="product-art">
-                <img
-                  class="featured-product-image"
-                  alt=""
-                  loading="eager"
-                />
-              </div>
-              <div class="hero-showcase-price" aria-label="Featured product price">
-                <span class="hero-showcase-price-label"></span>
-                <strong class="hero-showcase-price-value" data-price-sar="3299"></strong>
-              </div>
-            </div>
-
-            <div class="mini-card floating-card card-one">
-              <span></span>
-              <strong></strong>
-              <small></small>
-            </div>
-            <div class="mini-card floating-card card-two">
-              <span></span>
-              <strong></strong>
-              <small></small>
-            </div>
-          </div>
-        </section>
-
-        <section class="partners container reveal">
-          <div class="partner-row" aria-label="شراكات العلامات التجارية">
-            <div class="partner-track">
-              <div class="partner-group">
-                <span>APPLE</span>
-                <span>SAMSUNG</span>
-                <span>XIAOMI</span>
-                <span>SONY</span>
-                <span>ASUS</span>
-                <span>HP</span>
-              </div>
-              <div class="partner-group" aria-hidden="true">
-                <span>APPLE</span>
-                <span>SAMSUNG</span>
-                <span>XIAOMI</span>
-                <span>SONY</span>
-                <span>ASUS</span>
-                <span>HP</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="categories" class="categories container reveal">
-          <div class="section-head">
-            <div>
-              <span class="eyebrow" data-i18n="sections.browse">تصفح</span>
-              <h2 data-i18n="sections.categoriesTitle">فئات المنتجات</h2>
-            </div>
-            <a
-              href="/categories.html"
-              class="section-link"
-              data-i18n="sections.viewAll"
-              >عرض الكل</a
-            >
-          </div>
-
-          <div class="category-grid">
-            <a
-              href="/products.html?category=phones"
-              class="category-card feature-card"
-            >
-              <img
-                class="category-image"
-                src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"
-                alt=""
-                loading="lazy"
-              />
-              <div class="category-content">
-                <h3 data-i18n="cats.phones">الهواتف</h3>
-                <p data-i18n="cats.phonesText">
-                  أحدث هواتف الذكاء وابتكارات الكاميرا.
-                </p>
-                <span data-i18n="cats.phonesCount">120 منتج</span>
-              </div>
-            </a>
-            <a
-              href="/products.html?category=laptops"
-              class="category-card feature-card"
-            >
-              <img
-                class="category-image"
-                src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80"
-                alt=""
-                loading="lazy"
-              />
-              <div class="category-content">
-                <h3 data-i18n="cats.laptops">اللابتوبات</h3>
-                <p data-i18n="cats.laptopsText">
-                  أداء قوي، تصميم أنيق، وتجربة إنتاجية استثنائية.
-                </p>
-                <span data-i18n="cats.laptopsCount">94 منتج</span>
-              </div>
-            </a>
-            <a
-              href="/products.html?category=wearables"
-              class="category-card feature-card"
-            >
-              <img
-                class="category-image"
-                src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80"
-                alt=""
-                loading="lazy"
-              />
-              <div class="category-content">
-                <h3 data-i18n="cats.watches">الساعات</h3>
-                <p data-i18n="cats.watchesText">
-                  راقب صحتك وتابع أنشطتك بشكل ذكي.
-                </p>
-                <span data-i18n="cats.watchesCount">58 منتج</span>
-              </div>
-            </a>
-            <a
-              href="/products.html?category=audio"
-              class="category-card feature-card"
-            >
-              <img
-                class="category-image"
-                src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=80"
-                alt=""
-                loading="lazy"
-              />
-              <div class="category-content">
-                <h3 data-i18n="cats.audio">الصوت</h3>
-                <p data-i18n="cats.audioText">
-                  صوت نقي وتجربة استماع غامرة هادئة.
-                </p>
-                <span data-i18n="cats.audioCount">76 منتج</span>
-              </div>
+            <a href="/products.html" class="lx-btn-dark">
+              <span>Explore Ecosystem</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
             </a>
           </div>
-        </section>
 
-        <section class="experiment-editorial high-refresh-banner-section container reveal" id="high-refresh">
-          <div class="experiment-editorial-visual high-refresh-banner">
-            <div class="high-refresh-stage">
-              <a class="high-refresh-banner-link" data-hr-link>
-                <img
-                  class="high-refresh-banner-img"
-                  data-hr-image
-                  alt=""
-                  loading="eager"
-                />
-              </a>
-            </div>
-            <span class="experiment-editorial-orbit" aria-hidden="true"></span>
-          </div>
-        </section>
-
-        <section id="new" class="featured container reveal">
-          <div class="section-head">
-            <div>
-              <span class="eyebrow" data-i18n="sections.featured"
-                >منتجات مميزة</span
-              >
-              <h2 data-i18n="sections.newThisWeek">جديد هذا الأسبوع</h2>
-            </div>
-            <a
-              href="/products.html"
-              class="section-link"
-              data-i18n="sections.allDeals"
-              >كل العروض</a
-            >
-          </div>
-
-          <div class="product-grid">
-            <article class="product-card">
-              <div class="product-image img-one">
-                <span class="tag" data-i18n="tags.new">جديد</span>
-              </div>
-              <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=macbook-pro">MacBook Pro M4</a>
-                  </h3>
-                </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.9</span>
-                  <strong data-price-sar="5000">5,000 ر.س</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="product-card">
-              <div class="product-image img-two">
-                <span class="tag tag-sale" data-i18n="tags.sale">خصم</span>
-              </div>
-              <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=galaxy-s25">Samsung S25 Ultra</a>
-                  </h3>
-                </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.8</span>
-                  <strong data-price-sar="5499">5,499 ر.س</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="product-card">
-              <div class="product-image img-three">
-                <span class="tag" data-i18n="tags.featured">مميز</span>
-              </div>
-              <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=airpods-pro">AirPods Pro</a>
-                  </h3>
-                </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.9</span>
-                  <strong data-price-sar="1399">1,399 ر.س</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="product-card">
-              <div class="product-image img-four">
-                <span class="tag tag-sale" data-i18n="tags.offer">عرض</span>
-              </div>
-              <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=galaxy-watch">Galaxy Watch 7</a>
-                  </h3>
-                </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.7</span>
-                  <strong data-price-sar="1199">1,199 ر.س</strong>
-                </div>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section id="deals" class="promo-banner container reveal">
-          <div class="promo-copy">
-            <span class="eyebrow light" data-i18n="promo.eyebrow"
-              >تخفيضات حصرية</span
-            >
-            <h2 data-i18n="promo.title">خصم يصل إلى 35% على أجهزة الألعاب</h2>
-            <p data-i18n="promo.text">
-              استمتع بأداء استثنائي مع شاشات عالية التردد وأجهزة قوية للعبة
-              المميزة.
-            </p>
-            <a
-              href="/products.html?filter=deals"
-              class="primary-btn light-btn"
-              data-i18n="promo.button"
-              >احصل على العرض</a
-            >
-          </div>
-          <div class="promo-visual">
-            <img class="promo-image" data-promo-image alt="" hidden />
-            <div class="console-visual">
+          <div class="lx-bento-grid">
+            <!-- Bento Marketing Banner 1: Spatial Audio (Span 4) -->
+            <a href="/products.html?category=Audio" class="lx-bento-banner lx-bento-card--cloud" aria-label="WEEXEY Spatial Audio">
               <img
-                src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=85"
-                alt=""
-                loading="lazy"
+                class="lx-bento-banner__img"
+                src="/images/lunae-banners/banner-audio.png?v=2"
+                alt="WEEXEY Spatial Audio Headphones"
+                loading="eager"
               />
-            </div>
-          </div>
-          <div class="promo-controls" data-promo-controls role="group" aria-label="Homepage offers" hidden>
-            <button type="button" class="promo-arrow" data-promo-prev aria-label="Previous offer">‹</button>
-            <div class="promo-dots" data-promo-dots></div>
-            <button type="button" class="promo-arrow" data-promo-next aria-label="Next offer">›</button>
-          </div>
-        </section>
+            </a>
 
-        <section class="features container reveal">
-          <div class="section-head">
-            <div>
-              <span class="eyebrow" data-i18n="sections.whyUs">لماذا نحن</span>
-              <h2 data-i18n="sections.serviceTitle">خدمة تلبي احتياجاتك</h2>
-            </div>
-          </div>
+            <!-- Bento Marketing Banner 2: Neural Optical Visor (Span 5) -->
+            <a href="/products.html" class="lx-bento-banner lx-bento-card--wave" aria-label="WEEXEY Neural Optics">
+              <img
+                class="lx-bento-banner__img"
+                src="/images/lunae-banners/banner-optics.png?v=2"
+                alt="WEEXEY Neural Optical Visor"
+                loading="eager"
+              />
+            </a>
 
-          <div class="feature-grid">
-            <article class="feature-box">
-              <div class="feature-top">
-                <span class="feature-index">01</span>
-              </div>
-              <h3 data-i18n="features.fastDelivery">توصيل سريع</h3>
-              <p data-i18n="features.fastDeliveryText">
-                توصيل إلى جميع المدن خلال 48 ساعة مع تحديثات فورية.
-              </p>
-            </article>
-            <article class="feature-box">
-              <div class="feature-top">
-                <span class="feature-index">02</span>
-              </div>
-              <h3 data-i18n="features.warranty">ضمان موثوق</h3>
-              <p data-i18n="features.warrantyText">
-                ضمان أصلي لمدة عامين مع خدمات ما بعد البيع المتخصصة.
-              </p>
-            </article>
-            <article class="feature-box">
-              <div class="feature-top">
-                <span class="feature-index">03</span>
-              </div>
-              <h3 data-i18n="features.payment">دفع آمن</h3>
-              <p data-i18n="features.paymentText">
-                دفع مريح وآمن مع خيارات متعددة وموثوقة.
-              </p>
-            </article>
-            <article class="feature-box">
-              <div class="feature-top">
-                <span class="feature-index">04</span>
-              </div>
-              <h3 data-i18n="features.consulting">استشارات الخبراء</h3>
-              <p data-i18n="features.consultingText">
-                اختيار مثالي من خبرائنا حسب احتياجك ومميزتك.
-              </p>
-            </article>
-          </div>
-        </section>
+            <!-- Bento Marketing Banner 3: Flagship Neural Device (Span 3) -->
+            <a href="/products.html?category=Smartphones" class="lx-bento-banner lx-bento-card--donut" aria-label="WEEXEY Flagship Neural Device">
+              <img
+                class="lx-bento-banner__img"
+                src="/images/lunae-banners/banner-device.png?v=2"
+                alt="WEEXEY Flagship Neural Smartphone"
+                loading="eager"
+              />
+            </a>
 
-        <section class="stats container reveal">
-          <div class="stat-item">
-            <strong>12+</strong>
-            <span data-i18n="stats.experience">سنوات خبرة</span>
-          </div>
-          <div class="stat-item">
-            <strong>320K</strong>
-            <span data-i18n="stats.sold">منتج تم بيعه</span>
-          </div>
-          <div class="stat-item">
-            <strong>97%</strong>
-            <span data-i18n="stats.satisfaction">رضا العملاء</span>
-          </div>
-          <div class="stat-item">
-            <strong>24/7</strong>
-            <span data-i18n="stats.support">خدمة عملاء</span>
-          </div>
-        </section>
-
-        <section id="reviews" class="testimonials container reveal">
-          <div class="section-head">
-            <div>
-              <span class="eyebrow" data-i18n="sections.reviewsLabel"
-                >آراء العملاء</span
-              >
-              <h2 data-i18n="sections.reviewTitle">ماذا يقول عملاؤنا</h2>
-            </div>
-          </div>
-
-          <div class="testimonial-grid">
-            <article class="testimonial-card">
-              <div class="stars">★★★★★</div>
-              <p data-i18n="reviews.one">
-                “خدمة مميزة وسريعة، والتوصيل كان قبل الموعد المحدد، كما أن
-                الجهاز وصل بحالة ممتازة.”
-              </p>
-              <div class="author">
-                <div class="avatar avatar-one"></div>
-                <div>
-                  <strong>علي النجار</strong>
-                  <span data-i18n="reviews.oneRole">مصمم جرافيك</span>
+            <!-- Bento Card 4: Partner Ecosystem Dock -->
+            <article class="lx-glass-card lx-bento-card--partners">
+              <div class="lx-partners-dock">
+                <div class="lx-partners-label">
+                  <span class="lx-pill-dot" aria-hidden="true"></span>
+                  <span>Authorized Flagship Neural Ecosystem Partners</span>
                 </div>
-              </div>
-            </article>
-            <article class="testimonial-card">
-              <div class="stars">★★★★★</div>
-              <p data-i18n="reviews.two">
-                “التجربة كانت احترافية من أول زيارة إلى موقع المتجر حتى استلام
-                الطلب. أنصح به بشدة.”
-              </p>
-              <div class="author">
-                <div class="avatar avatar-two"></div>
-                <div>
-                  <strong>سارة الحربي</strong>
-                  <span data-i18n="reviews.twoRole">مديرة مشاريع</span>
-                </div>
-              </div>
-            </article>
-            <article class="testimonial-card">
-              <div class="stars">★★★★★</div>
-              <p data-i18n="reviews.three">
-                “الأدوات المتاحة متنوعة جدًا، والاختيارات كانت دقيقة جدًا مع
-                احتياجاتنا في العمل والراحة.”
-              </p>
-              <div class="author">
-                <div class="avatar avatar-three"></div>
-                <div>
-                  <strong>محمد الزهراني</strong>
-                  <span data-i18n="reviews.threeRole">مسوق رقمي</span>
+                <div class="lx-partners-pills">
+                  <span class="lx-partner-pill">APPLE</span>
+                  <span class="lx-partner-pill">SAMSUNG</span>
+                  <span class="lx-partner-pill">SONY</span>
+                  <span class="lx-partner-pill">ASUS</span>
+                  <span class="lx-partner-pill">XIAOMI</span>
+                  <span class="lx-partner-pill">HP</span>
                 </div>
               </div>
             </article>
           </div>
         </section>
 
-        <section class="newsletter container reveal">
-          <div class="newsletter-box">
-            <div>
-              <span class="eyebrow" data-i18n="newsletter.label"
-                >نبض السوق</span
-              >
-              <h2 data-i18n="newsletter.title">
-                اشترك للحصول على العروض الحصرية
+        <!-- SECTION 2: FROSTED GLASS CATEGORY CAPSULES (#categories) -->
+        <section id="categories" class="lx-section">
+          <div class="lx-section-header">
+            <div class="lx-section-header__copy">
+              <div class="lx-eyebrow-row">
+                <span class="lx-pill-badge">
+                  <span class="lx-pill-dot" aria-hidden="true"></span>
+                  Precision Categories
+                </span>
+                <span class="lx-eyebrow-sub">Four pillars of connected intelligence.</span>
+              </div>
+              <h2 class="lx-section-title">
+                Curated <span class="lx-gradient-text">Device Architectures</span>
               </h2>
             </div>
-            <form class="newsletter-form">
+            <a href="/categories.html" class="lx-btn-glass">
+              <span>View All Categories</span>
+              <span aria-hidden="true">›</span>
+            </a>
+          </div>
+
+          <div class="lx-categories-grid">
+            <!-- Category 1: Smartphones -->
+            <a href="/products.html?category=phones" class="lx-glass-card lx-cat-card">
+              <div class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="6" y="2" width="12" height="20" rx="3"></rect>
+                      <circle cx="12" cy="18" r="1" fill="currentColor"></circle>
+                    </svg>
+                  </span>
+                  Neural Smartphones
+                </span>
+                <span class="lx-card-chevron" aria-hidden="true">›</span>
+              </div>
+              <div class="lx-cat-visual">
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80" alt="Neural Smartphones" loading="lazy" />
+                <span class="lx-cat-float-pill">120 Devices</span>
+              </div>
+              <div class="lx-cat-body">
+                <h3 data-i18n="cats.phones">الهواتف الذكية</h3>
+                <p data-i18n="cats.phonesText">أحدث هواتف الذكاء الاصطناعي وابتكارات التصوير البصري الفائق.</p>
+              </div>
+              <div class="lx-telemetry-strip">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Optical AI Engine</span>
+                  <strong class="lx-telemetry-strip__val">200MP · 99.4% Sync</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 94%"></span></span>
+              </div>
+            </a>
+
+            <!-- Category 2: Laptops -->
+            <a href="/products.html?category=laptops" class="lx-glass-card lx-cat-card">
+              <div class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                      <path d="M2 20h20" stroke-linecap="round"></path>
+                    </svg>
+                  </span>
+                  Quantum Workstations
+                </span>
+                <span class="lx-card-chevron" aria-hidden="true">›</span>
+              </div>
+              <div class="lx-cat-visual">
+                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80" alt="Quantum Workstations" loading="lazy" />
+                <span class="lx-cat-float-pill">94 Devices</span>
+              </div>
+              <div class="lx-cat-body">
+                <h3 data-i18n="cats.laptops">اللابتوبات الفائقة</h3>
+                <p data-i18n="cats.laptopsText">أداء حوسبي خارق مع شاشات Liquid Retina XDR وبطارية تدوم طوال اليوم.</p>
+              </div>
+              <div class="lx-telemetry-strip">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Neural Compute</span>
+                  <strong class="lx-telemetry-strip__val">M4 / Ultra 7 · 38 TOPS</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 96%"></span></span>
+              </div>
+            </a>
+
+            <!-- Category 3: Wearables -->
+            <a href="/products.html?category=wearables" class="lx-glass-card lx-cat-card">
+              <div class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="6"></circle>
+                      <path d="M9 2h6M9 22h6" stroke-linecap="round"></path>
+                    </svg>
+                  </span>
+                  Bio-Sync Wearables
+                </span>
+                <span class="lx-card-chevron" aria-hidden="true">›</span>
+              </div>
+              <div class="lx-cat-visual">
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80" alt="Bio-Sync Wearables" loading="lazy" />
+                <span class="lx-cat-float-pill">58 Devices</span>
+              </div>
+              <div class="lx-cat-body">
+                <h3 data-i18n="cats.watches">الساعات الحيوية</h3>
+                <p data-i18n="cats.watchesText">مستشعرات حيوية دقيقة لمتابعة نبض القلب وجودة النوم والنشاط اللحظي.</p>
+              </div>
+              <div class="lx-telemetry-strip">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Biometric Pulse</span>
+                  <strong class="lx-telemetry-strip__val">24/7 Live Telemetry</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 89%"></span></span>
+              </div>
+            </a>
+
+            <!-- Category 4: Spatial Audio -->
+            <a href="/products.html?category=audio" class="lx-glass-card lx-cat-card">
+              <div class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 13v-1a8 8 0 0 1 16 0v1"></path>
+                      <rect x="2" y="13" width="4" height="7" rx="2"></rect>
+                      <rect x="18" y="13" width="4" height="7" rx="2"></rect>
+                    </svg>
+                  </span>
+                  Spatial Acoustics
+                </span>
+                <span class="lx-card-chevron" aria-hidden="true">›</span>
+              </div>
+              <div class="lx-cat-visual">
+                <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=80" alt="Spatial Acoustics" loading="lazy" />
+                <span class="lx-cat-float-pill">76 Devices</span>
+              </div>
+              <div class="lx-cat-body">
+                <h3 data-i18n="cats.audio">الصوت المكاني</h3>
+                <p data-i18n="cats.audioText">عزل ضجيج عصبي متكيف وتجربة صوتية ثلاثية الأبعاد بنقاء استوديو.</p>
+              </div>
+              <div class="lx-telemetry-strip">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Acoustic Purity</span>
+                  <strong class="lx-telemetry-strip__val">14Hz – 48kHz Studio</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 92%"></span></span>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- SECTION 3: FLAGSHIP FROSTED GLASS PRODUCT PODS (#new) -->
+        <section id="new" class="lx-section">
+          <div class="lx-section-header">
+            <div class="lx-section-header__copy">
+              <div class="lx-eyebrow-row">
+                <span class="lx-pill-badge">
+                  <span class="lx-pill-dot" aria-hidden="true"></span>
+                  Flagship Selection
+                </span>
+                <span class="lx-eyebrow-sub">Each pod includes live performance telemetry.</span>
+              </div>
+              <h2 class="lx-section-title">
+                Signature <span class="lx-gradient-text">Neural Devices</span>
+              </h2>
+            </div>
+            <a href="/products.html" class="lx-btn-dark">
+              <span>Browse Full Store</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+
+          <div class="lx-products-grid">
+            <!-- Pod 1: MacBook Pro M4 -->
+            <article class="lx-glass-card lx-product-pod">
+              <header class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2L14.6 9.4L22 12L14.6 14.6L12 22L9.4 14.6L2 12L9.4 9.4L12 2Z" stroke-linejoin="round"></path>
+                    </svg>
+                  </span>
+                  Apple Flagship
+                </span>
+                <span class="lx-card-badge">M4 Neural</span>
+              </header>
+              <div class="lx-product-stage">
+                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=85" alt="MacBook Pro 14 M4" loading="lazy" />
+                <span class="lx-product-rating">★ 4.9</span>
+              </div>
+              <div class="lx-product-info">
+                <h3><a href="/product.html?id=macbook-pro">MacBook Pro 14 M4</a></h3>
+                <p>Liquid Retina XDR · 16GB Unified Memory · 24h Battery</p>
+              </div>
+              <div class="lx-product-telemetry">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Neural Compute Score</span>
+                  <strong class="lx-telemetry-strip__val">99.4% · 38 TOPS</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 98%"></span></span>
+              </div>
+              <div class="lx-product-bottom">
+                <div class="lx-product-price">
+                  <small>Flagship Edition</small>
+                  <strong data-price-sar="5000">5,000 ر.س</strong>
+                </div>
+                <a href="/product.html?id=macbook-pro" class="lx-pod-cta">
+                  <span>Explore</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Pod 2: Galaxy S25 Ultra -->
+            <article class="lx-glass-card lx-product-pod">
+              <header class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="9"></circle>
+                      <circle cx="12" cy="12" r="4"></circle>
+                    </svg>
+                  </span>
+                  Samsung AI
+                </span>
+                <span class="lx-card-badge">200MP Optics</span>
+              </header>
+              <div class="lx-product-stage">
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1000&q=85" alt="Galaxy S25 Ultra" loading="lazy" />
+                <span class="lx-product-rating">★ 4.8</span>
+              </div>
+              <div class="lx-product-info">
+                <h3><a href="/product.html?id=galaxy-s25">Galaxy S25 Ultra</a></h3>
+                <p>200MP Pro-Grade Optics · 512GB · Titanium Frame</p>
+              </div>
+              <div class="lx-product-telemetry">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Optical Sensor Precision</span>
+                  <strong class="lx-telemetry-strip__val">98.7% · ProVisual AI</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 95%"></span></span>
+              </div>
+              <div class="lx-product-bottom">
+                <div class="lx-product-price">
+                  <small>512GB Titanium</small>
+                  <strong data-price-sar="5499">5,499 ر.س</strong>
+                </div>
+                <a href="/product.html?id=galaxy-s25" class="lx-pod-cta">
+                  <span>Explore</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Pod 3: AirPods Pro 2 -->
+            <article class="lx-glass-card lx-product-pod">
+              <header class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M2 12h4l2.5-6 4 12 3-8 2.5 2H22" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </span>
+                  Acoustic Core
+                </span>
+                <span class="lx-card-badge">Spatial ANC</span>
+              </header>
+              <div class="lx-product-stage">
+                <img src="https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=1000&q=85" alt="AirPods Pro 2" loading="lazy" />
+                <span class="lx-product-rating">★ 4.9</span>
+              </div>
+              <div class="lx-product-info">
+                <h3><a href="/product.html?id=airpods-pro">AirPods Pro 2</a></h3>
+                <p>H2 Neural Audio · Adaptive Transparency · USB-C MagSafe</p>
+              </div>
+              <div class="lx-product-telemetry">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Acoustic Calm Index</span>
+                  <strong class="lx-telemetry-strip__val">96.2% · 48,000 Hz/s</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 96%"></span></span>
+              </div>
+              <div class="lx-product-bottom">
+                <div class="lx-product-price">
+                  <small>Spatial Edition</small>
+                  <strong data-price-sar="1399">1,399 ر.س</strong>
+                </div>
+                <a href="/product.html?id=airpods-pro" class="lx-pod-cta">
+                  <span>Explore</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Pod 4: iPhone 16 Pro -->
+            <article class="lx-glass-card lx-product-pod">
+              <header class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="6" y="2" width="12" height="20" rx="3"></rect>
+                    </svg>
+                  </span>
+                  Apple Intelligence
+                </span>
+                <span class="lx-card-badge">A18 Pro</span>
+              </header>
+              <div class="lx-product-stage">
+                <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1000&q=85" alt="iPhone 16 Pro" loading="lazy" />
+                <span class="lx-product-rating">★ 4.9</span>
+              </div>
+              <div class="lx-product-info">
+                <h3><a href="/product.html?id=iphone-16">iPhone 16 Pro</a></h3>
+                <p>A18 Pro Neural Engine · 4K120 Dolby Vision · Grade 5 Titanium</p>
+              </div>
+              <div class="lx-product-telemetry">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Ray-Tracing &amp; AI Core</span>
+                  <strong class="lx-telemetry-strip__val">99.1% · 16-Core NPU</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 97%"></span></span>
+              </div>
+              <div class="lx-product-bottom">
+                <div class="lx-product-price">
+                  <small>256GB Pro</small>
+                  <strong data-price-sar="4899">4,899 ر.س</strong>
+                </div>
+                <a href="/product.html?id=iphone-16" class="lx-pod-cta">
+                  <span>Explore</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Pod 5: Zenbook 14 OLED -->
+            <article class="lx-glass-card lx-product-pod">
+              <header class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                    </svg>
+                  </span>
+                  ASUS Lumina
+                </span>
+                <span class="lx-card-badge">3K OLED</span>
+              </header>
+              <div class="lx-product-stage">
+                <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1000&q=85" alt="Zenbook 14 OLED" loading="lazy" />
+                <span class="lx-product-rating">★ 4.8</span>
+              </div>
+              <div class="lx-product-info">
+                <h3><a href="/product.html?id=asus-zenbook">Zenbook 14 OLED</a></h3>
+                <p>3K 120Hz OLED · Intel Core Ultra 7 · 1.2kg Featherlight</p>
+              </div>
+              <div class="lx-product-telemetry">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Display Color Fidelity</span>
+                  <strong class="lx-telemetry-strip__val">100% DCI-P3 · 120Hz</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 93%"></span></span>
+              </div>
+              <div class="lx-product-bottom">
+                <div class="lx-product-price">
+                  <small>Ultra 7 Edition</small>
+                  <strong data-price-sar="6299">6,299 ر.س</strong>
+                </div>
+                <a href="/product.html?id=asus-zenbook" class="lx-pod-cta">
+                  <span>Explore</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Pod 6: Galaxy Watch 7 -->
+            <article class="lx-glass-card lx-product-pod">
+              <header class="lx-card-top">
+                <span class="lx-card-title">
+                  <span class="lx-card-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="6"></circle>
+                    </svg>
+                  </span>
+                  Bio-Sensor
+                </span>
+                <span class="lx-card-badge">BioActive 2</span>
+              </header>
+              <div class="lx-product-stage">
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1000&q=85" alt="Galaxy Watch 7" loading="lazy" />
+                <span class="lx-product-rating">★ 4.7</span>
+              </div>
+              <div class="lx-product-info">
+                <h3><a href="/product.html?id=galaxy-watch">Galaxy Watch 7</a></h3>
+                <p>AI Energy Score · Dual-Frequency GPS · Sapphire Crystal</p>
+              </div>
+              <div class="lx-product-telemetry">
+                <div class="lx-telemetry-strip__info">
+                  <span class="lx-telemetry-strip__label">Biometric Readiness</span>
+                  <strong class="lx-telemetry-strip__val">95.0% · Sleep &amp; HRV</strong>
+                </div>
+                <span class="lx-mini-bar"><span class="lx-mini-bar__fill" style="width: 91%"></span></span>
+              </div>
+              <div class="lx-product-bottom">
+                <div class="lx-product-price">
+                  <small>Sapphire GPS</small>
+                  <strong data-price-sar="1199">1,199 ر.س</strong>
+                </div>
+                <a href="/product.html?id=galaxy-watch" class="lx-pod-cta">
+                  <span>Explore</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- SECTION 4: LUMINOUS PASTEL GLASS EXPERIENCE STAGE (#deals) -->
+        <section id="deals" class="lx-section">
+          <div class="lx-experience-stage">
+            <div class="lx-experience-copy">
+              <div class="lx-eyebrow-row">
+                <span class="lx-pill-badge">
+                  <span class="lx-pill-dot" aria-hidden="true"></span>
+                  Exclusive Neural Privileges
+                </span>
+                <span class="lx-eyebrow-sub">Season Flagship Release</span>
+              </div>
+
+              <h2 class="lx-section-title">
+                Up to <span class="lx-gradient-text">35% Privilege</span> on Flagship Setups
+              </h2>
+
+              <p class="lx-section-desc">
+                Experience ultra-low latency displays, spatial audio studio gear, and next-gen neural workstations — backed by WEEXEY 48-hour priority dispatch and 2-year official warranty.
+              </p>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 4px;">
+                <a href="/products.html?filter=deals" class="lx-btn-dark">
+                  <span>Unlock Flagship Offers</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                  </svg>
+                </a>
+                <a href="/support.html" class="lx-btn-glass">
+                  <span>2-Year Care Included</span>
+                </a>
+              </div>
+
+              <div class="lx-experience-stats">
+                <div class="lx-exp-stat">
+                  <strong>48h</strong>
+                  <span>Express Dispatch</span>
+                </div>
+                <div class="wx-stat-divider" aria-hidden="true"></div>
+                <div class="lx-exp-stat">
+                  <strong>2 Years</strong>
+                  <span>Official Warranty</span>
+                </div>
+                <div class="wx-stat-divider" aria-hidden="true"></div>
+                <div class="lx-exp-stat">
+                  <strong>99.9%</strong>
+                  <span>Client Satisfaction</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="lx-experience-visual">
+              <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1200&q=85" alt="WEEXEY Neural Audio Experience" loading="lazy" />
+              <div class="lx-floating-telemetry-badge">
+                <span class="lx-card-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L14.6 9.4L22 12L14.6 14.6L12 22L9.4 14.6L2 12L9.4 9.4L12 2Z" stroke-linejoin="round"></path>
+                  </svg>
+                </span>
+                <div>
+                  <div style="font-size: 0.7rem; color: #6d6282; font-weight: 500;">Live Neural Calibration</div>
+                  <strong style="font-size: 0.86rem; color: #120c1f;">Studio Spatial · 14 Hz Beta</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5: VERIFIED NEURAL EXPERIENCE REVIEWS (#reviews) -->
+        <section id="reviews" class="lx-section">
+          <div class="lx-section-header">
+            <div class="lx-section-header__copy">
+              <div class="lx-eyebrow-row">
+                <span class="lx-pill-badge">
+                  <span class="lx-pill-dot" aria-hidden="true"></span>
+                  Verified Telemetry
+                </span>
+                <span class="lx-eyebrow-sub">From 10,000+ active flagship owners.</span>
+              </div>
+              <h2 class="lx-section-title">
+                Voices From the <span class="lx-gradient-text">WEEXEY Community</span>
+              </h2>
+            </div>
+          </div>
+
+          <div class="lx-reviews-grid">
+            <article class="lx-glass-card lx-review-card">
+              <header class="lx-card-top">
+                <span class="lx-review-stars">★★★★★</span>
+                <span class="lx-card-badge">Verified Owner</span>
+              </header>
+              <p class="lx-review-quote" data-i18n="reviews.one">
+                “خدمة مميزة وسريعة، والتوصيل كان قبل الموعد المحدد، كما أن الجهاز وصل بتغليف فاخر وحالة ممتازة.”
+              </p>
+              <div class="lx-review-author">
+                <div>
+                  <strong>علي النجار</strong>
+                  <span data-i18n="reviews.oneRole">مصمم جرافيك · MacBook Pro M4</span>
+                </div>
+                <span class="lx-card-badge">99% Calm</span>
+              </div>
+            </article>
+
+            <article class="lx-glass-card lx-review-card">
+              <header class="lx-card-top">
+                <span class="lx-review-stars">★★★★★</span>
+                <span class="lx-card-badge">Verified Owner</span>
+              </header>
+              <p class="lx-review-quote" data-i18n="reviews.two">
+                “التجربة كانت احترافية من أول زيارة إلى موقع المتجر حتى استلام الطلب. تصميم المتجر وسلاسة الشراء استثنائية.”
+              </p>
+              <div class="lx-review-author">
+                <div>
+                  <strong>سارة الحربي</strong>
+                  <span data-i18n="reviews.twoRole">مديرة مشاريع · Galaxy S25 Ultra</span>
+                </div>
+                <span class="lx-card-badge">100% Sync</span>
+              </div>
+            </article>
+
+            <article class="lx-glass-card lx-review-card">
+              <header class="lx-card-top">
+                <span class="lx-review-stars">★★★★★</span>
+                <span class="lx-card-badge">Verified Owner</span>
+              </header>
+              <p class="lx-review-quote" data-i18n="reviews.three">
+                “الأجهزة المختارة دقيقة جداً وتلبي أعلى المعايير في العمل والراحة الصوتية.”
+              </p>
+              <div class="lx-review-author">
+                <div>
+                  <strong>محمد الزهراني</strong>
+                  <span data-i18n="reviews.threeRole">مسوق رقمي · AirPods Pro 2</span>
+                </div>
+                <span class="lx-card-badge">48kHz Pure</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- SECTION 6: FROSTED GLASS NEWSLETTER CAPSULE -->
+        <section class="lx-section">
+          <div class="lx-glass-card lx-newsletter-card">
+            <div class="lx-section-header__copy">
+              <div class="lx-eyebrow-row">
+                <span class="lx-pill-badge">
+                  <span class="lx-pill-dot" aria-hidden="true"></span>
+                  Neural Pulse Dispatch
+                </span>
+              </div>
+              <h2 class="lx-section-title" style="font-size: clamp(1.55rem, 2.4vw, 2.2rem);">
+                Receive Private <span class="lx-gradient-text">Flagship Releases</span>
+              </h2>
+            </div>
+
+            <form class="lx-newsletter-form" onsubmit="event.preventDefault();">
               <input
                 type="email"
                 name="email"
                 required
-                data-i18n-placeholder="newsletter.placeholder"
-                placeholder="بريدك الإلكتروني"
-                aria-label="البريد الإلكتروني"
+                placeholder="Enter your email for private access..."
+                aria-label="Email address"
               />
-              <button
-                type="submit"
-                class="primary-btn"
-                data-i18n="newsletter.button"
-              >
-                اشترك الآن
+              <button type="submit" class="lx-btn-dark">
+                <span>Join Pulse</span>
               </button>
             </form>
           </div>
@@ -878,11 +1195,11 @@
     <script src="/js/features-section.js?v=1"></script>
     <script src="/js/reviews-section.js?v=1"></script>
     <script src="/js/main.js?v=13"></script>
-    <script src="/js/laser-flow.js?v=7"></script>
     <script src="/js/experiments.js?v=12"></script>
+    <script src="/js/experiments-lunae.js?v=21"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/js/supabase-config.js"></script>
-    <script defer src="/js/supabase-client.js?v=10"></script>
+    <script defer src="/js/supabase-client.js?v=11"></script>
   </body>
 </html>

@@ -167,21 +167,7 @@
   };
   const footerTextFields = [
     { key: "footer.copy", label: "Store description", multiline: true },
-    { key: "footer.linksTitle", label: "Quick links heading" },
-    { key: "footer.link1", label: "New products link label" },
-    { key: "footer.link2", label: "Categories link label" },
-    { key: "footer.link3", label: "Offers link label" },
-    { key: "footer.about", label: "About us link label" },
-    { key: "footer.supportTitle", label: "Support heading" },
-    { key: "footer.support1", label: "Secure payment link label" },
-    { key: "footer.support2", label: "Shipping link label" },
-    { key: "footer.support3", label: "Contact link label" },
-    { key: "footer.contactTitle", label: "Contact details heading" },
     { key: "footer.location", label: "Store location" },
-    { key: "footer.legalTitle", label: "Legal information heading" },
-    { key: "footer.policy1", label: "Terms link label" },
-    { key: "footer.policy2", label: "Returns link label" },
-    { key: "footer.policy3", label: "Privacy link label" },
     { key: "footer.rights", label: "Copyright notice", multiline: true },
   ];
   const defaultFooterTexts = {
@@ -235,6 +221,46 @@
     { key: "terms", label: "Terms", href: "/support.html#terms" },
     { key: "returns", label: "Returns", href: "/support.html#returns" },
     { key: "privacy", label: "Privacy", href: "/support.html#privacy" },
+  ];
+  const defaultFooterSections = [
+    {
+      id: "quick-links",
+      titleKey: "footer.linksTitle",
+      titles: { en: "Quick links", ar: "روابط سريعة", fr: "Liens rapides", es: "Enlaces rápidos", zh: "快速链接" },
+      links: [
+        { id: "new", labelKey: "footer.link1", labels: { en: "New arrivals", ar: "منتجات جديدة", fr: "Nouveautés", es: "Novedades", zh: "新品上市" }, href: "/#new" },
+        { id: "categories", labelKey: "footer.link2", labels: { en: "Categories", ar: "التصنيفات", fr: "Catégories", es: "Categorías", zh: "商品分类" }, href: "/#categories" },
+        { id: "deals", labelKey: "footer.link3", labels: { en: "Offers", ar: "العروض", fr: "Offres", es: "Ofertas", zh: "优惠活动" }, href: "/#deals" },
+        { id: "about", labelKey: "footer.about", labels: { en: "About us", ar: "من نحن", fr: "À propos", es: "Sobre nosotros", zh: "关于我们" }, href: "/about.html" },
+      ],
+    },
+    {
+      id: "support",
+      titleKey: "footer.supportTitle",
+      titles: { en: "Support", ar: "الدعم", fr: "Assistance", es: "Ayuda", zh: "支持" },
+      links: [
+        { id: "payment", labelKey: "footer.support1", labels: { en: "Secure payment", ar: "الدفع الآمن", fr: "Paiement sécurisé", es: "Pago seguro", zh: "安全支付" }, href: "/support.html#payment" },
+        { id: "shipping", labelKey: "footer.support2", labels: { en: "Fast shipping", ar: "شحن سريع", fr: "Livraison rapide", es: "Envío rápido", zh: "快速配送" }, href: "/support.html#delivery" },
+        { id: "contact", labelKey: "footer.support3", labels: { en: "Contact us", ar: "تواصل معنا", fr: "Nous contacter", es: "Contáctanos", zh: "联系我们" }, href: "/support.html#contact" },
+      ],
+    },
+    {
+      id: "contact-details",
+      type: "contact",
+      titleKey: "footer.contactTitle",
+      titles: { en: "Contact", ar: "التواصل", fr: "Contact", es: "Contacto", zh: "联系方式" },
+      links: [],
+    },
+    {
+      id: "legal",
+      titleKey: "footer.legalTitle",
+      titles: { en: "Legal", ar: "معلومات قانونية", fr: "Mentions légales", es: "Legal", zh: "法律信息" },
+      links: [
+        { id: "terms", labelKey: "footer.policy1", labels: { en: "Terms", ar: "الشروط", fr: "Conditions", es: "Condiciones", zh: "条款" }, href: "/support.html#terms" },
+        { id: "returns", labelKey: "footer.policy2", labels: { en: "Returns", ar: "الاسترجاع", fr: "Retours", es: "Devoluciones", zh: "退货政策" }, href: "/support.html#returns" },
+        { id: "privacy", labelKey: "footer.policy3", labels: { en: "Privacy", ar: "الخصوصية", fr: "Confidentialité", es: "Privacidad", zh: "隐私" }, href: "/support.html#privacy" },
+      ],
+    },
   ];
   const productOptionGroups = window.RUQO_PRODUCT_OPTION_GROUPS;
   const productOptionGroupLabels = window.RUQO_PRODUCT_OPTION_GROUP_LABELS;
@@ -321,7 +347,7 @@
   const footerSettingsError = $("#footer-settings-error");
   const footerLanguageSelect = $("#footer-language");
   const footerTextFieldsContainer = $("#footer-text-fields");
-  const footerLinkFieldsContainer = $("#footer-link-fields");
+  const footerSectionsContainer = $("#footer-sections");
   const homepageShowcaseForm = $("#homepage-showcase-form");
   const homepageShowcaseError = $("#home-showcase-error");
   const homepageShowcaseDialog = $("#homepage-showcase-dialog");
@@ -357,7 +383,7 @@
   let homepageSpotlights = [];
   let brandSettings = {};
   let footerDraft = {};
-  let footerLinksDraft = {};
+  let footerSectionsDraft = [];
   let footerLanguage = "en";
   let editingSlug = null;
   let originalProductGalleryImages = [];
@@ -525,6 +551,7 @@
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("orders");
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("messages");
     if (currentRoles.some((role) => ["owner", "admin", "marketing_manager"].includes(role))) {
+      allowedViews.add("hero");
       allowedViews.add("promotions");
       allowedViews.add("exclusive-deals");
       allowedViews.add("features-stats");
@@ -557,6 +584,7 @@
       categories: "Categories",
       orders: "Orders",
       messages: "Messages",
+      hero: "HERO",
       promotions: "Offers",
       "exclusive-deals": "Exclusive deals",
       "features-stats": "Features & stats",
@@ -923,8 +951,9 @@
     renderNewsletterSubscribers();
     renderAudienceProductReviews();
     $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
-      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close"))
+      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"]'))
       .forEach((element) => { element.disabled = true; });
+    window.RUQO_INIT_HERO_EDITOR?.(null);
     window.lucide?.createIcons();
   }
 
@@ -1025,8 +1054,50 @@
         ...(savedFooter.translations?.[language] || {}),
       },
     ]));
-    footerLinksDraft = { ...savedFooter.links };
+    footerSectionsDraft = initializeFooterSections(savedFooter);
     renderFooterSettings();
+  }
+
+  function initializeFooterSections(savedFooter) {
+    const savedSections = Array.isArray(savedFooter.sections) ? savedFooter.sections : null;
+    const sections = savedSections || defaultFooterSections;
+    return sections.map((savedSection) => {
+      const base = defaultFooterSections.find((section) => section.id === savedSection.id);
+      const titleKey = savedSection.titleKey || base?.titleKey || "";
+      const titles = { ...(base?.titles || {}), ...(savedSection.titles || {}) };
+      for (const language of languages) {
+        const legacyTitle = savedFooter.translations?.[language]?.[titleKey];
+        if (legacyTitle && !savedSection.titles?.[language]) titles[language] = legacyTitle;
+      }
+      const sourceLinks = Array.isArray(savedSection.links) ? savedSection.links : (base?.links || []);
+      const links = sourceLinks.map((savedLink) => {
+        const defaultLink = base?.links.find((link) => link.id === savedLink.id);
+        const labelKey = savedLink.labelKey || defaultLink?.labelKey || "";
+        const labels = { ...(defaultLink?.labels || {}), ...(savedLink.labels || {}) };
+        for (const language of languages) {
+          const legacyLabel = savedFooter.translations?.[language]?.[labelKey];
+          if (legacyLabel && !savedLink.labels?.[language]) labels[language] = legacyLabel;
+        }
+        return {
+          id: String(savedLink.id || `link-${Math.random().toString(36).slice(2, 9)}`),
+          labelKey,
+          labels,
+          href: savedLink.href ?? savedFooter.links?.[savedLink.id] ?? defaultLink?.href ?? "",
+          kind: savedLink.kind || defaultLink?.kind || "link",
+        };
+      });
+      for (const link of links) {
+        const legacyDestination = savedFooter.links?.[link.id];
+        if (legacyDestination) link.href = legacyDestination;
+      }
+      return {
+        id: String(savedSection.id || `section-${Math.random().toString(36).slice(2, 9)}`),
+        type: savedSection.type || base?.type || "links",
+        titleKey,
+        titles,
+        links,
+      };
+    });
   }
 
   function renderFooterSettings() {
@@ -1044,18 +1115,102 @@
       return wrapper;
     });
     footerTextFieldsContainer.replaceChildren(...textFields);
-    const linkFields = footerLinkFields.map(({ key, label, href }) => {
-      const field = document.createElement("input");
-      field.type = "text";
-      field.maxLength = 500;
-      field.dataset.footerLink = key;
-      field.value = footerLinksDraft[key] ?? href;
-      const wrapper = document.createElement("label");
-      wrapper.textContent = `${label} URL`;
-      wrapper.append(field);
-      return wrapper;
+    const sectionCards = footerSectionsDraft.map((section, sectionIndex) => {
+      const card = document.createElement("section");
+      card.className = "footer-section-card";
+      card.draggable = true;
+      card.dataset.footerSectionCard = "";
+      card.dataset.sectionIndex = String(sectionIndex);
+
+      const heading = document.createElement("div");
+      heading.className = "footer-section-card-heading";
+      const titleLabel = document.createElement("label");
+      titleLabel.textContent = "Section heading";
+      const titleField = document.createElement("input");
+      titleField.type = "text";
+      titleField.maxLength = 120;
+      titleField.value = section.titles?.[footerLanguage] || "";
+      titleField.dataset.footerSectionTitle = String(sectionIndex);
+      titleLabel.append(titleField);
+      heading.append(titleLabel);
+
+      const actions = document.createElement("div");
+      actions.className = "footer-editor-actions";
+      actions.append(
+        createFooterAction("Move up", "move-section-up", sectionIndex, sectionIndex === 0),
+        createFooterAction("Move down", "move-section-down", sectionIndex, sectionIndex === footerSectionsDraft.length - 1),
+        createFooterAction("Delete section", "delete-section", sectionIndex),
+      );
+      heading.append(actions);
+      card.append(heading);
+
+      if (section.type === "contact") {
+        const note = document.createElement("p");
+        note.className = "footer-editor-note";
+        note.textContent = "Phone and email are managed in Store settings. The store location is edited above.";
+        card.append(note);
+      } else {
+        const linkRows = section.links.map((link, linkIndex) => {
+          const row = document.createElement("div");
+          row.className = "footer-link-editor-row";
+          row.draggable = true;
+          row.dataset.footerLinkRow = "";
+          row.dataset.sectionIndex = String(sectionIndex);
+          row.dataset.linkIndex = String(linkIndex);
+
+          const label = document.createElement("label");
+          label.textContent = "Link label";
+          const labelField = document.createElement("input");
+          labelField.type = "text";
+          labelField.maxLength = 120;
+          labelField.value = link.labels?.[footerLanguage] || "";
+          labelField.dataset.footerLinkLabel = "";
+          labelField.dataset.sectionIndex = String(sectionIndex);
+          labelField.dataset.linkIndex = String(linkIndex);
+          label.append(labelField);
+
+          const destination = document.createElement("label");
+          destination.textContent = "Destination";
+          const destinationField = document.createElement("input");
+          destinationField.type = "text";
+          destinationField.maxLength = 500;
+          destinationField.placeholder = "/support.html#payment or https://example.com";
+          destinationField.value = link.href || "";
+          destinationField.dataset.footerLinkHref = "";
+          destinationField.dataset.sectionIndex = String(sectionIndex);
+          destinationField.dataset.linkIndex = String(linkIndex);
+          destination.append(destinationField);
+
+          const rowActions = document.createElement("div");
+          rowActions.className = "footer-editor-actions";
+          rowActions.append(
+            createFooterAction("Move up", "move-link-up", sectionIndex, linkIndex === 0, linkIndex),
+            createFooterAction("Move down", "move-link-down", sectionIndex, linkIndex === section.links.length - 1, linkIndex),
+            createFooterAction("Delete link", "delete-link", sectionIndex, false, linkIndex),
+          );
+          row.append(label, destination, rowActions);
+          return row;
+        });
+        const addLink = createFooterAction("Add link", "add-link", sectionIndex);
+        addLink.classList.add("footer-add-link");
+        card.append(...linkRows, addLink);
+      }
+      return card;
     });
-    footerLinkFieldsContainer.replaceChildren(...linkFields);
+    footerSectionsContainer.replaceChildren(...sectionCards);
+    window.lucide?.createIcons();
+  }
+
+  function createFooterAction(label, action, sectionIndex, disabled = false, linkIndex = null) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "admin-secondary-button";
+    button.dataset.footerAction = action;
+    button.dataset.sectionIndex = String(sectionIndex);
+    if (linkIndex !== null) button.dataset.linkIndex = String(linkIndex);
+    button.disabled = disabled;
+    button.textContent = label;
+    return button;
   }
 
   function captureFooterSettings() {
@@ -1064,8 +1219,19 @@
       localeValues[field.dataset.footerField] = field.value;
     });
     footerDraft[footerLanguage] = localeValues;
-    footerLinkFieldsContainer.querySelectorAll("[data-footer-link]").forEach((field) => {
-      footerLinksDraft[field.dataset.footerLink] = field.value.trim();
+    footerSectionsContainer.querySelectorAll("[data-footer-section-title]").forEach((field) => {
+      const section = footerSectionsDraft[Number(field.dataset.footerSectionTitle)];
+      if (section) section.titles[footerLanguage] = field.value.trim();
+    });
+    footerSectionsContainer.querySelectorAll("[data-footer-link-label]").forEach((field) => {
+      const section = footerSectionsDraft[Number(field.dataset.sectionIndex)];
+      const link = section?.links[Number(field.dataset.linkIndex)];
+      if (link) link.labels[footerLanguage] = field.value.trim();
+    });
+    footerSectionsContainer.querySelectorAll("[data-footer-link-href]").forEach((field) => {
+      const section = footerSectionsDraft[Number(field.dataset.sectionIndex)];
+      const link = section?.links[Number(field.dataset.linkIndex)];
+      if (link) link.href = field.value.trim();
     });
   }
 
@@ -1085,12 +1251,25 @@
     event.preventDefault();
     footerSettingsError.hidden = true;
     captureFooterSettings();
-    for (const { key, label } of footerLinkFields) {
-      const value = footerLinksDraft[key] || "";
-      if (value && !isValidFooterHref(value)) {
-        footerSettingsError.textContent = `Enter a valid secure URL for ${label}.`;
+    for (const section of footerSectionsDraft) {
+      if (!String(section.titles?.[footerLanguage] || section.titles?.en || section.titles?.ar || "").trim()) {
+        footerSettingsError.textContent = "Enter a heading for every footer section.";
         footerSettingsError.hidden = false;
         return;
+      }
+      for (const link of section.links) {
+        const label = link.labels?.[footerLanguage] || link.labels?.en || "footer link";
+        const value = String(link.href || "").trim();
+        if (!(link.labels?.[footerLanguage] || link.labels?.en || link.labels?.ar || "").trim()) {
+          footerSettingsError.textContent = "Enter a label for every footer link.";
+          footerSettingsError.hidden = false;
+          return;
+        }
+        if (!value || !isValidFooterHref(value)) {
+          footerSettingsError.textContent = `Enter a valid destination for ${label}.`;
+          footerSettingsError.hidden = false;
+          return;
+        }
       }
     }
 
@@ -1098,22 +1277,29 @@
     submit.disabled = true;
     submit.textContent = "Saving…";
     try {
-      const translationsByLanguage = {};
+      const translationsByLanguage = Object.fromEntries(languages.map((language) => [
+        language,
+        { ...(brandSettings.footer?.translations?.[language] || {}) },
+      ]));
       for (const language of languages) {
-        const values = {};
+        const values = translationsByLanguage[language];
         for (const { key } of footerTextFields) {
           const value = String(footerDraft[language]?.[key] || "").trim();
           if (value) values[key] = value;
+          else delete values[key];
         }
-        if (Object.keys(values).length) translationsByLanguage[language] = values;
       }
-      const links = Object.fromEntries(footerLinkFields
-        .filter(({ key }) => footerLinksDraft[key] && footerLinksDraft[key] !== footerLinkFields.find((item) => item.key === key).href)
-        .map(({ key }) => [key, footerLinksDraft[key]]));
+      const links = {};
+      for (const section of footerSectionsDraft) {
+        for (const link of section.links) {
+          if (footerLinkFields.some(({ key }) => key === link.id)) links[link.id] = link.href;
+        }
+      }
       const footer = {
         ...brandSettings.footer,
         translations: translationsByLanguage,
         links,
+        sections: footerSectionsDraft,
       };
       const settings = { ...brandSettings, footer };
       const { error } = await client.from("store_settings").upsert({
@@ -5247,6 +5433,110 @@
       footerLanguage = footerLanguageSelect.value;
       renderFooterSettings();
     });
+    $("#add-footer-section").addEventListener("click", () => {
+      captureFooterSettings();
+      const newId = `section-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      footerSectionsDraft.push({
+        id: newId,
+        type: "links",
+        titleKey: "",
+        titles: { en: "New section", ar: "قسم جديد", fr: "Nouvelle section", es: "Nueva sección", zh: "新分组" },
+        links: [],
+      });
+      renderFooterSettings();
+    });
+    footerSectionsContainer.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-footer-action]");
+      if (!button) return;
+      captureFooterSettings();
+      const sectionIndex = Number(button.dataset.sectionIndex);
+      const linkIndex = Number(button.dataset.linkIndex);
+      const section = footerSectionsDraft[sectionIndex];
+      switch (button.dataset.footerAction) {
+        case "move-section-up":
+          [footerSectionsDraft[sectionIndex - 1], footerSectionsDraft[sectionIndex]] =
+            [footerSectionsDraft[sectionIndex], footerSectionsDraft[sectionIndex - 1]];
+          break;
+        case "move-section-down":
+          [footerSectionsDraft[sectionIndex], footerSectionsDraft[sectionIndex + 1]] =
+            [footerSectionsDraft[sectionIndex + 1], footerSectionsDraft[sectionIndex]];
+          break;
+        case "delete-section":
+          footerSectionsDraft.splice(sectionIndex, 1);
+          break;
+        case "add-link":
+          section.links.push({
+            id: `link-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            labelKey: "",
+            labels: { [footerLanguage]: "" },
+            href: "",
+          });
+          break;
+        case "move-link-up":
+          [section.links[linkIndex - 1], section.links[linkIndex]] =
+            [section.links[linkIndex], section.links[linkIndex - 1]];
+          break;
+        case "move-link-down":
+          [section.links[linkIndex], section.links[linkIndex + 1]] =
+            [section.links[linkIndex + 1], section.links[linkIndex]];
+          break;
+        case "delete-link":
+          section.links.splice(linkIndex, 1);
+          break;
+        default:
+          return;
+      }
+      renderFooterSettings();
+    });
+    let footerDrag = null;
+    footerSectionsContainer.addEventListener("dragstart", (event) => {
+      const linkRow = event.target.closest("[data-footer-link-row]");
+      if (linkRow) {
+        footerDrag = {
+          type: "link",
+          sectionIndex: Number(linkRow.dataset.sectionIndex),
+          index: Number(linkRow.dataset.linkIndex),
+        };
+      } else {
+        const sectionCard = event.target.closest("[data-footer-section-card]");
+        if (!sectionCard) return;
+        footerDrag = { type: "section", index: Number(sectionCard.dataset.sectionIndex) };
+      }
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", "footer-item");
+    });
+    footerSectionsContainer.addEventListener("dragover", (event) => {
+      if (!footerDrag) return;
+      const target = footerDrag.type === "link"
+        ? event.target.closest("[data-footer-link-row]")
+        : event.target.closest("[data-footer-section-card]");
+      if (target) event.preventDefault();
+    });
+    footerSectionsContainer.addEventListener("drop", (event) => {
+      if (!footerDrag) return;
+      const target = footerDrag.type === "link"
+        ? event.target.closest("[data-footer-link-row]")
+        : event.target.closest("[data-footer-section-card]");
+      if (!target) return;
+      event.preventDefault();
+      captureFooterSettings();
+      const targetIndex = footerDrag.type === "link"
+        ? Number(target.dataset.linkIndex)
+        : Number(target.dataset.sectionIndex);
+      if (footerDrag.type === "section" && footerDrag.index !== targetIndex) {
+        const [moved] = footerSectionsDraft.splice(footerDrag.index, 1);
+        footerSectionsDraft.splice(targetIndex, 0, moved);
+      } else if (footerDrag.type === "link"
+        && footerDrag.sectionIndex === Number(target.dataset.sectionIndex)
+        && footerDrag.index !== targetIndex) {
+        const links = footerSectionsDraft[footerDrag.sectionIndex].links;
+        const [moved] = links.splice(footerDrag.index, 1);
+        links.splice(targetIndex, 0, moved);
+      }
+      footerDrag = null;
+      renderFooterSettings();
+    });
+    footerSectionsContainer.addEventListener("dragend", () => { footerDrag = null; });
     $("#add-category").addEventListener("click", openNewCategory);
     categoryForm.addEventListener("submit", saveCategory);
     $("#translate-category").addEventListener("click", generateCategoryTranslations);
@@ -5462,6 +5752,7 @@
     window.RUQO_INIT_PROMO_BANNER_SETTINGS(client);
     window.RUQO_INIT_FEATURES_EDITOR?.(client);
     window.RUQO_INIT_REVIEWS_EDITOR?.(client);
+    window.RUQO_INIT_HERO_EDITOR?.(client);
     bindEvents();
     const { data, error } = await client.auth.getSession();
     if (error) {

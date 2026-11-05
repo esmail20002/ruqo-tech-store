@@ -2201,7 +2201,7 @@ body:is([data-page="experiments"], [data-page="home"]) .promo-banner {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1.15fr 0.9fr;
+  grid-template-columns: minmax(0, 1.4fr) repeat(var(--footer-section-count, 4), minmax(0, 1fr));
   align-items: start;
   gap: 34px 28px;
   padding-top: 12px;
