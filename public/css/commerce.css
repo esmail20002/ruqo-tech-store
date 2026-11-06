@@ -3793,7 +3793,7 @@ html[data-theme="dark"] .about-review-author small {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .detail-reveal {
-  animation: detail-arrive 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  animation: none;
 }
 .detail-reveal-1 {
   animation-delay: 0.08s;

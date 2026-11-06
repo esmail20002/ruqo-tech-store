@@ -2,6 +2,156 @@ html {
   overflow-x: clip;
 }
 
+html.has-inertial-scroll {
+  scroll-behavior: auto !important;
+}
+
+/* ==========================================================================
+   ZERO-FLASH PRE-PAINT GATE & SUBTLE PAGE ARRIVAL GLIDE
+   ========================================================================== */
+html:not([data-theme="dark"]),
+html:not([data-theme="dark"]) body,
+html:not([data-theme="dark"]) .page-shell,
+html:not([data-theme="dark"]) main {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+.wx-nav-progress-bar {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 100001;
+  pointer-events: none;
+  transform-origin: 0% 50%;
+  transform: scaleX(0);
+  opacity: 0;
+  background: linear-gradient(90deg, #6d28d9 0%, #a855f7 50%, #ec4899 100%);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.7);
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.25s ease;
+}
+
+[dir="rtl"] .wx-nav-progress-bar {
+  transform-origin: 100% 50%;
+}
+
+.wx-nav-progress-bar.is-active {
+  opacity: 1;
+  transform: scaleX(0.84);
+}
+
+.wx-nav-progress-bar.is-complete {
+  opacity: 0;
+  transform: scaleX(1);
+}
+
+/* Apple Store Optical Blur Cross-Dissolve (Header stays 100% anchored) */
+html.is-wx-leaving body > .page-shell > main,
+html.is-wx-leaving body > .page-shell > .lunae-sequence {
+  opacity: 0 !important;
+  filter: blur(8px) !important;
+  transform: translate3d(0, -8px, 0) !important;
+  transition:
+    opacity 0.14s cubic-bezier(0.32, 0, 0.67, 0),
+    filter 0.14s cubic-bezier(0.32, 0, 0.67, 0),
+    transform 0.14s cubic-bezier(0.32, 0, 0.67, 0) !important;
+}
+
+html.is-wx-preparing body > .page-shell > main,
+html.is-wx-preparing body > .page-shell > .lunae-sequence {
+  opacity: 0 !important;
+  filter: blur(10px) !important;
+  transform: translate3d(0, 14px, 0) !important;
+}
+
+@keyframes wx-apple-optical-dissolve {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate3d(0, 14px, 0);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+html.is-wx-ready body > .page-shell > main,
+html.is-wx-ready body > .page-shell > .lunae-sequence {
+  opacity: 1;
+  animation: wx-apple-optical-dissolve 0.56s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.is-wx-bfcache-restore body > .page-shell > main,
+html.is-wx-bfcache-restore body > .page-shell > .lunae-sequence {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* Keep above-the-fold product & catalog heroes 100% steady on arrival (no double jump) */
+.product-detail-page,
+.product-detail-gallery,
+.product-detail-copy,
+.detail-reveal,
+.detail-reveal-1,
+.detail-reveal-2,
+.detail-reveal-3,
+.catalog-intro,
+.commerce-heading {
+  animation: none !important;
+}
+
+/* ==========================================================================
+   PURE GPU 120FPS SECTION & STAGGERED CHILD ENTRANCE CHOREOGRAPHY
+   ========================================================================== */
+body:is([data-page="experiments"], [data-page="home"]) .reveal,
+.cinematic-section {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition:
+    opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.78s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body:is([data-page="experiments"], [data-page="home"]) .reveal.visible,
+.cinematic-section.visible {
+  opacity: 1;
+  transform: none;
+}
+
+.cinematic-stagger-item {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition:
+    opacity 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.74s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--stagger-index, 0) * 50ms);
+}
+
+.reveal.visible .cinematic-stagger-item,
+.cinematic-section.visible .cinematic-stagger-item,
+.cinematic-stagger-item.is-stagger-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:is([data-page="experiments"], [data-page="home"]) .reveal,
+  .cinematic-section,
+  .cinematic-stagger-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 body:not([data-page="experiments"]) {
   overflow-x: clip;
 }

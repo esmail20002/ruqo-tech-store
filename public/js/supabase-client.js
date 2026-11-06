@@ -241,6 +241,32 @@
       console.warn("Could not load public store settings; using built-in defaults.", error.message);
       return {};
     });
+  if (document.body.dataset.page === "support") {
+    const supportCache = readCache("ruqo-support-content-cache-v1");
+    window.RUQO_SUPPORT_CONTENT = supportCache && typeof supportCache === "object" && !Array.isArray(supportCache)
+      ? supportCache
+      : null;
+    window.RUQO_SUPPORT_CONTENT_READY = client
+      .from("homepage_sections")
+      .select("data")
+      .eq("key", "support_content")
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (error) throw error;
+        const row = data?.data;
+        const next = row && typeof row === "object" && !Array.isArray(row) ? row : null;
+        const changed = JSON.stringify(window.RUQO_SUPPORT_CONTENT) !== JSON.stringify(next);
+        window.RUQO_SUPPORT_CONTENT = next;
+        writeCache("ruqo-support-content-cache-v1", next);
+        if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-support-updated", { detail: next }));
+        return next;
+      })
+      .catch((error) => {
+        console.warn("Could not load support content; using built-in translations.", error?.message);
+        window.dispatchEvent(new CustomEvent("ruqo:home-support-updated", { detail: window.RUQO_SUPPORT_CONTENT }));
+        return window.RUQO_SUPPORT_CONTENT;
+      });
+  }
   if (["home", "experiments"].includes(document.body.dataset.page)) {
     window.RUQO_HIGH_REFRESH_READY = client.from("high_refresh_publications")
       .select("revision,translations,product_slugs,image_url,slides").eq("id", "homepage").maybeSingle()
@@ -391,6 +417,40 @@
       if (window.RUQO_HOME_FEATURES === undefined) window.RUQO_HOME_FEATURES = readLocalFeaturesSection();
       window.dispatchEvent(new CustomEvent("ruqo:home-features-updated", { detail: window.RUQO_HOME_FEATURES }));
       return window.RUQO_HOME_FEATURES;
+    });
+  const readLocalBig3Cards = () => {
+    try {
+      const raw = localStorage.getItem("ruqo-home-big-3-cards-v1");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.keys(parsed).length ? parsed : null;
+    } catch (error) {
+      console.warn("Could not read the locally saved BIG 3 CARDS section.", error?.message);
+      return null;
+    }
+  };
+  window.RUQO_HOME_BIG_3_CARDS_READY = client
+    .from("homepage_sections")
+    .select("data")
+    .eq("key", "big_3_cards")
+    .maybeSingle()
+    .then(({ data, error }) => {
+      if (error) throw error;
+      const row = data?.data;
+      const next = row && typeof row === "object" && !Array.isArray(row) && Object.keys(row).length
+        ? row
+        : readLocalBig3Cards();
+      const changed = JSON.stringify(window.RUQO_HOME_BIG_3_CARDS || null) !== JSON.stringify(next || null);
+      window.RUQO_HOME_BIG_3_CARDS = next || null;
+      writeCache("ruqo-home-big-3-cards-cache-v1", window.RUQO_HOME_BIG_3_CARDS);
+      if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-big-3-cards-updated", { detail: window.RUQO_HOME_BIG_3_CARDS }));
+      return window.RUQO_HOME_BIG_3_CARDS;
+    })
+    .catch((error) => {
+      console.warn("Could not load the homepage BIG 3 CARDS section; using built-in content.", error?.message);
+      if (window.RUQO_HOME_BIG_3_CARDS === undefined) window.RUQO_HOME_BIG_3_CARDS = readLocalBig3Cards();
+      window.dispatchEvent(new CustomEvent("ruqo:home-big-3-cards-updated", { detail: window.RUQO_HOME_BIG_3_CARDS }));
+      return window.RUQO_HOME_BIG_3_CARDS;
     });
   const readLocalReviewsSection = () => {
     try {

@@ -1385,29 +1385,49 @@
       }
       let activeSlide = 0;
       let settleTimer;
+      let morphCleanupTimer;
       const updateCount = () => {
         if (count) count.textContent = `${activeSlide + 1} / ${slides.length}`;
       };
-      const updateSlideHeight = () => {
+      const updateSlideHeight = (animateElastic = false) => {
         const image = slides[activeSlide].querySelector("img");
         if (!image.naturalWidth || !track.clientWidth) return;
-        track.style.height = `${track.clientWidth * image.naturalHeight / image.naturalWidth}px`;
+        const targetHeight = Math.round((track.clientWidth * image.naturalHeight) / image.naturalWidth);
+        const currentHeight = Math.round(track.getBoundingClientRect().height);
+        window.clearTimeout(morphCleanupTimer);
+
+        if (animateElastic && currentHeight > 0 && Math.abs(targetHeight - currentHeight) > 2 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          track.style.height = `${currentHeight}px`;
+          void track.offsetHeight;
+          track.classList.add("is-elastic-morphing");
+          detailSection.querySelector("[data-detail-carousel]")?.classList.add("is-elastic-morphing");
+          slides.forEach((s, idx) => s.classList.toggle("is-elastic-active", idx === activeSlide));
+          track.style.height = `${targetHeight}px`;
+          morphCleanupTimer = window.setTimeout(() => {
+            track.classList.remove("is-elastic-morphing");
+            detailSection.querySelector("[data-detail-carousel]")?.classList.remove("is-elastic-morphing");
+          }, 680);
+        } else {
+          track.style.height = `${targetHeight}px`;
+          slides.forEach((s, idx) => s.classList.toggle("is-elastic-active", idx === activeSlide));
+        }
       };
       const loadSlide = (index) => {
         const image = slides[index].querySelector("img");
         if (image.loading === "lazy") image.loading = "eager";
       };
       slides.forEach((slide, index) => {
+        slide.classList.toggle("is-elastic-active", index === 0);
         slide.querySelector("img").addEventListener("load", () => {
-          if (index === activeSlide) updateSlideHeight();
+          if (index === activeSlide) updateSlideHeight(true);
         });
       });
-      updateSlideHeight();
-      window.addEventListener("resize", updateSlideHeight, { passive: true });
+      updateSlideHeight(false);
+      window.addEventListener("resize", () => updateSlideHeight(false), { passive: true });
       const showSlide = (index) => {
         activeSlide = (index + slides.length) % slides.length;
         loadSlide(activeSlide);
-        updateSlideHeight();
+        updateSlideHeight(true);
         track.scrollTo({
           left: slides[activeSlide].offsetLeft - slides[0].offsetLeft,
           behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
@@ -1430,7 +1450,7 @@
             return distance < closestDistance ? index : closest;
           }, 0);
           loadSlide(activeSlide);
-          updateSlideHeight();
+          updateSlideHeight(true);
           updateCount();
         }, 90);
       });
@@ -3583,7 +3603,7 @@
     const status = root.querySelector("[data-support-search-status]");
     const entries = Array.from(root.querySelectorAll("[data-support-searchable]"), (element) => {
       element.tabIndex = -1;
-      const title = element.querySelector("summary, h2").textContent.trim();
+      const title = element.querySelector("summary, h2, h3").textContent.trim();
       const body = Array.from(element.querySelectorAll("p"), (paragraph) => paragraph.textContent.trim()).join(" ");
       return {
         element,
@@ -3657,10 +3677,56 @@
   }
 
   function renderSupport() {
-    const copy = getSupportCopy();
+    const defaultCopy = getSupportCopy();
+    const supportContent = window.RUQO_NORMALIZE_SUPPORT_CONTENT
+      ? window.RUQO_NORMALIZE_SUPPORT_CONTENT(window.RUQO_SUPPORT_CONTENT)
+      : {
+        translations: {},
+        sections: [],
+        faqs: [],
+        ordering: {
+          translations: {},
+          steps: [
+            { icon: "shopping-bag", titleKey: "flowOne", bodyKey: "flowOneText" },
+            { icon: "clipboard-check", titleKey: "flowTwo", bodyKey: "flowTwoText" },
+            { icon: "banknote", titleKey: "flowThree", bodyKey: "flowThreeText" },
+          ],
+        },
+      };
+    const contentTranslations = supportContent.translations?.[language] || {};
+    const copy = {
+      ...defaultCopy,
+      intro: contentTranslations.intro?.trim() || defaultCopy.intro,
+      policiesLabel: contentTranslations.policiesLabel?.trim() || defaultCopy.policiesLabel,
+      faqTitle: contentTranslations.faqTitle?.trim() || t.faq,
+      helpTitle: contentTranslations.helpTitle?.trim() || t.helpTitle,
+    };
+    const orderingTranslations = supportContent.ordering?.translations?.[language] || {};
+    const orderingEyebrow = orderingTranslations.eyebrow?.trim() || t.checkout;
+    const orderingTitle = orderingTranslations.title?.trim() || defaultCopy.flowTitle;
+    const orderingSteps = supportContent.ordering?.steps || [];
+    const supportLanguages = window.RUQO_SUPPORT_CONTENT_SCHEMA?.languages || ["en", "ar", "fr", "es", "zh"];
     const settings = window.RUQO_STORE_SETTINGS || {};
     const storeName = settings.store_name || "WEEXEY";
-    const brandedText = (text) => escapeHtml(text.replaceAll("WEEXEY", storeName));
+    const brandedText = (text) => escapeHtml(String(text).replaceAll("WEEXEY", storeName));
+    const resolveItemText = (item, field, fallback = "") => {
+      const current = item.translations?.[language]?.[field]?.trim();
+      if (current) return current;
+      if (fallback) return fallback;
+      const fallbackLocale = supportLanguages.find((locale) => item.translations?.[locale]?.[field]?.trim());
+      return item.translations?.[fallbackLocale]?.[field]?.trim() || "";
+    };
+    const supportBodyMarkup = (value) => String(value || "")
+      .split(/\n\s*\n/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean)
+      .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`)
+      .join("");
+    const activeSectionIds = new Set(supportContent.sections.map((section) => section.id));
+    const retiredSectionAnchors = (window.RUQO_SUPPORT_CONTENT_SCHEMA?.sections || [])
+      .filter((section) => !activeSectionIds.has(section.id))
+      .map((section) => `<span id="${escapeHtml(section.id)}" class="support-retired-anchor" aria-hidden="true"></span>`)
+      .join("");
     document.querySelector('meta[name="description"]').content =
       `${storeName} — ${copy.intro}`;
     const phone = String(settings.support_phone || "").trim();
@@ -3676,8 +3742,8 @@
         <section class="support-hero">
           <div class="support-hero-copy">
             <span class="commerce-eyebrow"><i data-lucide="sparkles" aria-hidden="true"></i>${brandedText(t.eyebrow)}</span>
-            <h1>${t.helpTitle}</h1>
-            <p>${copy.intro}</p>
+            <h1>${brandedText(copy.helpTitle)}</h1>
+            <p>${brandedText(copy.intro)}</p>
             <div class="support-search-block">
               <form role="search" aria-label="${copy.searchLabel}" data-support-search>
                 <label class="support-search-label" for="support-search-input">${copy.searchLabel}</label>
@@ -3708,42 +3774,43 @@
           </aside>
         </section>
 
-        <nav class="support-quick-links" aria-label="${t.support}">
-          <a href="#account-help"><span class="support-policy-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span><span>${t.accountTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
-          <a href="#delivery"><span class="support-policy-icon"><i data-lucide="truck" aria-hidden="true"></i></span><span>${t.deliveryTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
-          <a href="#payment"><span class="support-policy-icon"><i data-lucide="wallet-cards" aria-hidden="true"></i></span><span>${t.paymentsTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
-          <a href="#returns"><span class="support-policy-icon"><i data-lucide="package-check" aria-hidden="true"></i></span><span>${t.returnsTitle}</span><i data-lucide="arrow-down" aria-hidden="true"></i></a>
-        </nav>
-
         <section class="support-trust-grid" aria-label="${t.support}">
           <article class="support-trust-item"><i data-lucide="banknote" aria-hidden="true"></i><div><h2>${copy.trustPayment}</h2><p>${copy.trustPaymentText}</p></div></article>
           <article class="support-trust-item"><i data-lucide="truck" aria-hidden="true"></i><div><h2>${copy.trustDelivery}</h2><p>${shippingNote()}</p></div></article>
           <article class="support-trust-item"><i data-lucide="rotate-ccw" aria-hidden="true"></i><div><h2>${copy.trustReturns}</h2><p>${copy.trustReturnsText}</p></div></article>
         </section>
 
-        <nav class="support-anchor-nav" aria-label="${t.helpTitle}">
-          <a href="#ordering">${copy.flowTitle}</a><a href="#faq">${t.faq}</a><a href="#delivery">${t.deliveryTitle}</a><a href="#payment">${t.paymentsTitle}</a><a href="#returns">${t.returnsTitle}</a><a href="#contact">${brandedText(t.contactTitle)}</a><a href="#terms">${t.terms}</a><a href="#privacy">${t.privacy}</a>
+        <nav class="support-anchor-nav" aria-label="${brandedText(copy.helpTitle)}">
+          ${orderingSteps.length ? `<a href="#ordering">${escapeHtml(orderingTitle)}</a>` : ""}<a href="#faq">${escapeHtml(copy.faqTitle)}</a>
+          ${supportContent.sections.map((section) => {
+            const title = resolveItemText(section, "title", section.titleKey ? t[section.titleKey] : "");
+            return title ? `<a href="#${escapeHtml(section.id)}">${escapeHtml(title)}</a>` : "";
+          }).join("")}
+          <a href="#contact">${brandedText(t.contactTitle)}</a>
         </nav>
 
-        <section class="support-section support-flow" id="ordering">
-          <div class="support-section-heading"><span class="commerce-eyebrow">${t.checkout}</span><h2>${copy.flowTitle}</h2></div>
-          <div class="support-flow-grid">
-            <article><div class="support-step-top"><span class="support-step-number">01</span><i data-lucide="shopping-bag" aria-hidden="true"></i></div><h3>${copy.flowOne}</h3><p>${copy.flowOneText}</p></article>
-            <article><div class="support-step-top"><span class="support-step-number">02</span><i data-lucide="clipboard-check" aria-hidden="true"></i></div><h3>${copy.flowTwo}</h3><p>${copy.flowTwoText}</p></article>
-            <article><div class="support-step-top"><span class="support-step-number">03</span><i data-lucide="banknote" aria-hidden="true"></i></div><h3>${copy.flowThree}</h3><p>${copy.flowThreeText}</p></article>
+        ${orderingSteps.length ? `<section class="support-section support-flow" id="ordering">
+          <div class="support-section-heading"><span class="commerce-eyebrow">${brandedText(orderingEyebrow)}</span><h2>${brandedText(orderingTitle)}</h2></div>
+          <div class="support-flow-grid" data-step-count="${orderingSteps.length}">
+            ${orderingSteps.map((step, index) => {
+              const title = resolveItemText(step, "title", step.titleKey ? copy[step.titleKey] : "");
+              const body = resolveItemText(step, "body", step.bodyKey ? copy[step.bodyKey] : "");
+              if (!title || !body) return "";
+              return `<article data-support-searchable="ordering"><div class="support-step-top"><span class="support-step-number">${String(index + 1).padStart(2, "0")}</span><i data-lucide="${escapeHtml(step.icon)}" aria-hidden="true"></i></div><h3>${brandedText(title)}</h3><p>${brandedText(body)}</p></article>`;
+            }).join("")}
           </div>
-        </section>
+        </section>` : ""}
 
         <section class="support-section support-faq-layout" id="faq">
           <div class="support-faq-main">
-          <div class="support-section-heading"><span class="commerce-eyebrow">${t.support}</span><h2>${t.faq}</h2></div>
+          <div class="support-section-heading"><span class="commerce-eyebrow">${t.support}</span><h2>${escapeHtml(copy.faqTitle)}</h2></div>
           <div class="faq-list">
-            <details id="faq-delivery" data-support-searchable="faq"><summary>${t.faqDelivery}</summary><p>${copy.faqDeliveryAnswer}</p></details>
-            <details id="faq-payment" data-support-searchable="faq"><summary>${t.paymentsTitle}</summary><p>${copy.faqPaymentAnswer}</p></details>
-            <details id="faq-return" data-support-searchable="faq"><summary>${t.faqReturn}</summary><p>${copy.faqReturnAnswer}</p></details>
-            <details id="faq-warranty" data-support-searchable="faq"><summary>${t.faqWarranty}</summary><p>${copy.faqWarrantyAnswer}</p></details>
-            <details id="faq-account" data-support-searchable="faq"><summary>${t.accountTitle}</summary><p>${copy.faqAccountAnswer}</p></details>
-            <details id="faq-contact" data-support-searchable="faq"><summary>${brandedText(t.contactTitle)}</summary><p>${copy.faqContactAnswer}</p></details>
+            ${supportContent.faqs.map((faq) => {
+              const question = resolveItemText(faq, "question", faq.questionKey ? t[faq.questionKey] : "");
+              const answer = resolveItemText(faq, "answer", faq.answerKey ? copy[faq.answerKey] : "");
+              if (!question || !answer) return "";
+              return `<details id="${escapeHtml(faq.id)}" data-support-searchable="faq"><summary>${brandedText(question)}</summary>${supportBodyMarkup(answer)}</details>`;
+            }).join("")}
           </div>
           </div>
           <aside class="support-faq-aside">
@@ -3755,12 +3822,19 @@
         </section>
 
         <section class="support-section support-policies">
-          <div class="support-section-heading"><span class="commerce-eyebrow">${t.support}</span><h2>${copy.policiesLabel}</h2></div>
+          <div class="support-section-heading"><span class="commerce-eyebrow">${t.support}</span><h2>${escapeHtml(copy.policiesLabel)}</h2></div>
           <div class="support-policy-grid">
-          <article id="delivery" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span><h2>${t.deliveryTitle}</h2><p>${shippingNote()}</p><p>${copy.deliveryBody}</p></article>
-          <article id="payment" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="wallet-cards" aria-hidden="true"></i></span><h2>${t.paymentsTitle}</h2><p>${copy.paymentBody}</p></article>
-          <article id="returns" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="package-check" aria-hidden="true"></i></span><h2>${t.returnsTitle}</h2><p>${copy.returnsBody}</p></article>
-          <article id="account-help" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span><h2>${t.accountTitle}</h2><p>${copy.accountBody}</p></article>
+          ${supportContent.sections.map((section) => {
+            const title = resolveItemText(section, "title", section.titleKey ? t[section.titleKey] : "");
+            const body = resolveItemText(section, "body", section.bodyKey ? copy[section.bodyKey] : "");
+            if (!title || !body) return "";
+            if (section.kind === "legal") {
+              const eyebrow = section.eyebrowKey && t[section.eyebrowKey] ? `<span class="commerce-eyebrow">${escapeHtml(t[section.eyebrowKey])}</span>` : "";
+              return `<article class="support-legal" id="${escapeHtml(section.id)}" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="${escapeHtml(section.icon)}" aria-hidden="true"></i></span>${eyebrow}<h2>${escapeHtml(title)}</h2>${supportBodyMarkup(body)}</article>`;
+            }
+            const deliveryDetails = section.id === "delivery" ? `<p>${escapeHtml(shippingNote())}</p>` : "";
+            return `<article id="${escapeHtml(section.id)}" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="${escapeHtml(section.icon)}" aria-hidden="true"></i></span><h2>${escapeHtml(title)}</h2>${deliveryDetails}${supportBodyMarkup(body)}</article>`;
+          }).join("")}
           </div>
         </section>
 
@@ -3784,8 +3858,7 @@
           </aside>
         </section>
 
-        <section class="support-section support-legal" id="terms" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="file-text" aria-hidden="true"></i></span><span class="commerce-eyebrow">${t.terms}</span><h2>${t.termsTitle}</h2><p>${copy.termsBody}</p></section>
-        <section class="support-section support-legal" id="privacy" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="shield-check" aria-hidden="true"></i></span><span class="commerce-eyebrow">${t.privacy}</span><h2>${t.privacyTitle}</h2><p>${copy.privacyBody}</p></section>
+        ${retiredSectionAnchors}
       </div>`;
     setupSupportSearch(copy);
     window.lucide?.createIcons();
@@ -3994,9 +4067,6 @@
     }
     else renderSupport();
     if (page === "support") {
-      root.querySelector("#delivery > p").textContent = shippingNote();
-      root.querySelector(".faq-list details:first-child p").textContent =
-        getSupportCopy().faqDeliveryAnswer;
       const contactForm = root.querySelector("[data-contact-form]");
       contactForm.elements.name.minLength = 2;
       contactForm.elements.name.maxLength = 120;
@@ -4379,8 +4449,15 @@
   });
 
   render();
+  window.addEventListener("ruqo:language-updated", (event) => {
+    language = event.detail?.language || store.getLanguage();
+    render();
+  });
   window.addEventListener("ruqo:currency-updated", render);
   window.addEventListener("ruqo:catalog-updated", render);
+  window.addEventListener("ruqo:home-support-updated", () => {
+    if (page === "support") render();
+  });
   window.addEventListener("ruqo:store-settings-updated", () => {
     if (page === "product") {
       const product = productById(new URLSearchParams(location.search).get("id"));

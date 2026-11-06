@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=15" />
+    <link rel="stylesheet" href="/css/admin.css?v=19" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -110,6 +110,7 @@
           <div class="admin-nav-group" role="group" aria-labelledby="admin-storefront-label">
           <span id="admin-storefront-label" class="admin-nav-group-label">STOREFRONT</span>
           <button class="admin-nav-item" type="button" data-admin-view="hero"><i data-lucide="wand-sparkles" aria-hidden="true"></i><span>HERO</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="big-3-cards"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>BIG 3 CARDS</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="promotions"><i data-lucide="badge-percent" aria-hidden="true"></i><span>Offers</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="exclusive-deals"><i data-lucide="flame" aria-hidden="true"></i><span>Exclusive deals</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="features-stats"><i data-lucide="layout-grid" aria-hidden="true"></i><span>Features &amp; stats</span></button>
@@ -625,6 +626,86 @@
               <p class="admin-feedback form-field-wide" data-hero-feedback role="status" hidden></p>
             </form>
           </section>
+          <section class="admin-view" data-admin-panel="big-3-cards" hidden>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">STOREFRONT CONTENT</span>
+                <h1>BIG 3 CARDS</h1>
+                <p>Manage the three homepage promotion cards, including their five-language content, imagery, links, visibility, order, and appearance.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button class="admin-secondary-button" type="button" data-b3-reload><i data-lucide="refresh-cw" aria-hidden="true"></i> Reload</button>
+              </div>
+            </div>
+            <p class="admin-muted-copy" data-b3-live role="status">Loading BIG 3 CARDS settings…</p>
+
+            <form id="big-3-cards-form" class="admin-section b3-editor" novalidate>
+              <div class="b3-editor-controls">
+                <div class="admin-section-heading">
+                  <div>
+                    <h2>Section settings &amp; live preview</h2>
+                    <p>Changes appear in the preview immediately. Save to publish them on the homepage.</p>
+                  </div>
+                </div>
+                <div class="admin-form-grid">
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="visible" type="checkbox" checked />
+                    <span><strong>Show section on homepage</strong><small>Hide all three cards without removing their saved settings.</small></span>
+                  </label>
+                  <label>
+                    Editing language
+                    <select name="language">
+                      <option value="en">English</option>
+                      <option value="ar">Arabic (العربية)</option>
+                      <option value="fr">French (Français)</option>
+                      <option value="es">Spanish (Español)</option>
+                      <option value="zh">Simplified Chinese (中文)</option>
+                    </select>
+                  </label>
+                </div>
+                <div data-b3-card-editors class="b3-card-editors"></div>
+                <div class="b3-preview-wrap" data-b3-preview>
+                  <h3>Homepage preview</h3>
+                  <div class="b3-preview-grid">
+                    <article class="b3-preview-card b3-preview-main" data-b3-preview-main>
+                      <img alt="" data-preview-image />
+                      <div class="b3-preview-copy">
+                        <div class="b3-preview-tags"><span data-preview-eyebrow></span><span data-preview-badge></span></div>
+                        <strong data-preview-title></strong>
+                        <p data-preview-description></p>
+                        <span class="b3-preview-button" data-preview-button></span>
+                      </div>
+                    </article>
+                    <div class="b3-preview-side">
+                      <article class="b3-preview-card" data-b3-preview-top>
+                        <img alt="" data-preview-image />
+                        <div class="b3-preview-copy">
+                          <div class="b3-preview-tags"><span data-preview-eyebrow></span><span data-preview-badge></span></div>
+                          <strong data-preview-title></strong>
+                          <p data-preview-description></p>
+                          <span class="b3-preview-button" data-preview-button></span>
+                        </div>
+                      </article>
+                      <article class="b3-preview-card" data-b3-preview-bottom>
+                        <img alt="" data-preview-image />
+                        <div class="b3-preview-copy">
+                          <div class="b3-preview-tags"><span data-preview-eyebrow></span><span data-preview-badge></span></div>
+                          <strong data-preview-title></strong>
+                          <p data-preview-description></p>
+                          <span class="b3-preview-button" data-preview-button></span>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                </div>
+                <div class="high-refresh-actions">
+                  <button class="admin-primary-button" type="button" data-b3-action="save"><i data-lucide="check" aria-hidden="true"></i> Save &amp; publish section</button>
+                  <button class="admin-danger-button" type="button" data-b3-action="reset"><i data-lucide="rotate-ccw" aria-hidden="true"></i> Reset to defaults</button>
+                </div>
+                <p class="admin-feedback form-field-wide" data-b3-feedback role="status" hidden></p>
+              </div>
+            </form>
+          </section>
           <section class="admin-view" data-admin-panel="features-stats" hidden>
             <div class="admin-page-heading">
               <div>
@@ -900,15 +981,74 @@
                     <option value="zh">中文</option>
                   </select>
                 </label>
-                <div class="admin-section-heading"><div><h2>Footer text</h2><p>Leave a field blank to use its built-in translation.</p></div></div>
-                <div id="footer-text-fields" class="admin-form-grid"></div>
-                <div class="admin-section-heading">
-                  <div><h2>Footer sections and links</h2><p>Edit each heading, link label, and destination. Drag sections or links to change their order.</p></div>
-                  <button id="add-footer-section" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add section</button>
+                <div class="footer-editor-group footer-editor-group--footer-text">
+                  <div class="admin-section-heading"><div><h2>Footer text</h2><p>Leave a field blank to use its built-in translation.</p></div></div>
+                  <div id="footer-text-fields" class="admin-form-grid"></div>
                 </div>
-                <div id="footer-sections" class="footer-section-manager"></div>
+                <div class="footer-editor-group footer-editor-group--footer-links">
+                  <div class="admin-section-heading">
+                    <div><h2>Footer sections and links</h2><p>Edit each heading, link label, and destination. Drag sections or links to change their order.</p></div>
+                    <button id="add-footer-section" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add section</button>
+                  </div>
+                  <div id="footer-sections" class="footer-section-manager"></div>
+                </div>
                 <p id="footer-settings-error" class="admin-feedback" role="alert" hidden></p>
                 <div class="admin-settings-actions"><span></span><button class="admin-primary-button" type="submit">Save footer content</button></div>
+              </form>
+            </section>
+            <section class="admin-section support-content-section">
+              <form id="support-content-form" class="admin-settings-form">
+                <div class="footer-editor-group footer-editor-group--support-copy">
+                  <div class="admin-section-heading">
+                    <div><h2>How can we help?</h2><p>Manage support policies, ordering steps, and questions in Arabic, English, French, Spanish, and Chinese. Blank translations keep the current built-in text.</p></div>
+                  </div>
+                  <label class="footer-language-field">Editing language
+                    <select id="support-content-language">
+                      <option value="en">English</option>
+                      <option value="ar">العربية</option>
+                      <option value="fr">Français</option>
+                      <option value="es">Español</option>
+                      <option value="zh">中文</option>
+                    </select>
+                  </label>
+                  <div class="admin-section-heading">
+                    <div><h3>Automatic translations</h3><p>Translate English text into the four other languages. Existing translations are preserved; review the results before saving.</p></div>
+                  </div>
+                  <div id="support-content-copy" class="admin-form-grid"></div>
+                </div>
+                <div class="footer-editor-group footer-editor-group--ordering">
+                  <div class="admin-section-heading">
+                    <div><h3>How ordering works</h3><p>Edit the heading, step titles and descriptions, and icons. Add, remove, or reorder steps.</p></div>
+                </div>
+                <div id="support-content-ordering-copy" class="admin-form-grid"></div>
+                <div class="admin-section-heading">
+                  <div><h4>Ordering steps</h4><p>Each step can have its own icon and translations.</p></div>
+                  <button id="add-support-ordering-step" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add step</button>
+                </div>
+                <div id="support-content-ordering-steps" class="support-content-manager"></div>
+              </div>
+              <div class="footer-editor-group footer-editor-group--policies">
+                <div class="admin-section-heading">
+                  <div><h3>Policies and information</h3><p>Edit titles and full text, add or remove sections, and change their order.</p></div>
+                  <button id="add-support-section" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add section</button>
+                </div>
+                <div id="support-content-sections" class="support-content-manager"></div>
+              </div>
+              <div class="footer-editor-group footer-editor-group--faqs">
+                <div class="admin-section-heading">
+                  <div><h3>Frequently asked questions</h3><p>Edit questions and answers, add or remove entries, and change their order.</p></div>
+                  <button id="add-support-faq" class="admin-secondary-button" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add question</button>
+                </div>
+                <div id="support-content-faqs" class="support-content-manager"></div>
+              </div>
+              <p id="support-content-feedback" class="admin-feedback" role="status" aria-live="polite" hidden></p>
+              <div class="admin-settings-actions">
+                <span></span>
+                <div class="support-content-heading-actions">
+                  <button id="translate-support-content" class="admin-secondary-button" type="button" disabled><i data-lucide="languages" aria-hidden="true"></i> Translate missing text</button>
+                  <button class="admin-primary-button" type="submit" disabled>Save support content</button>
+                </div>
+              </div>
               </form>
             </section>
           </section>
@@ -1411,6 +1551,9 @@
     <script src="/js/admin-features.js?v=1" defer></script>
     <script src="/js/admin-reviews.js?v=1" defer></script>
     <script src="/js/admin-hero.js?v=1" defer></script>
-    <script src="/js/admin.js?v=22" defer></script>
+    <script src="/js/admin-big-3-cards.js?v=1" defer></script>
+    <script src="/js/support-content-defaults.js?v=2" defer></script>
+    <script src="/js/admin-support-content.js?v=5" defer></script>
+    <script src="/js/admin.js?v=24" defer></script>
   </body>
 </html>

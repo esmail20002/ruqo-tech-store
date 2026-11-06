@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <script src="/js/home-i18n.js?v=8"></script>
+    <script src="/js/home-i18n.js?v=10"></script>
     <script>
       (function () {
         try {
@@ -12,7 +12,10 @@
             if (m) saved = decodeURIComponent(m[1]);
           }
           var theme = saved === "dark" || saved === '"dark"' ? "dark" : "light";
-          document.documentElement.dataset.theme = theme;
+          var root = document.documentElement;
+          root.dataset.theme = theme;
+          root.classList.add("is-wx-preparing");
+          setTimeout(function () { root.classList.remove("is-wx-preparing"); root.classList.add("is-wx-ready"); }, 450);
         } catch (_) {}
       })();
     </script>
@@ -29,15 +32,16 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/styles.css?v=12" />
-    <link rel="stylesheet" href="/css/premium-experience.css?v=19" />
-    <link rel="stylesheet" href="/css/store-motion.css?v=2" />
-    <link rel="stylesheet" href="/css/experiments-lunae.css?v=18" />
+    <link rel="preload" as="image" href="/images/lunae-sequence/ezgif-frame-50_000242.png" media="(min-width: 921px)" fetchpriority="high" />
+    <link rel="stylesheet" href="/css/styles.css?v=18" />
+    <link rel="stylesheet" href="/css/premium-experience.css?v=35" />
+    <link rel="stylesheet" href="/css/store-motion.css?v=13" />
+    <link rel="stylesheet" href="/css/experiments-lunae.css?v=19" />
   </head>
-  <body data-page="home" class="is-lunae-header-hidden">
+  <body data-page="home">
     <div class="page-shell">
       <section
-        class="lunae-sequence"
+        class="lunae-sequence is-hero-locked"
         dir="ltr"
         data-lunae-sequence
         aria-label="WEEXEY scroll-driven flagship hero"
@@ -430,6 +434,80 @@
       </div>
 
       <main>
+        <!-- PROMO BENTO SHOWCASE SECTION (1 Large + 2 Stacked Offers & Images) -->
+        <section class="wx-promo-bento container reveal" aria-label="Featured Offers &amp; Promotions">
+          <div class="wx-promo-bento__grid">
+            <!-- Left Main Banner -->
+            <article id="wx-bento-main" class="wx-bento-card wx-bento-card--main" data-b3-slot="main">
+              <img
+                class="wx-bento-card__bg"
+                src="https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&amp;fit=crop&amp;w=1400&amp;q=85"
+                alt="Wireless Gaming Controller"
+                loading="eager"
+              />
+              <div class="wx-bento-card__overlay" aria-hidden="true"></div>
+              <div class="wx-bento-card__content">
+                <div class="wx-bento-card__tags">
+                  <span class="wx-bento-card__eyebrow" data-i18n="bento.main.eyebrow">GAMING GEAR</span>
+                  <span class="wx-bento-card__offer-pill" data-i18n="bento.main.badge">UP TO 30% OFF</span>
+                </div>
+                <h2 class="wx-bento-card__title" data-i18n="bento.main.title">GAME CONTROLLER</h2>
+                <p class="wx-bento-card__sub" data-i18n="bento.main.sub" data-b3-description>Controller type: Wireless controller</p>
+                <a href="/products.html?filter=deals" class="wx-bento-card__btn" data-i18n="bento.main.cta">SHOP NOW</a>
+              </div>
+            </article>
+
+            <!-- Right Stacked Side Banners -->
+            <div class="wx-promo-bento__side">
+              <!-- Top Side Card -->
+              <a id="wx-bento-top" href="/products.html?category=audio" class="wx-bento-card wx-bento-card--side wx-bento-card--top" data-b3-slot="top">
+                <img
+                  class="wx-bento-card__bg"
+                  src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                  alt="Wireless Earbuds"
+                  loading="lazy"
+                />
+                <div class="wx-bento-card__overlay" aria-hidden="true"></div>
+                <div class="wx-bento-card__content">
+                  <div class="wx-bento-card__tags">
+                    <span class="wx-bento-card__eyebrow wx-bento-card__eyebrow--neon" data-i18n="bento.top.eyebrow">NEW ARRIVALS</span>
+                    <span class="wx-bento-card__offer-pill" data-i18n="bento.top.badge">SPECIAL OFFER</span>
+                  </div>
+                  <h3 class="wx-bento-card__side-title" data-i18n="bento.top.title">BAMBOOBUDS PRO</h3>
+                  <p class="wx-bento-card__sub" data-b3-description></p>
+                  <span class="wx-bento-card__link">
+                    <span data-i18n="bento.top.cta" data-b3-button>Shop Now</span>
+                    <span class="wx-bento-card__link-arrow" aria-hidden="true">→</span>
+                  </span>
+                </div>
+              </a>
+
+              <!-- Bottom Side Card -->
+              <a id="wx-bento-bottom" href="/products.html?category=audio" class="wx-bento-card wx-bento-card--side wx-bento-card--bottom" data-b3-slot="bottom">
+                <img
+                  class="wx-bento-card__bg"
+                  src="https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                  alt="Smart HomePod Speaker"
+                  loading="lazy"
+                />
+                <div class="wx-bento-card__overlay" aria-hidden="true"></div>
+                <div class="wx-bento-card__content">
+                  <div class="wx-bento-card__tags">
+                    <span class="wx-bento-card__eyebrow wx-bento-card__eyebrow--neon" data-i18n="bento.bottom.eyebrow">NEW ARRIVALS</span>
+                    <span class="wx-bento-card__offer-pill" data-i18n="bento.bottom.badge">LIMITED DEAL</span>
+                  </div>
+                  <h3 class="wx-bento-card__side-title" data-i18n="bento.bottom.title">HOMEPOD PRO</h3>
+                  <p class="wx-bento-card__sub" data-b3-description></p>
+                  <span class="wx-bento-card__link">
+                    <span data-i18n="bento.bottom.cta" data-b3-button>Shop Now</span>
+                    <span class="wx-bento-card__link-arrow" aria-hidden="true">→</span>
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+
         <section class="hero container reveal">
           <div class="hero-copy">
             <span class="eyebrow" data-i18n="hero.eyebrow"
@@ -652,71 +730,39 @@
             >
           </div>
 
-          <div class="product-grid">
-            <article class="product-card">
+          <div class="editorial-filter-bar" data-new-filter-bar>
+            <div class="editorial-filter-group" role="tablist" aria-label="Filter products">
+              <span class="editorial-filter-label" data-new-filter-label>FILTER</span>
+              <div class="editorial-filter-pills" data-new-filter-pills>
+                <button type="button" class="editorial-filter-pill is-active" data-filter-cat="all" role="tab" aria-selected="true">ALL</button>
+                <button type="button" class="editorial-filter-pill" data-filter-cat="laptops" role="tab" aria-selected="false">LAPTOPS</button>
+                <button type="button" class="editorial-filter-pill" data-filter-cat="phones" role="tab" aria-selected="false">PHONES</button>
+                <button type="button" class="editorial-filter-pill" data-filter-cat="audio" role="tab" aria-selected="false">AUDIO</button>
+                <button type="button" class="editorial-filter-pill" data-filter-cat="wearables" role="tab" aria-selected="false">WEARABLES</button>
+              </div>
+            </div>
+            <span class="editorial-filter-count" data-new-filter-count>8 PRODUCTS</span>
+          </div>
+
+          <div class="product-grid" data-editorial-product-grid>
+            <article class="product-card" data-category="laptops">
               <div class="product-image img-one">
-                <span class="tag" data-i18n="tags.new">جديد</span>
+                <a class="product-image-link" href="/product.html?id=macbook-pro" aria-label="MacBook Pro 14 M4"></a>
+                <span class="product-corner-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+                </span>
+                <div class="product-pill-tags">
+                  <span class="tag tag-cat">LAPTOPS</span>
+                  <span class="tag" data-i18n="tags.new">FEATURED</span>
+                </div>
               </div>
               <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=macbook-pro">MacBook Pro M4</a>
-                  </h3>
+                <div class="product-row-top">
+                  <h3><a href="/product.html?id=macbook-pro">MacBook Pro 14 M4</a></h3>
+                  <strong class="product-editorial-price" data-price-sar="5000">5,000 ر.س</strong>
                 </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.9</span>
-                  <strong data-price-sar="5000">5,000 ر.س</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="product-card">
-              <div class="product-image img-two">
-                <span class="tag tag-sale" data-i18n="tags.sale">خصم</span>
-              </div>
-              <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=galaxy-s25">Samsung S25 Ultra</a>
-                  </h3>
-                </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.8</span>
-                  <strong data-price-sar="5499">5,499 ر.س</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="product-card">
-              <div class="product-image img-three">
-                <span class="tag" data-i18n="tags.featured">مميز</span>
-              </div>
-              <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=airpods-pro">AirPods Pro</a>
-                  </h3>
-                </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.9</span>
-                  <strong data-price-sar="1399">1,399 ر.س</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="product-card">
-              <div class="product-image img-four">
-                <span class="tag tag-sale" data-i18n="tags.offer">عرض</span>
-              </div>
-              <div class="product-body">
-                <div class="product-info">
-                  <h3>
-                    <a href="/product.html?id=galaxy-watch">Galaxy Watch 7</a>
-                  </h3>
-                </div>
-                <div class="product-meta">
-                  <span class="rating">★★★★★ 4.7</span>
-                  <strong data-price-sar="1199">1,199 ر.س</strong>
+                <div class="product-row-sub">
+                  <span class="product-editorial-brand">Apple</span>
                 </div>
               </div>
             </article>
@@ -992,15 +1038,16 @@
     <script src="/js/catalog-data.js?v=3"></script>
     <script src="/js/high-refresh-core.js?v=3"></script>
     <script src="/js/high-refresh.js?v=5"></script>
-    <script src="/js/promo-banner.js?v=2"></script>
+    <script src="/js/promo-banner.js?v=3"></script>
     <script src="/js/features-section.js?v=1"></script>
     <script src="/js/reviews-section.js?v=1"></script>
-    <script src="/js/main.js?v=15"></script>
-    <script src="/js/experiments-lunae.js?v=21"></script>
-    <script src="/js/store-motion.js?v=1"></script>
+    <script src="/js/main.js?v=17"></script>
+    <script src="/js/experiments-lunae.js?v=27"></script>
+    <script src="/js/store-motion.js?v=10"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/js/supabase-config.js"></script>
-    <script defer src="/js/supabase-client.js?v=12"></script>
+    <script defer src="/js/supabase-client.js?v=13"></script>
+    <script defer src="/js/home-big-3-cards.js?v=1"></script>
   </body>
 </html>

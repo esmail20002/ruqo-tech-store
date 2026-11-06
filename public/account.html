@@ -11,7 +11,15 @@
             if (m) saved = decodeURIComponent(m[1]);
           }
           var theme = saved === "dark" || saved === '"dark"' ? "dark" : "light";
-          document.documentElement.dataset.theme = theme;
+          var root = document.documentElement;
+          root.dataset.theme = theme;
+          var rawLang = localStorage.getItem("nours-language");
+          var lang = rawLang ? rawLang.replace(/^"|"$/g, "") : "en";
+          if (!["en", "fr", "es", "zh", "ar"].includes(lang)) lang = "en";
+          root.lang = lang;
+          root.dir = lang === "ar" ? "rtl" : "ltr";
+          root.classList.add("is-wx-preparing");
+          setTimeout(function () { root.classList.remove("is-wx-preparing"); root.classList.add("is-wx-ready"); }, 450);
         } catch (_) {}
       })();
     </script>
@@ -30,7 +38,7 @@
     />
     <link rel="stylesheet" href="/css/styles.css?v=9" />
     <link rel="stylesheet" href="/css/commerce.css?v=2" />
-    <link rel="stylesheet" href="/css/store-motion.css?v=2" />
+    <link rel="stylesheet" href="/css/store-motion.css?v=13" />
   </head>
   <body data-page="account">
     <div class="page-shell">
@@ -47,6 +55,6 @@
     <script src="/js/high-refresh.js?v=5"></script>
     <script src="/js/supabase-client.js?v=8"></script>
     <script src="/js/commerce.js?v=4"></script>
-    <script src="/js/store-motion.js?v=1"></script>
+    <script src="/js/store-motion.js?v=10"></script>
   </body>
 </html>

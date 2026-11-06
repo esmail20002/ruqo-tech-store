@@ -8,9 +8,9 @@
    ========================================================================== */
 
 body[data-page="experiments"] {
-  --lx-bg: #efe3f8;
-  --lx-bg-soft: #f6effc;
-  --lx-bg-pearl: #fbf8ff;
+  --lx-bg: #ffffff;
+  --lx-bg-soft: #ffffff;
+  --lx-bg-pearl: #ffffff;
   --lx-ink: #0e0a18;
   --lx-ink-mid: #1b1429;
   --lx-muted: #5b526e;
@@ -18,21 +18,29 @@ body[data-page="experiments"] {
   --lx-purple: #8b3dff;
   --lx-violet: #9333ea;
   --lx-pink: #d946ef;
-  --lx-glass: rgba(255, 255, 255, 0.68);
-  --lx-glass-strong: rgba(255, 255, 255, 0.86);
-  --lx-glass-border: rgba(255, 255, 255, 0.88);
-  --lx-shadow: 0 16px 38px rgba(104, 68, 154, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.94);
-  --lx-shadow-hover: 0 22px 48px rgba(116, 62, 184, 0.16), inset 0 1px 0 #ffffff;
+  --lx-glass: rgba(255, 255, 255, 0.88);
+  --lx-glass-strong: rgba(255, 255, 255, 0.96);
+  --lx-glass-border: rgba(139, 61, 255, 0.12);
+  --lx-shadow: 0 16px 38px rgba(104, 68, 154, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  --lx-shadow-hover: 0 22px 48px rgba(116, 62, 184, 0.14), inset 0 1px 0 #ffffff;
 
-  background-color: var(--lx-bg) !important;
-  background-image:
-    radial-gradient(circle at 12% 16%, rgba(217, 70, 239, 0.14) 0%, transparent 36%),
-    radial-gradient(circle at 88% 28%, rgba(139, 61, 255, 0.13) 0%, transparent 38%),
-    radial-gradient(circle at 18% 62%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 84% 82%, rgba(236, 72, 153, 0.12) 0%, transparent 38%),
-    linear-gradient(180deg, #efe3f8 0%, #f5eefc 32%, #faf6ff 65%, #efe3f8 100%) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
   color: var(--lx-ink) !important;
   font-family: "Inter", "Cairo", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html:has(body[data-page="experiments"]),
+body[data-page="experiments"] .page-shell,
+body[data-page="experiments"] .lx-main {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+body[data-page="experiments"] .product-side-drawer:not(.is-open) {
+  box-shadow: none !important;
 }
 
 /* Hide legacy dark/purple topbar and mobile banner for a pure Lunae look */

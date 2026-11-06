@@ -946,46 +946,42 @@
     });
   }
 
-  let frame = 0;
   function enhance() {
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => {
-      const page = root.querySelector(".product-detail-page");
-      if (!page) return;
-      page.classList.add("exp-product-stage");
+    const page = root.querySelector(".product-detail-page");
+    if (!page) return;
+    page.classList.add("exp-product-stage");
 
-      buildFacts(page);
-      buildSummary(page);
-      buildBar(page);
+    buildFacts(page);
+    buildSummary(page);
+    buildBar(page);
 
-      // 1. Place the Flagship Visual Showcase immediately after the purchase hero (like Apple/Samsung)
-      const showcase = buildFlagshipShowcase(page, page);
+    // 1. Place the Flagship Visual Showcase immediately after the purchase hero (like Apple/Samsung)
+    const showcase = buildFlagshipShowcase(page, page);
 
-      // 2. Place Highlights & Detailed Specifications right after the Flagship Showcase
-      let anchor = showcase;
-      page.querySelectorAll(":scope > .product-design-centered-details").forEach((section) => {
-        section.classList.add("exp-detached-details");
-      });
-      root.querySelectorAll(".exp-detached-details").forEach((section) => {
-        anchor.after(section);
-        anchor = section;
-      });
-
-      // 3. Build Sticky Chapter Navigation Bar between Hero and Flagship Showcase
-      buildChapterNav(page, showcase);
-
-      // 4. Balance the Reviews section (header actions + star breakdown card)
-      enhanceReviewsSection();
-
-      // 5. Redesign "You may also like" with header controls, rating badges, and clean cards
-      enhanceRelatedSection();
-
-      // 6. Apply the same studio spotlight glow, gradients, and 3D motion across the entire page
-      applyUnifiedSpotlightEffects();
-
-      sampleGlow(page);
-      refreshIcons();
+    // 2. Place Highlights & Detailed Specifications right after the Flagship Showcase
+    let anchor = showcase;
+    page.querySelectorAll(":scope > .product-design-centered-details").forEach((section) => {
+      section.classList.add("exp-detached-details");
     });
+    root.querySelectorAll(".exp-detached-details").forEach((section) => {
+      anchor.after(section);
+      anchor = section;
+    });
+
+    // 3. Build Sticky Chapter Navigation Bar between Hero and Flagship Showcase
+    buildChapterNav(page, showcase);
+
+    // 4. Balance the Reviews section (header actions + star breakdown card)
+    enhanceReviewsSection();
+
+    // 5. Redesign "You may also like" with header controls, rating badges, and clean cards
+    enhanceRelatedSection();
+
+    // 6. Apply the same studio spotlight glow, gradients, and 3D motion across the entire page
+    applyUnifiedSpotlightEffects();
+
+    sampleGlow(page);
+    refreshIcons();
   }
 
   new MutationObserver((records) => {

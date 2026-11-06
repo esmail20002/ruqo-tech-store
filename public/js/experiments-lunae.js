@@ -77,13 +77,8 @@
     }
   };
   const initialCustomHero = readCustomHeroData();
-  const introMode = initialCustomHero?.intro_mode || "once_per_session";
-  let hasSeenHeroInSession = false;
-  try {
-    hasSeenHeroInSession = sessionStorage.getItem(HERO_SEEN_SESSION_KEY) === "1";
-  } catch (_) {}
-  const shouldSkipIntroOnLoad =
-    introMode === "skip" || (introMode === "once_per_session" && hasSeenHeroInSession);
+  const introMode = initialCustomHero?.intro_mode || "skip";
+  const shouldSkipIntroOnLoad = introMode !== "always";
 
   function markHeroSeenInSession() {
     try {
@@ -91,34 +86,41 @@
     } catch (_) {}
   }
 
-  // Intro eye-opening video that plays automatically from start to finish on page entry
+  // Intro eye-opening video — lazy-loaded only when Replay is triggered (or if introMode === "always")
   const introPoster = new Image();
   introPoster.decoding = "async";
   let introPosterReady = false;
+  let introAssetsInitialized = false;
   introPoster.onload = () => {
     introPosterReady = true;
     redrawRequested = true;
   };
-  if (!useMobilePortraitSequence) {
-    introPoster.src = "/images/lunae-sequence/lunae-intro-poster.png";
-  }
 
   const introVideo = document.createElement("video");
-  if (!useMobilePortraitSequence) {
-    introVideo.src = "/images/lunae-sequence/lunae-intro-eye.mp4";
-  }
   introVideo.muted = true;
   introVideo.defaultMuted = true;
   introVideo.loop = false;
   introVideo.playsInline = true;
-  introVideo.preload = useMobilePortraitSequence ? "none" : "auto";
+  introVideo.preload = "none";
   introVideo.setAttribute("muted", "");
   introVideo.setAttribute("playsinline", "");
   let introVideoReady = false;
   let isIntroPlaying = false;
-  let introVideoEnded = false;
-  let introDismissedByScroll = false;
-  let introBlend = 1;
+  let introVideoEnded = shouldSkipIntroOnLoad;
+  let introDismissedByScroll = shouldSkipIntroOnLoad;
+  let introBlend = shouldSkipIntroOnLoad ? 0 : 1;
+
+  function ensureIntroAssetsLoaded() {
+    if (introAssetsInitialized || useMobilePortraitSequence) return;
+    introAssetsInitialized = true;
+    introPoster.src = "/images/lunae-sequence/lunae-intro-poster.png";
+    introVideo.preload = "auto";
+    introVideo.src = "/images/lunae-sequence/lunae-intro-eye.mp4";
+    introVideo.load();
+  }
+  if (!shouldSkipIntroOnLoad) {
+    ensureIntroAssetsLoaded();
+  }
 
   function setIntroLockState(locked) {
     isIntroPlaying = locked;
@@ -151,6 +153,7 @@
     }
 
     window.scrollTo({ top: 0, behavior: "instant" });
+    ensureIntroAssetsLoaded();
     introVideoEnded = false;
     introDismissedByScroll = false;
     introBlend = 1;
@@ -221,23 +224,29 @@
 
     const frameNumber = firstFrameNumber + index;
     const suffix = String(frameNumber).padStart(useMobilePortraitSequence ? 3 : 2, "0");
-    const sourceIndex = String(Math.round((frameNumber - 1) * ((243 - 1) / (50 - 1))))
-      .padStart(6, "0");
+    const sourceIndex = String(
+      frameNumber === 50 ? 242 : Math.round((frameNumber - 1) * ((243 - 1) / (50 - 1))),
+    ).padStart(6, "0");
     const image = new Image();
     image.decoding = "async";
 
+    const srcUrl = useMobilePortraitSequence
+      ? `/images/lunae-sequence/mobile-portrait/mframe_${suffix}.webp?v=3`
+      : `/images/lunae-sequence/ezgif-frame-${suffix}_${sourceIndex}.png`;
+    image.src = srcUrl;
+
+    if (image.complete && image.naturalWidth > 0) {
+      images[index] = image;
+      redrawRequested = true;
+      return Promise.resolve(image);
+    }
+
     pendingLoads[index] = new Promise((resolve, reject) => {
       image.onload = () => {
-        const decodeTask =
-          typeof image.decode === "function"
-            ? image.decode().catch(() => {})
-            : Promise.resolve();
-        decodeTask.finally(() => {
-          images[index] = image;
-          pendingLoads[index] = null;
-          redrawRequested = true;
-          resolve(image);
-        });
+        images[index] = image;
+        pendingLoads[index] = null;
+        redrawRequested = true;
+        resolve(image);
       };
       image.onerror = () => {
         pendingLoads[index] = null;
@@ -246,9 +255,6 @@
         setStatus(`Frame ${suffix} could not be loaded. Scroll position will remain available.`);
         reject(error);
       };
-      image.src = useMobilePortraitSequence
-        ? `/images/lunae-sequence/mobile-portrait/mframe_${suffix}.webp?v=3`
-        : `/images/lunae-sequence/ezgif-frame-${suffix}_${sourceIndex}.png`;
     });
 
     return pendingLoads[index];
@@ -437,7 +443,7 @@
     }
 
     // 4. Intro closed-to-open eye video overlay at the start of the experience
-    if ((introBlend > 0.005 || !image) && hasIntroSource) {
+    if (introBlend > 0.005 && !heroLocked && !introDismissedByScroll && hasIntroSource) {
       const introSource =
         introVideoReady && introVideo.readyState >= 2 ? introVideo : introPoster;
       const srcW =
@@ -531,74 +537,96 @@
     element.style.pointerEvents = progress > 0.45 ? "auto" : "none";
   }
 
+  let lastChoreographyProgress = -1;
+  let isHeroInViewport = true;
+  if ("IntersectionObserver" in window) {
+    const heroVisObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isHeroInViewport = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.01 },
+    );
+    heroVisObserver.observe(sequence);
+  }
+
   function updateChoreography(progress, timeMs, reducedMotion) {
     const p = reducedMotion ? (progress > 0.1 ? 1 : progress) : progress;
+    const progressChanged = Math.abs(p - lastChoreographyProgress) > 0.0005;
 
-    // 1. Intro cue fades out as camera leaves the eye (0% -> 24%)
-    if (introCue instanceof HTMLElement) {
-      const cueAlpha = 1 - smoothstep(0.06, 0.24, p);
-      introCue.style.opacity = cueAlpha.toFixed(3);
-      introCue.style.transform = `translate3d(-50%, ${((1 - cueAlpha) * 14).toFixed(1)}px, 0)`;
+    if (progressChanged) {
+      lastChoreographyProgress = p;
+
+      // 1. Intro cue fades out as camera leaves the eye (0% -> 24%)
+      if (introCue instanceof HTMLElement) {
+        const cueAlpha = 1 - smoothstep(0.06, 0.24, p);
+        introCue.style.opacity = cueAlpha.toFixed(3);
+        introCue.style.transform = `translate3d(-50%, ${((1 - cueAlpha) * 14).toFixed(1)}px, 0)`;
+      }
+
+      // 2. Soft pastel tint grows only after the bright lilac scene settles (78% -> 92%)
+      if (tintLayer instanceof HTMLElement) {
+        const tintAlpha = smoothstep(0.78, 0.92, p);
+        tintLayer.style.setProperty("--tint-opacity", tintAlpha.toFixed(3));
+      }
+
+      // 3. Synchronized ultra-smooth reveal starting once the bright backdrop is completely clear (Frame 40 / 78% -> 92%)
+      const syncReveal = smoothstep(0.78, 0.92, p);
+      applyRevealTransform(revealItems.brand, syncReveal, -12, -10, 0.985);
+      applyRevealTransform(revealItems.eyebrow, syncReveal, -14, 14, 0.985);
+      applyRevealTransform(revealItems.headline, syncReveal, -18, 18, 0.98);
+      applyRevealTransform(revealItems.description, syncReveal, -14, 16, 0.985);
+      applyRevealTransform(revealItems.actions, syncReveal, -12, 16, 0.985);
+      applyRevealTransform(revealItems.stats, syncReveal, 0, 18, 0.985);
+
+      // 5. Right column 4 glass cards synchronized reveal + live telemetry (78% -> 92%)
+      revealCards.forEach((card) => {
+        applyRevealTransform(card, syncReveal, 20, 14, 0.975);
+      });
+
+      // Live counters inside cards
+      const telemetryProgress = syncReveal;
+      cardNumbers.forEach((el) => {
+        const target = Number(el.getAttribute("data-card-number") || 0);
+        const suffix = el.getAttribute("data-card-suffix") || "";
+        const currentVal = Math.round(target * telemetryProgress);
+        el.textContent = `${currentVal}${suffix}`;
+      });
+
+      // Bottom stats counters
+      const statsProgress = syncReveal;
+      statCounters.forEach((el) => {
+        const target = Number(el.getAttribute("data-stat-counter") || 0);
+        const suffix = el.getAttribute("data-stat-suffix") || "";
+        el.textContent = `${Math.max(1, Math.round(target * statsProgress))}${suffix}`;
+      });
+      statDecimals.forEach((el) => {
+        const target = Number(el.getAttribute("data-stat-decimal") || 99.9);
+        const suffix = el.getAttribute("data-stat-suffix") || "%";
+        const val = (target * statsProgress).toFixed(1);
+        el.textContent = `${val}${suffix}`;
+      });
+
+      // Card 3 Donut ring fill (circumference = 207.35, 78% = dashoffset 45.6)
+      if (focusRing instanceof SVGCircleElement) {
+        const circumference = 207.35;
+        const targetRatio = 0.78 * telemetryProgress;
+        const offset = circumference * (1 - targetRatio);
+        focusRing.style.strokeDashoffset = offset.toFixed(2);
+      }
     }
 
-    // 2. Soft pastel tint grows only after the bright lilac scene settles (78% -> 92%)
-    if (tintLayer instanceof HTMLElement) {
-      const tintAlpha = smoothstep(0.78, 0.92, p);
-      tintLayer.style.setProperty("--tint-opacity", tintAlpha.toFixed(3));
-    }
-
-    // 3. Synchronized ultra-smooth reveal starting once the bright backdrop is completely clear (Frame 40 / 78% -> 92%)
     const syncReveal = smoothstep(0.78, 0.92, p);
-    applyRevealTransform(revealItems.brand, syncReveal, -12, -10, 0.985);
-    applyRevealTransform(revealItems.eyebrow, syncReveal, -14, 14, 0.985);
-    applyRevealTransform(revealItems.headline, syncReveal, -18, 18, 0.98);
-    applyRevealTransform(revealItems.description, syncReveal, -14, 16, 0.985);
-    applyRevealTransform(revealItems.actions, syncReveal, -12, 16, 0.985);
-    applyRevealTransform(revealItems.stats, syncReveal, 0, 18, 0.985);
+    const telemetryProgress = syncReveal;
 
     // 4. Floating Center Orb on the purple ring (synchronized 78% -> 92%)
-    if (revealItems.orb instanceof HTMLElement) {
+    if (revealItems.orb instanceof HTMLElement && (progressChanged || (!reducedMotion && syncReveal > 0.01))) {
       const orbP = syncReveal;
       const floatY = reducedMotion ? 0 : Math.sin(timeMs * 0.0024) * 5 * orbP;
       revealItems.orb.style.opacity = orbP.toFixed(3);
       revealItems.orb.style.transform = `translate3d(-50%, ${((1 - orbP) * 20 + floatY).toFixed(1)}px, 0) scale(${(0.9 + 0.1 * orbP).toFixed(3)})`;
       revealItems.orb.style.pointerEvents = orbP > 0.6 ? "auto" : "none";
-    }
-
-    // 5. Right column 4 glass cards synchronized reveal + live telemetry (78% -> 92%)
-    revealCards.forEach((card) => {
-      applyRevealTransform(card, syncReveal, 20, 14, 0.975);
-    });
-
-    // Live counters inside cards
-    const telemetryProgress = syncReveal;
-    cardNumbers.forEach((el) => {
-      const target = Number(el.getAttribute("data-card-number") || 0);
-      const suffix = el.getAttribute("data-card-suffix") || "";
-      const currentVal = Math.round(target * telemetryProgress);
-      el.textContent = `${currentVal}${suffix}`;
-    });
-
-    // Bottom stats counters
-    const statsProgress = syncReveal;
-    statCounters.forEach((el) => {
-      const target = Number(el.getAttribute("data-stat-counter") || 0);
-      const suffix = el.getAttribute("data-stat-suffix") || "";
-      el.textContent = `${Math.max(1, Math.round(target * statsProgress))}${suffix}`;
-    });
-    statDecimals.forEach((el) => {
-      const target = Number(el.getAttribute("data-stat-decimal") || 99.9);
-      const suffix = el.getAttribute("data-stat-suffix") || "%";
-      const val = (target * statsProgress).toFixed(1);
-      el.textContent = `${val}${suffix}`;
-    });
-
-    // Card 3 Donut ring fill (circumference = 207.35, 78% = dashoffset 45.6)
-    if (focusRing instanceof SVGCircleElement) {
-      const circumference = 207.35;
-      const targetRatio = 0.78 * telemetryProgress;
-      const offset = circumference * (1 - targetRatio);
-      focusRing.style.strokeDashoffset = offset.toFixed(2);
     }
 
     // Card 4 Beta bar fill + subtle live oscillation
@@ -634,11 +662,13 @@
     const rect = sequence.getBoundingClientRect();
     const lockedScrollTop = Math.max(0, window.scrollY + rect.top);
     window.scrollTo({ top: lockedScrollTop, behavior: "instant" });
+    window.WEEXEY_SMOOTH_SCROLL?.syncTo(lockedScrollTop);
     redrawRequested = true;
   }
 
   function startWatchFilmRewind() {
     if (isRewinding) return;
+    ensureIntroAssetsLoaded();
     isRewinding = true;
     heroLocked = false;
     sequence.classList.remove("is-hero-locked");
@@ -700,6 +730,14 @@
 
   function animate(timeMs = 0) {
     requestAnimationFrame(animate);
+
+    // Pause heavy canvas/video/SVG work when hero is scrolled completely out of view
+    if (heroLocked && !isHeroInViewport && !isRewinding && !isIntroPlaying) {
+      if (!ambientVideo.paused) {
+        ambientVideo.pause();
+      }
+      return;
+    }
 
     const dtMs = lastAnimTimeMs > 0 ? clamp(timeMs - lastAnimTimeMs, 4, 50) : 16.67;
     lastAnimTimeMs = timeMs;
@@ -1050,8 +1088,11 @@
       .then(() => {
         resizeCanvas();
         drawFrame(totalFrames - 1);
+        scheduleProgressivePreload(0);
       })
-      .catch(() => {});
+      .catch(() => {
+        scheduleProgressivePreload(0);
+      });
   } else if (window.scrollY < 120) {
     document.body.classList.add("is-lunae-header-hidden");
     startIntroVideoPlayback();
@@ -1061,6 +1102,7 @@
         drawFrame(0);
       })
       .catch(() => {});
+    scheduleProgressivePreload(1);
   } else {
     introVideoEnded = true;
     introDismissedByScroll = true;
@@ -1071,8 +1113,8 @@
         drawFrame(0);
       })
       .catch(() => {});
+    scheduleProgressivePreload(1);
   }
 
-  scheduleProgressivePreload(shouldSkipIntroOnLoad ? 0 : 1);
   requestAnimationFrame(animate);
 })();

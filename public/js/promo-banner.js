@@ -13,6 +13,7 @@
     description: section.querySelector(".promo-copy p"),
     button: section.querySelector(".promo-copy a"),
     image: section.querySelector("[data-promo-image]"),
+    consoleBox: section.querySelector(".console-visual"),
     consoleImg: section.querySelector(".console-visual img"),
     controls: section.querySelector("[data-promo-controls]"),
     previous: section.querySelector("[data-promo-prev]"),
@@ -147,6 +148,8 @@
     if (multiple) drawDots();
   }
 
+  let heightCleanupTimer = 0;
+
   function render(animate = false) {
     slides = activeSlides();
     if (!slides.length) {
@@ -158,20 +161,51 @@
     index = Math.min(index, slides.length - 1);
     const slide = slides[index];
     window.clearTimeout(changeTimer);
-    ui.copy.classList.remove("is-changing");
+    window.clearTimeout(heightCleanupTimer);
+    ui.copy.classList.remove("is-changing", "is-elastic-entering");
+    ui.consoleBox.classList.remove("is-changing", "is-elastic-entering");
     ui.consoleImg.classList.remove("is-changing");
+
     if (animate && hasRenderedCustomSlide && !reducedMotion.matches) {
+      const startHeight = section.getBoundingClientRect().height;
+      section.style.height = `${startHeight}px`;
+      section.classList.remove("is-elastic-morphing");
+
       ui.copy.classList.add("is-changing");
+      ui.consoleBox.classList.add("is-changing");
       ui.consoleImg.classList.add("is-changing");
+
       changeTimer = window.setTimeout(() => {
+        // Measure target height after content swap while keeping current height locked
+        section.style.height = "auto";
         applySlide(slide);
         updateControls();
+        const targetHeight = section.getBoundingClientRect().height;
+
+        // Lock back to startHeight, force reflow, then spring-animate to targetHeight
+        section.style.height = `${startHeight}px`;
+        void section.offsetHeight;
+        section.classList.add("is-elastic-morphing");
+        section.style.height = `${targetHeight}px`;
+
         requestAnimationFrame(() => {
           ui.copy.classList.remove("is-changing");
+          ui.consoleBox.classList.remove("is-changing");
           ui.consoleImg.classList.remove("is-changing");
+          ui.copy.classList.add("is-elastic-entering");
+          ui.consoleBox.classList.add("is-elastic-entering");
         });
-      }, 150);
+
+        heightCleanupTimer = window.setTimeout(() => {
+          section.classList.remove("is-elastic-morphing");
+          section.style.removeProperty("height");
+          ui.copy.classList.remove("is-elastic-entering");
+          ui.consoleBox.classList.remove("is-elastic-entering");
+        }, 680);
+      }, 170);
     } else {
+      section.classList.remove("is-elastic-morphing");
+      section.style.removeProperty("height");
       applySlide(slide);
       updateControls();
     }

@@ -340,38 +340,6 @@ body[data-page="support"] .support-page .support-search-results a > span {
   font-size: 0.82rem;
 }
 
-body[data-page="support"] .support-page .support-quick-links {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin: 0 0 24px;
-}
-
-body[data-page="support"] .support-page .support-quick-links a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  min-height: 96px;
-  padding: 18px;
-  border: 1px solid var(--support-border);
-  border-radius: 20px;
-  background: var(--support-panel);
-  color: var(--text);
-  box-shadow: none;
-  font-size: 0.88rem;
-  font-weight: 800;
-  line-height: 1.6;
-}
-
-body[data-page="support"] .support-page .support-quick-links a > svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  margin-inline-start: auto;
-  color: var(--support-accent);
-}
-
 body[data-page="support"] .support-page .support-policy-icon {
   width: 46px;
   height: 46px;
@@ -460,6 +428,7 @@ body[data-page="support"] .support-page :is(.support-section-heading h2, .suppor
 
 body[data-page="support"] .support-page .support-flow-grid {
   position: relative;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 24px;
   border: 0;
 }
@@ -513,6 +482,12 @@ body[data-page="support"] .support-page .support-step-top svg {
 body[data-page="support"] .support-page .support-flow-grid p {
   color: var(--support-copy);
   font-size: 0.9rem;
+}
+
+@media (min-width: 801px) {
+  body[data-page="support"] .support-page .support-flow-grid[data-step-count]:not([data-step-count="3"])::before {
+    display: none;
+  }
 }
 
 body[data-page="support"] .support-page .support-faq-layout {
@@ -614,6 +589,7 @@ body[data-page="support"] .support-page .faq-list details p {
 }
 
 body[data-page="support"] .support-page .support-policy-grid {
+  grid-template-columns: minmax(0, 1fr);
   gap: 0;
   border-block: 1px solid var(--support-border);
 }
@@ -631,10 +607,10 @@ body[data-page="support"] .support-page .support-policy-grid article {
 }
 
 body[data-page="support"] .support-page .support-policy-grid article:nth-child(odd) {
-  border-inline-end: 1px solid var(--support-border);
+  border-inline-end: 0;
 }
 
-body[data-page="support"] .support-page .support-policy-grid article:nth-child(n+3) {
+body[data-page="support"] .support-page .support-policy-grid article:nth-child(n+2) {
   border-top: 1px solid var(--support-border);
 }
 
@@ -759,10 +735,11 @@ body[data-page="support"] .support-page .support-form-note {
 
 body[data-page="support"] .support-page .support-legal {
   display: grid;
+  grid-column: 1 / -1;
   grid-template-columns: 46px minmax(0, 1fr);
   gap: 0 22px;
   max-width: none;
-  margin: 22px 0;
+  margin: 0;
   padding: clamp(22px, 3vw, 34px);
   border: 0;
   border-top: 1px solid var(--support-border);
@@ -849,10 +826,6 @@ html[dir="rtl"] body[data-page="support"] .support-page .support-search-submit s
 }
 
 @media (max-width: 1000px) {
-  body[data-page="support"] .support-page .support-quick-links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   body[data-page="support"] .support-page .support-anchor-nav {
     position: static;
     flex-wrap: nowrap;
@@ -999,21 +972,6 @@ html[dir="rtl"] body[data-page="support"] .support-page .support-search-submit s
 
   body[data-page="support"] .support-page .support-text-link {
     justify-content: center;
-  }
-
-  body[data-page="support"] .support-page .support-quick-links {
-    gap: 10px;
-  }
-
-  body[data-page="support"] .support-page .support-quick-links a {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-  }
-
-  body[data-page="support"] .support-page .support-quick-links a > svg {
-    display: none;
   }
 
   body[data-page="support"] .support-page .support-trust-grid {

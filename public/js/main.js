@@ -473,38 +473,202 @@ function renderFeaturedProduct() {
   }, 180);
 }
 
+let activeEditorialCategory = "all";
+
+function getEditorialFilterCopy(lang) {
+  return {
+    en: {
+      filter: "FILTER",
+      all: "ALL",
+      laptops: "LAPTOPS",
+      phones: "PHONES",
+      audio: "AUDIO",
+      wearables: "WEARABLES",
+      count: (n) => `${n} ${n === 1 ? "PRODUCT" : "PRODUCTS"}`,
+    },
+    ar: {
+      filter: "تصفية",
+      all: "الكل",
+      laptops: "اللابتوبات",
+      phones: "الهواتف",
+      audio: "الصوتيات",
+      wearables: "الساعات",
+      count: (n) => `${n} منتجات`,
+    },
+    fr: {
+      filter: "FILTRE",
+      all: "TOUS",
+      laptops: "PC PORTABLES",
+      phones: "MOBILES",
+      audio: "AUDIO",
+      wearables: "MONTRES",
+      count: (n) => `${n} PRODUITS`,
+    },
+    es: {
+      filter: "FILTRAR",
+      all: "TODOS",
+      laptops: "PORTÁTILES",
+      phones: "MÓVILES",
+      audio: "AUDIO",
+      wearables: "RELOJES",
+      count: (n) => `${n} PRODUCTOS`,
+    },
+    zh: {
+      filter: "筛选",
+      all: "全部",
+      laptops: "笔记本",
+      phones: "手机",
+      audio: "音频",
+      wearables: "穿戴",
+      count: (n) => `${n} 件商品`,
+    },
+  }[lang] || {
+    filter: "FILTER",
+    all: "ALL",
+    laptops: "LAPTOPS",
+    phones: "PHONES",
+    audio: "AUDIO",
+    wearables: "WEARABLES",
+    count: (n) => `${n} PRODUCTS`,
+  };
+}
+
+function renderEditorialProductGrid() {
+  const catalog = window.NoursData;
+  const grid = document.querySelector("#new .product-grid");
+  if (!grid || !catalog?.products?.length) return;
+  const dictionary = translations[currentLang] || translations.en || {};
+  const filterCopy = getEditorialFilterCopy(currentLang);
+  const categories = catalog.getCategories?.() || [];
+  const categoryNameMap = {};
+  categories.forEach((cat) => {
+    categoryNameMap[cat.slug] =
+      cat.name_translations?.[currentLang] ||
+      cat.name_translations?.en ||
+      filterCopy[cat.slug] ||
+      cat.slug;
+  });
+
+  const filterBar = document.querySelector("[data-new-filter-bar]");
+  if (filterBar) {
+    const labelNode = filterBar.querySelector("[data-new-filter-label]");
+    if (labelNode) labelNode.textContent = filterCopy.filter;
+    filterBar.querySelectorAll("[data-filter-cat]").forEach((btn) => {
+      const catSlug = btn.dataset.filterCat;
+      const isSelected = catSlug === activeEditorialCategory;
+      btn.classList.toggle("is-active", isSelected);
+      btn.setAttribute("aria-selected", String(isSelected));
+      btn.textContent = catSlug === "all"
+        ? filterCopy.all
+        : (categoryNameMap[catSlug] || filterCopy[catSlug] || catSlug);
+    });
+  }
+
+  const allProducts = [...catalog.products].sort((a, b) => (Number(b.newest) || 0) - (Number(a.newest) || 0));
+  const filtered = activeEditorialCategory === "all"
+    ? allProducts
+    : allProducts.filter((item) => item.category === activeEditorialCategory);
+  const visibleProducts = filtered.slice(0, 8);
+
+  const countNode = document.querySelector("[data-new-filter-count]");
+  if (countNode) {
+    countNode.textContent = filterCopy.count(visibleProducts.length);
+  }
+
+  const cards = visibleProducts.map((product) => {
+    const localized = catalog.localizeProduct(product, currentLang);
+    const productHref = `/product.html?id=${encodeURIComponent(product.id)}`;
+    const article = document.createElement("article");
+    article.className = "product-card";
+    article.dataset.category = product.category || "";
+
+    const imageWrap = document.createElement("div");
+    imageWrap.className = "product-image";
+    if (product.image) {
+      imageWrap.style.backgroundImage = `url("${product.image}")`;
+    }
+
+    const imageLink = document.createElement("a");
+    imageLink.className = "product-image-link";
+    imageLink.href = productHref;
+    imageLink.setAttribute("aria-label", localized.name);
+
+    const arrowBadge = document.createElement("span");
+    arrowBadge.className = "product-corner-arrow";
+    arrowBadge.setAttribute("aria-hidden", "true");
+    arrowBadge.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>`;
+
+    const pillTags = document.createElement("div");
+    pillTags.className = "product-pill-tags";
+
+    const catTag = document.createElement("span");
+    catTag.className = "tag tag-cat";
+    catTag.textContent = categoryNameMap[product.category] || filterCopy[product.category] || product.category || "";
+    pillTags.append(catTag);
+
+    if (product.badge) {
+      const badgeTag = document.createElement("span");
+      const tagName = product.badge === "sale" ? "sale" : product.badge === "new" ? "new" : "featured";
+      badgeTag.className = `tag${product.badge === "sale" ? " tag-sale" : ""}`;
+      badgeTag.textContent = dictionary[`tags.${tagName}`] || product.badge;
+      pillTags.append(badgeTag);
+    }
+
+    imageWrap.append(imageLink, arrowBadge, pillTags);
+
+    const body = document.createElement("div");
+    body.className = "product-body";
+
+    const rowTop = document.createElement("div");
+    rowTop.className = "product-row-top";
+
+    const h3 = document.createElement("h3");
+    const titleLink = document.createElement("a");
+    titleLink.href = productHref;
+    titleLink.textContent = localized.name;
+    h3.append(titleLink);
+
+    const priceStrong = document.createElement("strong");
+    priceStrong.className = "product-editorial-price";
+    priceStrong.dataset.priceSar = product.price;
+
+    rowTop.append(h3, priceStrong);
+
+    const rowSub = document.createElement("div");
+    rowSub.className = "product-row-sub";
+
+    const brandSpan = document.createElement("span");
+    brandSpan.className = "product-editorial-brand";
+    brandSpan.textContent = product.brand || categoryNameMap[product.category] || "";
+
+    rowSub.append(brandSpan);
+    body.append(rowTop, rowSub);
+    article.append(imageWrap, body);
+    return article;
+  });
+
+  grid.replaceChildren(...cards);
+}
+
+const editorialFilterBar = document.querySelector("[data-new-filter-bar]");
+if (editorialFilterBar) {
+  editorialFilterBar.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-filter-cat]");
+    if (!btn) return;
+    const nextCat = btn.dataset.filterCat || "all";
+    if (nextCat === activeEditorialCategory) return;
+    activeEditorialCategory = nextCat;
+    renderEditorialProductGrid();
+    formatHomepagePrices();
+  });
+}
+
 function syncHomepageCatalog() {
   const catalog = window.NoursData;
   renderManagedCategories();
   syncLunaeFeaturedCard();
   if (!catalog?.products?.length) return;
-  const dictionary = translations[currentLang] || translations.en || {};
-  document.querySelectorAll(".product-grid .product-card").forEach((card) => {
-    const link = card.querySelector(".product-info h3 a");
-    if (!link) return;
-    const slug = new URL(link.href).searchParams.get("id");
-    const product = catalog.products.find((item) => item.id === slug);
-    if (!product) return;
-    const localized = catalog.localizeProduct(product, currentLang);
-    link.textContent = localized.name;
-    const descNode = card.querySelector(".product-info p");
-    if (descNode) {
-      descNode.textContent =
-        localized.description[currentLang] || localized.description.en;
-    }
-    card.querySelector(".product-meta .rating").textContent =
-      `★★★★★ ${Number(product.rating).toFixed(1)}`;
-    const price = card.querySelector("[data-price-sar]");
-    price.dataset.priceSar = product.price;
-    const tag = card.querySelector(".tag");
-    if (tag) {
-      const tagName = product.badge === "sale" ? "sale" : product.badge === "new" ? "new" : "featured";
-      tag.className = `tag${product.badge === "sale" ? " tag-sale" : ""}`;
-      tag.textContent = dictionary[`tags.${tagName}`] || product.badge || "";
-    }
-    const image = card.querySelector(".product-image");
-    if (image && product.image) image.style.backgroundImage = `url("${product.image}")`;
-  });
+  renderEditorialProductGrid();
   const mbp = catalog.products.find((item) => item.id === "macbook-pro");
   if (mbp && featuredProducts[1]) {
     featuredProducts[1].price = new Intl.NumberFormat("en-US").format(mbp.price);
@@ -780,7 +944,11 @@ function renderPublishedHomeCopy() {
   })) {
     const node = document.querySelector(selector);
     if (!node) continue;
-    node.textContent = copy[field];
+    if (field === "title" && typeof window.NoursFormatHeroTitle === "function") {
+      window.NoursFormatHeroTitle(node, copy[field]);
+    } else {
+      node.textContent = copy[field];
+    }
     node.hidden = !copy[field].trim();
     // Some hero badge styles explicitly set display and otherwise override [hidden].
     if (node.hidden) node.style.setProperty("display", "none");
@@ -798,7 +966,14 @@ function renderManagedHomeBanners() {
     const description = hero?.querySelector(".hero-copy > p");
     const primaryAction = hero?.querySelector(".cta-group .primary-btn");
     if (eyebrow) eyebrow.textContent = currentLang === "ar" ? "محتوى المتجر" : "STORE SPOTLIGHT";
-    if (heading) heading.textContent = bannerText(heroBanner, "title_translations", heading.textContent);
+    if (heading) {
+      const nextTitle = bannerText(heroBanner, "title_translations", heading.textContent);
+      if (typeof window.NoursFormatHeroTitle === "function") {
+        window.NoursFormatHeroTitle(heading, nextTitle);
+      } else {
+        heading.textContent = nextTitle;
+      }
+    }
     if (description) description.textContent = bannerText(heroBanner, "description_translations", description.textContent);
     if (primaryAction) {
       primaryAction.textContent = bannerText(heroBanner, "button_translations", primaryAction.textContent);

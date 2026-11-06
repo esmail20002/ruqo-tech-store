@@ -552,6 +552,7 @@
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("messages");
     if (currentRoles.some((role) => ["owner", "admin", "marketing_manager"].includes(role))) {
       allowedViews.add("hero");
+      allowedViews.add("big-3-cards");
       allowedViews.add("promotions");
       allowedViews.add("exclusive-deals");
       allowedViews.add("features-stats");
@@ -585,6 +586,7 @@
       orders: "Orders",
       messages: "Messages",
       hero: "HERO",
+      "big-3-cards": "BIG 3 CARDS",
       promotions: "Offers",
       "exclusive-deals": "Exclusive deals",
       "features-stats": "Features & stats",
@@ -825,7 +827,11 @@
     if (canManage(["owner", "admin", "marketing_manager"])) {
       tasks.push(loadPromotions(), loadBanners(), loadNewsletterSubscribers(), loadAudienceProductReviews());
     }
-    if (canManage(["owner", "admin"])) tasks.push(loadBrandSettings(), loadHomepageSpotlights());
+    if (canManage(["owner", "admin"])) {
+      tasks.push(loadBrandSettings(), loadHomepageSpotlights());
+      const supportContentLoad = window.RUQO_INIT_SUPPORT_CONTENT_EDITOR?.(client);
+      if (supportContentLoad) tasks.push(supportContentLoad);
+    }
     const results = await Promise.allSettled(tasks);
     results.filter((result) => result.status === "rejected").forEach((result) => {
       showToast(`Could not load a section: ${result.reason?.message || "Unknown error"}`);
@@ -5753,6 +5759,7 @@
     window.RUQO_INIT_FEATURES_EDITOR?.(client);
     window.RUQO_INIT_REVIEWS_EDITOR?.(client);
     window.RUQO_INIT_HERO_EDITOR?.(client);
+    window.RUQO_INIT_BIG_3_CARDS_EDITOR?.(client);
     bindEvents();
     const { data, error } = await client.auth.getSession();
     if (error) {

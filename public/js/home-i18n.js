@@ -118,6 +118,19 @@ window.NoursHomeTranslations = {
     "lunae.card3.title": "منتج مميز",
     "lunae.card3.badge": "الأكثر مبيعًا",
     "lunae.replay": "إعادة",
+    "bento.main.eyebrow": "معدات الألعاب",
+    "bento.main.badge": "خصم حتى 30%",
+    "bento.main.title": "يد تحكم لاسلكية احترافية",
+    "bento.main.sub": "نوع وحدة التحكم: يد تحكم لاسلكية فائقة الاستجابة",
+    "bento.main.cta": "تسوق الآن",
+    "bento.top.eyebrow": "وصل حديثاً",
+    "bento.top.badge": "عرض خاص",
+    "bento.top.title": "سماعات لاسلكية ذكية",
+    "bento.top.cta": "تسوق الآن",
+    "bento.bottom.eyebrow": "وصل حديثاً",
+    "bento.bottom.badge": "إصدار محدود",
+    "bento.bottom.title": "مكبر صوت هوم بود برو",
+    "bento.bottom.cta": "تسوق الآن",
   },
   en: {
     "topbar.shipping": "Free delivery over 299 SAR",
@@ -243,6 +256,19 @@ window.NoursHomeTranslations = {
     "lunae.card3.title": "Featured Product",
     "lunae.card3.badge": "Best Seller",
     "lunae.replay": "Replay",
+    "bento.main.eyebrow": "GAMING GEAR",
+    "bento.main.badge": "UP TO 30% OFF",
+    "bento.main.title": "GAME CONTROLLER",
+    "bento.main.sub": "Controller type: Wireless controller",
+    "bento.main.cta": "SHOP NOW",
+    "bento.top.eyebrow": "NEW ARRIVALS",
+    "bento.top.badge": "SPECIAL OFFER",
+    "bento.top.title": "BAMBOOBUDS PRO",
+    "bento.top.cta": "Shop Now",
+    "bento.bottom.eyebrow": "NEW ARRIVALS",
+    "bento.bottom.badge": "LIMITED DEAL",
+    "bento.bottom.title": "HOMEPOD PRO",
+    "bento.bottom.cta": "Shop Now",
   },
   fr: {
     "topbar.shipping": "Livraison offerte dès 299 SAR",
@@ -355,6 +381,19 @@ window.NoursHomeTranslations = {
     "lunae.card3.title": "Produit à la une",
     "lunae.card3.badge": "Meilleure vente",
     "lunae.replay": "Rejouer",
+    "bento.main.eyebrow": "ÉQUIPEMENT GAMING",
+    "bento.main.badge": "JUSQU'À -30%",
+    "bento.main.title": "MANETTE SANS FIL",
+    "bento.main.sub": "Type : Manette sans fil haute précision",
+    "bento.main.cta": "ACHETER",
+    "bento.top.eyebrow": "NOUVEAUTÉS",
+    "bento.top.badge": "OFFRE SPÉCIALE",
+    "bento.top.title": "BAMBOOBUDS PRO",
+    "bento.top.cta": "Acheter",
+    "bento.bottom.eyebrow": "NOUVEAUTÉS",
+    "bento.bottom.badge": "ÉDITION LIMITÉE",
+    "bento.bottom.title": "HOMEPOD PRO",
+    "bento.bottom.cta": "Acheter",
   },
   es: {
     "topbar.shipping": "Envío gratis a partir de 299 SAR",
@@ -467,6 +506,19 @@ window.NoursHomeTranslations = {
     "lunae.card3.title": "Producto destacado",
     "lunae.card3.badge": "Más vendido",
     "lunae.replay": "Repetir",
+    "bento.main.eyebrow": "EQUIPO GAMING",
+    "bento.main.badge": "HASTA -30%",
+    "bento.main.title": "MANDO INALÁMBRICO",
+    "bento.main.sub": "Tipo de mando: Controlador inalámbrico",
+    "bento.main.cta": "COMPRAR AHORA",
+    "bento.top.eyebrow": "NOVEDADES",
+    "bento.top.badge": "OFERTA ESPECIAL",
+    "bento.top.title": "BAMBOOBUDS PRO",
+    "bento.top.cta": "Comprar ahora",
+    "bento.bottom.eyebrow": "NOVEDADES",
+    "bento.bottom.badge": "EDICIÓN LIMITADA",
+    "bento.bottom.title": "HOMEPOD PRO",
+    "bento.bottom.cta": "Comprar ahora",
   },
   zh: {
     "topbar.shipping": "订单满 299 SAR 免运费",
@@ -579,6 +631,19 @@ window.NoursHomeTranslations = {
     "lunae.card3.title": "精选商品",
     "lunae.card3.badge": "热销爆款",
     "lunae.replay": "重播",
+    "bento.main.eyebrow": "电竞装备",
+    "bento.main.badge": "最高立减 30%",
+    "bento.main.title": "无线游戏手柄",
+    "bento.main.sub": "控制器类型：低延迟无线手柄",
+    "bento.main.cta": "立即选购",
+    "bento.top.eyebrow": "新品上市",
+    "bento.top.badge": "特惠活动",
+    "bento.top.title": "BAMBOOBUDS PRO",
+    "bento.top.cta": "立即选购",
+    "bento.bottom.eyebrow": "新品上市",
+    "bento.bottom.badge": "限量特惠",
+    "bento.bottom.title": "HOMEPOD PRO",
+    "bento.bottom.cta": "立即选购",
   },
 };
 
@@ -615,6 +680,8 @@ window.NoursHomeTranslations = {
     if (Array.isArray(bannersCache)) window.RUQO_STORE_BANNERS = bannersCache;
     const featuresCache = readJson("ruqo-home-features-cache-v1");
     if (featuresCache !== undefined) window.RUQO_HOME_FEATURES = featuresCache;
+    const big3CardsCache = readJson("ruqo-home-big-3-cards-cache-v1");
+    if (big3CardsCache !== undefined) window.RUQO_HOME_BIG_3_CARDS = big3CardsCache;
     const reviewsCache = readJson("ruqo-home-reviews-cache-v1");
     if (reviewsCache !== undefined) window.RUQO_HOME_REVIEWS = reviewsCache;
     const lunaeHeroCache = readJson("ruqo-home-lunae-hero-cache-v1") ?? readJson("ruqo-home-lunae-hero-v1");
@@ -625,20 +692,72 @@ window.NoursHomeTranslations = {
     if (Array.isArray(categoriesCache)) window.RUQO_CATEGORIES = categoriesCache;
   } catch (_) {}
   const dictionary = window.NoursHomeTranslations[language];
+  const formatHeroTitle = (element, rawText) => {
+    const clean = typeof rawText === "string" ? rawText : "";
+    if (!clean.trim()) {
+      element.textContent = clean;
+      return;
+    }
+    if (element.dataset.formattedTitle === clean && element.querySelector(".hero-title__accent")) {
+      return;
+    }
+    element.dataset.formattedTitle = clean;
+    const sentenceMatch = clean.match(/^(.+?[.۔。!؟?])\s+(.+)$/u);
+    let lead = "";
+    let accent = "";
+    if (sentenceMatch) {
+      lead = sentenceMatch[1];
+      accent = sentenceMatch[2];
+    } else {
+      const words = clean.trim().split(/\s+/);
+      if (words.length >= 4) {
+        const splitIndex = Math.ceil(words.length * 0.45);
+        lead = words.slice(0, splitIndex).join(" ");
+        accent = words.slice(splitIndex).join(" ");
+      }
+    }
+    element.textContent = "";
+    if (lead && accent) {
+      const leadSpan = document.createElement("span");
+      leadSpan.className = "hero-title__lead";
+      leadSpan.textContent = lead;
+      const accentSpan = document.createElement("span");
+      accentSpan.className = "hero-title__accent";
+      accentSpan.textContent = accent;
+      element.append(leadSpan, " ", accentSpan);
+    } else {
+      const leadSpan = document.createElement("span");
+      leadSpan.className = "hero-title__lead";
+      leadSpan.textContent = clean;
+      element.append(leadSpan);
+    }
+  };
+  window.NoursFormatHeroTitle = formatHeroTitle;
   const translateElement = (element) => {
     if (!element || element.nodeType !== Node.ELEMENT_NODE) return;
+    const key = element.getAttribute("data-i18n");
     const published = window.RUQO_HOME_COPY?.translations?.[language] || window.RUQO_HOME_COPY?.translations?.en;
     if (published && typeof published.title === "string" && published.title.trim()) {
-      const copyKey = { "hero.eyebrow": "eyebrow", "hero.title": "title", "hero.text": "text" }[element.getAttribute("data-i18n")];
+      const copyKey = { "hero.eyebrow": "eyebrow", "hero.title": "title", "hero.text": "text" }[key];
       if (copyKey && typeof published[copyKey] === "string") {
-        if (element.textContent !== published[copyKey]) element.textContent = published[copyKey];
+        if (key === "hero.title") {
+          formatHeroTitle(element, published[copyKey]);
+        } else if (element.textContent !== published[copyKey]) {
+          element.textContent = published[copyKey];
+        }
         const shouldHide = !published[copyKey].trim();
         if (element.hidden !== shouldHide) element.hidden = shouldHide;
         return;
       }
     }
-    const text = dictionary[element.getAttribute("data-i18n")];
-    if (text && element.textContent.trim() && element.textContent !== text) element.textContent = text;
+    const text = dictionary[key];
+    if (text && element.textContent.trim()) {
+      if (key === "hero.title") {
+        formatHeroTitle(element, text);
+      } else if (element.textContent !== text) {
+        element.textContent = text;
+      }
+    }
     const placeholder = dictionary[element.getAttribute("data-i18n-placeholder")];
     if (placeholder) element.setAttribute("placeholder", placeholder);
   };
