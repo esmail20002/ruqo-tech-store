@@ -870,6 +870,27 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
     background: #efe3f8;
   }
 
+  html.is-low-power-mobile body[data-page="home"] .site-header,
+  html.is-low-power-mobile body[data-page="home"] .wx-btn-primary,
+  html.is-low-power-mobile body[data-page="home"] .wx-btn-video,
+  html.is-low-power-mobile body[data-page="home"] .wx-floating-orb__core,
+  html.is-low-power-mobile body[data-page="home"] .wx-glass-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html.is-low-power-mobile body[data-page="home"] .site-header {
+    background: rgba(255, 255, 255, 0.94) !important;
+  }
+
+  html.is-low-power-mobile body[data-page="home"] .wx-glass-card {
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  html.is-low-power-mobile body[data-page="home"] .wx-floating-orb__ring--outer {
+    animation: none;
+  }
+
   section.lunae-sequence.is-hero-locked,
   .lunae-sequence.is-hero-locked {
     height: 100vh;

@@ -2,6 +2,17 @@
   const page = document.body;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const coarsePointer = window.matchMedia("(pointer: coarse)");
+  const connection = navigator.connection;
+  const isLowPowerMobile =
+    coarsePointer.matches &&
+    (connection?.saveData === true ||
+      ["slow-2g", "2g"].includes(connection?.effectiveType) ||
+      (typeof navigator.deviceMemory === "number" && navigator.deviceMemory <= 4) ||
+      (typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4));
+
+  if (isLowPowerMobile) {
+    document.documentElement.classList.add("is-low-power-mobile");
+  }
 
   /* ==========================================================================
      0. ZERO-FLASH PRE-PAINT GATE & HOVER IMAGE/PAGE PREFETCH
@@ -54,7 +65,7 @@
     // Hover Prefetch & Product Image Prewarm (0ms instant cache hit on click)
     const prewarmedUrls = new Set();
     const prewarmLink = (link) => {
-      if (!link?.href) return;
+      if (isLowPowerMobile || !link?.href) return;
       let url;
       try {
         url = new URL(link.href, window.location.origin);
@@ -131,7 +142,7 @@
         }
         if (destUrl.href === window.location.href) return;
 
-        if (reducedMotion.matches) return;
+        if (reducedMotion.matches || isLowPowerMobile) return;
 
         event.preventDefault();
         isNavigating = true;

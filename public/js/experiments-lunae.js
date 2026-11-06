@@ -15,6 +15,21 @@
   const useMobilePortraitSequence =
     document.body.dataset.page === "home" &&
     window.matchMedia("(max-width: 920px)").matches;
+  const connection = navigator.connection;
+  const isDataSaver =
+    connection?.saveData === true ||
+    ["slow-2g", "2g"].includes(connection?.effectiveType);
+  const hasLimitedResources =
+    (typeof navigator.deviceMemory === "number" && navigator.deviceMemory <= 4) ||
+    (typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4);
+  const isLowPowerMobile =
+    useMobilePortraitSequence && (isDataSaver || hasLimitedResources);
+  const mobilePortraitSourceFrameCount = 120;
+  const lowPowerFrameCount = isDataSaver ? 24 : 36;
+
+  if (isLowPowerMobile) {
+    document.documentElement.classList.add("is-low-power-mobile");
+  }
 
   const revealItems = {
     brand: document.querySelector('[data-reveal-item="brand"]'),
@@ -47,8 +62,12 @@
   }
 
   const firstFrameNumber = useMobilePortraitSequence ? 1 : 7;
-  const lastFrameNumber = useMobilePortraitSequence ? 120 : 50;
-  const totalFrames = lastFrameNumber - firstFrameNumber + 1;
+  const lastFrameNumber = useMobilePortraitSequence ? mobilePortraitSourceFrameCount : 50;
+  const totalFrames = useMobilePortraitSequence
+    ? isLowPowerMobile
+      ? lowPowerFrameCount
+      : mobilePortraitSourceFrameCount
+    : lastFrameNumber - firstFrameNumber + 1;
   const images = new Array(totalFrames);
   const pendingLoads = new Array(totalFrames);
   const introRewindCount = 20;
@@ -222,7 +241,13 @@
     if (images[index]) return Promise.resolve(images[index]);
     if (pendingLoads[index]) return pendingLoads[index];
 
-    const frameNumber = firstFrameNumber + index;
+    const frameNumber = useMobilePortraitSequence
+      ? 1 +
+        Math.round(
+          (index * (mobilePortraitSourceFrameCount - 1)) /
+            Math.max(1, totalFrames - 1),
+        )
+      : firstFrameNumber + index;
     const suffix = String(frameNumber).padStart(useMobilePortraitSequence ? 3 : 2, "0");
     const sourceIndex = String(
       frameNumber === 50 ? 242 : Math.round((frameNumber - 1) * ((243 - 1) / (50 - 1))),
@@ -302,7 +327,7 @@
     const bounds = stage.getBoundingClientRect();
     const width = Math.max(1, bounds.width);
     const height = Math.max(1, bounds.height);
-    const maxDpr = useMobilePortraitSequence ? 2 : 3;
+    const maxDpr = isLowPowerMobile ? 1.5 : useMobilePortraitSequence ? 2 : 3;
     const pixelRatio = Math.min(window.devicePixelRatio || 1, maxDpr);
     const pixelWidth = Math.round(width * pixelRatio);
     const pixelHeight = Math.round(height * pixelRatio);
@@ -314,7 +339,7 @@
 
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = "high";
+    context.imageSmoothingQuality = isLowPowerMobile ? "medium" : "high";
     canvasNeedsResize = false;
     redrawRequested = true;
   }
@@ -342,7 +367,7 @@
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = "high";
+    context.imageSmoothingQuality = isLowPowerMobile ? "medium" : "high";
 
     if (image) {
       const coverScale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
@@ -394,7 +419,7 @@
       );
 
       // Sub-frame crossfade blending on mobile for ultra-smooth scrolling between adjacent frames
-      if (useMobilePortraitSequence && currentFrame >= 0) {
+      if (useMobilePortraitSequence && !isLowPowerMobile && currentFrame >= 0) {
         const baseIdx = clamp(Math.floor(currentFrame), 0, totalFrames - 1);
         const nextIdx = clamp(baseIdx + 1, 0, totalFrames - 1);
         const frac = clamp(currentFrame - baseIdx, 0, 1);
@@ -722,7 +747,9 @@
     const requestedFrame = Math.round(targetFrame);
     loadFrame(requestedFrame).catch(() => {});
     if (useMobilePortraitSequence) {
-      for (let offset = -3; offset <= 4; offset += 1) {
+      const lookBehind = isLowPowerMobile ? 1 : 3;
+      const lookAhead = isLowPowerMobile ? 2 : 4;
+      for (let offset = -lookBehind; offset <= lookAhead; offset += 1) {
         if (offset !== 0) loadFrame(requestedFrame + offset).catch(() => {});
       }
     }
@@ -730,6 +757,13 @@
 
   function animate(timeMs = 0) {
     requestAnimationFrame(animate);
+    if (
+      isLowPowerMobile &&
+      lastAnimTimeMs > 0 &&
+      timeMs - lastAnimTimeMs < 1000 / 30
+    ) {
+      return;
+    }
 
     // Pause heavy canvas/video/SVG work when hero is scrolled completely out of view
     if (heroLocked && !isHeroInViewport && !isRewinding && !isIntroPlaying) {
@@ -869,12 +903,16 @@
 
   function scheduleProgressivePreload(index) {
     const maxPreloadCount = useMobilePortraitSequence
-      ? totalFrames
+      ? isLowPowerMobile
+        ? isDataSaver
+          ? 0
+          : Math.min(6, totalFrames)
+        : totalFrames
       : totalFrames + introRewindCount;
     if (index >= maxPreloadCount) return;
 
-    const batchSize = useMobilePortraitSequence ? 4 : 1;
-    const delayMs = useMobilePortraitSequence ? 8 : 35;
+    const batchSize = isLowPowerMobile ? 1 : useMobilePortraitSequence ? 4 : 1;
+    const delayMs = isLowPowerMobile ? 80 : useMobilePortraitSequence ? 8 : 35;
 
     const loadNext = () => {
       if (document.hidden) {
