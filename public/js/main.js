@@ -16,68 +16,6 @@ const localeByLanguage = {
   zh: "zh-CN",
   ar: "ar-SA",
 };
-const mobileAdSlides = [
-  {
-    image:
-      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=500&q=80",
-    href: "#deals",
-    ar: {
-      label: "عرض محدود",
-      copy: "خصومات تصل إلى 35% على أجهزة مختارة",
-      action: "تسوق ←",
-    },
-    en: {
-      label: "Limited offer",
-      copy: "Up to 35% off selected devices",
-      action: "Shop now →",
-    },
-    fr: { label: "Offre limitée", copy: "Jusqu’à 35 % de remise sur une sélection", action: "Acheter →" },
-    es: { label: "Oferta limitada", copy: "Hasta un 35 % de descuento en productos seleccionados", action: "Comprar →" },
-    zh: { label: "限时优惠", copy: "精选设备最高优惠 35%", action: "立即选购 →" },
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=80",
-    href: "#new",
-    ar: {
-      label: "اختيار المحترفين",
-      copy: "أجهزة لابتوب تصنع فرقًا في يومك",
-      action: "اكتشفها ←",
-    },
-    en: {
-      label: "Pro picks",
-      copy: "Laptops that elevate your day",
-      action: "Explore →",
-    },
-    fr: { label: "Sélection pro", copy: "Des ordinateurs qui font la différence", action: "Explorer →" },
-    es: { label: "Selección Pro", copy: "Portátiles que mejoran tu día", action: "Explorar →" },
-    zh: { label: "专业之选", copy: "让每一天更高效的笔记本电脑", action: "探索 →" },
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=80",
-    href: "#categories",
-    ar: {
-      label: "وصل حديثًا",
-      copy: "اكتشف أحدث الهواتف الذكية",
-      action: "تصفح الهواتف ←",
-    },
-    en: {
-      label: "Just arrived",
-      copy: "Discover the latest smartphones",
-      action: "Shop phones →",
-    },
-    fr: { label: "Nouveautés", copy: "Découvrez les derniers smartphones", action: "Voir les téléphones →" },
-    es: { label: "Recién llegados", copy: "Descubre los últimos smartphones", action: "Ver móviles →" },
-    zh: { label: "新品上市", copy: "探索最新智能手机", action: "选购手机 →" },
-  },
-];
-let mobileAdIndex = 0;
-let mobileAdTimer;
-let mobileAdTransitionTimer;
-let mobileAdPaused = false;
-let mobileAdHovered = false;
-const mobileViewportQuery = window.matchMedia("(max-width: 640px)");
 const reducedMotionQuery = window.matchMedia(
   "(prefers-reduced-motion: reduce)",
 );
@@ -1000,10 +938,7 @@ window.addEventListener("ruqo:home-spotlights-updated", () => {
 });
 window.addEventListener("ruqo:store-settings-updated", renderFeaturedProduct);
 window.addEventListener("ruqo:home-lunae-hero-updated", syncLunaeFeaturedCard);
-window.addEventListener("ruqo:store-banners-updated", () => {
-  renderManagedHomeBanners();
-  renderMobileAd();
-});
+window.addEventListener("ruqo:store-banners-updated", renderManagedHomeBanners);
 window.RUQO_SUPABASE_READY?.then((loaded) => {
   if (loaded) syncHomepageCatalog();
 });
@@ -1011,136 +946,6 @@ window.RUQO_HOME_SPOTLIGHTS_READY?.then(() => {
   renderFeaturedProduct();
   updateFeaturedProductTimer();
 });
-
-function renderMobileAdControls(managedBanner) {
-  const shell = document.querySelector(".mobile-ad-shell");
-  if (!shell) return;
-  const controls = shell.querySelector(".mobile-ad-controls");
-  const copy = {
-    en: { offers: "Featured offers", offer: "Show offer", pause: "Pause offers", play: "Resume offers" },
-    ar: { offers: "عروض مختارة", offer: "عرض الإعلان", pause: "إيقاف تبديل العروض", play: "استئناف تبديل العروض" },
-    fr: { offers: "Offres à découvrir", offer: "Afficher l’offre", pause: "Mettre en pause", play: "Reprendre les offres" },
-    es: { offers: "Ofertas destacadas", offer: "Mostrar oferta", pause: "Pausar ofertas", play: "Reanudar ofertas" },
-    zh: { offers: "精选推荐", offer: "显示推荐", pause: "暂停轮播", play: "继续轮播" },
-  }[currentLang] || { offers: "Featured offers", offer: "Show offer", pause: "Pause offers", play: "Resume offers" };
-  shell.setAttribute("role", "region");
-  shell.setAttribute("aria-label", copy.offers);
-  const count = managedBanner ? 1 : mobileAdSlides.length;
-  controls.hidden = count <= 1;
-  shell.classList.toggle("has-controls", !controls.hidden);
-  if (!shell.dataset.controlsReady) {
-    shell.dataset.controlsReady = "true";
-    shell.addEventListener("pointerenter", (event) => {
-      if (event.pointerType !== "mouse") return;
-      mobileAdHovered = true;
-      updateMobileAdTimer();
-    });
-    shell.addEventListener("pointerleave", () => {
-      mobileAdHovered = false;
-      updateMobileAdTimer();
-    });
-    shell.addEventListener("focusin", () => window.clearInterval(mobileAdTimer));
-    shell.addEventListener("focusout", (event) => {
-      if (!shell.contains(event.relatedTarget)) updateMobileAdTimer();
-    });
-  }
-  if (controls.hidden) return;
-  if (!controls.childElementCount) {
-    mobileAdSlides.forEach((slide, index) => {
-      const dot = document.createElement("button");
-      dot.type = "button";
-      dot.className = "mobile-ad-dot";
-      dot.addEventListener("click", () => {
-        mobileAdIndex = index;
-        renderMobileAd();
-      });
-      controls.append(dot);
-    });
-    const pause = document.createElement("button");
-    pause.type = "button";
-    pause.className = "mobile-ad-pause";
-    pause.addEventListener("click", () => {
-      mobileAdPaused = !mobileAdPaused;
-      renderMobileAdControls(null);
-      updateMobileAdTimer();
-    });
-    controls.append(pause);
-  }
-  controls.querySelectorAll(".mobile-ad-dot").forEach((dot, index) => {
-    const slide = mobileAdSlides[index][currentLang] || mobileAdSlides[index].en;
-    dot.setAttribute("aria-label", `${copy.offer} ${index + 1}: ${slide.copy}`);
-    dot.setAttribute("aria-pressed", String(index === mobileAdIndex));
-  });
-  const pause = controls.querySelector(".mobile-ad-pause");
-  pause.hidden = reducedMotionQuery.matches;
-  pause.setAttribute("aria-label", mobileAdPaused ? copy.play : copy.pause);
-  pause.setAttribute("aria-pressed", String(mobileAdPaused));
-  const icon = document.createElement("i");
-  icon.dataset.lucide = mobileAdPaused ? "play" : "pause";
-  icon.setAttribute("aria-hidden", "true");
-  pause.replaceChildren(icon);
-  window.lucide?.createIcons();
-}
-
-function renderMobileAd() {
-  const banner = document.querySelector(".mobile-ad-banner");
-  if (!banner) return;
-
-  const managedBanner = (window.RUQO_STORE_BANNERS || []).find((item) => item.placement === "mobile_promo");
-  const slide = mobileAdSlides[mobileAdIndex];
-  const localCopy = slide[currentLang] || slide.en;
-  const copy = managedBanner
-    ? {
-        label: currentLang === "ar" ? "عرض المتجر" : "STORE OFFER",
-        copy: bannerText(managedBanner, "description_translations") || bannerText(managedBanner, "title_translations"),
-        action: bannerText(managedBanner, "button_translations", currentLang === "ar" ? "تسوق" : "Shop now"),
-      }
-    : localCopy;
-  const image = banner.querySelector(".mobile-ad-image");
-  const imageUrl = managedBanner?.mobile_image_url || managedBanner?.image_url || slide.image;
-
-  renderMobileAdControls(managedBanner);
-  window.clearTimeout(mobileAdTransitionTimer);
-  banner.classList.add("is-changing");
-  mobileAdTransitionTimer = window.setTimeout(() => {
-    image.src = imageUrl;
-    banner.href = managedBanner?.destination_url || (managedBanner ? "/products.html" : slide.href);
-    banner.querySelector(".mobile-ad-label").textContent = copy.label;
-    banner.querySelector(".mobile-ad-copy").textContent = copy.copy;
-    banner.querySelector(".mobile-ad-action-label").textContent = copy.action
-      .replace(/[←→]/g, "")
-      .trim();
-    banner.classList.remove("is-changing");
-  }, reducedMotionQuery.matches ? 0 : 180);
-  updateMobileAdTimer();
-}
-
-function advanceMobileAd() {
-  mobileAdIndex = (mobileAdIndex + 1) % mobileAdSlides.length;
-  renderMobileAd();
-}
-
-function updateMobileAdTimer() {
-  window.clearInterval(mobileAdTimer);
-  if (
-    mobileViewportQuery.matches &&
-    !reducedMotionQuery.matches &&
-    !mobileAdPaused &&
-    !mobileAdHovered &&
-    !document.querySelector(".mobile-ad-shell")?.contains(document.activeElement) &&
-    !(window.RUQO_STORE_BANNERS || []).some((item) => item.placement === "mobile_promo") &&
-    document.visibilityState === "visible"
-  ) {
-    mobileAdTimer = window.setInterval(advanceMobileAd, 5500);
-  }
-}
-
-mobileViewportQuery.addEventListener("change", updateMobileAdTimer);
-reducedMotionQuery.addEventListener("change", () => {
-  renderMobileAd();
-});
-document.addEventListener("visibilitychange", updateMobileAdTimer);
-updateMobileAdTimer();
 
 function applyTranslations(lang) {
   const renderRatingIcons = () => {
@@ -1250,7 +1055,6 @@ function applyTranslations(lang) {
   const body = document.body;
   body.classList.toggle("is-english", lang === "en");
   formatHomepagePrices();
-  renderMobileAd();
   renderFeaturedProduct();
   syncHomepageCatalog();
   renderManagedHomeBanners();

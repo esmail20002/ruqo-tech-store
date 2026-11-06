@@ -68,16 +68,14 @@ body.is-intro-locked {
 
 /* Smoothly hide store header/topbar while inside the eye scene, reveal on completion */
 body:is([data-page="experiments"], [data-page="home"]) .topbar,
-body:is([data-page="experiments"], [data-page="home"]) .site-header,
-body:is([data-page="experiments"], [data-page="home"]) .mobile-ad-shell {
+body:is([data-page="experiments"], [data-page="home"]) .site-header {
   transition:
     opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .topbar,
-body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .site-header,
-body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .mobile-ad-shell {
+body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .site-header {
   opacity: 0;
   transform: translate3d(0, -18px, 0);
   pointer-events: none;

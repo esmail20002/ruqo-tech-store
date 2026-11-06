@@ -43,9 +43,8 @@ body[data-page="experiments"] .product-side-drawer:not(.is-open) {
   box-shadow: none !important;
 }
 
-/* Hide legacy dark/purple topbar and mobile banner for a pure Lunae look */
-body[data-page="experiments"] .topbar,
-body[data-page="experiments"] .mobile-ad-shell {
+/* Hide the legacy dark/purple topbar for a pure Lunae look */
+body[data-page="experiments"] .topbar {
   display: none !important;
 }
 
