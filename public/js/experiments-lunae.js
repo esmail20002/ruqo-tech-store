@@ -81,7 +81,7 @@
   let canvasNeedsResize = true;
   let redrawRequested = true;
 
-  const HERO_SEEN_SESSION_KEY = "weexey-hero-intro-seen-v1";
+  const HERO_SEEN_SESSION_KEY = "weexey-hero-intro-seen-v2";
   const readCustomHeroData = () => {
     if (window.RUQO_HOME_LUNAE_HERO && typeof window.RUQO_HOME_LUNAE_HERO === "object") {
       return window.RUQO_HOME_LUNAE_HERO;
@@ -96,16 +96,32 @@
     }
   };
   const initialCustomHero = readCustomHeroData();
-  const introMode = initialCustomHero?.intro_mode || "skip";
-  const shouldSkipIntroOnLoad = introMode !== "always";
+  const introMode = ["once_per_session", "always", "skip"].includes(initialCustomHero?.intro_mode)
+    ? initialCustomHero.intro_mode
+    : "once_per_session";
+
+  function hasSeenHeroInSession() {
+    try {
+      return sessionStorage.getItem(HERO_SEEN_SESSION_KEY) === "1";
+    } catch (error) {
+      console.warn("Lunae sequence: session storage is unavailable; the hero intro may replay after reload.", error);
+      return false;
+    }
+  }
+
+  const shouldSkipIntroOnLoad =
+    introMode === "skip" ||
+    (introMode === "once_per_session" && hasSeenHeroInSession());
 
   function markHeroSeenInSession() {
     try {
       sessionStorage.setItem(HERO_SEEN_SESSION_KEY, "1");
-    } catch (_) {}
+    } catch (error) {
+      console.warn("Lunae sequence: the hero intro session state could not be saved.", error);
+    }
   }
 
-  // Intro eye-opening video — lazy-loaded only when Replay is triggered (or if introMode === "always")
+  // Intro eye-opening video — lazy-loaded only when the intro is scheduled or Replay is triggered.
   const introPoster = new Image();
   introPoster.decoding = "async";
   let introPosterReady = false;
@@ -1133,6 +1149,9 @@
       });
   } else if (window.scrollY < 120) {
     document.body.classList.add("is-lunae-header-hidden");
+    if (introMode === "once_per_session") {
+      markHeroSeenInSession();
+    }
     startIntroVideoPlayback();
     loadFrame(0)
       .then(() => {

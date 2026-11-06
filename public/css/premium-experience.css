@@ -2728,6 +2728,28 @@ body[data-page="home"] #new .product-editorial-brand {
     gap: 18px 12px;
   }
 
+  body[data-page="home"] #new .product-pill-tags {
+    inset-inline-end: auto;
+    width: fit-content;
+    max-width: calc(100% - 28px);
+    flex-wrap: nowrap;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    pointer-events: auto;
+  }
+
+  body[data-page="home"] #new .product-pill-tags .tag {
+    flex: 0 0 auto;
+    padding: 4px 8px;
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
   body[data-page="home"] #new .product-row-top {
     flex-direction: column;
     gap: 2px;
