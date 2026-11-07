@@ -24,8 +24,8 @@ try {
 const app = express();
 const PORT = process.env.PORT || 3000;
 const NVIDIA_API_URL = process.env.NVIDIA_API_URL || 'https://integrate.api.nvidia.com/v1/chat/completions';
-const NVIDIA_TEXT_MODEL = process.env.NVIDIA_TEXT_MODEL || 'meta/llama-3.3-70b-instruct';
-const NVIDIA_VISION_MODEL = process.env.NVIDIA_VISION_MODEL || 'meta/llama-3.2-90b-vision-instruct';
+const NVIDIA_PRIMARY_MODEL = process.env.NVIDIA_PRIMARY_MODEL || 'nvidia/nemotron-3.5-super-vl-120b-a12b';
+const NVIDIA_SECONDARY_MODEL = process.env.NVIDIA_SECONDARY_MODEL || 'deepseek-ai/deepseek-v4.1-flash';
 
 app.use(express.json({ limit: '15mb' }));
 
@@ -312,21 +312,23 @@ app.post('/api/ai-assistant', async (req, res) => {
     }));
 
     const systemPrompt = [
-      'You are WEEXEY AI, a luxury electronics shopping concierge for the WEEXEY store.',
-      `Respond in language code: "${language}" (use natural Arabic if "ar", English if "en", French if "fr", Spanish if "es", Chinese if "zh").`,
-      'You ONLY recommend real products from this live WEEXEY catalog JSON:',
+      'detailed thinking off',
+      'You are WEEXEY AI, a warm, intelligent, natural-sounding human-like assistant and tech advisor for the WEEXEY luxury electronics store.',
+      `Always respond in the user's language (current page language: "${language}", or match the language the user writes in—such as fluent, friendly Arabic or English).`,
+      'You can hold completely natural conversations on ANY topic (greetings, casual chat, general questions, tech advice, daily life) just like a helpful friend.',
+      'You also have access to the live WEEXEY store catalog JSON below:',
       JSON.stringify(catalogSummary),
       'Return ONLY a valid JSON object matching this exact schema (no markdown outside JSON):',
       JSON.stringify({
-        mode: 'general | comparison | room_analysis | budget_bundle',
-        reply: 'Concise, helpful response text in the user language',
+        mode: 'chat | general | comparison | room_analysis | budget_bundle',
+        reply: 'Your natural, warm, human-like response text',
         roomAnalysis: {
-          detected: 'What you see in the uploaded room/desk image (only when an image is provided)',
+          detected: 'What you see in the uploaded room/desk image (only when mode is room_analysis)',
           missing: ['Missing tech upgrade 1', 'Missing tech upgrade 2'],
           upgradeImpact: 'How the recommended WEEXEY products elevate the space',
         },
         comparison: {
-          title: 'Product A vs Product B',
+          title: 'Product A vs Product B (only when mode is comparison)',
           productIds: ['id1', 'id2'],
           rows: [
             { label: 'Spec name', values: ['Product 1 spec', 'Product 2 spec'], winnerIndex: 0 },
@@ -337,21 +339,22 @@ app.post('/api/ai-assistant', async (req, res) => {
           targetBudget: 7500,
           totalPrice: 6399,
           totalSaved: 4500,
-          note: 'Summary of total price and savings',
+          note: 'Summary of total price and savings (only when mode is budget_bundle)',
         },
-        productIds: ['id1', 'id2'],
+        productIds: [],
       }),
-      'Rules:',
-      '- If the user uploads a room/desk/setup image, set mode="room_analysis", fill roomAnalysis, and pick 2-3 matching catalog productIds with active store prices.',
-      '- If the user asks to compare products, set mode="comparison", fill comparison with 2 productIds and 4-5 rows, and include those productIds.',
-      '- If the user specifies a budget or bundle request, set mode="budget_bundle", fill budgetSummary, and pick productIds whose sum fits the budget.',
-      '- Always populate productIds with valid IDs from the catalog.',
+      'Rules for choosing `mode` and `productIds`:',
+      '1. If the user is greeting you, chatting casually, asking who you are, or asking a general question that does NOT ask for store products, set mode="chat", productIds=[], and omit roomAnalysis/comparison/budgetSummary. Just reply naturally and warmly!',
+      '2. If the user uploads a room/desk/setup image, set mode="room_analysis", fill roomAnalysis, and pick 2-3 matching catalog productIds.',
+      '3. If the user asks to compare products, set mode="comparison", fill comparison with 2 productIds and 4-5 rows, and include those productIds.',
+      '4. If the user specifies a budget or bundle request, set mode="budget_bundle", fill budgetSummary, and pick productIds whose sum fits the budget.',
+      '5. If the user asks for product recommendations or deals, set mode="general" and pick 1-3 matching catalog productIds.',
     ].join('\n');
 
     const recentHistory = Array.isArray(history)
-      ? history.slice(-4).map((h) => ({
+      ? history.slice(-6).map((h) => ({
           role: h.role === 'assistant' ? 'assistant' : 'user',
-          content: String(h.text || '').slice(0, 500),
+          content: String(h.text || '').slice(0, 600),
         }))
       : [];
 
@@ -372,28 +375,18 @@ app.post('/api/ai-assistant', async (req, res) => {
         ]
       : message.trim();
 
-    const modelCandidates = hasImage
-      ? [NVIDIA_VISION_MODEL, 'meta/llama-3.2-11b-vision-instruct', NVIDIA_TEXT_MODEL]
-      : [NVIDIA_TEXT_MODEL, 'meta/llama-3.1-70b-instruct'];
+    const modelCandidates = [NVIDIA_PRIMARY_MODEL, NVIDIA_SECONDARY_MODEL];
 
     let parsedResult = null;
     for (const modelName of modelCandidates) {
-      const isVisionAttempt = hasImage && modelName.includes('vision');
       const messagesPayload = [
         { role: 'system', content: systemPrompt },
         ...recentHistory,
-        {
-          role: 'user',
-          content: isVisionAttempt
-            ? userContent
-            : typeof userContent === 'string'
-              ? userContent
-              : `${userContent[0].text} [Uploaded room/setup photo metadata: ${JSON.stringify(imageMeta)}]`,
-        },
+        { role: 'user', content: userContent },
       ];
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 18000);
+      const timeout = setTimeout(() => controller.abort(), 14000);
       try {
         const nvidiaRes = await fetch(NVIDIA_API_URL, {
           method: 'POST',
@@ -404,7 +397,7 @@ app.post('/api/ai-assistant', async (req, res) => {
           body: JSON.stringify({
             model: modelName,
             messages: messagesPayload,
-            temperature: 0.35,
+            temperature: 0.45,
             max_tokens: 900,
           }),
           signal: controller.signal,
@@ -412,10 +405,20 @@ app.post('/api/ai-assistant', async (req, res) => {
         clearTimeout(timeout);
         if (!nvidiaRes.ok) continue;
         const data = await nvidiaRes.json();
-        const rawContent = data?.choices?.[0]?.message?.content;
+        const rawContent = String(data?.choices?.[0]?.message?.content || '');
         const extracted = extractJsonObject(rawContent);
-        if (extracted && Array.isArray(extracted.productIds)) {
+        if (extracted && typeof extracted.reply === 'string') {
+          if (!Array.isArray(extracted.productIds)) extracted.productIds = [];
           parsedResult = { ...extracted, source: `nvidia:${modelName}` };
+          break;
+        }
+        if (rawContent.trim()) {
+          parsedResult = {
+            mode: 'chat',
+            reply: rawContent.replace(/<think>[\s\S]*?<\/think>/gi, '').trim(),
+            productIds: [],
+            source: `nvidia-raw:${modelName}`,
+          };
           break;
         }
       } catch (_) {

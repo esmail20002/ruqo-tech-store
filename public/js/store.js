@@ -1655,27 +1655,59 @@
       });
 
       try {
-        const response = await fetch("/api/ai-assistant", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: displayMessage,
-            imageDataUrl: attachedImage,
-            imageMeta: attachedMeta,
-            language,
-            catalog: catalogPayload,
-            history: chatHistory.slice(-6),
-          }),
+        const payloadBody = JSON.stringify({
+          message: displayMessage,
+          imageDataUrl: attachedImage,
+          imageMeta: attachedMeta,
+          language,
+          catalog: catalogPayload,
+          history: chatHistory.slice(-6),
         });
-        if (!response.ok) throw new Error("API error");
-        const data = await response.json();
+        const endpoints = [];
+        const sbConfig = window.RUQO_SUPABASE_CONFIG;
+        if (sbConfig?.url) {
+          endpoints.push({
+            url: `${sbConfig.url}/functions/v1/ai-assistant`,
+            headers: {
+              "Content-Type": "application/json",
+              ...(sbConfig.publishableKey ? { apikey: sbConfig.publishableKey } : {}),
+            },
+          });
+        }
+        endpoints.push({
+          url: "/api/ai-assistant",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        let data = null;
+        for (const ep of endpoints) {
+          try {
+            const response = await fetch(ep.url, {
+              method: "POST",
+              headers: ep.headers,
+              body: payloadBody,
+            });
+            if (!response.ok) continue;
+            const parsed = await response.json();
+            if (parsed && (parsed.reply || parsed.productIds)) {
+              data = parsed;
+              break;
+            }
+          } catch (_) {}
+        }
+        if (!data) throw new Error("API error");
         loadingBubble.remove();
 
         const byId = new Map(allProducts.map((p) => [p.id, p]));
         const matchedProducts = (Array.isArray(data.productIds) ? data.productIds : [])
           .map((id) => byId.get(id))
           .filter(Boolean);
-        const finalProducts = matchedProducts.length ? matchedProducts : recommend(displayMessage);
+        const isPureChat = data.mode === "chat";
+        const finalProducts = isPureChat
+          ? matchedProducts
+          : matchedProducts.length
+            ? matchedProducts
+            : recommend(displayMessage);
 
         if (data.mode === "comparison" || data.mode === "room_analysis" || data.comparison || data.roomAnalysis) {
           setExpanded(true);
