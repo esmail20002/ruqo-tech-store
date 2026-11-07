@@ -87,6 +87,13 @@ body[data-page="home"].is-lunae-header-hidden .product-side-menu-trigger {
   pointer-events: none;
 }
 
+body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .wx-mobile-bottom-nav {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 100%, 0);
+  pointer-events: none;
+}
+
 .lunae-canvas {
   display: block;
   z-index: 0;

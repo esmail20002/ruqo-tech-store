@@ -107,7 +107,7 @@
     document.querySelectorAll("[data-cart-count]").forEach((node) => {
       node.textContent = formattedCount;
     });
-    document.querySelectorAll(".commerce-cart-count").forEach((node) => {
+    document.querySelectorAll(".commerce-cart-count, .wx-mobile-nav-badge").forEach((node) => {
       node.hidden = count === 0;
     });
     document.querySelectorAll(".commerce-cart-link").forEach((link) => {
@@ -1864,6 +1864,7 @@
     document.querySelector(".product-side-menu-trigger")?.remove();
     document.querySelector(".product-side-drawer")?.remove();
     document.querySelector(".product-side-drawer-backdrop")?.remove();
+    document.querySelector(".wx-mobile-bottom-nav")?.remove();
 
     const menuTexts = {
       ar: {
@@ -2303,10 +2304,102 @@
       assistantTrigger.click();
     });
     const syncAssistantExpanded = new MutationObserver(() => {
-      drawerAssistant.setAttribute("aria-expanded", assistantTrigger.getAttribute("aria-expanded") || "false");
+      const isExpanded = assistantTrigger.getAttribute("aria-expanded") === "true";
+      drawerAssistant.setAttribute("aria-expanded", String(isExpanded));
+      if (mobileAiButton) {
+        mobileAiButton.setAttribute("aria-expanded", String(isExpanded));
+        mobileAiButton.classList.toggle("is-active", isExpanded);
+        mobileBottomNav.classList.toggle("is-ai-active", isExpanded);
+      }
     });
     syncAssistantExpanded.observe(assistantTrigger, { attributes: true, attributeFilter: ["aria-expanded"] });
     controller.signal.addEventListener("abort", () => syncAssistantExpanded.disconnect(), { once: true });
+
+    const bottomNavCopy = {
+      en: { home: "Home", shop: "Shop", ai: "AI", cart: "Cart", account: "Account", navLabel: "Mobile navigation" },
+      ar: { home: "الرئيسية", shop: "المتجر", ai: "AI", cart: "السلة", account: "حسابي", navLabel: "التنقل السفلي للجوال" },
+      fr: { home: "Accueil", shop: "Boutique", ai: "AI", cart: "Panier", account: "Compte", navLabel: "Navigation mobile" },
+      es: { home: "Inicio", shop: "Tienda", ai: "AI", cart: "Carrito", account: "Cuenta", navLabel: "Navegación móvil" },
+      zh: { home: "首页", shop: "商城", ai: "AI", cart: "购物袋", account: "账户", navLabel: "底部导航" },
+    }[language] || { home: "Home", shop: "Shop", ai: "AI", cart: "Cart", account: "Account", navLabel: "Mobile navigation" };
+
+    const isHomeActive = currentPath === "/" || currentPath === "";
+    const isShopActive = ["/products.html", "/categories.html", "/product.html"].includes(currentPath);
+    const isCartActive = ["/cart.html", "/checkout.html"].includes(currentPath);
+    const isAccountActive = ["/account.html", "/wishlist.html"].includes(currentPath);
+
+    const mobileBottomNav = document.createElement("nav");
+    mobileBottomNav.className = "wx-mobile-bottom-nav";
+    mobileBottomNav.setAttribute("aria-label", bottomNavCopy.navLabel);
+    mobileBottomNav.dir = language === "ar" ? "rtl" : "ltr";
+    mobileBottomNav.innerHTML = `
+      <div class="wx-mobile-bottom-nav__inner">
+        <a href="/" class="wx-mobile-bottom-nav__item${isHomeActive ? " is-active" : ""}"${isHomeActive ? ' aria-current="page"' : ""}>
+          <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.03 2.59a1.5 1.5 0 0 1 1.94 0l7.5 6.36A1.5 1.5 0 0 1 21 10.1v9.4A2.5 2.5 0 0 1 18.5 22h-4a1 1 0 0 1-1-1v-4.5a1.5 1.5 0 0 0-3 0V21a1 1 0 0 1-1 1h-4A2.5 2.5 0 0 1 3 19.5v-9.4a1.5 1.5 0 0 1 .53-1.15l7.5-6.36Z"/>
+            </svg>
+          </span>
+          <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.home)}</span>
+        </a>
+
+        <a href="/products.html" class="wx-mobile-bottom-nav__item${isShopActive ? " is-active" : ""}"${isShopActive ? ' aria-current="page"' : ""}>
+          <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="3" width="8" height="8" rx="2.6"/>
+              <rect x="13" y="3" width="8" height="8" rx="2.6"/>
+              <rect x="3" y="13" width="8" height="8" rx="2.6"/>
+              <rect x="13" y="13" width="8" height="8" rx="2.6"/>
+            </svg>
+          </span>
+          <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.shop)}</span>
+        </a>
+
+        <button type="button" class="wx-mobile-bottom-nav__item wx-mobile-bottom-nav__item--ai" data-mobile-ai-trigger aria-haspopup="dialog" aria-expanded="false" aria-label="${escapeHtml(assistantLabel)}">
+          <span class="wx-mobile-bottom-nav__ai-orb" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10.5 2.2c.25-.67 1.2-.67 1.45 0l1.48 3.97a3.2 3.2 0 0 0 1.87 1.87l3.97 1.48c.67.25.67 1.2 0 1.45l-3.97 1.48a3.2 3.2 0 0 0-1.87 1.87l-1.48 3.97c-.25.67-1.2.67-1.45 0l-1.48-3.97a3.2 3.2 0 0 0-1.87-1.87L3.18 10.97c-.67-.25-.67-1.2 0-1.45l3.97-1.48a3.2 3.2 0 0 0 1.87-1.87L10.5 2.2Z"/>
+              <path d="M18.6 14.4c.15-.4.72-.4.87 0l.64 1.72c.18.48.56.86 1.04 1.04l1.72.64c.4.15.4.72 0 .87l-1.72.64c-.48.18-.86.56-1.04 1.04l-.64 1.72c-.15.4-.72.4-.87 0l-.64-1.72a1.8 1.8 0 0 0-1.04-1.04l-1.72-.64c-.4-.15-.4-.72 0-.87l1.72-.64c.48-.18.86-.56 1.04-1.04l.64-1.72Z"/>
+            </svg>
+          </span>
+          <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.ai)}</span>
+        </button>
+
+        <a href="/cart.html" class="wx-mobile-bottom-nav__item wx-mobile-bottom-nav__item--cart commerce-cart-link${isCartActive ? " is-active" : ""}"${isCartActive ? ' aria-current="page"' : ""}>
+          <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 6.5a4 4 0 0 1 8 0V7h1.6a2.5 2.5 0 0 1 2.48 2.2l1.12 9A2.5 2.5 0 0 1 18.72 21H5.28a2.5 2.5 0 0 1-2.48-2.8l1.12-9A2.5 2.5 0 0 1 6.4 7H8v-.5Zm2 0V7h4v-.5a2 2 0 1 0-4 0Zm-1.25 4.25a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5Zm8 0a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5Z"/>
+            </svg>
+            <span class="wx-mobile-nav-badge" data-cart-count>0</span>
+          </span>
+          <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.cart)}</span>
+        </a>
+
+        <a href="/account.html" class="wx-mobile-bottom-nav__item${isAccountActive ? " is-active" : ""}"${isAccountActive ? ' aria-current="page"' : ""}>
+          <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="8" r="4.2"/>
+              <path d="M4.2 19.4c0-3.3 3.45-5.6 7.8-5.6s7.8 2.3 7.8 5.6a1.8 1.8 0 0 1-1.8 1.8H6a1.8 1.8 0 0 1-1.8-1.8Z"/>
+            </svg>
+          </span>
+          <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.account)}</span>
+        </a>
+      </div>
+    `;
+    document.body.append(mobileBottomNav);
+    const mobileAiButton = mobileBottomNav.querySelector("[data-mobile-ai-trigger]");
+    listen(mobileAiButton, "click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeDrawer(false);
+      const aiOverlay = document.querySelector(".shop-ai-overlay");
+      if (aiOverlay && !aiOverlay.hidden && typeof aiOverlay.closeAssistant === "function") {
+        aiOverlay.closeAssistant();
+      } else {
+        assistantTrigger.click();
+      }
+    });
+    store.syncCartCount?.();
 
     listen(document, "click", (event) => {
       const button = event.target.closest(".product-side-menu-trigger, .menu-toggle, .commerce-menu");

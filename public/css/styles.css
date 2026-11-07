@@ -5308,3 +5308,205 @@ html[data-theme="dark"] .product-side-drawer [aria-current="page"] {
   color: #9de8d4;
   box-shadow: inset 3px 0 #9de8d4;
 }
+
+/* ==========================================================================
+   Mobile Bottom Navigation Bar (Home, Shop, AI, Cart, Account)
+   ========================================================================== */
+.wx-mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .wx-mobile-bottom-nav {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 1045;
+    display: block;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.06);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transition:
+      opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0.5s;
+  }
+
+  .wx-mobile-bottom-nav__inner {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: center;
+    height: 66px;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 0 6px;
+    position: relative;
+  }
+
+  .wx-mobile-bottom-nav__item {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 100%;
+    padding: 6px 2px 4px;
+    border: 0;
+    background: transparent;
+    color: #9ca3af;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.22s ease, transform 0.18s ease;
+  }
+
+  /* Soft ambient purple glow behind active tab (matches reference image) */
+  .wx-mobile-bottom-nav__item::before {
+    content: "";
+    position: absolute;
+    inset: -2px -6px;
+    z-index: -1;
+    background: radial-gradient(
+      circle at 50% 44%,
+      rgba(109, 40, 217, 0.18) 0%,
+      rgba(124, 58, 237, 0.08) 46%,
+      rgba(124, 58, 237, 0) 74%
+    );
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+
+  .wx-mobile-bottom-nav:not(.is-ai-active) .wx-mobile-bottom-nav__item.is-active,
+  .wx-mobile-bottom-nav__item--ai.is-active {
+    color: #6d28d9;
+  }
+
+  .wx-mobile-bottom-nav:not(.is-ai-active) .wx-mobile-bottom-nav__item.is-active::before,
+  .wx-mobile-bottom-nav__item--ai.is-active::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .wx-mobile-bottom-nav__item:active {
+    transform: scale(0.94);
+  }
+
+  .wx-mobile-bottom-nav__icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .wx-mobile-bottom-nav:not(.is-ai-active) .wx-mobile-bottom-nav__item.is-active .wx-mobile-bottom-nav__icon {
+    transform: translateY(-1px);
+  }
+
+  .wx-mobile-bottom-nav__icon svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  .wx-mobile-bottom-nav__label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .wx-mobile-bottom-nav:not(.is-ai-active) .wx-mobile-bottom-nav__item.is-active .wx-mobile-bottom-nav__label,
+  .wx-mobile-bottom-nav__item--ai.is-active .wx-mobile-bottom-nav__label {
+    font-weight: 700;
+  }
+
+  /* Center Featured AI Button */
+  .wx-mobile-bottom-nav__item--ai {
+    padding-top: 2px;
+  }
+
+  .wx-mobile-bottom-nav__ai-orb {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 30px;
+    margin-top: -3px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 52%, #9b4dff 100%);
+    color: #ffffff;
+    box-shadow:
+      0 5px 14px rgba(109, 40, 217, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transition:
+      transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.24s ease;
+  }
+
+  .wx-mobile-bottom-nav__ai-orb svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  .wx-mobile-bottom-nav__item--ai .wx-mobile-bottom-nav__label {
+    color: #6d28d9;
+    font-weight: 700;
+  }
+
+  .wx-mobile-bottom-nav__item--ai.is-active .wx-mobile-bottom-nav__ai-orb {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow:
+      0 8px 20px rgba(109, 40, 217, 0.46),
+      0 0 0 3px rgba(124, 58, 237, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  /* Cart Count Badge */
+  .wx-mobile-nav-badge {
+    position: absolute;
+    top: -5px;
+    inset-inline-end: -9px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #6d28d9;
+    color: #ffffff;
+    font-size: 0.58rem;
+    font-weight: 800;
+    line-height: 16px;
+    text-align: center;
+    box-shadow: 0 0 0 2px #ffffff;
+  }
+
+  .wx-mobile-nav-badge[hidden] {
+    display: none !important;
+  }
+
+  /* Reserve space at bottom of page so footer/content isn't hidden under bar */
+  body.has-store-menu .footer-bottom {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+  }
+
+  body.has-store-menu .bag-confirmation {
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
