@@ -81,6 +81,12 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
   pointer-events: none;
 }
 
+body[data-page="home"].is-lunae-header-hidden .product-side-menu-trigger {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .lunae-canvas {
   display: block;
   z-index: 0;
@@ -408,83 +414,6 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
 }
 
 /* ============================================================
-   CENTER FLOATING ORB CTA (Positioned on the purple ring)
-   ============================================================ */
-.wx-floating-orb {
-  position: absolute;
-  left: 64.6%;
-  bottom: 22.8%;
-  transform: translate(-50%, 0);
-  width: 118px;
-  height: 118px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  text-decoration: none;
-  pointer-events: auto;
-  z-index: 6;
-  will-change: transform, opacity;
-}
-
-.wx-floating-orb__ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.wx-floating-orb__ring--outer {
-  inset: -10px;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 0 32px rgba(168, 85, 247, 0.18);
-  animation: wxOrbPulse 3.4s ease-in-out infinite;
-}
-
-.wx-floating-orb__ring--inner {
-  inset: -3px;
-  border: 1px solid rgba(255, 255, 255, 0.82);
-}
-
-.wx-floating-orb__core {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow:
-    0 16px 36px rgba(105, 58, 168, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  color: #161024;
-  text-align: center;
-  font-size: 0.68rem;
-  font-weight: 600;
-  line-height: 1.22;
-  transition: transform 0.25s ease, background 0.25s ease;
-}
-
-.wx-floating-orb:hover .wx-floating-orb__core {
-  transform: scale(1.05);
-  background: #ffffff;
-}
-
-@keyframes wxOrbPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.72;
-  }
-  50% {
-    transform: scale(1.06);
-    opacity: 1;
-  }
-}
-
-/* ============================================================
    RIGHT COLUMN: 2 STORE HIGHLIGHT GLASSMORPHISM CARDS
    ============================================================ */
 .wx-cards-stack {
@@ -707,6 +636,14 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
   font-variant-numeric: tabular-nums;
 }
 
+html[data-theme="dark"] body[data-page="home"] .wx-hero-overlay {
+  color: #1d1728;
+}
+
+html[data-theme="dark"] body[data-page="home"] .wx-glass-card {
+  color: #1b1429;
+}
+
 /* Card 3 Donut + Legend */
 .wx-card-body--donut {
   min-height: 78px;
@@ -857,11 +794,6 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
     font-size: clamp(2.2rem, 4.3vw, 3.6rem);
   }
 
-  .wx-floating-orb {
-    left: 62%;
-    bottom: 18%;
-    transform: translate(-50%, 0) scale(0.9);
-  }
 }
 
 @media (max-width: 920px) {
@@ -873,7 +805,6 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
   html.is-low-power-mobile body[data-page="home"] .site-header,
   html.is-low-power-mobile body[data-page="home"] .wx-btn-primary,
   html.is-low-power-mobile body[data-page="home"] .wx-btn-video,
-  html.is-low-power-mobile body[data-page="home"] .wx-floating-orb__core,
   html.is-low-power-mobile body[data-page="home"] .wx-glass-card {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -883,12 +814,18 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
     background: rgba(255, 255, 255, 0.94) !important;
   }
 
+  html.is-low-power-mobile[data-theme="dark"] body[data-page="home"] .site-header {
+    border-color: rgba(229, 207, 246, 0.2) !important;
+    background: rgba(17, 13, 22, 0.94) !important;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3) !important;
+  }
+
   html.is-low-power-mobile body[data-page="home"] .wx-glass-card {
     background: rgba(255, 255, 255, 0.94);
   }
 
-  html.is-low-power-mobile body[data-page="home"] .wx-floating-orb__ring--outer {
-    animation: none;
+  html.is-low-power-mobile[data-theme="dark"] body[data-page="home"] .wx-glass-card {
+    background: rgba(28, 22, 35, 0.94);
   }
 
   section.lunae-sequence.is-hero-locked,
@@ -1102,9 +1039,6 @@ body:is([data-page="experiments"], [data-page="home"]).is-lunae-header-hidden .s
     padding: 1px 6px;
   }
 
-  .wx-floating-orb {
-    display: none;
-  }
 }
 
 @media (max-width: 600px) {

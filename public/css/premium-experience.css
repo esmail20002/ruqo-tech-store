@@ -54,6 +54,9 @@ body:is([data-page="experiments"], [data-page="home"]) .site-header {
   width: min(var(--container, 1360px), calc(100% - 40px));
   margin: 14px auto 0;
   border-radius: 999px;
+}
+
+html[data-theme="light"] body:is([data-page="experiments"], [data-page="home"]) .site-header {
   background: rgba(255, 255, 255, 0.72) !important;
   border: 1px solid rgba(255, 255, 255, 0.9) !important;
   box-shadow:
@@ -1263,9 +1266,13 @@ html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) .
 }
 
 html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) .site-header {
-  border-bottom-color: rgba(228, 206, 245, 0.1);
-  background: rgba(17, 13, 22, 0.84);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(228, 206, 245, 0.14);
+  background: rgba(17, 13, 22, 0.82);
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
 }
 
 html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) .brand-logo,
@@ -2453,16 +2460,16 @@ html[data-theme="dark"] body[data-page="home"] .wx-promo-bento::before {
   }
 }
 
-html:has(body[data-page="home"]),
-body[data-page="home"],
-body[data-page="home"] > .page-shell,
-body[data-page="home"] main {
+html[data-theme="light"]:has(body[data-page="home"]),
+html[data-theme="light"] body[data-page="home"],
+html[data-theme="light"] body[data-page="home"] > .page-shell,
+html[data-theme="light"] body[data-page="home"] main {
   background: #fff !important;
   background-image: none !important;
 }
 
-body[data-page="home"] .hero::before,
-body[data-page="home"] .wx-promo-bento::before {
+html[data-theme="light"] body[data-page="home"] .hero::before,
+html[data-theme="light"] body[data-page="home"] .wx-promo-bento::before {
   content: none !important;
 }
 
@@ -2713,6 +2720,23 @@ body[data-page="home"] #new .product-editorial-brand {
   font-size: 0.8rem;
   font-weight: 500;
   color: #7c7489;
+}
+
+html[data-theme="dark"] body[data-page="home"] #new .product-row-top h3,
+html[data-theme="dark"] body[data-page="home"] #new .product-row-top h3 a {
+  color: #f5effa;
+}
+
+html[data-theme="dark"] body[data-page="home"] #new .product-editorial-price {
+  color: #e0c7ff;
+}
+
+html[data-theme="dark"] body[data-page="home"] #new .product-editorial-brand {
+  color: #b8acbf;
+}
+
+html[data-theme="dark"] body[data-page="home"] #new .product-card:hover .product-row-top h3 a {
+  color: #e0c7ff;
 }
 
 @media (max-width: 1024px) {

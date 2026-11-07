@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="description"
+      content="The page you requested cannot be found."
+    />
+    <title>404 — Page not found | WEEXEY</title>
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("nours-theme");
+          const prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const theme =
+            saved === "dark" || saved === "light"
+              ? saved
+              : prefersDark
+                ? "dark"
+                : "light";
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (_) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/error-page.css?v=7" />
+  </head>
+  <body>
+    <nav class="error-preview-nav" aria-label="Experiment pages" data-experiment-preview-nav hidden>
+      <a href="/experiments.html">Homepage experiment</a>
+      <a href="/experiments-product.html?id=macbook-pro">Product page experiment</a>
+      <a href="/experiments-laser.html">LaserFlow experiment</a>
+      <a href="/experiments-blank-4.html">Blank experiment 4</a>
+      <a href="/experiments-blank-5.html">Blank experiment 5</a>
+      <a href="/experiments-lunae.html">Lunae scroll sequence</a>
+      <a href="/404.html?preview=experiments" aria-current="page">404 error page</a>
+    </nav>
+    <button
+      type="button"
+      class="error-preview-theme-btn"
+      data-error-theme-toggle
+      aria-label="Toggle theme"
+      hidden
+    >
+      Dark mode
+    </button>
+    <main class="error-page">
+      <div class="error-page__content">
+        <div class="error-page__code-wrap" aria-hidden="true">
+          <div class="error-page__code-layer error-page__code-layer--ambient">
+            <span class="error-page__code-ambient">404</span>
+          </div>
+          <div class="error-page__code-layer error-page__code-layer--blur-outer">
+            <span class="error-page__code-blur-outer">404</span>
+          </div>
+          <div class="error-page__code-layer error-page__code-layer--blur-inner">
+            <span class="error-page__code-blur-inner">404</span>
+          </div>
+          <div class="error-page__code-layer error-page__code-layer--sharp">
+            <span class="error-page__code-sharp">404</span>
+          </div>
+        </div>
+        <h1 class="sr-only">404</h1>
+        <h2 class="error-page__title">The page you requested cannot be found.</h2>
+        <p class="error-page__message">
+          The link may be broken, or the page could<br />
+          have been taken down or renamed.
+        </p>
+        <a class="error-page__home" href="/">Go back home</a>
+      </div>
+    </main>
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const nav = document.querySelector("[data-experiment-preview-nav]");
+        const toggleBtn = document.querySelector("[data-error-theme-toggle]");
+        if (params.get("preview") === "experiments") {
+          if (nav) nav.hidden = false;
+          if (toggleBtn) toggleBtn.hidden = false;
+        }
+        const syncThemeLabel = () => {
+          const current = document.documentElement.getAttribute("data-theme") || "light";
+          if (toggleBtn) {
+            toggleBtn.textContent = current === "dark" ? "Light mode" : "Dark mode";
+          }
+        };
+        syncThemeLabel();
+        if (toggleBtn) {
+          toggleBtn.addEventListener("click", () => {
+            const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const next = current === "dark" ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", next);
+            try {
+              localStorage.setItem("nours-theme", next);
+            } catch (_) {}
+            syncThemeLabel();
+          });
+        }
+        window.addEventListener("storage", (event) => {
+          if (event.key === "nours-theme" && (event.newValue === "dark" || event.newValue === "light")) {
+            document.documentElement.setAttribute("data-theme", event.newValue);
+            syncThemeLabel();
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

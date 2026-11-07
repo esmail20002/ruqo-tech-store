@@ -271,6 +271,26 @@ body[data-page="support"] .support-page .support-search-field:focus-within {
   box-shadow: 0 0 0 3px rgba(223, 180, 247, 0.3);
 }
 
+html[data-theme="dark"] body[data-page="support"] .support-page .support-search-field {
+  border-color: var(--support-border);
+  background: var(--surface-strong);
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] body[data-page="support"] .support-page .support-search-field input {
+  color: var(--text);
+}
+
+html[data-theme="dark"] body[data-page="support"] .support-page .support-search-field input::placeholder {
+  color: var(--support-copy);
+}
+
+html[data-theme="dark"] body[data-page="support"] .support-page .support-search-field button:not(.support-search-submit) {
+  background: var(--support-soft);
+  color: var(--support-accent);
+}
+
 body[data-page="support"] .support-page .support-search-status {
   margin: 12px 0 0;
   color: #f1dffa;

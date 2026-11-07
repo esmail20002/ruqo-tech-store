@@ -38,7 +38,6 @@
     description: document.querySelector('[data-reveal-item="description"]'),
     actions: document.querySelector('[data-reveal-item="actions"]'),
     stats: document.querySelector('[data-reveal-item="stats"]'),
-    orb: document.querySelector('[data-reveal-item="orb"]'),
   };
   const revealCards = Array.from(document.querySelectorAll("[data-reveal-card]"));
   const cardNumbers = Array.from(document.querySelectorAll("[data-card-number]"));
@@ -661,15 +660,6 @@
     const syncReveal = smoothstep(0.78, 0.92, p);
     const telemetryProgress = syncReveal;
 
-    // 4. Floating Center Orb on the purple ring (synchronized 78% -> 92%)
-    if (revealItems.orb instanceof HTMLElement && (progressChanged || (!reducedMotion && syncReveal > 0.01))) {
-      const orbP = syncReveal;
-      const floatY = reducedMotion ? 0 : Math.sin(timeMs * 0.0024) * 5 * orbP;
-      revealItems.orb.style.opacity = orbP.toFixed(3);
-      revealItems.orb.style.transform = `translate3d(-50%, ${((1 - orbP) * 20 + floatY).toFixed(1)}px, 0) scale(${(0.9 + 0.1 * orbP).toFixed(3)})`;
-      revealItems.orb.style.pointerEvents = orbP > 0.6 ? "auto" : "none";
-    }
-
     // Card 4 Beta bar fill + subtle live oscillation
     if (betaBar instanceof HTMLElement) {
       const pulse = reducedMotion ? 0 : Math.sin(timeMs * 0.004) * 0.05 * telemetryProgress;
@@ -1023,17 +1013,6 @@
         }
         if (cfg.copy.primary_btn_href) {
           primaryBtn.setAttribute("href", cfg.copy.primary_btn_href);
-        }
-      }
-      const orbNode = sequence.querySelector(".wx-floating-orb");
-      if (orbNode) {
-        orbNode.hidden = cfg.show_orb === false;
-        if (cfg.show_orb === false) orbNode.style.display = "none";
-        else orbNode.style.removeProperty("display");
-        if (cfg.copy.orb_href) orbNode.setAttribute("href", cfg.copy.orb_href);
-        const orbSpan = orbNode.querySelector(".wx-floating-orb__core span");
-        if (orbSpan && pick(cfg.copy.orb_text)) {
-          orbSpan.textContent = pick(cfg.copy.orb_text);
         }
       }
     }

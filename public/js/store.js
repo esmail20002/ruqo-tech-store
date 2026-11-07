@@ -716,17 +716,34 @@
       trigger: "Shop with AI",
       title: "Your shopping assistant",
       subtitle: "Tell me what you need and I’ll find a match in our catalog.",
-      welcome: "What are you shopping for? Share a product type, feature, or budget and I’ll suggest a few options.",
-      placeholder: "Describe what you need...",
+      welcome: "Compare flagship devices, upload a photo of your room or desk setup to spot what’s missing, or share your budget for tailored store deals.",
+      placeholder: "Ask to compare, build a budget setup, or upload a room photo...",
       send: "Send message",
       matches: "Here are a few options that match:",
       noMatches: "I couldn’t find a close match. Try another product type, feature, or budget.",
       view: "View product",
-      suggestions: ["A phone with a great camera", "A laptop for work", "Noise-cancelling headphones"],
+      addToCart: "Add to cart",
+      addedToCart: "Added ✓",
+      uploadImage: "Upload room or setup photo",
+      removeImage: "Remove photo",
+      imageReady: "Room / setup photo attached",
+      analyzing: "WEEXEY AI is analyzing...",
+      expand: "Expand view",
+      collapse: "Compact view",
+      roomDetectedTitle: "Space & Setup Reading",
+      roomMissingTitle: "What’s Missing in Your Space",
+      roomImpactTitle: "Upgrade Impact",
+      verdictTitle: "AI Verdict",
+      saleBadge: "Deal",
+      suggestions: [
+        "Compare MacBook Pro 14 M4 vs Zenbook 14 OLED",
+        "Analyze my room setup & show missing tech deals",
+        "Build a complete setup under 7,500 SAR",
+      ],
       close: "Close shopping assistant",
       intro: "Your next great find starts here.",
       starters: "A little inspiration",
-      note: "Suggestions from the WEEXEY catalog. Check product details before ordering.",
+      note: "Powered by NVIDIA AI · Live prices & deals from the WEEXEY catalog.",
       restart: "Start a new conversation",
       you: "You",
       assistant: "WEEXEY assistant",
@@ -735,17 +752,34 @@
       trigger: "تسوّق مع AI",
       title: "مساعد التسوق الذكي",
       subtitle: "أخبرني بما تحتاجه وسأبحث لك في منتجات المتجر.",
-      welcome: "ما المنتج الذي تبحث عنه؟ اذكر نوعه أو ميزة تهمك أو ميزانيتك لأقترح خيارات مناسبة.",
-      placeholder: "صف ما تبحث عنه...",
+      welcome: "قارن بين الأجهزة، أو ارفع صورة غرفتك/مكتبك لاكتشاف ما ينقصها مع العروض، أو حدّد ميزانيتك لتجميع أفضل باقة.",
+      placeholder: "اطلب مقارنة، أو ارفع صورة غرفتك، أو اكتب ميزانيتك...",
       send: "إرسال الرسالة",
       matches: "هذه بعض الخيارات المناسبة:",
       noMatches: "لم أجد تطابقاً قريباً. جرّب وصف نوع المنتج أو ميزته أو ميزانيتك.",
       view: "عرض المنتج",
-      suggestions: ["هاتف بكاميرا ممتازة", "لابتوب للعمل", "سماعة بعزل الضوضاء"],
+      addToCart: "أضف للسلة",
+      addedToCart: "تمت الإضافة ✓",
+      uploadImage: "إرفاق صورة غرفة أو سيت-أب",
+      removeImage: "إزالة الصورة",
+      imageReady: "صورة الغرفة جاهزة للتحليل",
+      analyzing: "يقوم مساعد WEEXEY بالتحليل...",
+      expand: "توسيع النافذة",
+      collapse: "الحجم العادي",
+      roomDetectedTitle: "قراءة المساحة الحالية",
+      roomMissingTitle: "ما ينقص الغرفة / السيت-أب",
+      roomImpactTitle: "تأثير الترقية",
+      verdictTitle: "الحكم النهائي",
+      saleBadge: "عرض خاص",
+      suggestions: [
+        "قارن بين MacBook Pro 14 M4 و Zenbook 14 OLED",
+        "حلّل صورة غرفتي واذكر الناقص مع العروض",
+        "رشّح لي باقة متكاملة بميزانية 7500 ريال",
+      ],
       close: "إغلاق مساعد التسوق",
       intro: "اختيارك القادم يبدأ من هنا.",
       starters: "بماذا نبدأ؟",
-      note: "اقتراحات من كتالوج WEEXEY. راجع تفاصيل المنتج قبل الطلب.",
+      note: "مدعوم بذكاء NVIDIA · أسعار وعروض حية من كتالوج WEEXEY.",
       restart: "بدء محادثة جديدة",
       you: "أنت",
       assistant: "مساعد WEEXEY",
@@ -754,17 +788,34 @@
       trigger: "Shop with AI",
       title: "Votre assistant shopping",
       subtitle: "Dites-moi ce qu’il vous faut et je chercherai dans notre catalogue.",
-      welcome: "Que recherchez-vous ? Indiquez un type de produit, une caractéristique ou un budget.",
-      placeholder: "Décrivez votre besoin...",
+      welcome: "Comparez nos appareils, importez une photo de votre pièce/bureau ou indiquez votre budget.",
+      placeholder: "Comparez, importez une photo ou indiquez votre budget...",
       send: "Envoyer",
       matches: "Voici quelques options correspondantes :",
       noMatches: "Aucun résultat proche. Essayez un autre produit, une caractéristique ou un budget.",
       view: "Voir le produit",
-      suggestions: ["Un téléphone avec un bon appareil photo", "Un ordinateur pour travailler", "Un casque antibruit"],
+      addToCart: "Ajouter",
+      addedToCart: "Ajouté ✓",
+      uploadImage: "Importer une photo de pièce/bureau",
+      removeImage: "Retirer la photo",
+      imageReady: "Photo prête pour l’analyse",
+      analyzing: "WEEXEY AI analyse...",
+      expand: "Agrandir",
+      collapse: "Réduire",
+      roomDetectedTitle: "Analyse de l’espace",
+      roomMissingTitle: "Ce qui manque à votre espace",
+      roomImpactTitle: "Impact de l’amélioration",
+      verdictTitle: "Verdict IA",
+      saleBadge: "Offre",
+      suggestions: [
+        "Comparer MacBook Pro 14 M4 et Zenbook 14 OLED",
+        "Analyser la photo de ma pièce et les offres",
+        "Configuration complète sous 7 500 SAR",
+      ],
       close: "Fermer l’assistant shopping",
       intro: "Votre prochaine découverte commence ici.",
       starters: "Un peu d’inspiration",
-      note: "Suggestions du catalogue WEEXEY. Vérifiez les détails avant de commander.",
+      note: "Propulsé par NVIDIA AI · Suggestions du catalogue WEEXEY.",
       restart: "Nouvelle conversation",
       you: "Vous",
       assistant: "Assistant WEEXEY",
@@ -773,17 +824,34 @@
       trigger: "Shop with AI",
       title: "Tu asistente de compras",
       subtitle: "Cuéntame qué necesitas y buscaré opciones en nuestro catálogo.",
-      welcome: "¿Qué estás buscando? Dime el tipo de producto, una característica o tu presupuesto.",
-      placeholder: "Describe lo que necesitas...",
+      welcome: "Compara dispositivos, sube una foto de tu habitación/escritorio o comparte tu presupuesto.",
+      placeholder: "Compara, sube una foto o indica tu presupuesto...",
       send: "Enviar mensaje",
       matches: "Estas opciones podrían encajarte:",
       noMatches: "No encontré una coincidencia cercana. Prueba con otro producto, característica o presupuesto.",
       view: "Ver producto",
-      suggestions: ["Un móvil con buena cámara", "Un portátil para trabajar", "Auriculares con cancelación de ruido"],
+      addToCart: "Añadir",
+      addedToCart: "Añadido ✓",
+      uploadImage: "Subir foto de habitación/setup",
+      removeImage: "Quitar foto",
+      imageReady: "Foto lista para analizar",
+      analyzing: "WEEXEY AI analizando...",
+      expand: "Ampliar",
+      collapse: "Compactar",
+      roomDetectedTitle: "Lectura del espacio",
+      roomMissingTitle: "Qué falta en tu espacio",
+      roomImpactTitle: "Impacto de la mejora",
+      verdictTitle: "Veredicto IA",
+      saleBadge: "Oferta",
+      suggestions: [
+        "Comparar MacBook Pro 14 M4 vs Zenbook 14 OLED",
+        "Analizar foto de mi habitación y ofertas",
+        "Setup completo por menos de 7.500 SAR",
+      ],
       close: "Cerrar asistente de compras",
       intro: "Tu próximo descubrimiento empieza aquí.",
       starters: "Un poco de inspiración",
-      note: "Sugerencias del catálogo WEEXEY. Revisa los detalles antes de comprar.",
+      note: "Impulsado por NVIDIA AI · Sugerencias del catálogo WEEXEY.",
       restart: "Iniciar una nueva conversación",
       you: "Tú",
       assistant: "Asistente WEEXEY",
@@ -792,17 +860,34 @@
       trigger: "AI 选购",
       title: "智能购物助手",
       subtitle: "告诉我你的需求，我会在商店目录中为你查找。",
-      welcome: "你想选购什么？请描述商品类型、功能或预算。",
-      placeholder: "描述你的需求...",
+      welcome: "对比旗舰设备、上传房间/桌面照片分析缺失装备，或输入预算获取专属优惠套装。",
+      placeholder: "输入对比需求、预算，或上传房间照片...",
       send: "发送消息",
       matches: "这些商品可能适合你：",
       noMatches: "没有找到相近商品。试试描述其他类型、功能或预算。",
       view: "查看商品",
-      suggestions: ["拍照效果好的手机", "适合办公的笔记本电脑", "降噪耳机"],
+      addToCart: "加入购物车",
+      addedToCart: "已加入 ✓",
+      uploadImage: "上传房间或桌面照片",
+      removeImage: "移除照片",
+      imageReady: "房间照片已就绪",
+      analyzing: "WEEXEY AI 正在分析...",
+      expand: "展开视图",
+      collapse: "紧凑视图",
+      roomDetectedTitle: "空间与桌面识别",
+      roomMissingTitle: "建议补充的科技装备",
+      roomImpactTitle: "升级效果",
+      verdictTitle: "AI 选购建议",
+      saleBadge: "特惠",
+      suggestions: [
+        "对比 MacBook Pro 14 M4 与 Zenbook 14 OLED",
+        "分析我的房间照片并推荐优惠好物",
+        "7500 SAR 预算内的全套装备推荐",
+      ],
       close: "关闭购物助手",
       intro: "从这里发现你的下一件好物。",
       starters: "从这些灵感开始",
-      note: "推荐来自 WEEXEY 商品目录。下单前请查看商品详情。",
+      note: "由 NVIDIA AI 驱动 · 推荐来自 WEEXEY 商品目录。",
       restart: "开始新对话",
       you: "你",
       assistant: "WEEXEY 助手",
@@ -840,6 +925,7 @@
             <div><span class="shop-ai-brand" dir="ltr">WEEXEY AI</span><h2 id="shop-ai-title">${copy.title}</h2></div>
           </div>
           <div class="shop-ai-header-actions">
+            <button class="shop-ai-expand" type="button" aria-label="${copy.expand}" title="${copy.expand}" aria-pressed="false"><i data-lucide="maximize-2" aria-hidden="true"></i></button>
             <button class="shop-ai-restart" type="button" aria-label="${copy.restart}" title="${copy.restart}"><i data-lucide="square-pen" aria-hidden="true"></i></button>
             <button class="shop-ai-close" type="button" aria-label="${copy.close}"><i data-lucide="x" aria-hidden="true"></i></button>
           </div>
@@ -857,8 +943,19 @@
           <div class="shop-ai-suggestions"></div>
         </div>
         <form class="shop-ai-form">
+          <div class="shop-ai-attachment-preview" hidden>
+            <img class="shop-ai-attachment-thumb" alt="" />
+            <span class="shop-ai-attachment-name">${copy.imageReady}</span>
+            <button class="shop-ai-attachment-remove" type="button" aria-label="${copy.removeImage}" title="${copy.removeImage}">
+              <i data-lucide="x" aria-hidden="true"></i>
+            </button>
+          </div>
           <div class="shop-ai-composer">
-            <label class="shop-ai-input-wrap"><input name="message" aria-label="${copy.placeholder}" autocomplete="off" maxlength="500" placeholder="${copy.placeholder}" required /></label>
+            <input class="shop-ai-file-input" type="file" accept="image/*" hidden />
+            <button class="shop-ai-upload-btn" type="button" aria-label="${copy.uploadImage}" title="${copy.uploadImage}">
+              <i data-lucide="image-plus" aria-hidden="true"></i>
+            </button>
+            <label class="shop-ai-input-wrap"><input name="message" aria-label="${copy.placeholder}" autocomplete="off" maxlength="500" placeholder="${copy.placeholder}" /></label>
             <button class="shop-ai-send" type="submit" aria-label="${copy.send}"><i data-lucide="arrow-up" aria-hidden="true"></i></button>
           </div>
           <p class="shop-ai-note"><i data-lucide="info" aria-hidden="true"></i><span>${copy.note}</span></p>
@@ -871,6 +968,12 @@
     const thread = overlay.querySelector(".shop-ai-thread");
     const form = overlay.querySelector(".shop-ai-form");
     const input = form.elements.message;
+    const fileInput = overlay.querySelector(".shop-ai-file-input");
+    const uploadBtn = overlay.querySelector(".shop-ai-upload-btn");
+    const attachmentPreview = overlay.querySelector(".shop-ai-attachment-preview");
+    const attachmentThumb = overlay.querySelector(".shop-ai-attachment-thumb");
+    const attachmentRemove = overlay.querySelector(".shop-ai-attachment-remove");
+    const expandBtn = overlay.querySelector(".shop-ai-expand");
     const welcome = overlay.querySelector(".shop-ai-welcome");
     const shell = document.querySelector(".page-shell");
     let previousInert = false;
@@ -878,6 +981,98 @@
     let viewportController;
     let fullViewportHeight = 0;
     let viewportWidth = 0;
+    let pendingImageDataUrl = null;
+    let pendingImageMeta = {};
+    let isSubmitting = false;
+    const chatHistory = [];
+
+    const setExpanded = (expanded) => {
+      dialog.classList.toggle("is-expanded", Boolean(expanded));
+      if (expandBtn) {
+        expandBtn.setAttribute("aria-pressed", String(Boolean(expanded)));
+        const label = expanded ? copy.collapse : copy.expand;
+        expandBtn.setAttribute("aria-label", label);
+        expandBtn.setAttribute("title", label);
+        expandBtn.innerHTML = `<i data-lucide="${expanded ? "minimize-2" : "maximize-2"}" aria-hidden="true"></i>`;
+        window.lucide?.createIcons();
+      }
+    };
+
+    expandBtn?.addEventListener("click", () => {
+      setExpanded(!dialog.classList.contains("is-expanded"));
+    });
+
+    const clearPendingImage = () => {
+      pendingImageDataUrl = null;
+      pendingImageMeta = {};
+      if (fileInput) fileInput.value = "";
+      if (attachmentPreview) attachmentPreview.hidden = true;
+      if (attachmentThumb) attachmentThumb.removeAttribute("src");
+    };
+
+    const processImageFile = (file) => {
+      if (!file || !file.type.startsWith("image/")) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 960;
+          const scale = Math.min(1, maxDim / Math.max(img.width || 1, img.height || 1));
+          const w = Math.max(1, Math.round(img.width * scale));
+          const h = Math.max(1, Math.round(img.height * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          let brightness = "balanced";
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, w, h);
+            try {
+              const sample = ctx.getImageData(0, 0, Math.min(w, 64), Math.min(h, 64)).data;
+              let sum = 0;
+              let count = 0;
+              for (let i = 0; i < sample.length; i += 16) {
+                sum += (sample[i] * 0.299 + sample[i + 1] * 0.587 + sample[i + 2] * 0.114);
+                count += 1;
+              }
+              const avg = count ? sum / count : 128;
+              brightness = avg < 95 ? "dark" : avg > 175 ? "bright" : "balanced";
+            } catch (_) {}
+          }
+          pendingImageDataUrl = canvas.toDataURL("image/jpeg", 0.84);
+          pendingImageMeta = { width: w, height: h, brightness, name: file.name };
+          if (attachmentThumb) attachmentThumb.src = pendingImageDataUrl;
+          if (attachmentPreview) attachmentPreview.hidden = false;
+          window.lucide?.createIcons();
+        };
+        img.src = String(reader.result || "");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    uploadBtn?.addEventListener("click", () => fileInput?.click());
+    fileInput?.addEventListener("change", () => {
+      const file = fileInput.files?.[0];
+      if (file) processImageFile(file);
+    });
+    attachmentRemove?.addEventListener("click", clearPendingImage);
+
+    dialog.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      dialog.classList.add("is-dragover");
+    });
+    dialog.addEventListener("dragleave", (event) => {
+      if (!dialog.contains(event.relatedTarget)) dialog.classList.remove("is-dragover");
+    });
+    dialog.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dialog.classList.remove("is-dragover");
+      const file = event.dataTransfer?.files?.[0];
+      if (file && file.type.startsWith("image/")) {
+        processImageFile(file);
+      }
+    });
+
     const mobileAssistantQuery = window.matchMedia("(max-width: 650px), (max-width: 1000px) and (pointer: coarse)");
     const focusAssistant = () => {
       (mobileAssistantQuery.matches ? dialog : input).focus({ preventScroll: true });
@@ -896,52 +1091,295 @@
       overlay.style.setProperty("--shop-ai-viewport-top", `${viewport?.offsetTop || 0}px`);
     };
 
-    const addMessage = (text, role, products = []) => {
+    const formatStorePrice = (amountSar) => {
+      const currency = store.getCurrency();
+      return new Intl.NumberFormat(
+        language === "zh" ? "zh-CN" : ({ ar: "ar-SA", fr: "fr-FR", es: "es-ES" }[language] || "en-US"),
+        { style: "currency", currency, maximumFractionDigits: currency === "SAR" ? 0 : 2 },
+      ).format(store.convertCurrency(amountSar, "SAR", currency));
+    };
+
+    const appendFormattedText = (container, rawText) => {
+      const text = String(rawText || "");
+      const parts = text.split(/(\*\*[^*]+\*\*)/g);
+      parts.forEach((part) => {
+        if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+          const strong = document.createElement("strong");
+          strong.textContent = part.slice(2, -2);
+          container.append(strong);
+        } else if (part) {
+          container.append(document.createTextNode(part));
+        }
+      });
+    };
+
+    const buildProductCardElement = (product) => {
+      const localized = window.NoursData?.localizeProduct?.(product, language) || product;
+      const card = document.createElement("div");
+      card.className = "shop-ai-product";
+
+      const imageLink = document.createElement("a");
+      imageLink.className = "shop-ai-product-media";
+      imageLink.href = `/product.html?id=${encodeURIComponent(product.id)}`;
+      const image = document.createElement("img");
+      image.src = product.image;
+      image.alt = localized.name || product.name;
+      image.loading = "lazy";
+      imageLink.append(image);
+
+      const details = document.createElement("div");
+      details.className = "shop-ai-product-details";
+
+      const topMeta = document.createElement("div");
+      topMeta.className = "shop-ai-product-meta";
+      const brand = document.createElement("small");
+      brand.textContent = product.brand;
+      topMeta.append(brand);
+
+      const hasDiscount = Number.isFinite(product.oldPrice) && product.oldPrice > product.price;
+      if (hasDiscount) {
+        const pct = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
+        const badge = document.createElement("span");
+        badge.className = "shop-ai-discount-pill";
+        badge.textContent = `${copy.saleBadge} -${pct}%`;
+        topMeta.append(badge);
+      }
+
+      const nameLink = document.createElement("a");
+      nameLink.className = "shop-ai-product-title";
+      nameLink.href = `/product.html?id=${encodeURIComponent(product.id)}`;
+      const name = document.createElement("strong");
+      name.textContent = localized.name || product.name;
+      nameLink.append(name);
+
+      const priceRow = document.createElement("div");
+      priceRow.className = "shop-ai-product-price-row";
+      const price = document.createElement("span");
+      price.className = "shop-ai-product-price";
+      price.textContent = formatStorePrice(product.price);
+      priceRow.append(price);
+
+      if (hasDiscount) {
+        const oldPrice = document.createElement("del");
+        oldPrice.className = "shop-ai-product-oldprice";
+        oldPrice.textContent = formatStorePrice(product.oldPrice);
+        priceRow.append(oldPrice);
+      }
+
+      details.append(topMeta, nameLink, priceRow);
+
+      const actions = document.createElement("div");
+      actions.className = "shop-ai-product-actions";
+
+      const addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "shop-ai-add-cart";
+      addBtn.textContent = copy.addToCart;
+      addBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        store.addToCart(product.id, 1);
+        addBtn.textContent = copy.addedToCart;
+        addBtn.classList.add("is-added");
+        setTimeout(() => {
+          addBtn.textContent = copy.addToCart;
+          addBtn.classList.remove("is-added");
+        }, 1800);
+      });
+
+      const viewLink = document.createElement("a");
+      viewLink.className = "shop-ai-product-action";
+      viewLink.href = `/product.html?id=${encodeURIComponent(product.id)}`;
+      viewLink.textContent = copy.view;
+
+      actions.append(addBtn, viewLink);
+      card.append(imageLink, details, actions);
+      return card;
+    };
+
+    const addMessage = (text, role, products = [], extra = {}) => {
       const message = document.createElement("article");
       message.className = `shop-ai-message is-${role}`;
       const author = document.createElement("span");
       author.className = "shop-ai-author";
       author.textContent = role === "user" ? copy.you : copy.assistant;
-      const paragraph = document.createElement("p");
-      paragraph.textContent = text;
-      message.append(author, paragraph);
+      message.append(author);
+
+      if (extra.userImage) {
+        const imgWrap = document.createElement("div");
+        imgWrap.className = "shop-ai-user-image";
+        const img = document.createElement("img");
+        img.src = extra.userImage;
+        img.alt = "";
+        imgWrap.append(img);
+        message.append(imgWrap);
+      }
+
+      if (text) {
+        const paragraph = document.createElement("p");
+        appendFormattedText(paragraph, text);
+        message.append(paragraph);
+      }
+
+      // Room / Setup Vision Card
+      if (extra.roomAnalysis && typeof extra.roomAnalysis === "object") {
+        const roomCard = document.createElement("div");
+        roomCard.className = "shop-ai-room-card";
+
+        if (extra.roomAnalysis.detected) {
+          const sec = document.createElement("div");
+          sec.className = "shop-ai-room-section";
+          sec.innerHTML = `<div class="shop-ai-room-heading"><i data-lucide="scan-eye" aria-hidden="true"></i><strong>${copy.roomDetectedTitle}</strong></div>`;
+          const p = document.createElement("p");
+          p.textContent = extra.roomAnalysis.detected;
+          sec.append(p);
+          roomCard.append(sec);
+        }
+
+        if (Array.isArray(extra.roomAnalysis.missing) && extra.roomAnalysis.missing.length) {
+          const sec = document.createElement("div");
+          sec.className = "shop-ai-room-section";
+          sec.innerHTML = `<div class="shop-ai-room-heading"><i data-lucide="sparkles" aria-hidden="true"></i><strong>${copy.roomMissingTitle}</strong></div>`;
+          const list = document.createElement("ul");
+          list.className = "shop-ai-room-list";
+          extra.roomAnalysis.missing.forEach((itemText) => {
+            const li = document.createElement("li");
+            li.textContent = itemText;
+            list.append(li);
+          });
+          sec.append(list);
+          roomCard.append(sec);
+        }
+
+        if (extra.roomAnalysis.upgradeImpact) {
+          const sec = document.createElement("div");
+          sec.className = "shop-ai-room-section is-impact";
+          sec.innerHTML = `<div class="shop-ai-room-heading"><i data-lucide="zap" aria-hidden="true"></i><strong>${copy.roomImpactTitle}</strong></div>`;
+          const p = document.createElement("p");
+          p.textContent = extra.roomAnalysis.upgradeImpact;
+          sec.append(p);
+          roomCard.append(sec);
+        }
+
+        message.append(roomCard);
+      }
+
+      // Interactive Comparison Studio Card
+      if (extra.comparison && Array.isArray(extra.comparison.rows) && products.length >= 2) {
+        const [p1, p2] = products;
+        const loc1 = window.NoursData?.localizeProduct?.(p1, language) || p1;
+        const loc2 = window.NoursData?.localizeProduct?.(p2, language) || p2;
+
+        const compWrap = document.createElement("div");
+        compWrap.className = "shop-ai-comparison";
+
+        const headGrid = document.createElement("div");
+        headGrid.className = "shop-ai-comp-devices";
+        [
+          { prod: p1, loc: loc1 },
+          { prod: p2, loc: loc2 },
+        ].forEach(({ prod, loc }) => {
+          const col = document.createElement("div");
+          col.className = "shop-ai-comp-device";
+          const img = document.createElement("img");
+          img.src = prod.image;
+          img.alt = loc.name || prod.name;
+          const title = document.createElement("strong");
+          title.textContent = loc.name || prod.name;
+          const price = document.createElement("span");
+          price.className = "shop-ai-comp-price";
+          price.textContent = formatStorePrice(prod.price);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "shop-ai-add-cart";
+          btn.textContent = copy.addToCart;
+          btn.addEventListener("click", () => {
+            store.addToCart(prod.id, 1);
+            btn.textContent = copy.addedToCart;
+            btn.classList.add("is-added");
+            setTimeout(() => {
+              btn.textContent = copy.addToCart;
+              btn.classList.remove("is-added");
+            }, 1800);
+          });
+          col.append(img, title, price, btn);
+          headGrid.append(col);
+        });
+        compWrap.append(headGrid);
+
+        const table = document.createElement("div");
+        table.className = "shop-ai-comp-rows";
+        extra.comparison.rows.forEach((row) => {
+          const rowEl = document.createElement("div");
+          rowEl.className = "shop-ai-comp-row";
+          const labelEl = document.createElement("span");
+          labelEl.className = "shop-ai-comp-label";
+          labelEl.textContent = row.label;
+
+          const valsEl = document.createElement("div");
+          valsEl.className = "shop-ai-comp-values";
+          const v0 = document.createElement("span");
+          v0.className = `shop-ai-comp-val${row.winnerIndex === 0 ? " is-winner" : ""}`;
+          v0.textContent = row.values?.[0] || "—";
+          const v1 = document.createElement("span");
+          v1.className = `shop-ai-comp-val${row.winnerIndex === 1 ? " is-winner" : ""}`;
+          v1.textContent = row.values?.[1] || "—";
+          valsEl.append(v0, v1);
+
+          rowEl.append(labelEl, valsEl);
+          table.append(rowEl);
+        });
+        compWrap.append(table);
+
+        if (extra.comparison.verdict) {
+          const verdict = document.createElement("div");
+          verdict.className = "shop-ai-verdict";
+          const vTitle = document.createElement("strong");
+          vTitle.textContent = `${copy.verdictTitle}: `;
+          const vText = document.createElement("span");
+          appendFormattedText(vText, extra.comparison.verdict);
+          verdict.append(vTitle, vText);
+          compWrap.append(verdict);
+        }
+
+        message.append(compWrap);
+      }
+
+      // Budget Summary Banner
+      if (extra.budgetSummary && typeof extra.budgetSummary === "object") {
+        const budgetCard = document.createElement("div");
+        budgetCard.className = "shop-ai-budget-card";
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "CheckCircle2");
+        const textSpan = document.createElement("span");
+        const totalFormatted = Number.isFinite(extra.budgetSummary.totalPrice)
+          ? formatStorePrice(extra.budgetSummary.totalPrice)
+          : "";
+        const savedFormatted = Number.isFinite(extra.budgetSummary.totalSaved) && extra.budgetSummary.totalSaved > 0
+          ? formatStorePrice(extra.budgetSummary.totalSaved)
+          : "";
+        textSpan.textContent = extra.budgetSummary.note || `${totalFormatted}${savedFormatted ? ` (-${savedFormatted})` : ""}`;
+        budgetCard.append(textSpan);
+        message.append(budgetCard);
+      }
+
       if (products.length) {
         const results = document.createElement("div");
         results.className = "shop-ai-results";
         products.forEach((product) => {
-          const localized = window.NoursData?.localizeProduct?.(product, language) || product;
-          const link = document.createElement("a");
-          link.className = "shop-ai-product";
-          link.href = `/product.html?id=${encodeURIComponent(product.id)}`;
-          const image = document.createElement("img");
-          image.src = product.image;
-          image.alt = "";
-          image.loading = "lazy";
-          const details = document.createElement("span");
-          details.className = "shop-ai-product-details";
-          const name = document.createElement("strong");
-          name.textContent = localized.name || product.name;
-          const description = document.createElement("small");
-          description.textContent = product.brand;
-          const price = document.createElement("span");
-          price.className = "shop-ai-product-price";
-          const currency = store.getCurrency();
-          price.textContent = new Intl.NumberFormat(
-            language === "zh" ? "zh-CN" : ({ ar: "ar-SA", fr: "fr-FR", es: "es-ES" }[language] || "en-US"),
-            { style: "currency", currency, maximumFractionDigits: currency === "SAR" ? 0 : 2 },
-          ).format(store.convertCurrency(product.price, "SAR", currency));
-          const action = document.createElement("span");
-          action.className = "shop-ai-product-action";
-          action.textContent = copy.view;
-          details.append(description, name, price);
-          link.append(image, details, action);
-          results.append(link);
+          results.append(buildProductCardElement(product));
         });
         message.append(results);
       }
+
       thread.append(message);
-      thread.scrollTop = thread.scrollHeight;
+      if (role === "assistant" && (extra.comparison || extra.roomAnalysis)) {
+        message.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        thread.scrollTop = thread.scrollHeight;
+      }
       window.lucide?.createIcons();
+      return message;
     };
 
     const recommend = (message) => {
@@ -990,16 +1428,279 @@
         .map((item) => item.product);
     };
 
-    const submitMessage = (text, focusInput = !mobileAssistantQuery.matches) => {
-      const message = text.trim();
-      if (!message) return;
+    const buildClientSmartResponse = (rawMsg, hasImage, imgMeta = {}) => {
+      const isAr = language === "ar";
+      const msg = String(rawMsg || "").toLowerCase();
+      const allProducts = window.NoursData?.products || [];
+      const byId = new Map(allProducts.map((p) => [p.id, p]));
+
+      if (hasImage) {
+        const mentionsMobile = /phone|mobile|camera|جوال|هاتف|تصوير/.test(msg);
+        const mentionsAudio = /audio|headphone|sound|quiet|music|سماعة|صوت|هدوء/.test(msg);
+        const ids = mentionsMobile
+          ? ["iphone-16", "airpods-pro", "apple-watch"]
+          : mentionsAudio
+            ? ["sony-headphones", "macbook-pro", "galaxy-watch"]
+            : ["macbook-pro", "sony-headphones", "apple-watch"];
+        const matched = ids.map((id) => byId.get(id)).filter(Boolean);
+        const toneNote =
+          imgMeta.brightness === "dark"
+            ? isAr
+              ? "إضاءة الغرفة هادئة وتميل للوضع الليلي، مما يجعل الشاشات عالية التباين (Liquid Retina XDR / OLED) مثالية لها."
+              : "Your space has a calm, low-light ambiance—making high-contrast Liquid Retina XDR and OLED displays ideal."
+            : isAr
+              ? "مساحة الغرفة متوازنة الإضاءة ومرتبة، وتسمح بإضافة ركن عمل وترفيه متكامل بأناقة."
+              : "Your space has balanced lighting and a clean layout, ideal for a streamlined flagship workstation.";
+        return {
+          mode: "room_analysis",
+          reply: isAr
+            ? "قمت بتحليل صورة الغرفة/السيت-أب الخاصة بك. لتكتمل تجربة العمل والترفيه في هذه المساحة، إليك ما ينقصها مع العروض المتوفرة حالياً في WEEXEY:"
+            : "I analyzed your room and setup photo. To elevate this space into a complete flagship setup, here is what is missing along with current WEEXEY deals:",
+          roomAnalysis: {
+            detected: toneNote,
+            missing: isAr
+              ? [
+                  "جهاز رئيسي فائق الأداء بشاشة احترافية (MacBook Pro 14 M4) ليكون قلب المكتب",
+                  "سماعة عزل ضجيج محيطي (WH-1000XM5 أو AirPods Pro 2) للتركيز التام داخل الغرفة",
+                  "ساعة ذكية متزامنة لتنبيهات المكتب والنشاط اليومي",
+                ]
+              : [
+                  "A flagship workstation laptop with an XDR/OLED display (MacBook Pro 14 M4) as the centerpiece",
+                  "Studio-grade Active Noise Cancelling headphones (WH-1000XM5) for deep focus in the room",
+                  "A smart wearable companion for seamless desk notifications and wellness tracking",
+                ],
+            upgradeImpact: isAr
+              ? "إضافة هذه القطع ستحوّل المساحة إلى استوديو متكامل بصوت معزول وشاشة فائقة الدقة مع الاستفادة من الخصومات الفعّالة حالياً."
+              : "Adding these pieces transforms your room into a distraction-free studio with reference-grade visuals, acoustic isolation, and active store discounts.",
+          },
+          products: matched.length ? matched : allProducts.slice(0, 3),
+        };
+      }
+
+      const isCompare = /compare|vs|versus|difference|better|قارن|مقارنة|الفرق|ايهم|أيهما|مقابل/.test(msg);
+      const genericTokens = new Set(["pro", "max", "ultra", "plus", "the", "and", "for", "with", "compare", "versus"]);
+      const named = allProducts
+        .map((p) => {
+          const loc = window.NoursData?.localizeProduct?.(p, language) || p;
+          const tokens = `${p.id} ${p.name} ${loc.name || ""} ${p.brand}`
+            .toLowerCase()
+            .split(/[^a-z0-9\u0600-\u06ff]+/)
+            .filter((tok) => tok.length > 2 && !genericTokens.has(tok));
+          const hits = tokens.filter((tok) => msg.includes(tok)).length;
+          return { product: p, hits };
+        })
+        .filter((entry) => entry.hits > 0)
+        .sort((a, b) => b.hits - a.hits)
+        .map((entry) => entry.product);
+
+      if (isCompare || named.length >= 2) {
+        let pair = named.slice(0, 2);
+        if (pair.length < 2) {
+          if (/phone|iphone|galaxy|هاتف|جوال|ايفون|سامسونج/.test(msg)) {
+            pair = [byId.get("iphone-16"), byId.get("galaxy-s25")].filter(Boolean);
+          } else if (/headphone|audio|airpods|sony|سماعة|سماعات|سوني/.test(msg)) {
+            pair = [byId.get("airpods-pro"), byId.get("sony-headphones")].filter(Boolean);
+          } else if (/watch|ساعة/.test(msg)) {
+            pair = [byId.get("apple-watch"), byId.get("galaxy-watch")].filter(Boolean);
+          } else {
+            pair = [byId.get("macbook-pro"), byId.get("asus-zenbook")].filter(Boolean);
+          }
+        }
+        if (pair.length >= 2) {
+          const [p1, p2] = pair;
+          const loc1 = window.NoursData?.localizeProduct?.(p1, language) || p1;
+          const loc2 = window.NoursData?.localizeProduct?.(p2, language) || p2;
+          const f1 = loc1.features?.[language] || p1.features?.en || [];
+          const f2 = loc2.features?.[language] || p2.features?.en || [];
+          const save1 = p1.oldPrice && p1.oldPrice > p1.price ? p1.oldPrice - p1.price : 0;
+          const save2 = p2.oldPrice && p2.oldPrice > p2.price ? p2.oldPrice - p2.price : 0;
+          return {
+            mode: "comparison",
+            reply: isAr
+              ? `إليك مقارنة تفصيلية مباشرة بين **${loc1.name || p1.name}** و **${loc2.name || p2.name}**:`
+              : `Here is a side-by-side comparison between **${loc1.name || p1.name}** and **${loc2.name || p2.name}**:`,
+            comparison: {
+              title: `${loc1.name || p1.name} vs ${loc2.name || p2.name}`,
+              productIds: [p1.id, p2.id],
+              rows: [
+                {
+                  label: isAr ? "الميزة الأبرز" : "Key Spec",
+                  values: [f1[0] || p1.brand, f2[0] || p2.brand],
+                  winnerIndex: 0,
+                },
+                {
+                  label: isAr ? "الأداء والتقنية" : "Performance",
+                  values: [f1[1] || f1[0] || p1.brand, f2[1] || f2[0] || p2.brand],
+                  winnerIndex: p1.rating >= p2.rating ? 0 : 1,
+                },
+                {
+                  label: isAr ? "إضافات ذكية" : "Smart Features",
+                  values: [f1[2] || f1[3] || "Flagship", f2[2] || f2[3] || "Flagship"],
+                  winnerIndex: 1,
+                },
+                {
+                  label: isAr ? "تقييم العملاء" : "Customer Rating",
+                  values: [`★ ${p1.rating} (${p1.reviews}+)`, `★ ${p2.rating} (${p2.reviews}+)`],
+                  winnerIndex: p1.rating >= p2.rating ? 0 : 1,
+                },
+                {
+                  label: isAr ? "العرض الحالي" : "Current Deal",
+                  values: [
+                    save1 > 0 ? `-${Math.round((save1 / p1.oldPrice) * 100)}% (${formatStorePrice(p1.price)})` : formatStorePrice(p1.price),
+                    save2 > 0 ? `-${Math.round((save2 / p2.oldPrice) * 100)}% (${formatStorePrice(p2.price)})` : formatStorePrice(p2.price),
+                  ],
+                  winnerIndex: save1 >= save2 ? 0 : 1,
+                },
+              ],
+              verdict: isAr
+                ? `اختر **${loc1.name || p1.name}** إذا كنت تبحث عن ${f1[0] || "أعلى قيمة"} ${save1 > save2 ? "مع خصم أقوى حالياً" : ""}، واختر **${loc2.name || p2.name}** إذا كنت تفضّل ${f2[0] || p2.brand}.`
+                : `Choose **${loc1.name || p1.name}** for ${f1[0] || "top performance"}${save1 > save2 ? " and the biggest active discount" : ""}, or pick **${loc2.name || p2.name}** if you prefer ${f2[0] || p2.brand}.`,
+            },
+            products: [p1, p2],
+          };
+        }
+      }
+
+      const budgetMatch = msg.match(/(\d[\d,.]*)/);
+      const mentionsBudget = /budget|bundle|setup|package|under|ميزانيت|ميزانية|باقة|تجميعة|حدود|تحت|اقل من/.test(msg);
+      if (mentionsBudget && budgetMatch) {
+        const rawNum = Number(budgetMatch[1].replace(/[,.]/g, ""));
+        const targetSar = rawNum >= 500 ? rawNum : 7500;
+        const bundle = [];
+        let runningTotal = 0;
+        const usedCategories = new Set();
+        for (const item of [...allProducts].sort((a, b) => b.rating - a.rating)) {
+          if (!usedCategories.has(item.category) && runningTotal + item.price <= targetSar) {
+            bundle.push(item);
+            runningTotal += item.price;
+            usedCategories.add(item.category);
+          }
+        }
+        if (!bundle.length && allProducts.length) {
+          bundle.push(allProducts[0]);
+          runningTotal = allProducts[0].price;
+        }
+        const totalSaved = bundle.reduce(
+          (sum, item) => sum + (item.oldPrice && item.oldPrice > item.price ? item.oldPrice - item.price : 0),
+          0
+        );
+        return {
+          mode: "budget_bundle",
+          reply: isAr
+            ? `قمت بتصميم أفضل باقة متكاملة لك ضمن ميزانية **${formatStorePrice(targetSar)}** مع الاستفادة من الخصومات الحالية:`
+            : `I curated the best multi-device setup within your **${formatStorePrice(targetSar)}** budget with active store discounts:`,
+          budgetSummary: {
+            targetBudget: targetSar,
+            totalPrice: runningTotal,
+            totalSaved,
+            note: isAr
+              ? `إجمالي الباقة: ${formatStorePrice(runningTotal)} (توفير ${formatStorePrice(totalSaved)} من العروض الحالية)`
+              : `Bundle total: ${formatStorePrice(runningTotal)} (Save ${formatStorePrice(totalSaved)} with current deals)`,
+          },
+          products: bundle,
+        };
+      }
+
+      const matches = recommend(rawMsg);
+      return {
+        mode: "general",
+        reply: matches.length ? copy.matches : copy.noMatches,
+        products: matches,
+      };
+    };
+    const submitMessage = async (text, focusInput = !mobileAssistantQuery.matches) => {
+      if (isSubmitting) return;
+      const rawMessage = String(text || "").trim();
+      const attachedImage = pendingImageDataUrl;
+      const attachedMeta = { ...pendingImageMeta };
+      if (!rawMessage && !attachedImage) return;
+
+      const displayMessage =
+        rawMessage ||
+        (language === "ar"
+          ? "حلّل صورة هذه الغرفة واذكر ما ينقصها مع العروض المتوفرة"
+          : "Analyze this room setup photo and show what is missing with current deals");
+
       welcome.hidden = true;
       dialog.classList.add("is-chatting");
-      addMessage(message, "user");
-      const matches = recommend(message);
-      addMessage(matches.length ? copy.matches : copy.noMatches, "assistant", matches);
+      addMessage(displayMessage, "user", [], { userImage: attachedImage });
+      chatHistory.push({ role: "user", text: displayMessage });
+
       form.reset();
+      clearPendingImage();
       if (focusInput) input.focus({ preventScroll: true });
+
+      isSubmitting = true;
+      const loadingBubble = document.createElement("article");
+      loadingBubble.className = "shop-ai-message is-assistant is-loading";
+      loadingBubble.innerHTML = `<span class="shop-ai-author">${copy.assistant}</span><div class="shop-ai-typing"><span class="shop-ai-typing-dot"></span><span class="shop-ai-typing-dot"></span><span class="shop-ai-typing-dot"></span><span>${copy.analyzing}</span></div>`;
+      thread.append(loadingBubble);
+      thread.scrollTop = thread.scrollHeight;
+
+      const allProducts = window.NoursData?.products || [];
+      const catalogPayload = allProducts.map((p) => {
+        const loc = window.NoursData?.localizeProduct?.(p, language) || p;
+        return {
+          id: p.id,
+          name: loc.name || p.name,
+          brand: p.brand,
+          category: p.category,
+          price: p.price,
+          oldPrice: p.oldPrice || null,
+          rating: p.rating,
+          reviews: p.reviews,
+          description: loc.description?.[language] || p.description?.en || "",
+          features: loc.features?.[language] || p.features?.en || [],
+        };
+      });
+
+      try {
+        const response = await fetch("/api/ai-assistant", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: displayMessage,
+            imageDataUrl: attachedImage,
+            imageMeta: attachedMeta,
+            language,
+            catalog: catalogPayload,
+            history: chatHistory.slice(-6),
+          }),
+        });
+        if (!response.ok) throw new Error("API error");
+        const data = await response.json();
+        loadingBubble.remove();
+
+        const byId = new Map(allProducts.map((p) => [p.id, p]));
+        const matchedProducts = (Array.isArray(data.productIds) ? data.productIds : [])
+          .map((id) => byId.get(id))
+          .filter(Boolean);
+        const finalProducts = matchedProducts.length ? matchedProducts : recommend(displayMessage);
+
+        if (data.mode === "comparison" || data.mode === "room_analysis" || data.comparison || data.roomAnalysis) {
+          setExpanded(true);
+        }
+
+        addMessage(data.reply || (finalProducts.length ? copy.matches : copy.noMatches), "assistant", finalProducts, {
+          roomAnalysis: data.roomAnalysis,
+          comparison: data.comparison,
+          budgetSummary: data.budgetSummary,
+        });
+        chatHistory.push({ role: "assistant", text: data.reply || copy.matches });
+      } catch (_) {
+        loadingBubble.remove();
+        const fallback = buildClientSmartResponse(displayMessage, Boolean(attachedImage), attachedMeta);
+        if (fallback.mode === "comparison" || fallback.mode === "room_analysis" || fallback.comparison || fallback.roomAnalysis) {
+          setExpanded(true);
+        }
+        addMessage(fallback.reply, "assistant", fallback.products || [], {
+          roomAnalysis: fallback.roomAnalysis,
+          comparison: fallback.comparison,
+          budgetSummary: fallback.budgetSummary,
+        });
+      } finally {
+        isSubmitting = false;
+      }
     };
 
     const suggestions = overlay.querySelector(".shop-ai-suggestions");
@@ -1007,15 +1708,35 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "shop-ai-suggestion";
-      button.innerHTML = `<i data-lucide="${["smartphone", "laptop", "headphones"][index]}" aria-hidden="true"></i><span></span><i data-lucide="arrow-up-right" aria-hidden="true"></i>`;
+      button.innerHTML = `<i data-lucide="${["scale", "camera", "sparkles"][index] || "sparkles"}" aria-hidden="true"></i><span></span><i data-lucide="arrow-up-right" aria-hidden="true"></i>`;
       button.querySelector("span").textContent = suggestion;
-      button.addEventListener("click", () => submitMessage(suggestion));
+      button.addEventListener("click", () => {
+        if (index === 1 && !pendingImageDataUrl) {
+          input.value = suggestion;
+          fileInput?.click();
+          return;
+        }
+        submitMessage(suggestion);
+      });
       suggestions.append(button);
     });
+
+    fileInput?.addEventListener("change", () => {
+      const file = fileInput.files?.[0];
+      if (file && input.value.trim()) {
+        setTimeout(() => {
+          if (pendingImageDataUrl) submitMessage(input.value, true);
+        }, 120);
+      }
+    });
+
     overlay.querySelector(".shop-ai-restart").addEventListener("click", () => {
       thread.querySelectorAll(".shop-ai-message").forEach((message) => message.remove());
       welcome.hidden = false;
       dialog.classList.remove("is-chatting");
+      setExpanded(false);
+      chatHistory.length = 0;
+      clearPendingImage();
       form.reset();
       thread.scrollTop = 0;
       focusAssistant();

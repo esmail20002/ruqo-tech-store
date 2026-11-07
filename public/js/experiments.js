@@ -7,11 +7,11 @@
   const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const labels = {
-    ar: { home: "تجربة الرئيسية", product: "تجربة صفحة المنتج", laser: "تجربة تدفق الليزر", blank4: "صفحة تجارب 4", blank5: "صفحة تجارب 5", lunae: "تجربة لونيه" },
-    en: { home: "Homepage experiment", product: "Product page experiment", laser: "LaserFlow experiment", blank4: "Blank experiment 4", blank5: "Blank experiment 5", lunae: "Lunae scroll sequence" },
-    fr: { home: "Expérience de la page d’accueil", product: "Expérience de la page produit", laser: "Expérience LaserFlow", blank4: "Expérience vierge 4", blank5: "Expérience vierge 5", lunae: "Séquence Lunae au défilement" },
-    es: { home: "Experimento de inicio", product: "Experimento de página de producto", laser: "Experimento LaserFlow", blank4: "Experimento en blanco 4", blank5: "Experimento en blanco 5", lunae: "Secuencia Lunae al desplazarse" },
-    zh: { home: "首页实验", product: "商品页实验", laser: "LaserFlow 光效实验", blank4: "空白实验页 4", blank5: "空白实验页 5", lunae: "Lunae 滚动序列" },
+    ar: { home: "تجربة الرئيسية", product: "تجربة صفحة المنتج", laser: "تجربة تدفق الليزر", blank4: "صفحة تجارب 4", blank5: "صفحة تجارب 5", lunae: "تجربة لونيه", error: "صفحة الخطأ 404" },
+    en: { home: "Homepage experiment", product: "Product page experiment", laser: "LaserFlow experiment", blank4: "Blank experiment 4", blank5: "Blank experiment 5", lunae: "Lunae scroll sequence", error: "404 error page" },
+    fr: { home: "Expérience de la page d’accueil", product: "Expérience de la page produit", laser: "Expérience LaserFlow", blank4: "Expérience vierge 4", blank5: "Expérience vierge 5", lunae: "Séquence Lunae au défilement", error: "Page d’erreur 404" },
+    es: { home: "Experimento de inicio", product: "Experimento de página de producto", laser: "Experimento LaserFlow", blank4: "Experimento en blanco 4", blank5: "Experimento en blanco 5", lunae: "Secuencia Lunae al desplazarse", error: "Página de error 404" },
+    zh: { home: "首页实验", product: "商品页实验", laser: "LaserFlow 光效实验", blank4: "空白实验页 4", blank5: "空白实验页 5", lunae: "Lunae 滚动序列", error: "404 错误页面" },
   };
   const updateSwitcherLabels = () => {
     const language = document.documentElement.lang.toLowerCase().split("-")[0];

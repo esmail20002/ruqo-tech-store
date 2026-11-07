@@ -7,7 +7,6 @@
 
   const DEFAULT_DATA = () => ({
     intro_mode: "once_per_session",
-    show_orb: true,
     show_stats: true,
     copy: {
       pill_badge: {
@@ -60,14 +59,6 @@
         zh: "探索商城",
       },
       primary_btn_href: "/products.html",
-      orb_text: {
-        en: "Explore The Platform",
-        ar: "استكشف المنصة",
-        fr: "Explorer la plateforme",
-        es: "Explorar plataforma",
-        zh: "探索平台",
-      },
-      orb_href: "/products.html",
     },
     cards: {
       card1: {
@@ -204,7 +195,6 @@
       intro_mode: ["once_per_session", "always", "skip"].includes(src.intro_mode)
         ? src.intro_mode
         : base.intro_mode,
-      show_orb: src.show_orb !== false,
       show_stats: src.show_stats !== false,
       copy: {
         pill_badge: asMap(copy.pill_badge, base.copy.pill_badge),
@@ -215,8 +205,6 @@
         description: asMap(copy.description, base.copy.description),
         primary_btn_text: asMap(copy.primary_btn_text, base.copy.primary_btn_text),
         primary_btn_href: String(copy.primary_btn_href || base.copy.primary_btn_href).trim() || "/products.html",
-        orb_text: asMap(copy.orb_text, base.copy.orb_text),
-        orb_href: String(copy.orb_href || base.copy.orb_href).trim() || "/products.html",
       },
       cards: {
         card1: {
@@ -435,7 +423,6 @@
 
       form.elements.language.value = language;
       form.elements.intro_mode.value = data.intro_mode;
-      form.elements.show_orb.checked = data.show_orb !== false;
       form.elements.show_stats.checked = data.show_stats !== false;
 
       form.elements.pill_badge.value = data.copy.pill_badge[language] || "";
@@ -446,8 +433,6 @@
       form.elements.description.value = data.copy.description[language] || "";
       form.elements.primary_btn_text.value = data.copy.primary_btn_text[language] || "";
       form.elements.primary_btn_href.value = data.copy.primary_btn_href || "/products.html";
-      form.elements.orb_text.value = data.copy.orb_text[language] || "";
-      form.elements.orb_href.value = data.copy.orb_href || "/products.html";
 
       form.elements.c1_title.value = data.cards.card1.title[language] || "";
       form.elements.c1_label.value = data.cards.card1.label[language] || "";
@@ -530,7 +515,6 @@
 
     const syncFromInputs = () => {
       data.intro_mode = form.elements.intro_mode.value;
-      data.show_orb = form.elements.show_orb.checked;
       data.show_stats = form.elements.show_stats.checked;
 
       data.copy.pill_badge[language] = form.elements.pill_badge.value;
@@ -541,8 +525,6 @@
       data.copy.description[language] = form.elements.description.value;
       data.copy.primary_btn_text[language] = form.elements.primary_btn_text.value;
       data.copy.primary_btn_href = form.elements.primary_btn_href.value.trim() || "/products.html";
-      data.copy.orb_text[language] = form.elements.orb_text.value;
-      data.copy.orb_href = form.elements.orb_href.value.trim() || "/products.html";
 
       data.cards.card1.title[language] = form.elements.c1_title.value;
       data.cards.card1.label[language] = form.elements.c1_label.value;
@@ -721,7 +703,6 @@
         copyTranslateField(data.copy.headline_gradient, defaults.copy.headline_gradient);
         copyTranslateField(data.copy.description, defaults.copy.description);
         copyTranslateField(data.copy.primary_btn_text, defaults.copy.primary_btn_text);
-        copyTranslateField(data.copy.orb_text, defaults.copy.orb_text);
         copyTranslateField(data.cards.card1.title, defaults.cards.card1.title);
         copyTranslateField(data.cards.card1.label, defaults.cards.card1.label);
         copyTranslateField(data.cards.card1.sub, defaults.cards.card1.sub);
