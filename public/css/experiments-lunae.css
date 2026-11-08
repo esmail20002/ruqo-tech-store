@@ -838,20 +838,20 @@ html[data-theme="dark"] body[data-page="home"] .wx-glass-card {
   section.lunae-sequence.is-hero-locked,
   .lunae-sequence.is-hero-locked {
     height: 100vh;
-    height: 100dvh;
-    min-height: -webkit-fill-available;
+    height: 100svh;
+    min-height: 580px;
+    overflow: hidden;
   }
 
   .lunae-stage {
     height: 100vh;
-    height: 100dvh;
-    min-height: 100lvh;
+    height: 100svh;
+    min-height: 580px;
     overflow: hidden;
   }
 
   .wx-hero-overlay {
-    height: 100vh;
-    height: 100dvh;
+    height: 100%;
   }
 
   .lunae-backdrop-tint {
@@ -872,7 +872,7 @@ html[data-theme="dark"] body[data-page="home"] .wx-glass-card {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto;
     gap: 12px;
-    padding: 58px 16px 18px;
+    padding: 58px 16px calc(80px + env(safe-area-inset-bottom, 0px));
     align-content: space-between;
   }
 
@@ -1050,7 +1050,7 @@ html[data-theme="dark"] body[data-page="home"] .wx-glass-card {
 
 @media (max-width: 600px) {
   .wx-hero-grid {
-    padding: 54px 12px 14px;
+    padding: 54px 12px calc(78px + env(safe-area-inset-bottom, 0px));
   }
 
   .wx-cards-stack {

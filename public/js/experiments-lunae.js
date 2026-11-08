@@ -685,15 +685,8 @@
     if (heroLocked || isRewinding) return;
     heroLocked = true;
     markHeroSeenInSession();
-    sequence.classList.add("is-hero-locked");
     targetFrame = totalFrames - 1;
     currentFrame = totalFrames - 1;
-    // Collapse scroll track to 100vh and clamp window scroll so the hero stays pinned at the top
-    // while allowing natural downward scroll if future sections exist below <section class="lunae-sequence">
-    const rect = sequence.getBoundingClientRect();
-    const lockedScrollTop = Math.max(0, window.scrollY + rect.top);
-    window.scrollTo({ top: lockedScrollTop, behavior: "instant" });
-    window.WEEXEY_SMOOTH_SCROLL?.syncTo(lockedScrollTop);
     redrawRequested = true;
   }
 
@@ -858,10 +851,11 @@
     const normalizedProgress = clamp(currentFrame / Math.max(1, totalFrames - 1), 0, 1);
     updateChoreography(normalizedProgress, timeMs, reducedMotion);
 
+    const scrollRevealThreshold = Math.max(stage.offsetHeight, sequence.offsetHeight - stage.offsetHeight) * 0.85;
     const shouldShowStoreHeader =
       !isIntroPlaying &&
       !isRewinding &&
-      (heroLocked || normalizedProgress >= 0.85 || window.scrollY > stage.offsetHeight * 0.85);
+      (heroLocked || normalizedProgress >= 0.85 || window.scrollY > scrollRevealThreshold);
     document.body.classList.toggle("is-lunae-header-hidden", !shouldShowStoreHeader);
 
     // Seamless transition into the living hair/wind video at the end of scroll (96.5% -> 100%)
@@ -1127,6 +1121,7 @@
         scheduleProgressivePreload(0);
       });
   } else if (window.scrollY < 120) {
+    sequence.classList.remove("is-hero-locked");
     document.body.classList.add("is-lunae-header-hidden");
     if (introMode === "once_per_session") {
       markHeroSeenInSession();
@@ -1140,6 +1135,7 @@
       .catch(() => {});
     scheduleProgressivePreload(1);
   } else {
+    sequence.classList.remove("is-hero-locked");
     introVideoEnded = true;
     introDismissedByScroll = true;
     introBlend = 0;

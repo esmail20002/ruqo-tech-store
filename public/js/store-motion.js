@@ -170,9 +170,9 @@
 
     let targetScroll = window.scrollY || 0;
     let currentScroll = targetScroll;
+    let lastProgrammaticY = Math.round(currentScroll);
     let rafId = 0;
     let lastFrameTime = 0;
-    let isProgrammaticScroll = false;
 
     const DAMPING_LAMBDA = 3.6; // Long, velvety 1.3-1.5s cinematic glide tail
     const WHEEL_MULTIPLIER = 1.22;
@@ -220,15 +220,13 @@
       if (Math.abs(diff) > 0.08) {
         const alpha = 1 - Math.exp(-DAMPING_LAMBDA * dt);
         currentScroll += diff * alpha;
-        isProgrammaticScroll = true;
+        lastProgrammaticY = Math.round(currentScroll);
         window.scrollTo(0, currentScroll);
-        isProgrammaticScroll = false;
         rafId = window.requestAnimationFrame(stepInertialScroll);
       } else {
         currentScroll = targetScroll;
-        isProgrammaticScroll = true;
-        window.scrollTo(0, Math.round(currentScroll));
-        isProgrammaticScroll = false;
+        lastProgrammaticY = Math.round(currentScroll);
+        window.scrollTo(0, lastProgrammaticY);
         rafId = 0;
         lastFrameTime = 0;
       }
@@ -245,6 +243,7 @@
       const nextY = typeof y === "number" ? y : window.scrollY;
       targetScroll = nextY;
       currentScroll = nextY;
+      lastProgrammaticY = Math.round(nextY);
       if (rafId) {
         window.cancelAnimationFrame(rafId);
         rafId = 0;
@@ -293,9 +292,13 @@
     window.addEventListener(
       "scroll",
       () => {
-        if (!isProgrammaticScroll && !rafId) {
+        if (!rafId) {
           currentScroll = window.scrollY;
           targetScroll = currentScroll;
+          lastProgrammaticY = Math.round(currentScroll);
+        } else if (Math.abs(window.scrollY - lastProgrammaticY) > 6) {
+          // User scrolled natively (e.g. touch or scrollbar drag) while inertial loop was active
+          syncTo(window.scrollY);
         }
       },
       { passive: true },
