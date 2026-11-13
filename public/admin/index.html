@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=19" />
+    <link rel="stylesheet" href="/css/admin.css?v=23" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -109,6 +109,7 @@
           </div>
           <div class="admin-nav-group" role="group" aria-labelledby="admin-storefront-label">
           <span id="admin-storefront-label" class="admin-nav-group-label">STOREFRONT</span>
+          <button class="admin-nav-item" type="button" data-admin-view="hello-page"><i data-lucide="smartphone" aria-hidden="true"></i><span>hello page</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="hero"><i data-lucide="wand-sparkles" aria-hidden="true"></i><span>HERO</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="big-3-cards"><i data-lucide="panels-top-left" aria-hidden="true"></i><span>BIG 3 CARDS</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="promotions"><i data-lucide="badge-percent" aria-hidden="true"></i><span>Offers</span></button>
@@ -374,6 +375,376 @@
                 </div>
               </div>
               <p class="admin-feedback form-field-wide" data-ed-feedback role="status" hidden></p>
+            </form>
+          </section>
+          <section class="admin-view" data-admin-panel="hello-page" hidden>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">STOREFRONT ONBOARDING</span>
+                <h1>hello page</h1>
+                <p>Control the welcome &amp; onboarding experience across mobile and desktop — texts in 5 languages, mobile model &amp; outlined brand typography, slide-to-start button, and desktop crystal stage &amp; floating cards.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button class="admin-secondary-button" type="button" data-hp-reload><i data-lucide="refresh-cw" aria-hidden="true"></i> Reload</button>
+              </div>
+            </div>
+            <p class="admin-muted-copy" data-hp-live role="status">Loading hello page configuration…</p>
+
+            <form id="hello-page-form" class="admin-section high-refresh-editor hello-page-admin-editor" novalidate>
+              <div>
+                <h2>General settings, copy &amp; dual live previews</h2>
+                <p class="admin-muted-copy">Configure when the welcome screen appears, default currency &amp; language, main texts, and preview both Mobile &amp; Desktop layouts in real time.</p>
+                <p class="admin-muted-copy" data-hp-state role="status"></p>
+
+                <div class="admin-form-grid">
+                  <label>
+                    Editing / preview language
+                    <select name="language">
+                      <option value="en">English (source)</option>
+                      <option value="ar">Arabic (العربية)</option>
+                      <option value="fr">French (Français)</option>
+                      <option value="es">Spanish (Español)</option>
+                      <option value="zh">Simplified Chinese (中文)</option>
+                    </select>
+                  </label>
+                  <label>
+                    Display mode
+                    <select name="display_mode">
+                      <option value="first_visit">First visit only (default)</option>
+                      <option value="always">Show on every page load</option>
+                      <option value="disabled">Disabled (skip welcome page)</option>
+                    </select>
+                  </label>
+                  <label>
+                    Default selected currency
+                    <select name="default_currency">
+                      <option value="USD">USD — US Dollar</option>
+                      <option value="EUR">EUR — Euro</option>
+                      <option value="SAR">SAR — Saudi Riyal</option>
+                    </select>
+                  </label>
+                  <label>
+                    Default selected language
+                    <select name="default_language">
+                      <option value="en">English</option>
+                      <option value="fr">French</option>
+                      <option value="es">Spanish</option>
+                      <option value="zh">Chinese</option>
+                      <option value="ar">Arabic</option>
+                    </select>
+                  </label>
+                  <label class="admin-inline-check">
+                    <input name="show_currency_picker" type="checkbox" checked />
+                    <span><strong>Show currency picker</strong><small>Allow visitors to choose USD / EUR / SAR</small></span>
+                  </label>
+                  <label class="admin-inline-check">
+                    <input name="show_language_picker" type="checkbox" checked />
+                    <span><strong>Show language picker</strong><small>Allow visitors to choose storefront language</small></span>
+                  </label>
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="show_logo" type="checkbox" checked />
+                    <span><strong>Show store logo</strong><small>Display the brand logo at the top of the card (mobile) and header (desktop)</small></span>
+                  </label>
+                  <label class="form-field-wide">
+                    Custom logo image (upload or URL)
+                    <input name="logo_file" type="file" accept="image/png,image/jpeg,image/webp" />
+                    <input name="logo_url" maxlength="2048" placeholder="/images/new/li.png or https://..." />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Main Welcome Copy &amp; Slide Button</h3>
+                <div class="admin-form-grid" data-hp-copy-fields>
+                  <label class="form-field-wide">
+                    Main headline
+                    <textarea name="title" rows="2" maxlength="300" placeholder="Intelligent technology for modern flagship experiences"></textarea>
+                  </label>
+                  <label class="form-field-wide">
+                    Subtitle / description
+                    <textarea name="subtitle" rows="3" maxlength="500" placeholder="WEEXEY curates flagship performance, precision optics, and neural audio. Choose your language to begin a seamless cinematic experience."></textarea>
+                  </label>
+                  <label class="form-field-wide">
+                    Get Started button label (Mobile &amp; Desktop)
+                    <input name="slide_btn_text" maxlength="80" placeholder="Get Started" />
+                  </label>
+                </div>
+
+                <!-- Dual Live Previews: Mobile & Desktop -->
+                <div class="hp-dual-preview-header">
+                  <span class="admin-eyebrow">REAL-TIME DUAL LIVE PREVIEW (MOBILE &amp; DESKTOP)</span>
+                </div>
+                <div class="hp-dual-preview-grid" data-hp-preview>
+                  <!-- 1. Mobile Phone Live Preview -->
+                  <div class="hp-preview-col">
+                    <span class="hp-preview-badge"><i data-lucide="smartphone" aria-hidden="true"></i> Mobile Preview</span>
+                    <div class="hp-mobile-mockup">
+                      <div class="hp-mobile-stage" data-hp-prev-mobile-stage>
+                        <div class="hp-mobile-stripes" data-hp-prev-stripes></div>
+                        <img class="hp-mobile-model-img" data-hp-prev-model src="https://images.unsplash.com/photo-1625786682948-2168238883d2?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Mobile model preview" />
+                        <div class="hp-mobile-outline-word" data-hp-prev-outline>
+                          <span data-hp-prev-outline1>WEE</span>
+                          <span data-hp-prev-outline2>XEY</span>
+                        </div>
+                      </div>
+                      <div class="hp-mobile-sheet" data-hp-prev-mobile-sheet>
+                        <div class="hp-mobile-logo" data-hp-prev-mobile-logo-wrap>
+                          <img data-hp-prev-logo-mob src="/images/new/li.png" alt="WEEXEY" />
+                        </div>
+                        <h4 class="hp-mobile-title" data-hp-prev-title-mob>Intelligent technology for modern flagship experiences</h4>
+                        <p class="hp-mobile-sub" data-hp-prev-sub-mob>WEEXEY curates flagship performance, precision optics, and neural audio.</p>
+                        <div class="hp-mobile-pickers" data-hp-prev-pickers-mob>
+                          <span class="hp-mobile-pill" data-hp-prev-curr-mob>USD ▾</span>
+                          <span class="hp-mobile-pill" data-hp-prev-lang-mob>English ▾</span>
+                        </div>
+                        <div class="hp-mobile-slider">
+                          <span class="hp-mobile-slider-thumb" data-hp-prev-slide-mob>Get Started</span>
+                          <span class="hp-mobile-slider-arrows">› › ›</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 2. Desktop Monitor Live Preview -->
+                  <div class="hp-preview-col">
+                    <span class="hp-preview-badge"><i data-lucide="monitor" aria-hidden="true"></i> Desktop Preview</span>
+                    <div class="hp-desktop-mockup" data-hp-prev-desktop>
+                      <div class="hp-desktop-topbar" data-hp-prev-desk-logo-wrap>
+                        <img data-hp-prev-logo-desk src="/images/new/li.png" alt="WEEXEY" />
+                      </div>
+                      <div class="hp-desktop-hero">
+                        <h4 class="hp-desktop-title" data-hp-prev-title-desk>Intelligent technology for modern flagship experiences</h4>
+                        <p class="hp-desktop-sub" data-hp-prev-sub-desk>WEEXEY curates flagship performance, precision optics, and neural audio.</p>
+                        <div class="hp-desktop-pickers" data-hp-prev-pickers-desk>
+                          <span class="hp-desktop-pill" data-hp-prev-curr-desk>USD ▾</span>
+                          <span class="hp-desktop-pill" data-hp-prev-lang-desk>English ▾</span>
+                          <span class="hp-desktop-start-pill" data-hp-prev-start-desk>Get Started →</span>
+                        </div>
+                      </div>
+                      <div class="hp-desktop-stage">
+                        <div class="hp-desk-card hp-desk-card--tl" data-hp-prev-c1>
+                          <strong data-hp-prev-c1-num>$13,592.00</strong>
+                          <span data-hp-prev-c1-lbl>Flagship Index</span>
+                        </div>
+                        <div class="hp-desk-card hp-desk-card--bl" data-hp-prev-c2>
+                          <span data-hp-prev-c2-lbl>Goal</span>
+                          <strong data-hp-prev-c2-val>56K</strong>
+                        </div>
+                        <div class="hp-desk-card hp-desk-card--tr" data-hp-prev-c3>
+                          <span class="hp-desk-pill" data-hp-prev-c3-pill>Flagship speed</span>
+                          <strong data-hp-prev-c3-top>42% · 242,925</strong>
+                        </div>
+                        <div class="hp-desk-card hp-desk-card--br" data-hp-prev-c4>
+                          <span data-hp-prev-c4-title>Customer rating</span>
+                          <strong data-hp-prev-c4-val>$24,345.00</strong>
+                        </div>
+                        <div class="hp-desktop-crystal">
+                          <img data-hp-prev-crystal src="/images/new/gate-crystal.webp?v=3" alt="Crystal preview" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="high-refresh-actions">
+                  <button class="admin-primary-button" type="button" data-hp-action="save">
+                    <i data-lucide="check" aria-hidden="true"></i> Save &amp; publish hello page
+                  </button>
+                  <button class="admin-secondary-button" type="button" data-hp-action="translate">
+                    <i data-lucide="languages" aria-hidden="true"></i> Translate to all 5 languages
+                  </button>
+                  <button class="admin-danger-button" type="button" data-hp-action="reset">
+                    <i data-lucide="rotate-ccw" aria-hidden="true"></i> Reset to defaults
+                  </button>
+                </div>
+              </div>
+
+              <div data-hp-right-editor>
+                <h2>Mobile &amp; Desktop Visual Stage</h2>
+                <p class="admin-muted-copy">Customize the mobile model portrait &amp; outlined typography, and the desktop crystal sculpture &amp; 4 floating analytics cards.</p>
+
+                <h3 class="fs-subhead">Mobile Stage (Portrait &amp; Outlined Text)</h3>
+                <div class="admin-form-grid">
+                  <label class="form-field-wide">
+                    Mobile model portrait image (upload or HTTPS URL)
+                    <input name="mobile_model_file" type="file" accept="image/png,image/jpeg,image/webp" />
+                    <input name="mobile_model_url" maxlength="2048" placeholder="https://images.unsplash.com/..." />
+                    <small>Displayed in the upper stage on mobile screens.</small>
+                  </label>
+                  <label class="admin-inline-check">
+                    <input name="show_outline_word" type="checkbox" checked />
+                    <span><strong>Show outlined text over photo</strong><small>Display the large hollow letters (WEE / XEY) over the model</small></span>
+                  </label>
+                  <label class="admin-inline-check">
+                    <input name="show_stripes" type="checkbox" checked />
+                    <span><strong>Show diagonal background stripes</strong><small>Subtle light purple stripes behind the mobile stage</small></span>
+                  </label>
+                  <label>
+                    Outlined word — Line 1
+                    <input name="outline_line1" maxlength="20" placeholder="WEE" />
+                  </label>
+                  <label>
+                    Outlined word — Line 2
+                    <input name="outline_line2" maxlength="20" placeholder="XEY" />
+                  </label>
+                  <label class="form-field-wide">
+                    <span class="hp-range-label-row">
+                      <span>Outlined word size</span>
+                      <strong data-hp-outline-scale-label>100%</strong>
+                    </span>
+                    <input name="outline_scale" type="range" min="40" max="180" step="5" value="100" />
+                    <small>Adjust the font size of the outlined text (40% to 180%).</small>
+                  </label>
+                  <label>
+                    <span class="hp-range-label-row">
+                      <span>Vertical position (Up / Down)</span>
+                      <strong data-hp-outline-y-label>72%</strong>
+                    </span>
+                    <input name="outline_pos_y" type="range" min="10" max="92" step="1" value="72" />
+                    <small>10% = Top · 50% = Center · 92% = Bottom</small>
+                  </label>
+                  <label>
+                    <span class="hp-range-label-row">
+                      <span>Horizontal position (Left / Right)</span>
+                      <strong data-hp-outline-x-label>50%</strong>
+                    </span>
+                    <input name="outline_pos_x" type="range" min="10" max="90" step="1" value="50" />
+                    <small>10% = Left · 50% = Center · 90% = Right</small>
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Desktop Centerpiece Crystal Sculpture</h3>
+                <div class="admin-form-grid">
+                  <label class="form-field-wide">
+                    Crystal motion video URL (MP4)
+                    <input name="crystal_video_url" maxlength="2048" placeholder="/images/new/gate-crystal-motion.mp4?v=2" />
+                  </label>
+                  <label class="form-field-wide">
+                    Crystal poster / fallback image (upload or URL)
+                    <input name="crystal_poster_file" type="file" accept="image/png,image/jpeg,image/webp" />
+                    <input name="crystal_poster_url" maxlength="2048" placeholder="/images/new/gate-crystal.webp?v=3" />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Desktop Card 1 — Top-Left Performance Index</h3>
+                <div class="admin-form-grid" data-hp-c1-fields>
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="c1_visible" type="checkbox" checked />
+                    <span><strong>Show Top-Left Card</strong><small>Display the dual metric performance card on desktop</small></span>
+                  </label>
+                  <label>
+                    Row 1 Value
+                    <input name="c1_num1" maxlength="40" placeholder="$13,592.00" />
+                  </label>
+                  <label>
+                    Row 1 Label
+                    <input name="c1_label1" maxlength="80" placeholder="Flagship Index" />
+                  </label>
+                  <label>
+                    Row 1 Badge
+                    <input name="c1_badge1" maxlength="30" placeholder="▼ 14.4%" />
+                  </label>
+                  <label>
+                    Row 2 Value
+                    <input name="c1_num2" maxlength="40" placeholder="$12,167.00" />
+                  </label>
+                  <label>
+                    Row 2 Label
+                    <input name="c1_label2" maxlength="80" placeholder="Smart Devices" />
+                  </label>
+                  <label>
+                    Row 2 Badge
+                    <input name="c1_badge2" maxlength="30" placeholder="▲ 8.3%" />
+                  </label>
+                  <label class="form-field-wide">
+                    Comparison sub-label
+                    <input name="c1_vs" maxlength="60" placeholder="vs prev. period" />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Desktop Card 2 — Bottom-Left Goal Tracker</h3>
+                <div class="admin-form-grid" data-hp-c2-fields>
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="c2_visible" type="checkbox" checked />
+                    <span><strong>Show Bottom-Left Card</strong><small>Display the goal progress card on desktop</small></span>
+                  </label>
+                  <label>
+                    Goal label
+                    <input name="c2_label" maxlength="60" placeholder="Goal" />
+                  </label>
+                  <label>
+                    Goal value
+                    <input name="c2_value" maxlength="40" placeholder="56K" />
+                  </label>
+                  <label class="form-field-wide">
+                    Goal badge
+                    <input name="c2_badge" maxlength="30" placeholder="▼ 14.6%" />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Desktop Card 3 — Top-Right Speed Bars</h3>
+                <div class="admin-form-grid" data-hp-c3-fields>
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="c3_visible" type="checkbox" checked />
+                    <span><strong>Show Top-Right Card</strong><small>Display the 4-bar flagship speed chart card on desktop</small></span>
+                  </label>
+                  <label class="form-field-wide">
+                    Pill title
+                    <input name="c3_pill" maxlength="80" placeholder="Flagship speed" />
+                  </label>
+                  <label>
+                    Bar 1 %
+                    <input name="c3_b1_pct" maxlength="20" placeholder="42%" />
+                  </label>
+                  <label>
+                    Bar 1 Number
+                    <input name="c3_b1_num" maxlength="30" placeholder="242,925" />
+                  </label>
+                  <label>
+                    Bar 2 %
+                    <input name="c3_b2_pct" maxlength="20" placeholder="24%" />
+                  </label>
+                  <label>
+                    Bar 2 Number
+                    <input name="c3_b2_num" maxlength="30" placeholder="90,188" />
+                  </label>
+                  <label>
+                    Bar 3 %
+                    <input name="c3_b3_pct" maxlength="20" placeholder="20%" />
+                  </label>
+                  <label>
+                    Bar 3 Number
+                    <input name="c3_b3_num" maxlength="30" placeholder="64,193" />
+                  </label>
+                  <label>
+                    Bar 4 %
+                    <input name="c3_b4_pct" maxlength="20" placeholder="14%" />
+                  </label>
+                  <label>
+                    Bar 4 Number
+                    <input name="c3_b4_num" maxlength="30" placeholder="48,210" />
+                  </label>
+                </div>
+
+                <h3 class="fs-subhead">Desktop Card 4 — Bottom-Right Customer Rating</h3>
+                <div class="admin-form-grid" data-hp-c4-fields>
+                  <label class="admin-inline-check form-field-wide">
+                    <input name="c4_visible" type="checkbox" checked />
+                    <span><strong>Show Bottom-Right Card</strong><small>Display the customer rating card on desktop</small></span>
+                  </label>
+                  <label>
+                    Card title
+                    <input name="c4_title" maxlength="80" placeholder="Customer rating" />
+                  </label>
+                  <label>
+                    Main value
+                    <input name="c4_value" maxlength="40" placeholder="$24,345.00" />
+                  </label>
+                  <label class="form-field-wide">
+                    Subnote
+                    <input name="c4_sub" maxlength="80" placeholder="Verified analytics" />
+                  </label>
+                </div>
+              </div>
+              <p class="admin-feedback form-field-wide" data-hp-feedback role="status" hidden></p>
             </form>
           </section>
           <section class="admin-view" data-admin-panel="hero" hidden>
@@ -1538,10 +1909,11 @@
     <script src="/js/admin-promo-banner.js?v=2" defer></script>
     <script src="/js/admin-features.js?v=1" defer></script>
     <script src="/js/admin-reviews.js?v=1" defer></script>
+    <script src="/js/admin-hello-page.js?v=4" defer></script>
     <script src="/js/admin-hero.js?v=2" defer></script>
     <script src="/js/admin-big-3-cards.js?v=1" defer></script>
     <script src="/js/support-content-defaults.js?v=2" defer></script>
     <script src="/js/admin-support-content.js?v=5" defer></script>
-    <script src="/js/admin.js?v=24" defer></script>
+    <script src="/js/admin.js?v=25" defer></script>
   </body>
 </html>

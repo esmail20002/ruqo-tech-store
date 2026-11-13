@@ -93,6 +93,11 @@
   const langGateCurrencyMenu = document.querySelector("[data-wx-gate-currency-menu]");
   const langGateCurrencyLabel = document.querySelector("[data-wx-gate-currency-label]");
   const langGateCurrencyButtons = Array.from(document.querySelectorAll("[data-wx-gate-currency]"));
+  const langGateSlider = document.querySelector("[data-wx-gate-slider]");
+  const langGateThumb = document.querySelector("[data-wx-gate-thumb]");
+  const langGateDesktopStart = document.querySelector("[data-wx-gate-desktop-start]");
+  const langGateDesktopStartLabel = document.querySelector("[data-wx-gate-desktop-start-label]");
+  let selectedGateLang = window.NoursStore?.getLanguage?.() || "en";
 
   const readCustomHeroData = () => {
     if (window.RUQO_HOME_LUNAE_HERO && typeof window.RUQO_HOME_LUNAE_HERO === "object") {
@@ -107,10 +112,32 @@
       return null;
     }
   };
+
+  const readCustomHelloPageData = () => {
+    if (window.RUQO_HOME_HELLO_PAGE && typeof window.RUQO_HOME_HELLO_PAGE === "object") {
+      return window.RUQO_HOME_HELLO_PAGE;
+    }
+    try {
+      const raw =
+        localStorage.getItem("ruqo-home-hello-page-cache-v1") ||
+        localStorage.getItem("ruqo-home-hello-page-v1");
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  };
+
   const initialCustomHero = readCustomHeroData();
+  const initialHelloPage = readCustomHelloPageData();
   const introMode = ["once_per_session", "always", "skip"].includes(initialCustomHero?.intro_mode)
     ? initialCustomHero.intro_mode
     : "once_per_session";
+  const helloDisplayMode =
+    initialHelloPage?.enabled === false || initialHelloPage?.display_mode === "disabled"
+      ? "disabled"
+      : initialHelloPage?.display_mode === "always"
+        ? "always"
+        : "first_visit";
 
   function hasCompletedFirstVisit() {
     try {
@@ -130,9 +157,12 @@
   }
 
   const isFirstEverVisit = !hasCompletedFirstVisit();
+  const shouldOpenHelloGateOnLoad =
+    helloDisplayMode === "always" ||
+    (helloDisplayMode === "first_visit" && isFirstEverVisit);
   const shouldSkipIntroOnLoad =
-    introMode === "skip" ||
-    (!isFirstEverVisit && introMode !== "always");
+    !shouldOpenHelloGateOnLoad &&
+    (introMode === "skip" || (!isFirstEverVisit && introMode !== "always"));
 
   function markHeroSeenInSession() {
     markFirstVisitCompleted();
@@ -1228,6 +1258,172 @@
     updateChoreography(norm, performance.now(), window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }
 
+  function applyCustomHelloPageConfig() {
+    if (!(langGate instanceof HTMLElement)) return;
+    const cfg = readCustomHelloPageData();
+    if (!cfg || typeof cfg !== "object") return;
+
+    const currentLang = selectedGateLang || window.NoursStore?.getLanguage?.() || "en";
+    const pick = (map) => {
+      if (!map || typeof map !== "object") return "";
+      return String(map[currentLang] || map.en || "").trim();
+    };
+
+    // Logos
+    const logoUrl = String(cfg.logo_url || "/images/new/li.png").trim() || "/images/new/li.png";
+    const showLogo = cfg.show_logo !== false;
+    const desktopLogoImg = langGate.querySelector(".wx-gate-brand__logo");
+    const mobileLogoWrap = langGate.querySelector(".wx-gate-mobile-logo");
+    const mobileLogoImg = langGate.querySelector(".wx-gate-mobile-logo img");
+    const topbarEl = langGate.querySelector(".wx-gate-topbar");
+    if (desktopLogoImg instanceof HTMLImageElement) desktopLogoImg.src = logoUrl;
+    if (mobileLogoImg instanceof HTMLImageElement) mobileLogoImg.src = logoUrl;
+    if (mobileLogoWrap instanceof HTMLElement) mobileLogoWrap.hidden = !showLogo;
+    if (topbarEl instanceof HTMLElement) topbarEl.hidden = !showLogo;
+
+    // Main Copy & Slide CTA
+    if (cfg.copy && typeof cfg.copy === "object") {
+      const titleEl = langGate.querySelector(".wx-gate-title");
+      const titleVal = pick(cfg.copy.title);
+      if (titleEl instanceof HTMLElement && titleVal) {
+        titleEl.textContent = titleVal;
+      }
+      const subVal = pick(cfg.copy.subtitle);
+      if (langGateStatus instanceof HTMLElement && subVal && !gatePendingLang) {
+        langGateStatus.textContent = subVal;
+      }
+      const slideSpan = langGate.querySelector(".wx-gate-slide-thumb span");
+      const slideVal = pick(cfg.copy.slide_btn_text);
+      if (slideSpan instanceof HTMLElement && slideVal) {
+        slideSpan.textContent = slideVal;
+      }
+      if (langGateDesktopStartLabel instanceof HTMLElement && slideVal) {
+        langGateDesktopStartLabel.textContent = slideVal;
+      }
+    }
+
+    // Pickers visibility
+    const currPicker = langGate.querySelector(".wx-gate-currency-picker");
+    const langPicker = langGate.querySelector(".wx-gate-language-picker");
+    const showCurr = cfg.show_currency_picker !== false;
+    const showLang = cfg.show_language_picker !== false;
+    if (currPicker instanceof HTMLElement) currPicker.hidden = !showCurr;
+    if (langPicker instanceof HTMLElement) langPicker.hidden = !showLang;
+
+    // Mobile section
+    if (cfg.mobile && typeof cfg.mobile === "object") {
+      const modelImg = langGate.querySelector(".wx-gate-mobile-model");
+      if (modelImg instanceof HTMLImageElement && cfg.mobile.model_image_url) {
+        modelImg.src = String(cfg.mobile.model_image_url).trim();
+      }
+      const outlineWrap = langGate.querySelector(".wx-gate-mobile-outline-word");
+      if (outlineWrap instanceof HTMLElement) {
+        outlineWrap.hidden = cfg.mobile.show_outline_word === false;
+        const scalePct = Number.isFinite(Number(cfg.mobile.outline_scale))
+          ? Math.min(180, Math.max(40, Number(cfg.mobile.outline_scale)))
+          : 100;
+        const posX = Number.isFinite(Number(cfg.mobile.outline_pos_x))
+          ? Math.min(90, Math.max(10, Number(cfg.mobile.outline_pos_x)))
+          : 50;
+        const posY = Number.isFinite(Number(cfg.mobile.outline_pos_y))
+          ? Math.min(92, Math.max(10, Number(cfg.mobile.outline_pos_y)))
+          : 72;
+        outlineWrap.style.setProperty("--wx-outline-scale", String(scalePct / 100));
+        outlineWrap.style.setProperty("--wx-outline-x", `${posX}%`);
+        outlineWrap.style.setProperty("--wx-outline-y", `${posY}%`);
+        const spans = outlineWrap.querySelectorAll("span");
+        if (spans[0] && cfg.mobile.outline_line1 !== undefined) {
+          spans[0].textContent = String(cfg.mobile.outline_line1);
+        }
+        if (spans[1] && cfg.mobile.outline_line2 !== undefined) {
+          spans[1].textContent = String(cfg.mobile.outline_line2);
+        }
+      }
+      const stripesEl = langGate.querySelector(".wx-gate-mobile-bg-stripes");
+      if (stripesEl instanceof HTMLElement) {
+        stripesEl.hidden = cfg.mobile.show_stripes === false;
+      }
+    }
+
+    // Desktop section
+    if (cfg.desktop && typeof cfg.desktop === "object") {
+      if (langGateVideo instanceof HTMLVideoElement) {
+        const nextPoster = String(cfg.desktop.crystal_poster_url || "").trim();
+        if (nextPoster) langGateVideo.poster = nextPoster;
+        const nextVideo = String(cfg.desktop.crystal_video_url || "").trim();
+        if (nextVideo && langGateVideo.getAttribute("src") !== nextVideo) {
+          langGateVideo.setAttribute("src", nextVideo);
+          langGateVideo.load();
+          if (isGateOpen) langGateVideo.play().catch(() => {});
+        }
+      }
+
+      const cards = cfg.desktop.cards;
+      if (cards && typeof cards === "object") {
+        // Card 1: Top-Left
+        const c1El = langGate.querySelector(".wx-gate-float-card--top-left");
+        if (c1El instanceof HTMLElement && cards.card1) {
+          c1El.hidden = cards.card1.visible === false;
+          const nums = c1El.querySelectorAll(".wx-gate-stat-num");
+          const lbls = c1El.querySelectorAll(".wx-gate-stat-lbl");
+          const badges = c1El.querySelectorAll(".wx-gate-badge");
+          const vss = c1El.querySelectorAll(".wx-gate-stat-vs");
+          if (nums[0] && cards.card1.num1) nums[0].textContent = String(cards.card1.num1);
+          if (lbls[0] && pick(cards.card1.label1)) lbls[0].textContent = pick(cards.card1.label1);
+          if (badges[0] && cards.card1.badge1) badges[0].textContent = String(cards.card1.badge1);
+          if (nums[1] && cards.card1.num2) nums[1].textContent = String(cards.card1.num2);
+          if (lbls[1] && pick(cards.card1.label2)) lbls[1].textContent = pick(cards.card1.label2);
+          if (badges[1] && cards.card1.badge2) badges[1].textContent = String(cards.card1.badge2);
+          const vsText = pick(cards.card1.vs_text);
+          if (vsText) vss.forEach((el) => { el.textContent = vsText; });
+        }
+
+        // Card 2: Bottom-Left
+        const c2El = langGate.querySelector(".wx-gate-float-card--bottom-left");
+        if (c2El instanceof HTMLElement && cards.card2) {
+          c2El.hidden = cards.card2.visible === false;
+          const lbl = c2El.querySelector(".wx-gate-goal-label");
+          const val = c2El.querySelector(".wx-gate-goal-val");
+          const bdg = c2El.querySelector(".wx-gate-badge");
+          if (lbl && pick(cards.card2.label)) lbl.textContent = pick(cards.card2.label);
+          if (val && cards.card2.value) val.textContent = String(cards.card2.value);
+          if (bdg && cards.card2.badge) bdg.textContent = String(cards.card2.badge);
+        }
+
+        // Card 3: Top-Right
+        const c3El = langGate.querySelector(".wx-gate-float-card--top-right");
+        if (c3El instanceof HTMLElement && cards.card3) {
+          c3El.hidden = cards.card3.visible === false;
+          const pill = c3El.querySelector(".wx-gate-chart-pill");
+          if (pill && pick(cards.card3.pill)) pill.textContent = pick(cards.card3.pill);
+          const barEls = c3El.querySelectorAll(".wx-gate-bar");
+          if (Array.isArray(cards.card3.bars)) {
+            cards.card3.bars.forEach((b, idx) => {
+              const barEl = barEls[idx];
+              if (!barEl || !b) return;
+              const pctEl = barEl.querySelector(".wx-gate-bar__pct");
+              const numEl = barEl.querySelector(".wx-gate-bar__num");
+              if (pctEl && b.pct) pctEl.textContent = String(b.pct);
+              if (numEl && b.num) numEl.textContent = String(b.num);
+            });
+          }
+        }
+
+        // Card 4: Bottom-Right
+        const c4El = langGate.querySelector(".wx-gate-float-card--bottom-right");
+        if (c4El instanceof HTMLElement && cards.card4) {
+          c4El.hidden = cards.card4.visible === false;
+          const title = c4El.querySelector(".wx-gate-growth-title");
+          const val = c4El.querySelector(".wx-gate-growth-val");
+          const sub = c4El.querySelector(".wx-gate-growth-sub");
+          if (title && pick(cards.card4.title)) title.textContent = pick(cards.card4.title);
+          if (val && cards.card4.value) val.textContent = String(cards.card4.value);
+          if (sub && pick(cards.card4.sub)) sub.textContent = pick(cards.card4.sub);
+        }
+      }
+    }
+  }
+
   const INITIAL_BUFFER_TARGET = useMobilePortraitSequence
     ? Math.min(10, totalFrames)
     : Math.min(8, totalFrames);
@@ -1317,22 +1513,20 @@
     if (langGateLanguageLabel instanceof HTMLElement && selectedButton instanceof HTMLElement) {
       langGateLanguageLabel.textContent = selectedButton.textContent.trim();
     }
+    if (chosenLang) {
+      selectedGateLang = chosenLang;
+    }
   }
 
-  function handleGateLanguageSelection(chosenLang, btnEl) {
-    if (!chosenLang) return;
-    updateLanguagePickerSelection(chosenLang, btnEl);
-    setLanguageMenuOpen(false);
-    window.NoursStore?.setLanguage?.(chosenLang);
-    applyCustomHeroConfig();
-
+  function launchFromGate(chosenLang) {
+    const langToUse = chosenLang || selectedGateLang || window.NoursStore?.getLanguage?.() || "en";
     const ratio = getInitialBufferRatio();
     if (ratio >= 0.65) {
-      finalizeGateAndLaunch(chosenLang);
+      finalizeGateAndLaunch(langToUse);
       return;
     }
 
-    gatePendingLang = chosenLang;
+    gatePendingLang = langToUse;
     if (langGateStatus instanceof HTMLElement) {
       langGateStatus.textContent = "One moment... preparing your cinematic experience.";
     }
@@ -1344,6 +1538,15 @@
         finalizeGateAndLaunch(lang);
       }
     }, 1800);
+  }
+
+  function handleGateLanguageSelection(chosenLang, btnEl) {
+    if (!chosenLang) return;
+    updateLanguagePickerSelection(chosenLang, btnEl);
+    setLanguageMenuOpen(false);
+    window.NoursStore?.setLanguage?.(chosenLang);
+    applyCustomHeroConfig();
+    applyCustomHelloPageConfig();
   }
 
   function setLanguageMenuOpen(open, restoreFocus = false) {
@@ -1389,13 +1592,21 @@
     setCurrencyMenuOpen(false);
   }
 
-  const devGateBtn = document.querySelector("[data-wx-open-gate-dev]");
+  const devGateButtons = Array.from(document.querySelectorAll("[data-wx-open-gate-dev]"));
+  const defaultGateSubtitleHtml =
+    langGateStatus instanceof HTMLElement ? langGateStatus.innerHTML : "";
 
   function openLanguageGateForPreview() {
     if (!(langGate instanceof HTMLElement)) return;
     try {
       localStorage.removeItem(FIRST_VISIT_COMPLETED_KEY);
+      sessionStorage.removeItem(HERO_SEEN_SESSION_KEY);
     } catch (_) {}
+
+    if (gateSafetyTimer) {
+      window.clearTimeout(gateSafetyTimer);
+      gateSafetyTimer = null;
+    }
 
     gatePendingLang = null;
     isGateOpen = true;
@@ -1409,13 +1620,28 @@
     introDismissedByScroll = false;
     introBlend = 1;
 
+    if (!introVideo.paused) {
+      introVideo.pause();
+    }
     if (!ambientVideo.paused) {
       ambientVideo.pause();
     }
     window.scrollTo({ top: 0, behavior: "instant" });
 
+    setLanguageMenuOpen(false);
+    setCurrencyMenuOpen(false);
+    if (langGateSlider instanceof HTMLElement) {
+      langGateSlider.classList.remove("is-dragging");
+      langGateSlider.style.setProperty("--wx-slide-x", "0px");
+    }
+    if (langGateStatus instanceof HTMLElement && defaultGateSubtitleHtml) {
+      langGateStatus.innerHTML = defaultGateSubtitleHtml;
+    }
+
     const activeLang = window.NoursStore?.getLanguage?.() || "en";
     updateLanguagePickerSelection(activeLang);
+    updateCurrencyPickerSelection(window.NoursStore?.getCurrency?.() || "USD");
+    applyCustomHelloPageConfig();
 
     langGate.classList.remove("is-closing");
     langGate.hidden = false;
@@ -1438,9 +1664,11 @@
     redrawRequested = true;
   }
 
-  if (devGateBtn instanceof HTMLElement) {
-    devGateBtn.addEventListener("click", () => {
-      openLanguageGateForPreview();
+  if (devGateButtons.length > 0) {
+    devGateButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        openLanguageGateForPreview();
+      });
     });
   }
 
@@ -1475,6 +1703,87 @@
     });
   }
 
+  if (langGateDesktopStart instanceof HTMLButtonElement) {
+    langGateDesktopStart.addEventListener("click", () => {
+      setLanguageMenuOpen(false);
+      setCurrencyMenuOpen(false);
+      launchFromGate(selectedGateLang);
+    });
+  }
+
+  if (langGateSlider instanceof HTMLElement && langGateThumb instanceof HTMLElement) {
+    let isDraggingSlide = false;
+    let slideStartX = 0;
+    let currentSlideX = 0;
+    let maxSlideX = 0;
+
+    const resetSlideThumb = () => {
+      isDraggingSlide = false;
+      currentSlideX = 0;
+      langGateSlider.classList.remove("is-dragging");
+      langGateSlider.style.setProperty("--wx-slide-x", "0px");
+    };
+
+    const completeSlideLaunch = () => {
+      isDraggingSlide = false;
+      langGateSlider.classList.remove("is-dragging");
+      const endX = Math.max(0, langGateSlider.clientWidth - langGateThumb.offsetWidth - 12);
+      langGateSlider.style.setProperty("--wx-slide-x", `${endX}px`);
+      setLanguageMenuOpen(false);
+      setCurrencyMenuOpen(false);
+      window.setTimeout(() => {
+        launchFromGate(selectedGateLang);
+        window.setTimeout(resetSlideThumb, 650);
+      }, 150);
+    };
+
+    langGateSlider.addEventListener("pointerdown", (event) => {
+      if (event.button !== undefined && event.button !== 0) return;
+      isDraggingSlide = true;
+      slideStartX = event.clientX - currentSlideX;
+      maxSlideX = Math.max(1, langGateSlider.clientWidth - langGateThumb.offsetWidth - 12);
+      langGateSlider.classList.add("is-dragging");
+      try {
+        langGateSlider.setPointerCapture(event.pointerId);
+      } catch (_) {}
+    });
+
+    langGateSlider.addEventListener("pointermove", (event) => {
+      if (!isDraggingSlide) return;
+      const deltaX = event.clientX - slideStartX;
+      currentSlideX = Math.min(maxSlideX, Math.max(0, deltaX));
+      langGateSlider.style.setProperty("--wx-slide-x", `${currentSlideX}px`);
+    });
+
+    const finishPointerDrag = (event) => {
+      if (!isDraggingSlide) return;
+      try {
+        if (event?.pointerId !== undefined) {
+          langGateSlider.releasePointerCapture(event.pointerId);
+        }
+      } catch (_) {}
+
+      if (maxSlideX > 0 && currentSlideX >= maxSlideX * 0.55) {
+        completeSlideLaunch();
+      } else if (Math.abs(currentSlideX) < 6) {
+        // Also support quick tap on the track/thumb to animate & launch smoothly
+        completeSlideLaunch();
+      } else {
+        resetSlideThumb();
+      }
+    };
+
+    langGateSlider.addEventListener("pointerup", finishPointerDrag);
+    langGateSlider.addEventListener("pointercancel", resetSlideThumb);
+
+    langGateSlider.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        completeSlideLaunch();
+      }
+    });
+  }
+
   document.addEventListener("click", (event) => {
     if (
       langGateLanguageMenu instanceof HTMLElement &&
@@ -1504,13 +1813,18 @@
   });
 
   window.addEventListener("ruqo:home-lunae-hero-updated", applyCustomHeroConfig);
-  window.addEventListener("ruqo:language-updated", applyCustomHeroConfig);
+  window.addEventListener("ruqo:home-hello-page-updated", applyCustomHelloPageConfig);
+  window.addEventListener("ruqo:language-updated", () => {
+    applyCustomHeroConfig();
+    applyCustomHelloPageConfig();
+  });
   window.addEventListener("ruqo:currency-updated", (event) => {
     updateCurrencyPickerSelection(event.detail?.currency || window.NoursStore?.getCurrency?.() || "USD");
   });
 
   resizeCanvas();
   applyCustomHeroConfig();
+  applyCustomHelloPageConfig();
   updateCurrencyPickerSelection(window.NoursStore?.getCurrency?.() || "USD");
 
   if (shouldSkipIntroOnLoad) {
@@ -1539,9 +1853,17 @@
         drawFrame(totalFrames - 1);
       })
       .catch(() => {});
-  } else if (isFirstEverVisit && langGate instanceof HTMLElement) {
+  } else if (shouldOpenHelloGateOnLoad && langGate instanceof HTMLElement) {
     isGateOpen = true;
     langGate.hidden = false;
+    const helloCfg = readCustomHelloPageData();
+    const initialLang = helloCfg?.default_language || window.NoursStore?.getLanguage?.() || "en";
+    if (helloCfg?.default_currency && ["USD", "EUR", "SAR"].includes(helloCfg.default_currency) && isFirstEverVisit) {
+      window.NoursStore?.setCurrency?.(helloCfg.default_currency);
+      updateCurrencyPickerSelection(helloCfg.default_currency);
+    }
+    updateLanguagePickerSelection(initialLang);
+    applyCustomHelloPageConfig();
     document.body.classList.add("is-wx-gate-open", "is-intro-locked", "is-lunae-header-hidden");
     sequence.classList.add("is-hero-locked");
     ensureIntroAssetsLoaded();

@@ -25,9 +25,10 @@
     window.addEventListener("load", guardLucide, { once: true });
   }
   const supportedLanguages = ["en", "fr", "es", "zh", "ar"];
-  const isLocalDevelopment = ["localhost", "127.0.0.1", "::1"].includes(
-    window.location.hostname,
-  );
+  const isLocalDevelopment =
+    ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname) ||
+    /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(window.location.hostname) ||
+    window.location.hostname.endsWith(".local");
   document.documentElement.classList.toggle(
     "is-local-development",
     isLocalDevelopment,

@@ -551,6 +551,7 @@
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("orders");
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("messages");
     if (currentRoles.some((role) => ["owner", "admin", "marketing_manager"].includes(role))) {
+      allowedViews.add("hello-page");
       allowedViews.add("hero");
       allowedViews.add("big-3-cards");
       allowedViews.add("promotions");
@@ -585,6 +586,7 @@
       categories: "Categories",
       orders: "Orders",
       messages: "Messages",
+      "hello-page": "hello page",
       hero: "HERO",
       "big-3-cards": "BIG 3 CARDS",
       promotions: "Offers",
@@ -957,8 +959,9 @@
     renderNewsletterSubscribers();
     renderAudienceProductReviews();
     $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
-      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"]'))
+      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"], [data-admin-panel="hello-page"]'))
       .forEach((element) => { element.disabled = true; });
+    window.RUQO_INIT_HELLO_PAGE_EDITOR?.(null);
     window.RUQO_INIT_HERO_EDITOR?.(null);
     window.lucide?.createIcons();
   }
@@ -5758,6 +5761,7 @@
     window.RUQO_INIT_PROMO_BANNER_SETTINGS(client);
     window.RUQO_INIT_FEATURES_EDITOR?.(client);
     window.RUQO_INIT_REVIEWS_EDITOR?.(client);
+    window.RUQO_INIT_HELLO_PAGE_EDITOR?.(client);
     window.RUQO_INIT_HERO_EDITOR?.(client);
     window.RUQO_INIT_BIG_3_CARDS_EDITOR?.(client);
     bindEvents();

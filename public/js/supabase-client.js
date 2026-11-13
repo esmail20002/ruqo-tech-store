@@ -516,6 +516,38 @@
       window.dispatchEvent(new CustomEvent("ruqo:home-lunae-hero-updated", { detail: window.RUQO_HOME_LUNAE_HERO }));
       return window.RUQO_HOME_LUNAE_HERO;
     });
+  const readLocalHelloPageSection = () => {
+    try {
+      const raw = localStorage.getItem("ruqo-home-hello-page-v1") || localStorage.getItem("ruqo-home-hello-page-cache-v1");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.keys(parsed).length ? parsed : null;
+    } catch (_) {}
+    return null;
+  };
+  window.RUQO_HOME_HELLO_PAGE_READY = client
+    .from("homepage_sections")
+    .select("data")
+    .eq("key", "hello_page")
+    .maybeSingle()
+    .then(({ data, error }) => {
+      if (error) throw error;
+      const row = data?.data;
+      const next = row && typeof row === "object" && !Array.isArray(row) && Object.keys(row).length
+        ? row
+        : readLocalHelloPageSection();
+      const changed = JSON.stringify(window.RUQO_HOME_HELLO_PAGE || null) !== JSON.stringify(next || null);
+      window.RUQO_HOME_HELLO_PAGE = next || null;
+      writeCache("ruqo-home-hello-page-cache-v1", window.RUQO_HOME_HELLO_PAGE);
+      if (changed) window.dispatchEvent(new CustomEvent("ruqo:home-hello-page-updated", { detail: window.RUQO_HOME_HELLO_PAGE }));
+      return window.RUQO_HOME_HELLO_PAGE;
+    })
+    .catch((error) => {
+      console.warn("Could not load the homepage Hello Page section; using built-in content.", error?.message);
+      if (window.RUQO_HOME_HELLO_PAGE === undefined) window.RUQO_HOME_HELLO_PAGE = readLocalHelloPageSection();
+      window.dispatchEvent(new CustomEvent("ruqo:home-hello-page-updated", { detail: window.RUQO_HOME_HELLO_PAGE }));
+      return window.RUQO_HOME_HELLO_PAGE;
+    });
   window.RUQO_SUPABASE_READY = window.NoursData?.loadFromSupabase(client)
     .then((loaded) => {
       return Boolean(loaded);

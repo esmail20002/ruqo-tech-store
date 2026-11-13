@@ -15,7 +15,16 @@
           var root = document.documentElement;
           root.dataset.theme = theme;
           var onboarded = localStorage.getItem("weexey-first-visit-completed-v1") === "1";
-          if (!onboarded) {
+          var helloRaw = localStorage.getItem("ruqo-home-hello-page-cache-v1") || localStorage.getItem("ruqo-home-hello-page-v1");
+          var helloMode = "first_visit";
+          if (helloRaw) {
+            try {
+              var helloParsed = JSON.parse(helloRaw);
+              if (helloParsed && helloParsed.enabled === false) helloMode = "disabled";
+              else if (helloParsed && (helloParsed.display_mode === "always" || helloParsed.display_mode === "disabled")) helloMode = helloParsed.display_mode;
+            } catch (_) {}
+          }
+          if (helloMode === "always" || (helloMode === "first_visit" && !onboarded)) {
             root.classList.add("is-wx-gate-pending");
           }
           root.classList.add("is-wx-preparing");
@@ -40,7 +49,7 @@
     <link rel="stylesheet" href="/css/styles.css?v=21" />
     <link rel="stylesheet" href="/css/premium-experience.css?v=40" />
     <link rel="stylesheet" href="/css/store-motion.css?v=13" />
-    <link rel="stylesheet" href="/css/experiments-lunae.css?v=41" />
+    <link rel="stylesheet" href="/css/experiments-lunae.css?v=49" />
   </head>
   <body data-page="home">
     <!-- First-Visit Full-Page White Editorial Language & Experience Gate -->
@@ -61,10 +70,29 @@
 
       </header>
 
+      <!-- Mobile Fashion/Tech Model Stage -->
+      <div class="wx-gate-mobile-stage" aria-hidden="true">
+        <div class="wx-gate-mobile-bg-stripes"></div>
+        <img
+          class="wx-gate-mobile-model"
+          src="https://images.unsplash.com/photo-1625786682948-2168238883d2?auto=format&fit=crop&w=900&q=85"
+          alt=""
+          loading="eager"
+        />
+        <div class="wx-gate-mobile-outline-word">
+          <span>WEE</span>
+          <span>XEY</span>
+        </div>
+      </div>
+
       <!-- Hero Center Copy & Two Pill Buttons -->
       <div class="wx-gate-hero">
+        <div class="wx-gate-mobile-logo">
+          <img src="/images/new/li.png" alt="WEEXEY" />
+        </div>
+
         <h1 id="wx-lang-gate-title" class="wx-gate-title">
-          Intelligent technology for<br />modern flagship<br />experiences
+          Intelligent technology for <br />modern flagship <br />experiences
         </h1>
         <p class="wx-gate-subtitle" data-wx-gate-status>
           WEEXEY curates flagship performance, precision optics, and neural audio.<br />
@@ -82,8 +110,15 @@
               aria-haspopup="true"
               aria-controls="wx-gate-currency-menu"
             >
-              <span data-wx-gate-currency-label>Select currency</span>
-              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <span class="wx-gate-trigger-lead">
+                <svg class="wx-gate-trigger-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M14.8 9A2.6 2.6 0 0 0 12 7.5c-1.6 0-2.8.8-2.8 2.1 0 2.7 5.6 1.6 5.6 4.6 0 1.4-1.2 2.3-2.8 2.3-1.3 0-2.4-.6-2.9-1.6"></path>
+                  <path d="M12 6v12"></path>
+                </svg>
+                <span data-wx-gate-currency-label>USD</span>
+              </span>
+              <svg class="wx-gate-trigger-chevron" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m6 9 6 6 6-6"></path>
               </svg>
             </button>
@@ -103,8 +138,15 @@
               aria-haspopup="true"
               aria-controls="wx-gate-language-menu"
             >
-              <span data-wx-gate-language-label>Select language</span>
-              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <span class="wx-gate-trigger-lead">
+                <svg class="wx-gate-trigger-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M2 12h20"></path>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                <span data-wx-gate-language-label>English</span>
+              </span>
+              <svg class="wx-gate-trigger-chevron" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m6 9 6 6 6-6"></path>
               </svg>
             </button>
@@ -115,6 +157,38 @@
               <button type="button" data-wx-gate-lang="zh" aria-pressed="false">Chinese</button>
               <button type="button" data-wx-gate-lang="ar" aria-pressed="false">Arabic</button>
             </div>
+          </div>
+
+          <button
+            type="button"
+            class="wx-gate-desktop-start"
+            data-wx-gate-desktop-start
+          >
+            <span data-wx-gate-desktop-start-label>Get Started</span>
+            <span class="wx-gate-desktop-start__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <!-- Draggable Slide-to-Start Pill Button -->
+        <div
+          class="wx-gate-slide-track"
+          data-wx-gate-slider
+          role="button"
+          tabindex="0"
+          aria-label="Slide or tap to get started"
+        >
+          <div class="wx-gate-slide-thumb" data-wx-gate-thumb>
+            <span>Get Started</span>
+          </div>
+          <div class="wx-gate-slide-chevrons" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
           </div>
         </div>
       </div>
@@ -281,14 +355,15 @@
                       type="button"
                       class="wx-btn-video wx-btn-dev-gate"
                       data-wx-open-gate-dev
-                      title="معاينة شاشة اختيار اللغة (محلي فقط)"
-                      aria-label="Preview language welcome gate (local dev only)"
+                      title="العودة إلى صفحة البداية"
+                      aria-label="العودة إلى صفحة البداية"
                     >
                       <span class="wx-btn-video__circle" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M2 12h20"></path>
-                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="5" y="2" width="14" height="20" rx="3"></rect>
+                          <path d="M12 18h.01"></path>
+                          <path d="m10 9-2 2 2 2"></path>
+                          <path d="M8 11h6a2 2 0 0 1 2 2v1"></path>
                         </svg>
                       </span>
                     </button>
@@ -1182,7 +1257,7 @@
       </footer>
     </div>
 
-    <script src="/js/store.js?v=11"></script>
+    <script src="/js/store.js?v=12"></script>
     <script src="/js/catalog-data.js?v=3"></script>
     <script src="/js/high-refresh-core.js?v=3"></script>
     <script src="/js/high-refresh.js?v=5"></script>
@@ -1190,12 +1265,12 @@
     <script src="/js/features-section.js?v=1"></script>
     <script src="/js/reviews-section.js?v=1"></script>
     <script src="/js/main.js?v=18"></script>
-    <script src="/js/experiments-lunae.js?v=45"></script>
+    <script src="/js/experiments-lunae.js?v=52"></script>
     <script src="/js/store-motion.js?v=12"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/js/supabase-config.js"></script>
-    <script defer src="/js/supabase-client.js?v=13"></script>
+    <script defer src="/js/supabase-client.js?v=14"></script>
     <script defer src="/js/home-big-3-cards.js?v=1"></script>
   </body>
 </html>
