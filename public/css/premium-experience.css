@@ -1257,6 +1257,18 @@ html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) {
     linear-gradient(180deg, #0d0a12 0%, #15101a 46%, #0b0a0f 100%);
 }
 
+html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) .section-link {
+  border-color: rgba(195, 154, 244, 0.3);
+  background: rgba(48, 36, 60, 0.82);
+  color: #e6d2ff;
+}
+
+html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) .section-link:hover {
+  border-color: rgba(195, 154, 244, 0.55);
+  background: rgba(70, 50, 88, 0.96);
+  color: #ffffff;
+}
+
 html[data-theme="dark"] body:is([data-page="experiments"], [data-page="home"]) .topbar {
   background: linear-gradient(100deg, #1a1023 0%, #39204d 52%, #4c1f3d 100%);
 }

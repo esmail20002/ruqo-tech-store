@@ -14,6 +14,10 @@
           var theme = saved === "dark" || saved === '"dark"' ? "dark" : "light";
           var root = document.documentElement;
           root.dataset.theme = theme;
+          var onboarded = localStorage.getItem("weexey-first-visit-completed-v1") === "1";
+          if (!onboarded) {
+            root.classList.add("is-wx-gate-pending");
+          }
           root.classList.add("is-wx-preparing");
           setTimeout(function () { root.classList.remove("is-wx-preparing"); root.classList.add("is-wx-ready"); }, 450);
         } catch (_) {}
@@ -36,9 +40,173 @@
     <link rel="stylesheet" href="/css/styles.css?v=21" />
     <link rel="stylesheet" href="/css/premium-experience.css?v=40" />
     <link rel="stylesheet" href="/css/store-motion.css?v=13" />
-    <link rel="stylesheet" href="/css/experiments-lunae.css?v=27" />
+    <link rel="stylesheet" href="/css/experiments-lunae.css?v=41" />
   </head>
   <body data-page="home">
+    <!-- First-Visit Full-Page White Editorial Language & Experience Gate -->
+    <div
+      class="wx-lang-gate"
+      data-wx-lang-gate
+      dir="ltr"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="wx-lang-gate-title"
+      hidden
+    >
+      <!-- Minimal Top Navigation Bar -->
+      <header class="wx-gate-topbar">
+        <div class="wx-gate-brand">
+          <img class="wx-gate-brand__logo" src="/images/new/li.png" alt="WEEXEY" />
+        </div>
+
+      </header>
+
+      <!-- Hero Center Copy & Two Pill Buttons -->
+      <div class="wx-gate-hero">
+        <h1 id="wx-lang-gate-title" class="wx-gate-title">
+          Intelligent technology for<br />modern flagship<br />experiences
+        </h1>
+        <p class="wx-gate-subtitle" data-wx-gate-status>
+          WEEXEY curates flagship performance, precision optics, and neural audio.<br />
+          Choose your language to begin a seamless cinematic experience.
+        </p>
+
+        <div class="wx-gate-cta-row">
+          <div class="wx-gate-picker wx-gate-currency-picker">
+            <button
+              type="button"
+              class="wx-gate-currency-trigger"
+              data-wx-gate-currency-trigger
+              aria-label="Select currency"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls="wx-gate-currency-menu"
+            >
+              <span data-wx-gate-currency-label>Select currency</span>
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+            <div class="wx-gate-currency-menu" id="wx-gate-currency-menu" data-wx-gate-currency-menu hidden>
+              <button type="button" data-wx-gate-currency="USD" aria-pressed="false">USD — US Dollar</button>
+              <button type="button" data-wx-gate-currency="EUR" aria-pressed="false">EUR — Euro</button>
+              <button type="button" data-wx-gate-currency="SAR" aria-pressed="false">SAR — Saudi Riyal</button>
+            </div>
+          </div>
+
+          <div class="wx-gate-picker wx-gate-language-picker">
+            <button
+              type="button"
+              class="wx-gate-language-trigger"
+              data-wx-gate-language-trigger
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls="wx-gate-language-menu"
+            >
+              <span data-wx-gate-language-label>Select language</span>
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+            <div class="wx-gate-language-menu" id="wx-gate-language-menu" data-wx-gate-language-menu hidden>
+              <button type="button" data-wx-gate-lang="en" aria-pressed="false">English</button>
+              <button type="button" data-wx-gate-lang="fr" aria-pressed="false">French</button>
+              <button type="button" data-wx-gate-lang="es" aria-pressed="false">Spanish</button>
+              <button type="button" data-wx-gate-lang="zh" aria-pressed="false">Chinese</button>
+              <button type="button" data-wx-gate-lang="ar" aria-pressed="false">Arabic</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Visual Stage: 4 Floating Tilted Cards + 3D Purple/Silver/Pink Crystal Sculpture -->
+      <div class="wx-gate-stage" aria-hidden="true">
+        <!-- Card 1: Top-Left Tilted Performance Card -->
+        <div class="wx-gate-float-card wx-gate-float-card--top-left">
+          <div class="wx-gate-stat-row">
+            <div class="wx-gate-stat-col">
+              <strong class="wx-gate-stat-num">$13,592.00</strong>
+              <span class="wx-gate-stat-lbl">Flagship Index</span>
+            </div>
+            <div class="wx-gate-stat-col wx-gate-stat-col--end">
+              <span class="wx-gate-badge wx-gate-badge--red">▼ 14.4%</span>
+              <span class="wx-gate-stat-vs">vs prev. period</span>
+            </div>
+          </div>
+          <div class="wx-gate-stat-divider"></div>
+          <div class="wx-gate-stat-row">
+            <div class="wx-gate-stat-col">
+              <strong class="wx-gate-stat-num">$12,167.00</strong>
+              <span class="wx-gate-stat-lbl">Smart Devices</span>
+            </div>
+            <div class="wx-gate-stat-col wx-gate-stat-col--end">
+              <span class="wx-gate-badge wx-gate-badge--green">▲ 8.3%</span>
+              <span class="wx-gate-stat-vs">vs prev. period</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Bottom-Left Tilted Goal Card -->
+        <div class="wx-gate-float-card wx-gate-float-card--bottom-left">
+          <span class="wx-gate-goal-label">Goal</span>
+          <div class="wx-gate-goal-track">
+            <span class="wx-gate-goal-fill" data-wx-gate-bar></span>
+          </div>
+          <div class="wx-gate-goal-bottom">
+            <strong class="wx-gate-goal-val">56K</strong>
+            <span class="wx-gate-badge wx-gate-badge--red">▼ 14.6%</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Top-Right Bar Chart Card -->
+        <div class="wx-gate-float-card wx-gate-float-card--top-right">
+          <span class="wx-gate-chart-pill">Flagship speed</span>
+          <div class="wx-gate-bars">
+            <div class="wx-gate-bar wx-gate-bar--primary">
+              <span class="wx-gate-bar__pct">42%</span>
+              <span class="wx-gate-bar__num">242,925</span>
+            </div>
+            <div class="wx-gate-bar wx-gate-bar--two">
+              <span class="wx-gate-bar__pct">24%</span>
+              <span class="wx-gate-bar__line"></span>
+              <span class="wx-gate-bar__num">90,188</span>
+            </div>
+            <div class="wx-gate-bar wx-gate-bar--three">
+              <span class="wx-gate-bar__pct">20%</span>
+              <span class="wx-gate-bar__line"></span>
+              <span class="wx-gate-bar__num">64,193</span>
+            </div>
+            <div class="wx-gate-bar wx-gate-bar--four">
+              <span class="wx-gate-bar__pct">14%</span>
+              <span class="wx-gate-bar__line"></span>
+              <span class="wx-gate-bar__num">48,210</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Bottom-Right Tilted Growth Card -->
+        <div class="wx-gate-float-card wx-gate-float-card--bottom-right">
+          <span class="wx-gate-growth-title">Customer rating</span>
+          <strong class="wx-gate-growth-val">$24,345.00</strong>
+          <span class="wx-gate-growth-sub">Verified analytics</span>
+        </div>
+
+        <!-- Centerpiece 3D Purple/Chrome/Rose Crystal Video Sculpture (cropped to bottom-center like reference) -->
+        <div class="wx-gate-crystal-wrap">
+          <video
+            class="wx-gate-crystal-video"
+            data-wx-gate-video
+            src="/images/new/gate-crystal-motion.mp4?v=2"
+            poster="/images/new/gate-crystal.webp?v=3"
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
+        </div>
+      </div>
+    </div>
+
     <div class="page-shell">
       <section
         class="lunae-sequence is-hero-locked"
@@ -105,6 +273,22 @@
                         <svg class="wx-btn-video__icon-replay" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
                           <path d="M3 3v5h5"></path>
+                        </svg>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="wx-btn-video wx-btn-dev-gate"
+                      data-wx-open-gate-dev
+                      title="معاينة شاشة اختيار اللغة (محلي فقط)"
+                      aria-label="Preview language welcome gate (local dev only)"
+                    >
+                      <span class="wx-btn-video__circle" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <path d="M2 12h20"></path>
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                         </svg>
                       </span>
                     </button>
@@ -1006,7 +1190,7 @@
     <script src="/js/features-section.js?v=1"></script>
     <script src="/js/reviews-section.js?v=1"></script>
     <script src="/js/main.js?v=18"></script>
-    <script src="/js/experiments-lunae.js?v=33"></script>
+    <script src="/js/experiments-lunae.js?v=45"></script>
     <script src="/js/store-motion.js?v=12"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" onload="if (window.lucide) lucide.createIcons();"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -81,6 +81,19 @@
   let redrawRequested = true;
 
   const HERO_SEEN_SESSION_KEY = "weexey-hero-intro-seen-v2";
+  const FIRST_VISIT_COMPLETED_KEY = "weexey-first-visit-completed-v1";
+  const langGate = document.querySelector("[data-wx-lang-gate]");
+  const langGateBar = document.querySelector("[data-wx-gate-bar]");
+  const langGateStatus = document.querySelector("[data-wx-gate-status]");
+  const langGateButtons = Array.from(document.querySelectorAll("[data-wx-gate-lang]"));
+  const langGateLanguageTrigger = document.querySelector("[data-wx-gate-language-trigger]");
+  const langGateLanguageMenu = document.querySelector("[data-wx-gate-language-menu]");
+  const langGateLanguageLabel = document.querySelector("[data-wx-gate-language-label]");
+  const langGateCurrencyTrigger = document.querySelector("[data-wx-gate-currency-trigger]");
+  const langGateCurrencyMenu = document.querySelector("[data-wx-gate-currency-menu]");
+  const langGateCurrencyLabel = document.querySelector("[data-wx-gate-currency-label]");
+  const langGateCurrencyButtons = Array.from(document.querySelectorAll("[data-wx-gate-currency]"));
+
   const readCustomHeroData = () => {
     if (window.RUQO_HOME_LUNAE_HERO && typeof window.RUQO_HOME_LUNAE_HERO === "object") {
       return window.RUQO_HOME_LUNAE_HERO;
@@ -99,25 +112,30 @@
     ? initialCustomHero.intro_mode
     : "once_per_session";
 
-  function hasSeenHeroInSession() {
+  function hasCompletedFirstVisit() {
     try {
-      return sessionStorage.getItem(HERO_SEEN_SESSION_KEY) === "1";
+      return localStorage.getItem(FIRST_VISIT_COMPLETED_KEY) === "1";
     } catch (error) {
-      console.warn("Lunae sequence: session storage is unavailable; the hero intro may replay after reload.", error);
       return false;
     }
   }
 
-  const shouldSkipIntroOnLoad =
-    introMode === "skip" ||
-    (introMode === "once_per_session" && hasSeenHeroInSession());
-
-  function markHeroSeenInSession() {
+  function markFirstVisitCompleted() {
     try {
+      localStorage.setItem(FIRST_VISIT_COMPLETED_KEY, "1");
       sessionStorage.setItem(HERO_SEEN_SESSION_KEY, "1");
     } catch (error) {
-      console.warn("Lunae sequence: the hero intro session state could not be saved.", error);
+      console.warn("Lunae sequence: first-visit state could not be saved.", error);
     }
+  }
+
+  const isFirstEverVisit = !hasCompletedFirstVisit();
+  const shouldSkipIntroOnLoad =
+    introMode === "skip" ||
+    (!isFirstEverVisit && introMode !== "always");
+
+  function markHeroSeenInSession() {
+    markFirstVisitCompleted();
   }
 
   // Intro eye-opening video — lazy-loaded only when the intro is scheduled or Replay is triggered.
@@ -128,6 +146,7 @@
   introPoster.onload = () => {
     introPosterReady = true;
     redrawRequested = true;
+    updateGateBufferProgress();
   };
 
   const introVideo = document.createElement("video");
@@ -140,6 +159,10 @@
   introVideo.setAttribute("playsinline", "");
   let introVideoReady = false;
   let isIntroPlaying = false;
+  let isAutoPlayingSequence = false;
+  let autoPlayStartTime = 0;
+  let autoPlayStartFrame = 0;
+  let isGateOpen = false;
   let introVideoEnded = shouldSkipIntroOnLoad;
   let introDismissedByScroll = shouldSkipIntroOnLoad;
   let introBlend = shouldSkipIntroOnLoad ? 0 : 1;
@@ -158,31 +181,49 @@
 
   function setIntroLockState(locked) {
     isIntroPlaying = locked;
-    document.body.classList.toggle("is-intro-locked", locked);
+    document.body.classList.toggle("is-intro-locked", locked || isAutoPlayingSequence || isGateOpen);
     if (introCueText instanceof HTMLElement) {
-      introCueText.textContent = locked
-        ? "AWAKENING WEEXEY VISION..."
-        : "SCROLL TO AWAKEN WEEXEY VISION";
+      introCueText.textContent = "AWAKENING WEEXEY VISION...";
     }
   }
 
-  function startIntroVideoPlayback() {
-    if (useMobilePortraitSequence) {
+  function startAutoPlaySequence(fromFrame = 0) {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      isAutoPlayingSequence = false;
       setIntroLockState(false);
-      introVideoEnded = true;
-      introDismissedByScroll = true;
-      introBlend = 0;
-      redrawRequested = true;
+      lockHeroAtEnd();
       return;
     }
+    isAutoPlayingSequence = true;
+    heroLocked = false;
+    sequence.classList.add("is-hero-locked");
+    autoPlayStartFrame = clamp(fromFrame, 0, totalFrames - 1);
+    currentFrame = autoPlayStartFrame;
+    targetFrame = autoPlayStartFrame;
+    autoPlayStartTime = performance.now();
+    document.body.classList.toggle("is-intro-locked", true);
+    ensureAmbientVideoLoaded();
+    redrawRequested = true;
+  }
 
+  function startIntroVideoPlayback() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) {
       setIntroLockState(false);
       introVideoEnded = true;
       introDismissedByScroll = true;
       introBlend = 0;
-      redrawRequested = true;
+      lockHeroAtEnd();
+      return;
+    }
+
+    if (useMobilePortraitSequence) {
+      setIntroLockState(false);
+      introVideoEnded = true;
+      introDismissedByScroll = true;
+      introBlend = 0;
+      startAutoPlaySequence(0);
       return;
     }
 
@@ -190,6 +231,7 @@
     ensureIntroAssetsLoaded();
     introVideoEnded = false;
     introDismissedByScroll = false;
+    isAutoPlayingSequence = false;
     introBlend = 1;
     setIntroLockState(true);
     introVideo.currentTime = 0;
@@ -198,6 +240,9 @@
       playPromise.catch(() => {
         setIntroLockState(false);
         introVideoEnded = true;
+        introDismissedByScroll = true;
+        introBlend = 0;
+        startAutoPlaySequence(0);
       });
     }
     redrawRequested = true;
@@ -206,33 +251,40 @@
   introVideo.addEventListener("loadeddata", () => {
     introVideoReady = true;
     redrawRequested = true;
+    updateGateBufferProgress();
   });
 
   introVideo.addEventListener("ended", () => {
     introVideoEnded = true;
-    markHeroSeenInSession();
     setIntroLockState(false);
+    startAutoPlaySequence(0);
     redrawRequested = true;
   });
 
-  // Ambient hair & wind loop video that takes over seamlessly at the end of the scroll
+  // Ambient hair & wind loop video that takes over seamlessly at the end of the sequence
   const ambientVideo = document.createElement("video");
-  if (!useMobilePortraitSequence) {
-    ambientVideo.src = "/images/lunae-sequence/lunae-ambient-hair.mp4";
-  }
   ambientVideo.muted = true;
   ambientVideo.defaultMuted = true;
   ambientVideo.loop = true;
   ambientVideo.playsInline = true;
-  ambientVideo.preload = useMobilePortraitSequence ? "none" : "auto";
+  ambientVideo.preload = "none";
   ambientVideo.setAttribute("muted", "");
   ambientVideo.setAttribute("playsinline", "");
+  let ambientVideoInitialized = false;
   let ambientVideoReady = false;
   let ambientBlend = 0;
   let heroLocked = false;
   let isRewinding = false;
   let rewindStartTime = 0;
   let rewindStartFrame = 0;
+
+  function ensureAmbientVideoLoaded() {
+    if (ambientVideoInitialized || useMobilePortraitSequence) return;
+    ambientVideoInitialized = true;
+    ambientVideo.preload = "auto";
+    ambientVideo.src = "/images/lunae-sequence/lunae-ambient-hair.mp4";
+    ambientVideo.load();
+  }
 
   ambientVideo.addEventListener("loadeddata", () => {
     ambientVideoReady = true;
@@ -278,6 +330,7 @@
     if (image.complete && image.naturalWidth > 0) {
       images[index] = image;
       redrawRequested = true;
+      updateGateBufferProgress();
       return Promise.resolve(image);
     }
 
@@ -286,6 +339,7 @@
         images[index] = image;
         pendingLoads[index] = null;
         redrawRequested = true;
+        updateGateBufferProgress();
         resolve(image);
       };
       image.onerror = () => {
@@ -385,36 +439,11 @@
     context.imageSmoothingQuality = isLowPowerMobile ? "medium" : "high";
 
     if (image) {
-      const coverScale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
-      const containScale = Math.min(width / image.naturalWidth, height / image.naturalHeight);
-
-      if (!useMobilePortraitSequence) {
-        // 1. Draw an atmospheric edge-matched backdrop (cover + soft blur) on wide desktop frames
-        const bgWidth = width / coverScale;
-        const bgHeight = height / coverScale;
-        const bgX = (image.naturalWidth - bgWidth) / 2;
-        const bgY = (image.naturalHeight - bgHeight) / 2;
-
-        context.save();
-        context.filter = "blur(26px) saturate(1.08)";
-        context.drawImage(
-          image,
-          bgX,
-          bgY,
-          bgWidth,
-          bgHeight,
-          -32,
-          -32,
-          width + 64,
-          height + 64,
-        );
-        context.restore();
-      }
-
-      // 2. Blend framing between cover and contain on wide desktop frames; keep full 9:16 portrait cover on mobile
-      const pullBackReveal = smoothstep(0.18, 0.72, index / Math.max(1, totalFrames - 1));
-      const zoomReduction = useMobilePortraitSequence ? 0 : 0.45 * pullBackReveal;
-      const effectiveScale = coverScale * (1 - zoomReduction) + containScale * zoomReduction;
+      const safeHeightRatio = useMobilePortraitSequence ? 1 : 1202 / 1280;
+      const effectiveScale = Math.max(
+        width / image.naturalWidth,
+        height / (image.naturalHeight * safeHeightRatio),
+      );
 
       const drawWidth = image.naturalWidth * effectiveScale;
       const drawHeight = image.naturalHeight * effectiveScale;
@@ -684,18 +713,26 @@
   function lockHeroAtEnd() {
     if (heroLocked || isRewinding) return;
     heroLocked = true;
+    isAutoPlayingSequence = false;
+    isIntroPlaying = false;
+    sequence.classList.add("is-hero-locked");
+    document.body.classList.remove("is-intro-locked");
+    document.body.classList.remove("is-lunae-header-hidden");
     markHeroSeenInSession();
+    ensureAmbientVideoLoaded();
     targetFrame = totalFrames - 1;
     currentFrame = totalFrames - 1;
     redrawRequested = true;
   }
 
   function startWatchFilmRewind() {
-    if (isRewinding) return;
+    if (isRewinding || isGateOpen) return;
     ensureIntroAssetsLoaded();
+    ensureAmbientVideoLoaded();
     isRewinding = true;
+    isAutoPlayingSequence = false;
     heroLocked = false;
-    sequence.classList.remove("is-hero-locked");
+    sequence.classList.add("is-hero-locked");
     document.body.classList.add("is-intro-locked");
     if (introCueText instanceof HTMLElement) {
       introCueText.textContent = "REWINDING WEEXEY VISION...";
@@ -720,7 +757,7 @@
   }
 
   function updateTargetFromScroll() {
-    if (isRewinding) return;
+    if (isRewinding || isAutoPlayingSequence || isGateOpen) return;
     if (isIntroPlaying) {
       if (window.scrollY > 0) {
         window.scrollTo({ top: 0, behavior: "instant" });
@@ -731,26 +768,6 @@
     if (heroLocked) {
       targetFrame = totalFrames - 1;
       return;
-    }
-
-    const sectionBounds = sequence.getBoundingClientRect();
-    const travelDistance = Math.max(1, sequence.offsetHeight - stage.offsetHeight);
-    const progress = clamp(-sectionBounds.top / travelDistance, 0, 1);
-    targetFrame = progress * (totalFrames - 1);
-
-    if (progress >= 0.965) {
-      lockHeroAtEnd();
-      return;
-    }
-
-    const requestedFrame = Math.round(targetFrame);
-    loadFrame(requestedFrame).catch(() => {});
-    if (useMobilePortraitSequence) {
-      const lookBehind = isLowPowerMobile ? 1 : 3;
-      const lookAhead = isLowPowerMobile ? 2 : 4;
-      for (let offset = -lookBehind; offset <= lookAhead; offset += 1) {
-        if (offset !== 0) loadFrame(requestedFrame + offset).catch(() => {});
-      }
     }
   }
 
@@ -765,7 +782,7 @@
     }
 
     // Pause heavy canvas/video/SVG work when hero is scrolled completely out of view
-    if (heroLocked && !isHeroInViewport && !isRewinding && !isIntroPlaying) {
+    if (heroLocked && !isHeroInViewport && !isRewinding && !isIntroPlaying && !isAutoPlayingSequence) {
       if (!ambientVideo.paused) {
         ambientVideo.pause();
       }
@@ -803,10 +820,33 @@
         window.scrollTo({ top: 0, behavior: "instant" });
         startIntroVideoPlayback();
       }
+    } else if (isGateOpen) {
+      targetFrame = 0;
+      currentFrame = 0;
+      redrawRequested = true;
     } else if (isIntroPlaying) {
       targetFrame = 0;
       currentFrame = 0;
       redrawRequested = true;
+    } else if (isAutoPlayingSequence) {
+      const autoDuration = reducedMotion ? 250 : useMobilePortraitSequence ? 2350 : 2550;
+      const elapsed = Math.max(0, performance.now() - autoPlayStartTime);
+      const t = clamp(elapsed / autoDuration, 0, 1);
+      // Smooth cinematic ease-in-out pull-back through the eye sequence
+      const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const nextFrame = autoPlayStartFrame + (totalFrames - 1 - autoPlayStartFrame) * ease;
+      currentFrame = nextFrame;
+      targetFrame = nextFrame;
+      redrawRequested = true;
+
+      const lookAheadBase = Math.round(nextFrame);
+      for (let ahead = 0; ahead <= 4; ahead += 1) {
+        loadFrame(lookAheadBase + ahead).catch(() => {});
+      }
+
+      if (t >= 1) {
+        lockHeroAtEnd();
+      }
     } else if (heroLocked) {
       targetFrame = totalFrames - 1;
       currentFrame = totalFrames - 1;
@@ -829,17 +869,16 @@
 
     if (currentFrame > 1.4 && !isIntroPlaying && !isRewinding) {
       introDismissedByScroll = true;
-      markHeroSeenInSession();
     }
 
-    // Smooth blend from the intro video into the scroll sequence as user scrolls away from top
+    // Smooth blend from the intro video into the automatic pull-back sequence
     const targetIntroBlend = reducedMotion
       ? 0
-      : isIntroPlaying
+      : isIntroPlaying || isGateOpen
         ? 1
         : introDismissedByScroll || isRewinding
           ? 0
-          : 1 - smoothstep(0.0, 1.1, currentFrame);
+          : 1 - smoothstep(0.0, 1.4, currentFrame);
     introBlend += (targetIntroBlend - introBlend) * 0.18;
     if (Math.abs(targetIntroBlend - introBlend) < 0.004) {
       introBlend = targetIntroBlend;
@@ -851,11 +890,11 @@
     const normalizedProgress = clamp(currentFrame / Math.max(1, totalFrames - 1), 0, 1);
     updateChoreography(normalizedProgress, timeMs, reducedMotion);
 
-    const scrollRevealThreshold = Math.max(stage.offsetHeight, sequence.offsetHeight - stage.offsetHeight) * 0.85;
     const shouldShowStoreHeader =
+      !isGateOpen &&
       !isIntroPlaying &&
       !isRewinding &&
-      (heroLocked || normalizedProgress >= 0.85 || window.scrollY > scrollRevealThreshold);
+      (heroLocked || normalizedProgress >= 0.82);
     document.body.classList.toggle("is-lunae-header-hidden", !shouldShowStoreHeader);
 
     // Seamless transition into the living hair/wind video at the end of scroll (96.5% -> 100%)
@@ -959,21 +998,114 @@
     }, { passive: true });
   }
 
+  const DEFAULT_HERO_COPY = {
+    show_stats: true,
+    copy: {
+      pill_badge: {
+        en: "AI-Powered Flagship",
+        ar: "رائد بالذكاء الاصطناعي",
+        fr: "Fleuron propulsé par l’IA",
+        es: "Insignia con IA",
+        zh: "AI 驱动旗舰",
+      },
+      eyebrow_sub: {
+        en: "Real-time intelligence. Smarter devices.",
+        ar: "ذكاء فوري. أجهزة أكثر تطورًا.",
+        fr: "Intelligence en temps réel. Appareils plus intelligents.",
+        es: "Inteligencia en tiempo real. Dispositivos más inteligentes.",
+        zh: "实时智能 · 更聪明的设备。",
+      },
+      headline_line1: {
+        en: "Visualize",
+        ar: "تخيّل",
+        fr: "Visualisez",
+        es: "Visualiza",
+        zh: "洞见",
+      },
+      headline_line2: {
+        en: "Your Tech",
+        ar: "تقنيتك",
+        fr: "Votre Tech",
+        es: "Tu Tecnología",
+        zh: "未来科技",
+      },
+      headline_gradient: {
+        en: "in Motion",
+        ar: "بكل حركة",
+        fr: "en Mouvement",
+        es: "en Movimiento",
+        zh: "灵动呈现",
+      },
+      description: {
+        en: "WEEXEY brings flagship performance, neural audio, and precision optics into a living visual experience — crafted for a smarter tomorrow.",
+        ar: "تجمع WEEXEY بين الأداء الرائد والصوت الذكي والبصريات الدقيقة في تجربة بصرية حية — صُممت لغدٍ أذكى.",
+        fr: "WEEXEY réunit performances de pointe, audio neuronal et optique de précision dans une expérience visuelle vivante.",
+        es: "WEEXEY combina rendimiento insignia, audio neuronal y óptica de precisión en una experiencia visual viva.",
+        zh: "WEEXEY 将旗舰性能、神经音频与精密光学融为鲜活的视觉体验，只为更智慧的明天。",
+      },
+      primary_btn_text: {
+        en: "Explore Store",
+        ar: "استكشف المتجر",
+        fr: "Explorer la boutique",
+        es: "Explorar tienda",
+        zh: "探索商城",
+      },
+      primary_btn_href: "/products.html",
+    },
+    stats: [
+      {
+        value: 10,
+        suffix: "K+",
+        label: {
+          en: "Active Users",
+          ar: "مستخدم نشط",
+          fr: "Utilisateurs actifs",
+          es: "Usuarios activos",
+          zh: "活跃用户",
+        },
+      },
+      {
+        value: 99.9,
+        suffix: "%",
+        label: {
+          en: "Uptime",
+          ar: "جاهزية الخدمة",
+          fr: "Disponibilité",
+          es: "Disponibilidad",
+          zh: "稳定运行",
+        },
+      },
+      {
+        value: 150,
+        suffix: "+",
+        label: {
+          en: "Countries",
+          ar: "دولة حول العالم",
+          fr: "Pays couverts",
+          es: "Países",
+          zh: "覆盖国家",
+        },
+      },
+    ],
+  };
+
   function applyCustomHeroConfig() {
-    const cfg = readCustomHeroData();
-    if (!cfg || typeof cfg !== "object") return;
+    const customCfg = readCustomHeroData();
+    const cfg = customCfg && typeof customCfg === "object" ? customCfg : DEFAULT_HERO_COPY;
     const lang = String(
       window.NoursStore?.getLanguage?.() || document.documentElement.lang || "en",
     )
       .toLowerCase()
       .split("-")[0];
-    const pick = (map) => String(map?.[lang] || map?.en || "").trim();
+    const pick = (map, fallbackMap) =>
+      String(map?.[lang] || map?.en || fallbackMap?.[lang] || fallbackMap?.en || "").trim();
 
-    if (cfg.copy && typeof cfg.copy === "object") {
+    const copySource = cfg.copy && typeof cfg.copy === "object" ? cfg.copy : DEFAULT_HERO_COPY.copy;
+    if (copySource) {
       const pillBadgeNode = sequence.querySelector(".wx-pill-badge");
       if (pillBadgeNode) {
         const dot = pillBadgeNode.querySelector(".wx-pill-dot");
-        const val = pick(cfg.copy.pill_badge);
+        const val = pick(copySource.pill_badge, DEFAULT_HERO_COPY.copy.pill_badge);
         if (val) {
           pillBadgeNode.replaceChildren();
           if (dot) pillBadgeNode.append(dot, document.createTextNode(` ${val}`));
@@ -981,32 +1113,32 @@
         }
       }
       const subNode = sequence.querySelector(".wx-eyebrow-sub");
-      if (subNode && pick(cfg.copy.eyebrow_sub)) {
-        subNode.textContent = pick(cfg.copy.eyebrow_sub);
+      if (subNode && pick(copySource.eyebrow_sub, DEFAULT_HERO_COPY.copy.eyebrow_sub)) {
+        subNode.textContent = pick(copySource.eyebrow_sub, DEFAULT_HERO_COPY.copy.eyebrow_sub);
       }
       const darkSpans = sequence.querySelectorAll(".wx-headline .wx-headline__dark");
-      if (darkSpans[0] && pick(cfg.copy.headline_line1)) {
-        darkSpans[0].textContent = pick(cfg.copy.headline_line1);
+      if (darkSpans[0] && pick(copySource.headline_line1, DEFAULT_HERO_COPY.copy.headline_line1)) {
+        darkSpans[0].textContent = pick(copySource.headline_line1, DEFAULT_HERO_COPY.copy.headline_line1);
       }
-      if (darkSpans[1] && pick(cfg.copy.headline_line2)) {
-        darkSpans[1].textContent = pick(cfg.copy.headline_line2);
+      if (darkSpans[1] && pick(copySource.headline_line2, DEFAULT_HERO_COPY.copy.headline_line2)) {
+        darkSpans[1].textContent = pick(copySource.headline_line2, DEFAULT_HERO_COPY.copy.headline_line2);
       }
       const gradSpan = sequence.querySelector(".wx-headline .wx-headline__gradient");
-      if (gradSpan && pick(cfg.copy.headline_gradient)) {
-        gradSpan.textContent = pick(cfg.copy.headline_gradient);
+      if (gradSpan && pick(copySource.headline_gradient, DEFAULT_HERO_COPY.copy.headline_gradient)) {
+        gradSpan.textContent = pick(copySource.headline_gradient, DEFAULT_HERO_COPY.copy.headline_gradient);
       }
       const descNode = sequence.querySelector(".wx-description");
-      if (descNode && pick(cfg.copy.description)) {
-        descNode.textContent = pick(cfg.copy.description);
+      if (descNode && pick(copySource.description, DEFAULT_HERO_COPY.copy.description)) {
+        descNode.textContent = pick(copySource.description, DEFAULT_HERO_COPY.copy.description);
       }
       const primaryBtn = sequence.querySelector(".wx-btn-primary");
       if (primaryBtn) {
         const span = primaryBtn.querySelector("span");
-        if (span && pick(cfg.copy.primary_btn_text)) {
-          span.textContent = pick(cfg.copy.primary_btn_text);
+        if (span && pick(copySource.primary_btn_text, DEFAULT_HERO_COPY.copy.primary_btn_text)) {
+          span.textContent = pick(copySource.primary_btn_text, DEFAULT_HERO_COPY.copy.primary_btn_text);
         }
-        if (cfg.copy.primary_btn_href) {
-          primaryBtn.setAttribute("href", cfg.copy.primary_btn_href);
+        if (copySource.primary_btn_href) {
+          primaryBtn.setAttribute("href", copySource.primary_btn_href);
         }
       }
     }
@@ -1016,9 +1148,10 @@
       statsBar.hidden = cfg.show_stats === false;
       if (cfg.show_stats === false) statsBar.style.display = "none";
       else statsBar.style.removeProperty("display");
-      if (Array.isArray(cfg.stats)) {
+      const statsSource = Array.isArray(cfg.stats) ? cfg.stats : DEFAULT_HERO_COPY.stats;
+      if (Array.isArray(statsSource)) {
         const statItems = statsBar.querySelectorAll(".wx-stat-item");
-        cfg.stats.forEach((st, idx) => {
+        statsSource.forEach((st, idx) => {
           const itemEl = statItems[idx];
           if (!itemEl || !st) return;
           const valContainer = itemEl.querySelector(".wx-stat-value span");
@@ -1034,8 +1167,9 @@
             valContainer.setAttribute("data-stat-suffix", suffix);
             valContainer.textContent = `${num}${suffix}`;
           }
-          if (labelEl && pick(st.label)) {
-            labelEl.textContent = pick(st.label);
+          const fallbackStat = DEFAULT_HERO_COPY.stats[idx];
+          if (labelEl && pick(st.label, fallbackStat?.label)) {
+            labelEl.textContent = pick(st.label, fallbackStat?.label);
           }
         });
       }
@@ -1094,13 +1228,300 @@
     updateChoreography(norm, performance.now(), window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }
 
+  const INITIAL_BUFFER_TARGET = useMobilePortraitSequence
+    ? Math.min(10, totalFrames)
+    : Math.min(8, totalFrames);
+  let gatePendingLang = null;
+  let gateSafetyTimer = null;
+
+  function getInitialBufferRatio() {
+    let loadedCount = 0;
+    for (let i = 0; i < INITIAL_BUFFER_TARGET; i += 1) {
+      if (images[i]) loadedCount += 1;
+    }
+    const frameWeight = useMobilePortraitSequence ? 1 : 0.72;
+    const videoReadyScore = useMobilePortraitSequence
+      ? 1
+      : introVideoReady
+        ? 1
+        : introPosterReady
+          ? 0.55
+          : 0.15;
+    const ratio =
+      (loadedCount / Math.max(1, INITIAL_BUFFER_TARGET)) * frameWeight +
+      videoReadyScore * (1 - frameWeight);
+    return clamp(ratio, 0.08, 1);
+  }
+
+  function updateGateBufferProgress() {
+    if (!(langGate instanceof HTMLElement) || langGate.hidden) return;
+    const ratio = getInitialBufferRatio();
+    if (langGateBar instanceof HTMLElement) {
+      langGateBar.style.width = `${Math.round(ratio * 100)}%`;
+    }
+    if (gatePendingLang && ratio >= 0.75) {
+      const chosen = gatePendingLang;
+      gatePendingLang = null;
+      finalizeGateAndLaunch(chosen);
+    }
+  }
+
+  const langGateVideo = document.querySelector("[data-wx-gate-video]");
+  if (langGateVideo instanceof HTMLVideoElement) {
+    langGateVideo.loop = true;
+    langGateVideo.addEventListener("ended", () => {
+      if (!isGateOpen) return;
+      langGateVideo.currentTime = 0;
+      langGateVideo.play().catch(() => {});
+    });
+  }
+
+  function finalizeGateAndLaunch(chosenLang) {
+    if (gateSafetyTimer) {
+      window.clearTimeout(gateSafetyTimer);
+      gateSafetyTimer = null;
+    }
+    markFirstVisitCompleted();
+    window.NoursStore?.setLanguage?.(chosenLang);
+    applyCustomHeroConfig();
+
+    isGateOpen = false;
+    document.documentElement.classList.remove("is-wx-gate-pending");
+    document.body.classList.remove("is-wx-gate-open");
+
+    if (langGate instanceof HTMLElement) {
+      langGate.classList.add("is-closing");
+      window.setTimeout(() => {
+        if (langGateVideo instanceof HTMLVideoElement && !langGateVideo.paused) {
+          langGateVideo.pause();
+        }
+        langGate.hidden = true;
+        langGate.classList.remove("is-closing");
+      }, 740);
+    }
+
+    startIntroVideoPlayback();
+  }
+
+  function updateLanguagePickerSelection(chosenLang, activeButton = null) {
+    langGateButtons.forEach((button) => {
+      const selected = button === activeButton || button.getAttribute("data-wx-gate-lang") === chosenLang;
+      button.classList.toggle("is-selected", selected);
+      if (button.hasAttribute("aria-pressed")) {
+        button.setAttribute("aria-pressed", String(selected));
+      }
+    });
+    const selectedButton = activeButton instanceof HTMLElement
+      ? activeButton
+      : langGateButtons.find((button) => button.getAttribute("data-wx-gate-lang") === chosenLang);
+    if (langGateLanguageLabel instanceof HTMLElement && selectedButton instanceof HTMLElement) {
+      langGateLanguageLabel.textContent = selectedButton.textContent.trim();
+    }
+  }
+
+  function handleGateLanguageSelection(chosenLang, btnEl) {
+    if (!chosenLang) return;
+    updateLanguagePickerSelection(chosenLang, btnEl);
+    setLanguageMenuOpen(false);
+    window.NoursStore?.setLanguage?.(chosenLang);
+    applyCustomHeroConfig();
+
+    const ratio = getInitialBufferRatio();
+    if (ratio >= 0.65) {
+      finalizeGateAndLaunch(chosenLang);
+      return;
+    }
+
+    gatePendingLang = chosenLang;
+    if (langGateStatus instanceof HTMLElement) {
+      langGateStatus.textContent = "One moment... preparing your cinematic experience.";
+    }
+    if (gateSafetyTimer) window.clearTimeout(gateSafetyTimer);
+    gateSafetyTimer = window.setTimeout(() => {
+      if (gatePendingLang) {
+        const lang = gatePendingLang;
+        gatePendingLang = null;
+        finalizeGateAndLaunch(lang);
+      }
+    }, 1800);
+  }
+
+  function setLanguageMenuOpen(open, restoreFocus = false) {
+    if (!(langGateLanguageTrigger instanceof HTMLButtonElement) || !(langGateLanguageMenu instanceof HTMLElement)) return;
+    langGateLanguageMenu.hidden = !open;
+    langGateLanguageTrigger.setAttribute("aria-expanded", String(open));
+    if (!open && restoreFocus) langGateLanguageTrigger.focus();
+  }
+
+  function updateCurrencyPickerSelection(currency, activeButton = null) {
+    langGateCurrencyButtons.forEach((button) => {
+      const selected = button === activeButton || button.getAttribute("data-wx-gate-currency") === currency;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    if (langGateCurrencyLabel instanceof HTMLElement) {
+      langGateCurrencyLabel.textContent = currency;
+    }
+    if (langGateCurrencyTrigger instanceof HTMLButtonElement) {
+      langGateCurrencyTrigger.setAttribute("aria-label", `Currency: ${currency}`);
+    }
+  }
+
+  function setCurrencyMenuOpen(open, restoreFocus = false) {
+    if (!(langGateCurrencyTrigger instanceof HTMLButtonElement) || !(langGateCurrencyMenu instanceof HTMLElement)) return;
+    langGateCurrencyMenu.hidden = !open;
+    langGateCurrencyTrigger.setAttribute("aria-expanded", String(open));
+    if (!open && restoreFocus) langGateCurrencyTrigger.focus();
+  }
+
+  function handleGateCurrencySelection(button) {
+    const currency = button.getAttribute("data-wx-gate-currency");
+    if (!["USD", "EUR", "SAR"].includes(currency)) {
+      console.error("Language gate: an unsupported currency was selected.");
+      return;
+    }
+    if (typeof window.NoursStore?.setCurrency !== "function") {
+      console.error("Language gate: the currency store is unavailable.");
+      return;
+    }
+    window.NoursStore.setCurrency(currency);
+    updateCurrencyPickerSelection(currency, button);
+    setCurrencyMenuOpen(false);
+  }
+
+  const devGateBtn = document.querySelector("[data-wx-open-gate-dev]");
+
+  function openLanguageGateForPreview() {
+    if (!(langGate instanceof HTMLElement)) return;
+    try {
+      localStorage.removeItem(FIRST_VISIT_COMPLETED_KEY);
+    } catch (_) {}
+
+    gatePendingLang = null;
+    isGateOpen = true;
+    isAutoPlayingSequence = false;
+    isIntroPlaying = false;
+    isRewinding = false;
+    heroLocked = false;
+    currentFrame = 0;
+    targetFrame = 0;
+    introVideoEnded = false;
+    introDismissedByScroll = false;
+    introBlend = 1;
+
+    if (!ambientVideo.paused) {
+      ambientVideo.pause();
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
+
+    const activeLang = window.NoursStore?.getLanguage?.() || "en";
+    updateLanguagePickerSelection(activeLang);
+
+    langGate.classList.remove("is-closing");
+    langGate.hidden = false;
+    if (langGateVideo instanceof HTMLVideoElement) {
+      langGateVideo.currentTime = 0;
+      langGateVideo.play().catch(() => {});
+    }
+    document.documentElement.classList.add("is-wx-gate-pending");
+    document.body.classList.add("is-wx-gate-open", "is-intro-locked", "is-lunae-header-hidden");
+
+    ensureIntroAssetsLoaded();
+    loadFrame(0)
+      .then(() => {
+        resizeCanvas();
+        drawFrame(0);
+      })
+      .catch(() => {});
+    scheduleProgressivePreload(1);
+    updateGateBufferProgress();
+    redrawRequested = true;
+  }
+
+  if (devGateBtn instanceof HTMLElement) {
+    devGateBtn.addEventListener("click", () => {
+      openLanguageGateForPreview();
+    });
+  }
+
+  if (langGateButtons.length > 0) {
+    langGateButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const chosen = btn.getAttribute("data-wx-gate-lang") || "en";
+        handleGateLanguageSelection(chosen, btn);
+      });
+    });
+  }
+
+  if (langGateLanguageTrigger instanceof HTMLButtonElement) {
+    langGateLanguageTrigger.addEventListener("click", () => {
+      const isOpen = langGateLanguageTrigger.getAttribute("aria-expanded") === "true";
+      setLanguageMenuOpen(!isOpen);
+    });
+  }
+
+  if (langGateCurrencyButtons.length > 0) {
+    langGateCurrencyButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        handleGateCurrencySelection(button);
+      });
+    });
+  }
+
+  if (langGateCurrencyTrigger instanceof HTMLButtonElement) {
+    langGateCurrencyTrigger.addEventListener("click", () => {
+      const isOpen = langGateCurrencyTrigger.getAttribute("aria-expanded") === "true";
+      setCurrencyMenuOpen(!isOpen);
+    });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (
+      langGateLanguageMenu instanceof HTMLElement &&
+      event.target instanceof Node &&
+      !langGateLanguageMenu.contains(event.target) &&
+      !(langGateLanguageTrigger instanceof HTMLElement && langGateLanguageTrigger.contains(event.target))
+    ) {
+      setLanguageMenuOpen(false);
+    }
+    if (
+      langGateCurrencyMenu instanceof HTMLElement &&
+      event.target instanceof Node &&
+      !langGateCurrencyMenu.contains(event.target) &&
+      !(langGateCurrencyTrigger instanceof HTMLElement && langGateCurrencyTrigger.contains(event.target))
+    ) {
+      setCurrencyMenuOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && langGateLanguageTrigger?.getAttribute("aria-expanded") === "true") {
+      setLanguageMenuOpen(false, true);
+    }
+    if (event.key === "Escape" && langGateCurrencyTrigger?.getAttribute("aria-expanded") === "true") {
+      setCurrencyMenuOpen(false, true);
+    }
+  });
+
   window.addEventListener("ruqo:home-lunae-hero-updated", applyCustomHeroConfig);
   window.addEventListener("ruqo:language-updated", applyCustomHeroConfig);
+  window.addEventListener("ruqo:currency-updated", (event) => {
+    updateCurrencyPickerSelection(event.detail?.currency || window.NoursStore?.getCurrency?.() || "USD");
+  });
 
   resizeCanvas();
   applyCustomHeroConfig();
+  updateCurrencyPickerSelection(window.NoursStore?.getCurrency?.() || "USD");
 
   if (shouldSkipIntroOnLoad) {
+    document.documentElement.classList.remove("is-wx-gate-pending");
+    document.body.classList.remove("is-wx-gate-open");
+    if (langGate instanceof HTMLElement) {
+      langGate.hidden = true;
+    }
+    if (langGateVideo instanceof HTMLVideoElement && !langGateVideo.paused) {
+      langGateVideo.pause();
+    }
     heroLocked = true;
     sequence.classList.add("is-hero-locked");
     document.body.classList.remove("is-lunae-header-hidden");
@@ -1110,23 +1531,21 @@
     introBlend = 0;
     targetFrame = totalFrames - 1;
     currentFrame = totalFrames - 1;
+    ensureAmbientVideoLoaded();
     updateChoreography(1, 0, window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     loadFrame(totalFrames - 1)
       .then(() => {
         resizeCanvas();
         drawFrame(totalFrames - 1);
-        scheduleProgressivePreload(0);
       })
-      .catch(() => {
-        scheduleProgressivePreload(0);
-      });
-  } else if (window.scrollY < 120) {
-    sequence.classList.remove("is-hero-locked");
-    document.body.classList.add("is-lunae-header-hidden");
-    if (introMode === "once_per_session") {
-      markHeroSeenInSession();
-    }
-    startIntroVideoPlayback();
+      .catch(() => {});
+  } else if (isFirstEverVisit && langGate instanceof HTMLElement) {
+    isGateOpen = true;
+    langGate.hidden = false;
+    document.body.classList.add("is-wx-gate-open", "is-intro-locked", "is-lunae-header-hidden");
+    sequence.classList.add("is-hero-locked");
+    ensureIntroAssetsLoaded();
+    updateGateBufferProgress();
     loadFrame(0)
       .then(() => {
         resizeCanvas();
@@ -1135,10 +1554,15 @@
       .catch(() => {});
     scheduleProgressivePreload(1);
   } else {
-    sequence.classList.remove("is-hero-locked");
-    introVideoEnded = true;
-    introDismissedByScroll = true;
-    introBlend = 0;
+    document.documentElement.classList.remove("is-wx-gate-pending");
+    document.body.classList.remove("is-wx-gate-open");
+    if (langGate instanceof HTMLElement) {
+      langGate.hidden = true;
+    }
+    sequence.classList.add("is-hero-locked");
+    document.body.classList.add("is-lunae-header-hidden");
+    markFirstVisitCompleted();
+    startIntroVideoPlayback();
     loadFrame(0)
       .then(() => {
         resizeCanvas();

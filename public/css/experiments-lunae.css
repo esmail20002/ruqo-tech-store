@@ -27,7 +27,9 @@ body[data-page="experiments"] .experiment-switcher {
 section.lunae-sequence,
 .lunae-sequence {
   position: relative;
-  height: 400vh;
+  height: 100vh;
+  height: 100svh;
+  min-height: 600px;
   padding: 0 !important;
   margin: 0 !important;
   background: #ffffff;
@@ -39,6 +41,7 @@ section.lunae-sequence,
 section.lunae-sequence.is-hero-locked,
 .lunae-sequence.is-hero-locked {
   height: 100vh;
+  height: 100svh;
 }
 
 .lunae-stage {
@@ -1057,4 +1060,542 @@ html[data-theme="dark"] body[data-page="home"] .wx-glass-card {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
+}
+
+/* ============================================================
+   FIRST-VISIT FULL-PAGE WHITE EDITORIAL LANGUAGE GATE
+   (Matches Elegostra Reference Layout 1:1 on Full White Canvas)
+   ============================================================ */
+html.is-wx-gate-pending,
+html.is-wx-gate-pending body,
+body.is-wx-gate-open {
+  overflow: hidden !important;
+}
+
+html.is-wx-gate-pending .wx-lang-gate[hidden] {
+  display: flex !important;
+}
+
+.wx-lang-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ffffff;
+  color: #111318;
+  font-family: "Plus Jakarta Sans", "Inter", "Cairo", -apple-system, BlinkMacSystemFont, sans-serif;
+  direction: ltr;
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.65s linear;
+}
+
+.wx-lang-gate[hidden] {
+  display: none;
+}
+
+.wx-lang-gate.is-closing {
+  opacity: 0;
+  transform: scale(1.025);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* 1. Minimal Top Bar */
+.wx-gate-topbar {
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: clamp(20px, 3vh, 34px) clamp(24px, 4.5vw, 64px) 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 20px;
+  flex: 0 0 auto;
+  z-index: 5;
+}
+
+.wx-gate-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+}
+
+.wx-gate-brand__logo {
+  display: block;
+  width: clamp(138px, 11.5vw, 174px);
+  height: 42px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* 2. Center Hero Copy & Language Selector */
+.wx-gate-hero {
+  position: relative;
+  z-index: 5;
+  max-width: 780px;
+  margin: clamp(8px, 2vh, 26px) auto 0;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.wx-gate-title {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  font-size: clamp(2.15rem, 4.4vw, 3.85rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.032em;
+  color: #0f1117;
+}
+
+.wx-gate-subtitle {
+  margin: clamp(12px, 1.8vh, 20px) 0 0;
+  max-width: 540px;
+  font-family: "Inter", "Cairo", sans-serif;
+  font-size: clamp(0.8rem, 1.02vw, 0.94rem);
+  font-weight: 400;
+  line-height: 1.65;
+  color: #6c727f;
+}
+
+.wx-gate-cta-row {
+  margin-top: clamp(18px, 2.8vh, 30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.wx-gate-picker {
+  position: relative;
+  z-index: 6;
+}
+
+.wx-gate-language-trigger,
+.wx-gate-currency-trigger {
+  appearance: none;
+  min-width: 190px;
+  min-height: 48px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  background: linear-gradient(115deg, #7338c6 0%, #8b3dff 52%, #d946a0 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(115, 56, 198, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  font-family: "Cairo", "Plus Jakarta Sans", "Inter", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.wx-gate-currency-trigger {
+  min-width: 136px;
+}
+
+.wx-gate-language-trigger:hover,
+.wx-gate-language-trigger[aria-expanded="true"],
+.wx-gate-currency-trigger:hover,
+.wx-gate-currency-trigger[aria-expanded="true"] {
+  transform: translateY(-1px);
+  filter: saturate(1.12);
+  box-shadow: 0 16px 34px rgba(115, 56, 198, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+
+.wx-gate-language-trigger svg,
+.wx-gate-currency-trigger svg {
+  transition: transform 0.2s ease;
+}
+
+.wx-gate-language-trigger[aria-expanded="true"] svg,
+.wx-gate-currency-trigger[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.wx-gate-language-menu,
+.wx-gate-currency-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  z-index: 7;
+  width: 100%;
+  min-width: 190px;
+  padding: 6px;
+  display: grid;
+  gap: 3px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(139, 61, 255, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 18px 42px rgba(47, 24, 73, 0.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.wx-gate-language-menu[hidden],
+.wx-gate-currency-menu[hidden] {
+  display: none;
+}
+
+.wx-gate-language-menu button,
+.wx-gate-currency-menu button {
+  appearance: none;
+  width: 100%;
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #241834;
+  font: 600 0.84rem "Cairo", "Plus Jakarta Sans", "Inter", sans-serif;
+  text-align: start;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.wx-gate-language-menu button:hover,
+.wx-gate-language-menu button.is-selected,
+.wx-gate-currency-menu button:hover,
+.wx-gate-currency-menu button.is-selected {
+  background: linear-gradient(110deg, rgba(139, 61, 255, 0.12), rgba(217, 70, 160, 0.1));
+  color: #7338c6;
+}
+
+.wx-gate-language-menu button:focus-visible,
+.wx-gate-language-trigger:focus-visible,
+.wx-gate-currency-menu button:focus-visible,
+.wx-gate-currency-trigger:focus-visible {
+  outline: 3px solid rgba(139, 61, 255, 0.38);
+  outline-offset: 3px;
+}
+
+/* 3. Bottom Visual Stage: 4 Tilted Floating Cards + Static Crystal Sculpture */
+.wx-gate-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1360px;
+  flex: 1 1 auto;
+  min-height: 290px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.wx-gate-crystal-wrap {
+  position: relative;
+  z-index: 2;
+  width: min(740px, 80vw);
+  height: min(380px, 46vh);
+  overflow: visible;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: transparent;
+}
+
+.wx-gate-crystal-video {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(-56px, -6.8vh, -30px);
+  /* Scale so the top crystal spikes breathe freely inside the white space without ever getting clipped at peak height while the lower base is cropped at the bottom edge of the viewport */
+  width: min(176%, 174vh);
+  height: auto;
+  max-width: none;
+  transform: translateX(-48.5%);
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  mix-blend-mode: multiply;
+  filter: contrast(1.04);
+}
+
+/* Floating Tilted Analytics Cards */
+.wx-gate-float-card {
+  position: absolute;
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 18px;
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.08),
+    0 4px 12px rgba(15, 23, 42, 0.03);
+  text-align: left;
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+}
+
+/* Top-Left Card ($13,592 / $12,167) */
+.wx-gate-float-card--top-left {
+  left: clamp(11%, 17.5vw, 240px);
+  bottom: clamp(175px, 23vh, 235px);
+  width: 196px;
+  padding: 14px 16px;
+  transform: rotate(-11deg);
+}
+
+.wx-gate-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wx-gate-stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wx-gate-stat-col--end {
+  align-items: flex-end;
+}
+
+.wx-gate-stat-num {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #12151c;
+  letter-spacing: -0.02em;
+}
+
+.wx-gate-stat-lbl,
+.wx-gate-stat-vs {
+  font-size: 0.56rem;
+  color: #8b93a4;
+  font-weight: 500;
+}
+
+.wx-gate-stat-divider {
+  height: 1px;
+  background: #f0f2f7;
+  margin: 9px 0;
+}
+
+.wx-gate-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 0.54rem;
+  font-weight: 700;
+}
+
+.wx-gate-badge--red {
+  background: #fff0ed;
+  color: #e0523c;
+}
+
+.wx-gate-badge--green {
+  background: #e9fbf0;
+  color: #18a957;
+}
+
+/* Bottom-Left Card (Goal 56K) */
+.wx-gate-float-card--bottom-left {
+  left: clamp(5%, 11vw, 150px);
+  bottom: clamp(52px, 8.5vh, 95px);
+  width: 122px;
+  padding: 12px 14px;
+  transform: rotate(19deg);
+}
+
+.wx-gate-goal-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #232733;
+}
+
+.wx-gate-goal-track {
+  margin: 6px 0 8px;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: #eef1f8;
+  overflow: hidden;
+}
+
+.wx-gate-goal-fill {
+  display: block;
+  width: 65%;
+  height: 100%;
+  border-radius: inherit;
+  background: #2f54eb;
+  transition: width 0.25s ease;
+}
+
+.wx-gate-goal-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.wx-gate-goal-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #111319;
+  letter-spacing: -0.02em;
+}
+
+/* Top-Right Card (Bar Chart) */
+.wx-gate-float-card--top-right {
+  right: clamp(10%, 16vw, 225px);
+  bottom: clamp(185px, 24vh, 245px);
+  width: 164px;
+  height: 128px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.wx-gate-chart-pill {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #2744e8;
+  color: #ffffff;
+  font-size: 0.5rem;
+  font-weight: 600;
+}
+
+.wx-gate-bars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: end;
+  gap: 6px;
+  height: 100%;
+}
+
+.wx-gate-bar {
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px 4px;
+  font-size: 0.48rem;
+  font-weight: 700;
+}
+
+.wx-gate-bar--primary {
+  height: 100%;
+  background: linear-gradient(180deg, #3c62ff 0%, #2442d8 100%);
+  color: #ffffff;
+}
+
+.wx-gate-bar--two {
+  height: 70%;
+  background: #f3f5fa;
+  color: #232733;
+}
+
+.wx-gate-bar--three {
+  height: 54%;
+  background: #f3f5fa;
+  color: #232733;
+}
+
+.wx-gate-bar--four {
+  height: 40%;
+  background: #f3f5fa;
+  color: #232733;
+}
+
+.wx-gate-bar__line {
+  display: block;
+  width: 65%;
+  height: 2px;
+  background: #4064ff;
+  border-radius: 99px;
+  margin: auto 0 2px;
+}
+
+.wx-gate-bar__num {
+  font-size: 0.44rem;
+  opacity: 0.72;
+}
+
+/* Bottom-Right Card (Customer rating / $24 345,00) */
+.wx-gate-float-card--bottom-right {
+  right: clamp(5%, 10.5vw, 145px);
+  bottom: clamp(46px, 7.5vh, 88px);
+  width: 132px;
+  padding: 12px 14px;
+  transform: rotate(-22deg);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wx-gate-growth-title {
+  font-size: 0.56rem;
+  font-weight: 700;
+  color: #232733;
+}
+
+.wx-gate-growth-val {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #2b4eff;
+  letter-spacing: -0.02em;
+}
+
+.wx-gate-growth-sub {
+  font-size: 0.48rem;
+  color: #8b93a4;
+}
+
+@media (max-width: 960px) {
+  .wx-gate-float-card--top-left,
+  .wx-gate-float-card--top-right {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .wx-gate-float-card--bottom-left,
+  .wx-gate-float-card--bottom-right {
+    display: none;
+  }
+
+  .wx-gate-title {
+    font-size: 1.95rem;
+  }
+
+  .wx-gate-spiral-wrap {
+    width: 95vw;
+    height: 38vh;
+  }
+}
+
+/* Local-only dev preview button for the language welcome gate */
+.wx-btn-dev-gate {
+  display: none !important;
+}
+
+html.is-local-development .wx-btn-dev-gate {
+  display: inline-flex !important;
 }
