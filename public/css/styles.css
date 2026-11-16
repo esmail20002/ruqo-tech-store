@@ -2544,28 +2544,29 @@ body:is([data-page="experiments"], [data-page="home"]) .promo-banner {
 
   .promo-banner {
     grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 20px 16px 18px;
+    gap: 10px;
+    padding: 16px 14px 14px;
     border-radius: 22px;
   }
 
   .promo-copy h2 {
-    font-size: clamp(1.7rem, 7vw, 2.4rem);
-    margin: 8px 0 6px;
+    font-size: clamp(1.35rem, 6vw, 1.85rem);
+    margin: 6px 0 4px;
   }
 
   .promo-copy p {
-    font-size: 0.88rem;
-    line-height: 1.7;
+    font-size: 0.82rem;
+    line-height: 1.55;
   }
 
   .promo-visual {
-    min-height: 140px;
+    min-height: 160px;
   }
 
   .console-visual {
-    width: min(100%, 220px);
-    height: 150px;
+    width: calc(100% - 10px);
+    max-width: 340px;
+    height: 158px;
   }
 
   .console-visual::before {
@@ -2977,27 +2978,49 @@ body:is([data-page="experiments"], [data-page="home"]) .promo-banner {
   }
 
   .promo-banner {
-    gap: 0;
-    padding: 20px 16px;
+    gap: 8px;
+    padding: 16px 14px 12px;
     border-radius: 22px;
   }
 
   .promo-copy h2 {
-    font-size: 1.65rem;
+    font-size: 1.4rem;
   }
 
   .promo-copy p {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
   }
 
   .promo-visual {
-    min-height: 170px;
+    min-height: 160px;
   }
 
   .console-visual {
-    height: 150px;
-    max-width: 240px;
-    border-radius: 22px;
+    width: calc(100% - 8px);
+    max-width: 340px;
+    height: 156px;
+    border-radius: 20px;
+  }
+
+  .promo-banner .promo-controls {
+    position: relative;
+    inset-inline-start: auto;
+    bottom: auto;
+    transform: none;
+    justify-content: center;
+    margin-top: 2px;
+    gap: 8px;
+  }
+
+  .promo-banner .promo-arrow {
+    width: 28px;
+    height: 28px;
+    font-size: 1.15rem;
+  }
+
+  .promo-banner .promo-dot {
+    width: 7px;
+    height: 7px;
   }
 
   .newsletter-box {

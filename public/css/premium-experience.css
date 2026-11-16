@@ -1078,17 +1078,19 @@ html[dir="rtl"] body:is([data-page="experiments"], [data-page="home"]) .partner-
 
   body:is([data-page="experiments"], [data-page="home"]) .promo-banner {
     gap: 8px;
-    padding: 24px 18px 20px;
-    border-radius: 26px;
+    min-height: 0;
+    padding: 16px 14px 12px;
+    border-radius: 24px;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .promo-visual {
-    min-height: 195px;
+    min-height: 164px;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .console-visual {
-    width: min(100%, 300px);
-    height: 190px;
+    width: calc(100% - 8px);
+    max-width: 350px;
+    height: 162px;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .feature-box {
@@ -3185,36 +3187,79 @@ html[data-theme="dark"] body[data-page="home"] #new .product-card:hover .product
 
   /* 7. Compact Promo Banner, Features, Stats, Reviews & Newsletter */
   body:is([data-page="experiments"], [data-page="home"]) .promo-banner {
-    gap: 10px;
-    padding: 16px 14px;
-    border-radius: 18px;
+    gap: 8px;
+    min-height: 0;
+    padding: 15px 14px 12px;
+    border-radius: 20px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .promo-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .promo-copy .eyebrow {
+    margin-bottom: 0;
+    padding: 4px 10px;
+    font-size: 0.64rem;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .promo-copy h2 {
-    font-size: clamp(1.15rem, 5vw, 1.4rem);
-    margin: 4px 0;
+    font-size: clamp(1.2rem, 5.2vw, 1.45rem);
+    margin: 2px 0 0;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .promo-copy p {
     font-size: 0.74rem;
-    line-height: 1.45;
-    margin-bottom: 8px;
+    line-height: 1.4;
+    margin: 0 0 4px;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .promo-copy .primary-btn {
-    min-height: 32px;
-    padding: 6px 14px;
-    font-size: 0.7rem;
+    min-height: 30px;
+    padding: 5px 14px;
+    font-size: 0.68rem;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .promo-visual {
-    min-height: 120px;
+    min-height: 0;
+    padding: 4px 0 2px;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .console-visual {
-    width: min(100%, 190px);
-    height: 120px;
-    border-radius: 20px;
+    width: calc(100% - 8px);
+    max-width: 350px;
+    height: 162px;
+    border-width: 5px;
+    border-radius: 18px;
+    transform: rotate(1.6deg);
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .console-visual img {
+    border-radius: 13px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .promo-banner .promo-controls {
+    position: relative;
+    inset-inline-start: auto;
+    bottom: auto;
+    transform: none;
+    justify-content: center;
+    margin-top: 2px;
+    gap: 8px;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .promo-banner .promo-arrow {
+    width: 28px;
+    height: 28px;
+    font-size: 1.15rem;
+  }
+
+  body:is([data-page="experiments"], [data-page="home"]) .promo-banner .promo-dot {
+    width: 7px;
+    height: 7px;
   }
 
   body:is([data-page="experiments"], [data-page="home"]) .feature-grid,
