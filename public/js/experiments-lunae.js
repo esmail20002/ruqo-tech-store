@@ -309,10 +309,12 @@
   let rewindStartFrame = 0;
 
   function ensureAmbientVideoLoaded() {
-    if (ambientVideoInitialized || useMobilePortraitSequence) return;
+    if (ambientVideoInitialized) return;
     ambientVideoInitialized = true;
     ambientVideo.preload = "auto";
-    ambientVideo.src = "/images/lunae-sequence/lunae-ambient-hair.mp4";
+    ambientVideo.src = useMobilePortraitSequence
+      ? "/images/lunae-sequence/lunae-ambient-mobile.mp4?v=2"
+      : "/images/lunae-sequence/lunae-ambient-hair.mp4";
     ambientVideo.load();
   }
 
@@ -354,7 +356,7 @@
 
     const srcUrl = useMobilePortraitSequence
       ? `/images/lunae-sequence/mobile-portrait/mframe_${suffix}.webp?v=3`
-      : `/images/lunae-sequence/ezgif-frame-${suffix}_${sourceIndex}.png`;
+      : `/images/lunae-sequence/ezgif-frame-${suffix}_${sourceIndex}.webp`;
     image.src = srcUrl;
 
     if (image.complete && image.naturalWidth > 0) {
@@ -518,11 +520,18 @@
 
       // 3. Seamless ambient hair/wind video overlay when user reaches the end of the scroll
       if (ambientBlend > 0.005 && ambientVideoReady && ambientVideo.readyState >= 2) {
-        // Exact spatial alignment: the 1440x608 video corresponds to y=[39..1241] (height 1202) inside the 2848x1280 frame
-        const videoDestX = destX;
-        const videoDestY = destY + (39 / 1280) * drawHeight;
-        const videoDestW = drawWidth;
-        const videoDestH = (1202 / 1280) * drawHeight;
+        const videoDestX = useMobilePortraitSequence
+          ? destX + (10 / 900) * drawWidth
+          : destX;
+        const videoDestY = useMobilePortraitSequence
+          ? destY
+          : destY + (39 / 1280) * drawHeight;
+        const videoDestW = useMobilePortraitSequence
+          ? (880 / 900) * drawWidth
+          : drawWidth;
+        const videoDestH = useMobilePortraitSequence
+          ? drawHeight
+          : (1202 / 1280) * drawHeight;
 
         context.save();
         context.globalAlpha = clamp(ambientBlend, 0, 1);
@@ -530,8 +539,8 @@
           ambientVideo,
           0,
           0,
-          ambientVideo.videoWidth || 1440,
-          ambientVideo.videoHeight || 608,
+          ambientVideo.videoWidth || (useMobilePortraitSequence ? 704 : 1440),
+          ambientVideo.videoHeight || (useMobilePortraitSequence ? 1280 : 608),
           videoDestX,
           videoDestY,
           videoDestW,
@@ -929,7 +938,7 @@
 
     // Seamless transition into the living hair/wind video at the end of scroll (96.5% -> 100%)
     const targetAmbientBlend =
-      !useMobilePortraitSequence && !reducedMotion && ambientVideoReady && !isRewinding
+      !reducedMotion && ambientVideoReady && !isRewinding
         ? heroLocked
           ? 1
           : smoothstep(0.965, 0.996, normalizedProgress)

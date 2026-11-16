@@ -915,7 +915,73 @@
       { slug: "apple-watch", brand: "Apple", category_slug: "wearables", name_translations: { en: "Apple Watch" }, price: 1299, compare_at_price: null, badge: null, in_stock: false, is_active: true, is_featured: false, sort_order: 1, external_image_url: defaultLightLogoUrl, variants: [] },
     ];
     orders = [
-      { id: "local-order-1", order_number: "RUQ-DEMO-001", customer_name: "Demo Customer", customer_email: "customer@example.com", customer_phone: "+966500000000", status: "pending", payment_method: "cash_on_delivery", payment_status: "pending", currency: "SAR", total: 5700, created_at: new Date().toISOString() },
+      {
+        id: "local-order-1",
+        order_number: "RUQ-20261116-6EBEFC",
+        customer_name: "ESMAIL AL-KHADER",
+        customer_email: "esmailsaber10@gmail.com",
+        customer_phone: "+967773879358",
+        status: "confirmed",
+        payment_method: "cash_on_delivery",
+        payment_status: "pending",
+        currency: "SAR",
+        subtotal: 5000,
+        discount_total: 0,
+        shipping_total: 0,
+        total: 6399,
+        shipping_address: { city: "Riyadh", street: "King Fahd Road, Al Olaya District", postal_code: "12214" },
+        customer_note: "Please call 30 minutes before arrival.",
+        created_at: new Date().toISOString(),
+        order_items: [
+          {
+            product_slug: "macbook-pro",
+            product_name_translations: { en: "MacBook Pro 14 M4", ar: "ماك بوك برو 14 M4" },
+            variant_label_translations: { en: "512GB · Space Black", ar: "512GB · أسود فلكي" },
+            sku: "WX-MACBOOK-PR",
+            quantity: 1,
+            unit_price: 5000,
+            line_total: 5000,
+          },
+          {
+            product_slug: "airpods-pro",
+            product_name_translations: { en: "AirPods Pro 2", ar: "إيربودز برو 2" },
+            variant_label_translations: { en: "USB-C MagSafe", ar: "USB-C MagSafe" },
+            sku: "WX-AIRPODS-PR",
+            quantity: 1,
+            unit_price: 1399,
+            line_total: 1399,
+          },
+        ],
+      },
+      {
+        id: "local-order-2",
+        order_number: "RUQ-20261114-92A4C1",
+        customer_name: "سارة العتيبي",
+        customer_email: "sara.otaibi@example.com",
+        customer_phone: "+966559876543",
+        status: "delivered",
+        payment_method: "cash_on_delivery",
+        payment_status: "paid",
+        currency: "SAR",
+        subtotal: 4499,
+        discount_total: 0,
+        shipping_total: 0,
+        total: 4499,
+        shipping_address: { city: "Jeddah", street: "Prince Sultan Street, Al Rawdah", postal_code: "23435" },
+        customer_note: "",
+        created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+        order_items: [
+          {
+            product_slug: "galaxy-s25",
+            product_name_translations: { en: "Galaxy S25 Ultra", ar: "جالكسي S25 ألترا" },
+            variant_label_translations: { en: "512GB · Titanium Gray", ar: "512GB · رمادي تيتانيوم" },
+            sku: "WX-GALAXY-S25",
+            quantity: 1,
+            unit_price: 4499,
+            line_total: 4499,
+          },
+        ],
+      },
     ];
     promotions = [{ id: "local-promo-1", name: "Demo weekend offer", title_translations: { en: "Weekend offer" }, coupon_code: "DEMO15", discount_type: "percentage", discount_value: 15, minimum_order: 500, starts_at: new Date().toISOString(), ends_at: new Date(Date.now() + 86400000).toISOString(), is_active: true }];
     banners = [{ id: "local-banner-1", name: "Demo campaign", placement: "home_promo", title_translations: { en: "Demo campaign" }, image_path: null, starts_at: null, ends_at: null, is_active: true }];
@@ -959,7 +1025,7 @@
     renderNewsletterSubscribers();
     renderAudienceProductReviews();
     $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
-      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"], [data-admin-panel="hello-page"]'))
+      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"], [data-admin-panel="hello-page"], [data-admin-panel="orders"], #order-detail-dialog, #invoice-settings-dialog'))
       .forEach((element) => { element.disabled = true; });
     window.RUQO_INIT_HELLO_PAGE_EDITOR?.(null);
     window.RUQO_INIT_HERO_EDITOR?.(null);
@@ -994,6 +1060,39 @@
     $("#admin-theme-toggle").addEventListener("click", () => {
       const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
       setTheme(current === "dark" ? "light" : "dark");
+    });
+    $("#orders-search")?.addEventListener("input", renderOrders);
+    $("#orders-status-filter")?.addEventListener("change", renderOrders);
+    $("#orders-clear-filters")?.addEventListener("click", () => {
+      if ($("#orders-search")) $("#orders-search").value = "";
+      if ($("#orders-status-filter")) $("#orders-status-filter").value = "all";
+      renderOrders();
+    });
+    $("#open-invoice-settings-btn")?.addEventListener("click", openInvoiceSettingsDialog);
+    $$("[data-close-invoice-settings]").forEach((btn) =>
+      btn.addEventListener("click", () => $("#invoice-settings-dialog")?.close()),
+    );
+    $("#invoice-settings-form")?.addEventListener("submit", saveInvoiceSettings);
+    $("#preview-sample-invoice-btn")?.addEventListener("click", () => {
+      const sampleOrder = orders[0] || {
+        order_number: "RUQ-20261116-SAMPLE",
+        customer_name: "ESMAIL AL-KHADER",
+        customer_phone: "+967773879358",
+        customer_email: "esmailsaber10@gmail.com",
+        status: "confirmed",
+        total: 6399,
+        shipping_address: { city: "Riyadh", street: "King Fahd Road, KAFD" },
+        created_at: new Date().toISOString(),
+      };
+      const draftCfg = readInvoiceFormDraft();
+      window.WEEXEY_INVOICE?.openOfficialInvoice(buildAdminInvoicePayload(sampleOrder), {
+        language: "en",
+        autoPrint: false,
+        customConfig: draftCfg,
+      });
+    });
+    $("#order-detail-print-en")?.addEventListener("click", () => {
+      if (activeDetailOrder) issueOrderInvoiceFromAdmin(activeDetailOrder);
     });
   }
 
@@ -1580,12 +1679,20 @@
   }
 
   async function loadOrders() {
-    const { data, error } = await client
+    let { data, error } = await client
       .from("orders")
-      .select("id, order_number, customer_name, customer_email, customer_phone, status, payment_method, payment_status, currency, total, created_at")
+      .select("id, order_number, customer_name, customer_email, customer_phone, status, payment_method, payment_status, currency, subtotal, discount_total, shipping_total, total, shipping_address, customer_note, created_at, order_items(product_slug, product_name_translations, variant_label_translations, sku, quantity, unit_price, line_total)")
       .order("created_at", { ascending: false })
       .limit(100);
-    if (error) throw error;
+    if (error) {
+      const fallback = await client
+        .from("orders")
+        .select("id, order_number, customer_name, customer_email, customer_phone, status, payment_method, payment_status, currency, total, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (fallback.error) throw fallback.error;
+      data = fallback.data;
+    }
     orders = data || [];
     renderOrders();
   }
@@ -2019,8 +2126,251 @@
     window.lucide?.createIcons();
   }
 
+  function buildAdminInvoicePayload(order) {
+    const addr = order.shipping_address || {};
+    const items = Array.isArray(order.order_items) && order.order_items.length
+      ? order.order_items.map((oi) => {
+          const catalogMatch = products.find((p) => p.slug === oi.product_slug);
+          return {
+            id: oi.product_slug || oi.sku || "ITEM",
+            brand: catalogMatch?.brand || "WEEXEY",
+            name:
+              oi.product_name_translations?.en ||
+              catalogMatch?.name_translations?.en ||
+              oi.product_slug ||
+              "Product",
+            variant:
+              oi.variant_label_translations?.en ||
+              "",
+            quantity: Number(oi.quantity) || 1,
+            price: Number(oi.unit_price) || 0,
+          };
+        })
+      : [
+          {
+            id: order.order_number || "ORDER",
+            brand: "WEEXEY",
+            name: "WEEXEY Hardware Order",
+            variant: "",
+            quantity: 1,
+            price: Number(order.total) || 0,
+          },
+        ];
+
+    return {
+      orderNumber: order.order_number,
+      createdAt: order.created_at,
+      formattedDate: formatDateTime(order.created_at),
+      status: order.status || "confirmed",
+      subtotal: Number(order.subtotal) || Number(order.total) || 0,
+      discountTotal: Number(order.discount_total) || 0,
+      shippingTotal: Number(order.shipping_total) || 0,
+      total: Number(order.total) || 0,
+      customerName: order.customer_name,
+      phone: order.customer_phone || "",
+      email: order.customer_email || "",
+      city: addr.city || "",
+      address: addr.street || addr.address || "",
+      postal: addr.postal_code || addr.postal || "",
+      notes: order.customer_note || "",
+      items,
+    };
+  }
+
+  function issueOrderInvoiceFromAdmin(order) {
+    if (!window.WEEXEY_INVOICE?.openOfficialInvoice) {
+      showToast("Invoice generator is not loaded.");
+      return;
+    }
+    const payload = buildAdminInvoicePayload(order);
+    window.WEEXEY_INVOICE.openOfficialInvoice(payload, {
+      language: "en",
+      autoPrint: false,
+      customConfig: brandSettings?.invoice_config || null,
+    });
+  }
+
+  let activeDetailOrder = null;
+
+  function openOrderDetailsDialog(order) {
+    activeDetailOrder = order;
+    const dialog = $("#order-detail-dialog");
+    if (!dialog) return;
+    const addr = order.shipping_address || {};
+    const addressParts = [addr.street || addr.address, addr.city, addr.postal_code ? `(${addr.postal_code})` : ""].filter(Boolean);
+    $("#order-detail-number").textContent = `#${order.order_number}`;
+    $("#order-detail-customer").textContent = order.customer_name || "—";
+    $("#order-detail-phone").textContent = order.customer_phone || "—";
+    $("#order-detail-email").textContent = order.customer_email || "—";
+    $("#order-detail-address").textContent = addressParts.join(" — ") || "—";
+    $("#order-detail-date").textContent = formatDateTime(order.created_at);
+    $("#order-detail-payment").textContent = `${(order.payment_method || "cash_on_delivery").replaceAll("_", " ")} · ${order.payment_status || "pending"}`;
+    $("#order-detail-total").textContent = new Intl.NumberFormat("en-SA", {
+      style: "currency",
+      currency: order.currency || "SAR",
+    }).format(Number(order.total) || 0);
+
+    const rawItems = Array.isArray(order.order_items) ? order.order_items : [];
+    const totalQty = rawItems.reduce((sum, i) => sum + (Number(i.quantity) || 1), 0);
+    $("#order-detail-items-count").textContent = String(totalQty || rawItems.length);
+
+    const itemRows = (rawItems.length ? rawItems : [{ product_slug: "Order Package", quantity: 1, unit_price: order.total, line_total: order.total }]).map((item) => {
+      const tr = document.createElement("tr");
+      const nameText =
+        item.product_name_translations?.en ||
+        item.product_name_translations?.ar ||
+        item.product_slug ||
+        "Product";
+      const variantText =
+        item.variant_label_translations?.en ||
+        item.variant_label_translations?.ar ||
+        item.sku ||
+        "—";
+      const qty = Number(item.quantity) || 1;
+      const unit = Number(item.unit_price) || 0;
+      const line = Number(item.line_total) || unit * qty;
+      appendTextCell(tr, nameText);
+      appendTextCell(tr, variantText);
+      appendTextCell(tr, `×${qty}`);
+      appendTextCell(tr, new Intl.NumberFormat("en-SA", { style: "currency", currency: order.currency || "SAR" }).format(unit));
+      appendTextCell(tr, new Intl.NumberFormat("en-SA", { style: "currency", currency: order.currency || "SAR" }).format(line));
+      return tr;
+    });
+    $("#order-detail-items-body").replaceChildren(...itemRows);
+
+    const noteSec = $("#order-detail-note-section");
+    if (order.customer_note) {
+      noteSec.hidden = false;
+      $("#order-detail-note").textContent = order.customer_note;
+    } else {
+      noteSec.hidden = true;
+    }
+
+    dialog.showModal();
+    window.lucide?.createIcons();
+  }
+
+  function openInvoiceSettingsDialog() {
+    const dialog = $("#invoice-settings-dialog");
+    const form = $("#invoice-settings-form");
+    if (!dialog || !form) return;
+    const enDefaults = window.WEEXEY_INVOICE?.getDefaultInvoiceCopy?.("en") || {};
+    let saved = brandSettings?.invoice_config || {};
+    try {
+      const localRaw = localStorage.getItem("weexey-invoice-config-v1");
+      if (localRaw && !Object.keys(saved).length) saved = JSON.parse(localRaw);
+    } catch (_) {}
+
+    form.elements.trn_number.value = saved.trn_number || enDefaults.trnNumber || "310489275600003";
+    form.elements.cr_number.value = saved.cr_number || enDefaults.crNumber || "1010894521";
+    form.elements.billing_email.value = saved.billing_email || enDefaults.supportEmail || "legal-billing@weexey.com";
+    form.elements.company_name_en.value = saved.company_name_en || enDefaults.companyLegalName || "";
+    form.elements.company_address_en.value = saved.company_address_en || enDefaults.companyAddress || "";
+    form.elements.policy1_body_en.value = saved.policy1_body_en || enDefaults.policy1Body || "";
+    form.elements.policy2_body_en.value = saved.policy2_body_en || enDefaults.policy2Body || "";
+    form.elements.policy3_body_en.value = saved.policy3_body_en || enDefaults.policy3Body || "";
+    form.elements.policy4_body_en.value = saved.policy4_body_en || enDefaults.policy4Body || "";
+
+    const feedback = $("#invoice-settings-feedback");
+    if (feedback) feedback.hidden = true;
+    dialog.showModal();
+  }
+
+  function readInvoiceFormDraft() {
+    const form = $("#invoice-settings-form");
+    if (!form) return {};
+    const fd = new FormData(form);
+    return {
+      trn_number: String(fd.get("trn_number") || "").trim(),
+      cr_number: String(fd.get("cr_number") || "").trim(),
+      billing_email: String(fd.get("billing_email") || "").trim(),
+      company_name_en: String(fd.get("company_name_en") || "").trim(),
+      company_address_en: String(fd.get("company_address_en") || "").trim(),
+      policy1_body_en: String(fd.get("policy1_body_en") || "").trim(),
+      policy2_body_en: String(fd.get("policy2_body_en") || "").trim(),
+      policy3_body_en: String(fd.get("policy3_body_en") || "").trim(),
+      policy4_body_en: String(fd.get("policy4_body_en") || "").trim(),
+    };
+  }
+
+  async function saveInvoiceSettings(event) {
+    event.preventDefault();
+    const invoice_config = readInvoiceFormDraft();
+    try {
+      localStorage.setItem("weexey-invoice-config-v1", JSON.stringify(invoice_config));
+    } catch (_) {}
+    brandSettings = { ...brandSettings, invoice_config };
+    window.RUQO_STORE_SETTINGS = brandSettings;
+
+    if (!localDemoMode && client && currentUser) {
+      const btn = $("#save-invoice-settings-btn");
+      if (btn) btn.disabled = true;
+      try {
+        const { error } = await client.from("store_settings").upsert({
+          setting_key: "storefront",
+          setting_value: brandSettings,
+          description: "Public storefront identity, contact, delivery, appearance, footer, and legal invoice settings",
+          is_public: true,
+          updated_by: currentUser.id,
+        }, { onConflict: "setting_key" });
+        if (error) throw error;
+      } catch (err) {
+        showToast(`Saved locally, but cloud sync failed: ${err.message}`);
+        if (btn) btn.disabled = false;
+        return;
+      }
+      if (btn) btn.disabled = false;
+    }
+
+    $("#invoice-settings-dialog")?.close();
+    showToast("Official tax invoice settings saved.");
+  }
+
   function renderOrders() {
-    const rows = orders.map((order) => {
+    const searchVal = String($("#orders-search")?.value || "").trim().toLowerCase();
+    const statusFilter = $("#orders-status-filter")?.value || "all";
+
+    const totalCount = orders.length;
+    const activeCount = orders.filter((o) => ["pending", "confirmed", "processing", "shipped"].includes(o.status)).length;
+    const deliveredCount = orders.filter((o) => o.status === "delivered").length;
+    const totalRevenue = orders
+      .filter((o) => !["cancelled", "refunded"].includes(o.status))
+      .reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+
+    if ($("#orders-stat-total")) $("#orders-stat-total").textContent = String(totalCount);
+    if ($("#orders-stat-active")) $("#orders-stat-active").textContent = String(activeCount);
+    if ($("#orders-stat-delivered")) $("#orders-stat-delivered").textContent = String(deliveredCount);
+    if ($("#orders-stat-revenue")) {
+      $("#orders-stat-revenue").textContent = new Intl.NumberFormat("en-SA", {
+        style: "currency",
+        currency: "SAR",
+        maximumFractionDigits: 0,
+      }).format(totalRevenue);
+    }
+
+    const filtered = orders.filter((order) => {
+      if (statusFilter !== "all" && order.status !== statusFilter) return false;
+      if (!searchVal) return true;
+      const addr = order.shipping_address || {};
+      const haystack = [
+        order.order_number,
+        order.customer_name,
+        order.customer_phone,
+        order.customer_email,
+        addr.city,
+        addr.street,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(searchVal);
+    });
+
+    if ($("#orders-results-count")) {
+      $("#orders-results-count").textContent = `Showing ${filtered.length} of ${totalCount} orders`;
+    }
+
+    const rows = filtered.map((order) => {
       const row = document.createElement("tr");
       const number = document.createElement("td");
       const numberStrong = document.createElement("strong");
@@ -2031,10 +2381,26 @@
       customerRef.textContent = order.customer_phone;
       number.append(numberStrong, customerRef);
       row.append(number);
-      appendTextCell(row, order.customer_name);
+
+      const custCell = document.createElement("td");
+      const custStrong = document.createElement("strong");
+      custStrong.textContent = order.customer_name || "Guest";
+      const citySmall = document.createElement("small");
+      citySmall.style.display = "block";
+      citySmall.style.color = "var(--admin-muted)";
+      const addr = order.shipping_address || {};
+      citySmall.textContent = [addr.city, addr.street].filter(Boolean).join(" · ") || order.customer_email || "—";
+      custCell.append(custStrong, citySmall);
+      row.append(custCell);
+
       appendTextCell(row, formatDateTime(order.created_at));
+
+      const rawItems = Array.isArray(order.order_items) ? order.order_items : [];
+      const qtyCount = rawItems.reduce((sum, i) => sum + (Number(i.quantity) || 1), 0) || 1;
+      appendTextCell(row, `${qtyCount} ${qtyCount === 1 ? "item" : "items"}`);
+
       appendTextCell(row, new Intl.NumberFormat("en-SA", { style: "currency", currency: order.currency || "SAR" }).format(order.total));
-      appendTextCell(row, `${order.payment_method.replaceAll("_", " ")} · ${order.payment_status}`);
+
       const statusCell = document.createElement("td");
       const status = document.createElement("select");
       status.setAttribute("aria-label", `Status for ${order.order_number}`);
@@ -2048,10 +2414,35 @@
       status.addEventListener("change", () => updateOrderStatus(order, status.value, status));
       statusCell.append(status);
       row.append(statusCell);
+
+      const actionsCell = document.createElement("td");
+      const actionsWrap = document.createElement("div");
+      actionsWrap.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap;";
+
+      const invoiceBtn = document.createElement("button");
+      invoiceBtn.type = "button";
+      invoiceBtn.className = "admin-secondary-button";
+      invoiceBtn.style.cssText = "padding:6px 10px;font-size:0.76rem;display:inline-flex;align-items:center;gap:5px;";
+      invoiceBtn.title = "Preview & Download Official Tax Invoice";
+      invoiceBtn.innerHTML = '<i data-lucide="file-text" aria-hidden="true"></i><span>Invoice</span>';
+      invoiceBtn.addEventListener("click", () => issueOrderInvoiceFromAdmin(order));
+
+      const detailsBtn = document.createElement("button");
+      detailsBtn.type = "button";
+      detailsBtn.className = "admin-row-action";
+      detailsBtn.title = "View order items & delivery details";
+      detailsBtn.setAttribute("aria-label", `Details for ${order.order_number}`);
+      detailsBtn.innerHTML = '<i data-lucide="eye" aria-hidden="true"></i>';
+      detailsBtn.addEventListener("click", () => openOrderDetailsDialog(order));
+
+      actionsWrap.append(invoiceBtn, detailsBtn);
+      actionsCell.append(actionsWrap);
+      row.append(actionsCell);
       return row;
     });
     $("#orders-body").replaceChildren(...rows);
-    $("#orders-empty").hidden = orders.length > 0;
+    $("#orders-empty").hidden = filtered.length > 0;
+    window.lucide?.createIcons();
   }
 
   async function updateOrderStatus(order, nextStatus, control) {
@@ -5603,6 +5994,39 @@
     $("#add-product-gallery-image").addEventListener("click", addProductGalleryImageRow);
     $("#refresh-products").addEventListener("click", loadCatalog);
     $("#refresh-orders").addEventListener("click", loadOrders);
+    $("#orders-search")?.addEventListener("input", renderOrders);
+    $("#orders-status-filter")?.addEventListener("change", renderOrders);
+    $("#orders-clear-filters")?.addEventListener("click", () => {
+      if ($("#orders-search")) $("#orders-search").value = "";
+      if ($("#orders-status-filter")) $("#orders-status-filter").value = "all";
+      renderOrders();
+    });
+    $("#open-invoice-settings-btn")?.addEventListener("click", openInvoiceSettingsDialog);
+    $$("[data-close-invoice-settings]").forEach((btn) =>
+      btn.addEventListener("click", () => $("#invoice-settings-dialog")?.close()),
+    );
+    $("#invoice-settings-form")?.addEventListener("submit", saveInvoiceSettings);
+    $("#preview-sample-invoice-btn")?.addEventListener("click", () => {
+      const sampleOrder = orders[0] || {
+        order_number: "RUQ-20261116-SAMPLE",
+        customer_name: "ESMAIL AL-KHADER",
+        customer_phone: "+967773879358",
+        customer_email: "esmailsaber10@gmail.com",
+        status: "confirmed",
+        total: 6399,
+        shipping_address: { city: "Riyadh", street: "King Fahd Road, KAFD" },
+        created_at: new Date().toISOString(),
+      };
+      const draftCfg = readInvoiceFormDraft();
+      window.WEEXEY_INVOICE?.openOfficialInvoice(buildAdminInvoicePayload(sampleOrder), {
+        language: "en",
+        autoPrint: false,
+        customConfig: draftCfg,
+      });
+    });
+    $("#order-detail-print-en")?.addEventListener("click", () => {
+      if (activeDetailOrder) issueOrderInvoiceFromAdmin(activeDetailOrder);
+    });
     $("#refresh-messages").addEventListener("click", loadContactMessages);
     const renderMessagesOnFilterChange = () => renderContactMessages();
     $("#messages-search").addEventListener("input", renderMessagesOnFilterChange);

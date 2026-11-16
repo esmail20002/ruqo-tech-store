@@ -49,30 +49,110 @@ html:not([data-theme="dark"]) main {
   transform: scaleX(1);
 }
 
-/* Apple Store Optical Blur Cross-Dissolve (Header stays 100% anchored) */
+/* Instant Content Stage Clear & Pulsing Brand Logo (Header stays 100% anchored) */
 html.is-wx-leaving body > .page-shell > main,
-html.is-wx-leaving body > .page-shell > .lunae-sequence {
+html.is-wx-leaving body > .page-shell > .lunae-sequence,
+html.is-wx-leaving body > .page-shell > [data-site-footer],
+html.is-wx-leaving body > .page-shell > footer {
   opacity: 0 !important;
-  filter: blur(8px) !important;
-  transform: translate3d(0, -8px, 0) !important;
-  transition:
-    opacity 0.14s cubic-bezier(0.32, 0, 0.67, 0),
-    filter 0.14s cubic-bezier(0.32, 0, 0.67, 0),
-    transform 0.14s cubic-bezier(0.32, 0, 0.67, 0) !important;
+  pointer-events: none !important;
+  transition: opacity 0.08s ease-out !important;
 }
 
 html.is-wx-preparing body > .page-shell > main,
 html.is-wx-preparing body > .page-shell > .lunae-sequence {
   opacity: 0 !important;
-  filter: blur(10px) !important;
-  transform: translate3d(0, 14px, 0) !important;
+  filter: blur(8px) !important;
+  transform: translate3d(0, 10px, 0) !important;
+}
+
+@keyframes wx-logo-breathe {
+  0%, 100% {
+    opacity: 0.42;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* Pure-CSS Pre-JS Fallback Pulsing Logo in Content Area (below header) */
+html:is(.is-wx-preparing, .is-wx-pulse-active):not(.is-wx-gate-pending) body:not(.has-wx-pulse-stage)::after {
+  content: "";
+  position: fixed;
+  top: var(--wx-header-offset, 76px);
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 48;
+  pointer-events: none;
+  background-color: #ffffff;
+  background-image: url("/images/new/li.png");
+  background-repeat: no-repeat;
+  background-position: center 44%;
+  background-size: clamp(135px, 20vw, 185px) auto;
+  animation: wx-logo-breathe 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+html[data-theme="dark"]:is(.is-wx-preparing, .is-wx-pulse-active):not(.is-wx-gate-pending) body:not(.has-wx-pulse-stage)::after {
+  background-color: #0d1520;
+  background-image: url("/images/new/dark.png");
+}
+
+/* DOM Content-Area Pulsing Logo Stage (Header remains visible above z-index 48) */
+.wx-content-pulse-stage {
+  position: fixed;
+  top: var(--wx-header-offset, 76px);
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 48;
+  display: grid;
+  place-items: center;
+  padding-bottom: 6vh;
+  background-color: #ffffff;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.14s ease,
+    visibility 0.14s ease;
+}
+
+html[data-theme="dark"] .wx-content-pulse-stage {
+  background-color: #0d1520;
+}
+
+html.is-wx-leaving .wx-content-pulse-stage,
+html:is(.is-wx-pulse-active, .is-wx-preparing):not(.is-wx-gate-pending) .wx-content-pulse-stage {
+  /* Immediately clear the content area visually on click with 0ms delay */
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto;
+  transition: none !important;
+}
+
+.wx-content-pulse-logo {
+  width: clamp(135px, 20vw, 185px);
+  height: auto;
+  max-height: 64px;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.12s ease;
+}
+
+html:is(.is-wx-pulse-active, .is-wx-preparing):not(.is-wx-gate-pending) .wx-content-pulse-logo {
+  opacity: 1 !important;
+  animation: wx-logo-breathe 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes wx-apple-optical-dissolve {
   0% {
     opacity: 0;
-    filter: blur(10px);
-    transform: translate3d(0, 14px, 0);
+    filter: blur(8px);
+    transform: translate3d(0, 10px, 0);
   }
   100% {
     opacity: 1;
@@ -84,7 +164,7 @@ html.is-wx-preparing body > .page-shell > .lunae-sequence {
 html.is-wx-ready body > .page-shell > main,
 html.is-wx-ready body > .page-shell > .lunae-sequence {
   opacity: 1;
-  animation: wx-apple-optical-dissolve 0.56s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: wx-apple-optical-dissolve 0.42s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html.is-wx-bfcache-restore body > .page-shell > main,

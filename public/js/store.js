@@ -305,8 +305,195 @@
   const getProfile = () =>
     read(keys.profile, { name: "", email: "", phone: "", city: "Riyadh" });
   const setProfile = (profile) => write(keys.profile, profile);
-  const getOrders = () => read(keys.orders, []);
-  const setOrders = (orders) => write(keys.orders, orders);
+  const buildDefaultDemoOrders = () => {
+    const now = Date.now();
+    const dayMs = 86400000;
+    const isoDaysAgo = (days) => new Date(now - days * dayMs).toISOString();
+    const fmtDate = (iso) => {
+      try {
+        return new Intl.DateTimeFormat(localeByLanguage[getLanguage()] || "en-US", {
+          dateStyle: "medium",
+        }).format(new Date(iso));
+      } catch {
+        return iso.slice(0, 10);
+      }
+    };
+    const d1 = isoDaysAgo(1);
+    const d2 = isoDaysAgo(4);
+    const d3 = isoDaysAgo(14);
+    const d4 = isoDaysAgo(21);
+    const d5 = isoDaysAgo(68);
+    return [
+      {
+        id: "WX-2026-8954",
+        createdAt: d1,
+        date: fmtDate(d1),
+        status: "shipped",
+        payment: "cod",
+        city: "Riyadh",
+        address: "King Fahd Road, Al Olaya District",
+        phone: "+966 50 123 4567",
+        isDemo: true,
+        total: 6399,
+        items: [
+          {
+            id: "macbook-pro",
+            name: "MacBook Pro 14 M4",
+            quantity: 1,
+            variant: "512GB · Space Black",
+            price: 5000,
+          },
+          {
+            id: "airpods-pro",
+            name: "AirPods Pro 2",
+            quantity: 1,
+            variant: "USB-C MagSafe",
+            price: 1399,
+          },
+        ],
+      },
+      {
+        id: "WX-2026-8920",
+        createdAt: d2,
+        date: fmtDate(d2),
+        status: "processing",
+        payment: "cod",
+        city: "Jeddah",
+        address: "Prince Sultan Street, Al Rawdah",
+        phone: "+966 55 987 6543",
+        isDemo: true,
+        total: 5499,
+        items: [
+          {
+            id: "galaxy-s25",
+            name: "Galaxy S25 Ultra",
+            quantity: 1,
+            variant: "512GB · Titanium Gray",
+            price: 5499,
+          },
+        ],
+      },
+      {
+        id: "WX-2026-8741",
+        createdAt: d3,
+        date: fmtDate(d3),
+        status: "delivered",
+        payment: "cod",
+        city: "Riyadh",
+        address: "Tahlia Street, Al Sulimaniyah",
+        phone: "+966 50 123 4567",
+        isDemo: true,
+        total: 6498,
+        items: [
+          {
+            id: "iphone-16",
+            name: "iPhone 16 Pro Max",
+            quantity: 1,
+            variant: "256GB · Desert Titanium",
+            price: 5199,
+          },
+          {
+            id: "sony-headphones",
+            name: "Sony WH-1000XM5",
+            quantity: 1,
+            variant: "Midnight Black",
+            price: 1299,
+          },
+        ],
+      },
+      {
+        id: "WX-2026-8615",
+        createdAt: d4,
+        date: fmtDate(d4),
+        status: "cancelled",
+        payment: "cod",
+        city: "Dammam",
+        address: "Corniche Road, Al Shati",
+        phone: "+966 54 321 0987",
+        isDemo: true,
+        total: 4299,
+        items: [
+          {
+            id: "asus-zenbook",
+            name: "ASUS Zenbook 14 OLED",
+            quantity: 1,
+            variant: "16GB · 1TB SSD",
+            price: 4299,
+          },
+        ],
+      },
+      {
+        id: "WX-2026-8309",
+        createdAt: d5,
+        date: fmtDate(d5),
+        status: "delivered",
+        payment: "cod",
+        city: "Riyadh",
+        address: "King Abdullah Financial District",
+        phone: "+966 50 123 4567",
+        isDemo: true,
+        total: 4398,
+        items: [
+          {
+            id: "apple-watch",
+            name: "Apple Watch Ultra 2",
+            quantity: 1,
+            variant: "49mm · Titanium",
+            price: 3199,
+          },
+          {
+            id: "galaxy-watch",
+            name: "Galaxy Watch 7",
+            quantity: 1,
+            variant: "44mm · Silver",
+            price: 1199,
+          },
+        ],
+      },
+    ];
+  };
+  const getOrders = () => {
+    const saved = read(keys.orders, null);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
+    const seededFlag = read("nours-orders-seeded", false);
+    if (!seededFlag) {
+      const defaults = buildDefaultDemoOrders();
+      write(keys.orders, defaults);
+      write("nours-orders-seeded", true);
+      return defaults;
+    }
+    return Array.isArray(saved) ? saved : [];
+  };
+  const setOrders = (orders) => {
+    write("nours-orders-seeded", true);
+    write(keys.orders, orders);
+    syncOrdersCount();
+    window.dispatchEvent(new CustomEvent("ruqo:orders-updated", { detail: { orders } }));
+    return orders;
+  };
+  const resetDemoOrders = () => {
+    const defaults = buildDefaultDemoOrders();
+    const existingReal = (read(keys.orders, []) || []).filter((item) => !item?.isDemo);
+    const merged = [...existingReal, ...defaults];
+    return setOrders(merged);
+  };
+  const activeOrdersCount = () =>
+    getOrders().filter((order) =>
+      ["pending", "confirmed", "processing", "shipped", "in_transit"].includes(
+        String(order?.status || "confirmed").toLowerCase(),
+      ),
+    ).length;
+  const syncOrdersCount = () => {
+    const language = getLanguage();
+    const count = activeOrdersCount();
+    const formattedCount = new Intl.NumberFormat(
+      localeByLanguage[language] || localeByLanguage.en,
+    ).format(count);
+    document.querySelectorAll("[data-orders-count]").forEach((node) => {
+      node.textContent = formattedCount;
+      node.hidden = count === 0;
+    });
+  };
   const getSettings = () =>
     read(keys.settings, { orderUpdates: true, offers: false });
   const setSettings = (settings) => write(keys.settings, settings);
@@ -1884,6 +2071,7 @@
         deals: "العروض والتخفيضات",
         wishlist: "المفضلة",
         cart: "سلة المشتريات",
+        orders: "طلباتي",
         account: "حسابي",
         help: "مركز المساعدة والأسئلة الشائعة",
         shipping: "الشحن والتوصيل السريع",
@@ -1907,6 +2095,7 @@
         deals: "Exclusive Deals",
         wishlist: "Wishlist",
         cart: "Shopping Bag",
+        orders: "My orders",
         account: "My Account",
         help: "Help Center & FAQ",
         shipping: "Fast Shipping & Delivery",
@@ -1930,6 +2119,7 @@
         deals: "Offres exclusives",
         wishlist: "Favoris",
         cart: "Panier",
+        orders: "Mes commandes",
         account: "Mon compte",
         help: "Centre d'aide et FAQ",
         shipping: "Livraison rapide",
@@ -1953,6 +2143,7 @@
         deals: "Ofertas exclusivas",
         wishlist: "Favoritos",
         cart: "Carrito",
+        orders: "Mis pedidos",
         account: "Mi cuenta",
         help: "Centro de ayuda y FAQ",
         shipping: "Envío rápido",
@@ -1976,6 +2167,7 @@
         deals: "热销优惠",
         wishlist: "心愿单",
         cart: "购物袋",
+        orders: "我的订单",
         account: "我的账户",
         help: "帮助中心与常见问题",
         shipping: "快速配送",
@@ -2090,6 +2282,12 @@
               <span class="side-link-icon">${icon("shopping-bag")}</span>
               <span class="side-link-text">${mt.cart}</span>
               <span class="side-link-badge is-cart" data-cart-count>${store.cartCount()}</span>
+            </a>
+            <a href="/orders.html" class="product-side-link is-orders">
+              <span class="side-link-icon">${icon("package")}</span>
+              <span class="side-link-text">${mt.orders}</span>
+              <span class="side-link-badge is-orders" data-orders-count${store.activeOrdersCount() ? "" : " hidden"}>${store.activeOrdersCount()}</span>
+              <span class="side-link-arrow">${arrowSymbol}</span>
             </a>
             <a href="/account.html" class="product-side-link">
               <span class="side-link-icon">${icon("user")}</span>
@@ -2327,7 +2525,7 @@
     const isHomeActive = currentPath === "/" || currentPath === "";
     const isShopActive = ["/products.html", "/categories.html", "/product.html"].includes(currentPath);
     const isCartActive = ["/cart.html", "/checkout.html"].includes(currentPath);
-    const isAccountActive = ["/account.html", "/wishlist.html"].includes(currentPath);
+    const isAccountActive = ["/account.html", "/wishlist.html", "/orders.html"].includes(currentPath);
 
     const mobileBottomNav = document.createElement("nav");
     mobileBottomNav.className = "wx-mobile-bottom-nav";
@@ -2470,6 +2668,9 @@
     setProfile,
     getOrders,
     setOrders,
+    resetDemoOrders,
+    activeOrdersCount,
+    syncOrdersCount,
     getSettings,
     setSettings,
     getCurrency,
@@ -2569,4 +2770,34 @@
 
   document.addEventListener("pointerover", handleLinkHover, { passive: true });
   document.addEventListener("touchstart", handleLinkHover, { passive: true });
+
+  // Register Service Worker & Idle Pre-cache for Instant Navigation on Slow Connections
+  if ("serviceWorker" in navigator && !location.pathname.startsWith("/admin")) {
+    window.addEventListener(
+      "load",
+      () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      },
+      { once: true },
+    );
+  }
+
+  const warmCorePages = () => {
+    [
+      "/",
+      "/products.html",
+      "/orders.html",
+      "/cart.html",
+      "/wishlist.html",
+      "/account.html",
+      "/categories.html",
+      "/support.html",
+      "/about.html",
+    ].forEach((path) => prefetchPage(path));
+  };
+  if (typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(warmCorePages, { timeout: 2000 });
+  } else {
+    window.setTimeout(warmCorePages, 1200);
+  }
 })();

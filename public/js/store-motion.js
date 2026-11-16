@@ -14,21 +14,96 @@
     document.documentElement.classList.add("is-low-power-mobile");
   }
 
+  const motionScriptUrl = document.currentScript?.src || document.baseURI;
+  const lightLogoSrc = new URL("../images/new/li.png", motionScriptUrl).href;
+  const darkLogoSrc = new URL("../images/new/dark.png", motionScriptUrl).href;
+
+  // Preload both theme logos in RAM immediately so the pulsing logo renders in 0ms
+  [lightLogoSrc, darkLogoSrc].forEach((src) => {
+    const img = new Image();
+    img.decoding = "sync";
+    img.src = src;
+  });
+
+  const isSlowNetworkConnection = () => {
+    if (!navigator.onLine) return true;
+    const conn = navigator.connection;
+    if (!conn) return false;
+    if (conn.saveData === true) return true;
+    if (["slow-2g", "2g", "3g"].includes(conn.effectiveType)) return true;
+    if (typeof conn.rtt === "number" && conn.rtt > 180) return true;
+    if (typeof conn.downlink === "number" && conn.downlink > 0 && conn.downlink < 2) return true;
+    return false;
+  };
+
   /* ==========================================================================
-     0. ZERO-FLASH PRE-PAINT GATE & HOVER IMAGE/PAGE PREFETCH
+     0. ZERO-DELAY NAVIGATION & CONTENT-AREA PULSING LOGO STAGE
      ========================================================================== */
   const setupCinematicPageTransitions = () => {
     const progressBar = document.createElement("div");
     progressBar.className = "wx-nav-progress-bar";
     progressBar.setAttribute("aria-hidden", "true");
-    document.body.append(progressBar);
+
+    const pulseStage = document.createElement("div");
+    pulseStage.className = "wx-content-pulse-stage";
+    pulseStage.setAttribute("aria-hidden", "true");
+    const pulseLogo = document.createElement("img");
+    pulseLogo.className = "wx-content-pulse-logo brand-logo";
+    pulseLogo.alt = "";
+    pulseLogo.decoding = "sync";
+    pulseStage.append(pulseLogo);
+
+    const syncPulseStageLogoAndOffset = () => {
+      const isDark = document.documentElement.dataset.theme === "dark";
+      const customLightLogo = window.RUQO_BRAND_LOGO_URL;
+      const targetSrc = isDark ? darkLogoSrc : customLightLogo || lightLogoSrc;
+      if (pulseLogo.src !== targetSrc) pulseLogo.src = targetSrc;
+
+      const headerEl = document.querySelector(".commerce-header, .site-header");
+      if (headerEl) {
+        const rect = headerEl.getBoundingClientRect();
+        const offsetPx = Math.max(0, Math.round(rect.bottom));
+        if (offsetPx > 0) {
+          document.documentElement.style.setProperty("--wx-header-offset", `${offsetPx}px`);
+        }
+      }
+    };
+
+    syncPulseStageLogoAndOffset();
+    document.body.classList.add("has-wx-pulse-stage");
+    document.body.append(progressBar, pulseStage);
+
+    window.addEventListener("ruqo:theme-updated", syncPulseStageLogoAndOffset);
+    window.addEventListener("ruqo:store-settings-updated", syncPulseStageLogoAndOffset);
+    window.addEventListener("resize", syncPulseStageLogoAndOffset, { passive: true });
+
+    let pulseThresholdTimer = 0;
+    const clearPulseStage = () => {
+      window.clearTimeout(pulseThresholdTimer);
+      document.documentElement.classList.remove("is-wx-leaving", "is-wx-pulse-active", "is-wx-preparing");
+      progressBar.classList.remove("is-active");
+      progressBar.classList.add("is-complete");
+    };
+
+    const showPulseStageNow = () => {
+      syncPulseStageLogoAndOffset();
+      document.documentElement.classList.add("is-wx-leaving", "is-wx-pulse-active");
+      progressBar.classList.remove("is-complete");
+      progressBar.classList.add("is-active");
+    };
+
+    window.WEEXEY_PULSE_STAGE = {
+      show: showPulseStageNow,
+      hide: clearPulseStage,
+    };
 
     let readyTriggered = false;
     const revealReadyPage = () => {
       if (readyTriggered) return;
       readyTriggered = true;
+      window.clearTimeout(pulseThresholdTimer);
       requestAnimationFrame(() => {
-        document.documentElement.classList.remove("is-wx-bfcache-restore");
+        document.documentElement.classList.remove("is-wx-bfcache-restore", "is-wx-leaving", "is-wx-pulse-active");
         document.documentElement.classList.add("is-wx-ready");
         document.documentElement.classList.remove("is-wx-preparing");
         progressBar.classList.remove("is-active");
@@ -54,18 +129,18 @@
     let isNavigating = false;
     window.addEventListener("pageshow", (event) => {
       isNavigating = false;
-      document.documentElement.classList.remove("is-wx-leaving", "is-wx-preparing");
-      progressBar.classList.remove("is-active");
+      clearPulseStage();
       if (event.persisted) {
         document.documentElement.classList.add("is-wx-bfcache-restore", "is-wx-ready");
       } else {
         revealReadyPage();
       }
     });
+
     // Hover Prefetch & Product Image Prewarm (0ms instant cache hit on click)
     const prewarmedUrls = new Set();
     const prewarmLink = (link) => {
-      if (isLowPowerMobile || !link?.href) return;
+      if (!link?.href) return;
       let url;
       try {
         url = new URL(link.href, window.location.origin);
@@ -111,7 +186,7 @@
       { passive: true },
     );
 
-    // Trigger fast optical exit motion (110ms) + top progress bar before navigating
+    // Zero-Delay Navigation + Smart Threshold Content-Area Pulsing Logo
     document.addEventListener(
       "click",
       (event) => {
@@ -129,6 +204,16 @@
         }
         const link = event.target.closest("a[href]");
         if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
+        const rawHref = link.getAttribute("href") || "";
+        if (
+          !rawHref ||
+          rawHref.startsWith("#") ||
+          rawHref.startsWith("mailto:") ||
+          rawHref.startsWith("tel:") ||
+          rawHref.startsWith("javascript:")
+        ) {
+          return;
+        }
 
         let destUrl;
         try {
@@ -142,19 +227,32 @@
         }
         if (destUrl.href === window.location.href) return;
 
-        if (reducedMotion.matches || isLowPowerMobile) return;
-
-        event.preventDefault();
         isNavigating = true;
         prewarmLink(link);
+        syncPulseStageLogoAndOffset();
 
+        // Close open sidebar drawer or search panel immediately (0ms visual response)
+        document.querySelector(".product-side-drawer.is-open")?.classList.remove("is-open");
+        document.querySelector(".product-side-drawer-backdrop.is-open")?.classList.remove("is-open");
+        const searchPanel = document.getElementById("site-search-panel");
+        if (searchPanel) searchPanel.hidden = true;
+
+        // Immediately clear content area while keeping the top header anchored
         progressBar.classList.remove("is-complete");
         progressBar.classList.add("is-active");
         document.documentElement.classList.add("is-wx-leaving");
 
-        window.setTimeout(() => {
-          window.location.href = destUrl.href;
-        }, 110);
+        // Smart threshold: 0ms on slow internet, or 90ms if navigation takes longer than an instant cache hit
+        window.clearTimeout(pulseThresholdTimer);
+        if (isSlowNetworkConnection()) {
+          document.documentElement.classList.add("is-wx-pulse-active");
+        } else {
+          pulseThresholdTimer = window.setTimeout(() => {
+            document.documentElement.classList.add("is-wx-pulse-active");
+          }, 90);
+        }
+        // Notice we do NOT call event.preventDefault() or delay window.location.href!
+        // The browser starts navigating at 0ms while the content area shows the clean stage + pulsing logo.
       },
       { capture: true },
     );

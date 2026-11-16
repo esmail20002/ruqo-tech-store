@@ -5100,6 +5100,20 @@ html[dir="rtl"] .product-side-link:hover .side-link-arrow {
   text-align: center;
 }
 
+.side-link-badge.is-orders {
+  background: rgba(120, 56, 211, 0.14);
+  border: 1px solid rgba(120, 56, 211, 0.25);
+  color: var(--primary-deep, #633ea5);
+  min-width: 20px;
+  text-align: center;
+}
+
+html[data-theme="dark"] .side-link-badge.is-orders {
+  background: rgba(186, 143, 235, 0.18);
+  border-color: rgba(186, 143, 235, 0.32);
+  color: #d8b4fe;
+}
+
 /* Category Pills inside drawer */
 .product-side-category-pills {
   display: grid;

@@ -180,8 +180,91 @@
           </section>
 
           <section class="admin-view" data-admin-panel="orders" hidden>
-            <div class="admin-page-heading"><div><span class="admin-eyebrow">FULFILLMENT</span><h1>Orders</h1><p>Review incoming orders and update their fulfillment status.</p></div><button id="refresh-orders" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh</button></div>
-            <section class="admin-section"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Order</th><th>Customer</th><th>Placed</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead><tbody id="orders-body"></tbody></table><div id="orders-empty" class="admin-empty" hidden><i data-lucide="clipboard-list" aria-hidden="true"></i><strong>No orders yet</strong><span>Guest checkout orders will appear here.</span></div></div></section>
+            <div class="admin-page-heading">
+              <div>
+                <span class="admin-eyebrow">FULFILLMENT &amp; BILLING</span>
+                <h1>Orders &amp; Official Invoices</h1>
+                <p>Review incoming orders, update fulfillment status, inspect ordered items, and issue official legal tax invoices.</p>
+              </div>
+              <div class="admin-heading-actions">
+                <button id="open-invoice-settings-btn" class="admin-secondary-button" type="button">
+                  <i data-lucide="file-cog" aria-hidden="true"></i> Invoice Legal Settings
+                </button>
+                <button id="refresh-orders" class="admin-secondary-button" type="button">
+                  <i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh
+                </button>
+              </div>
+            </div>
+
+            <section class="admin-stat-grid messages-stats" aria-label="Order statistics">
+              <article class="admin-stat">
+                <span>Total orders</span>
+                <strong id="orders-stat-total">0</strong>
+                <small>All recorded orders</small>
+              </article>
+              <article class="admin-stat">
+                <span>Active / In transit</span>
+                <strong id="orders-stat-active">0</strong>
+                <small>Pending, confirmed, or shipped</small>
+              </article>
+              <article class="admin-stat">
+                <span>Delivered</span>
+                <strong id="orders-stat-delivered">0</strong>
+                <small>Completed handovers</small>
+              </article>
+              <article class="admin-stat">
+                <span>Total revenue (SAR)</span>
+                <strong id="orders-stat-revenue">0</strong>
+                <small>Excluding cancelled orders</small>
+              </article>
+            </section>
+
+            <section class="admin-section">
+              <div class="messages-toolbar" style="margin-bottom: 14px;">
+                <label class="admin-search">
+                  <i data-lucide="search" aria-hidden="true"></i>
+                  <input id="orders-search" type="search" placeholder="Search order #, customer name, phone, or city…" aria-label="Search orders" />
+                </label>
+                <label class="messages-filter-field">
+                  <span>Status</span>
+                  <select id="orders-status-filter" aria-label="Filter orders by status">
+                    <option value="all">All statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="refunded">Refunded</option>
+                  </select>
+                </label>
+                <button id="orders-clear-filters" class="admin-secondary-button" type="button">Clear filters</button>
+              </div>
+              <div class="messages-results-bar" style="margin-bottom: 10px;">
+                <span id="orders-results-count" role="status">Showing 0 of 0 orders</span>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Order</th>
+                      <th>Customer &amp; Destination</th>
+                      <th>Placed</th>
+                      <th>Items</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Invoice &amp; Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="orders-body"></tbody>
+                </table>
+                <div id="orders-empty" class="admin-empty" hidden>
+                  <i data-lucide="clipboard-list" aria-hidden="true"></i>
+                  <strong>No orders found</strong>
+                  <span>Orders matching your criteria will appear here.</span>
+                </div>
+              </div>
+            </section>
           </section>
 
           <section class="admin-view" data-admin-panel="messages" hidden>
@@ -1545,6 +1628,97 @@
       </form>
     </dialog>
 
+    <dialog id="order-detail-dialog" class="product-dialog message-detail-dialog" aria-labelledby="order-detail-title">
+      <form method="dialog">
+        <header class="dialog-header">
+          <div>
+            <span class="admin-eyebrow">ORDER &amp; BILLING RECORD</span>
+            <h2 id="order-detail-title">Order Details</h2>
+          </div>
+          <button class="admin-icon-button" type="submit" aria-label="Close order details">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </header>
+        <div class="dialog-body">
+          <dl class="message-detail-meta">
+            <div><dt>Order Number</dt><dd id="order-detail-number"></dd></div>
+            <div><dt>Customer</dt><dd id="order-detail-customer"></dd></div>
+            <div><dt>Phone</dt><dd id="order-detail-phone" dir="ltr"></dd></div>
+            <div><dt>Email</dt><dd id="order-detail-email" dir="ltr"></dd></div>
+            <div><dt>Delivery Address</dt><dd id="order-detail-address"></dd></div>
+            <div><dt>Placed Date</dt><dd id="order-detail-date"></dd></div>
+            <div><dt>Payment</dt><dd id="order-detail-payment"></dd></div>
+            <div><dt>Total Amount</dt><dd id="order-detail-total"></dd></div>
+          </dl>
+          <section class="message-detail-content" style="margin-top: 14px;">
+            <h3>Ordered Items (<span id="order-detail-items-count">0</span>)</h3>
+            <div class="admin-table-wrap" style="margin-top: 8px;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Variant / Option</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Line Total</th>
+                  </tr>
+                </thead>
+                <tbody id="order-detail-items-body"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="message-detail-content" id="order-detail-note-section" style="margin-top: 12px;" hidden>
+            <h3>Customer Delivery Note</h3>
+            <p id="order-detail-note"></p>
+          </section>
+        </div>
+        <footer class="dialog-footer">
+          <button class="admin-secondary-button" type="submit">Close</button>
+          <span></span>
+          <button id="order-detail-print-en" class="admin-primary-button" type="button">
+            <i data-lucide="printer" aria-hidden="true"></i> Preview Official Tax Invoice (PDF)
+          </button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="invoice-settings-dialog" class="product-dialog" aria-labelledby="invoice-settings-title">
+      <form id="invoice-settings-form" method="dialog" novalidate>
+        <header class="dialog-header">
+          <div>
+            <span class="admin-eyebrow">LEGAL TAX DOCUMENT CONFIGURATION</span>
+            <h2 id="invoice-settings-title">Official Invoice &amp; Policies Settings</h2>
+          </div>
+          <button class="admin-icon-button" type="button" data-close-invoice-settings aria-label="Close invoice settings">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </header>
+        <div class="dialog-body">
+          <p class="admin-muted-copy">Customize the legal entity name, Tax Registration Number (VAT/TRN), Commercial Registration (CR), and the 4 statutory policy clauses printed on all customer &amp; admin invoices.</p>
+          <div class="admin-form-grid">
+            <label>Tax Reg. Number (VAT / TRN)<input name="trn_number" placeholder="310489275600003" required /></label>
+            <label>Commercial Reg. (CR)<input name="cr_number" placeholder="1010894521" required /></label>
+            <label>Company Legal Name<input name="company_name_en" placeholder="WEEXEY Commerce &amp; Technology Ltd." required /></label>
+            <label>Official Billing Email<input name="billing_email" type="email" placeholder="legal-billing@weexey.com" required /></label>
+            <label class="form-field-wide">Headquarters Address<input name="company_address_en" placeholder="King Fahd Road, King Abdullah Financial District (KAFD), Tower 4, Postal Code 13519" /></label>
+            <label class="form-field-wide">1. Official 2-Year Warranty Policy<textarea name="policy1_body_en" rows="2"></textarea></label>
+            <label class="form-field-wide">2. 7-Day Statutory Return &amp; Exchange Policy<textarea name="policy2_body_en" rows="2"></textarea></label>
+            <label class="form-field-wide">3. Cash on Delivery (COD) Inspection Protocol<textarea name="policy3_body_en" rows="2"></textarea></label>
+            <label class="form-field-wide">4. Electronic Tax Invoice Legal Validity<textarea name="policy4_body_en" rows="2"></textarea></label>
+          </div>
+          <p id="invoice-settings-feedback" class="admin-feedback" role="status" hidden></p>
+        </div>
+        <footer class="dialog-footer">
+          <button id="preview-sample-invoice-btn" class="admin-secondary-button" type="button">
+            <i data-lucide="eye" aria-hidden="true"></i> Preview Live Sample Invoice
+          </button>
+          <span></span>
+          <button class="admin-secondary-button" type="button" data-close-invoice-settings>Cancel</button>
+          <button id="save-invoice-settings-btn" class="admin-primary-button" type="submit">Save Invoice Settings</button>
+        </footer>
+      </form>
+    </dialog>
+
     <dialog id="message-detail-dialog" class="product-dialog message-detail-dialog" aria-labelledby="message-detail-title">
       <form method="dialog">
         <header class="dialog-header"><div><span class="admin-eyebrow">CUSTOMER CARE</span><h2 id="message-detail-title">Message details</h2></div><button class="admin-icon-button" type="submit" aria-label="Close message details"><i data-lucide="x" aria-hidden="true"></i></button></header>
@@ -1914,6 +2088,7 @@
     <script src="/js/admin-big-3-cards.js?v=1" defer></script>
     <script src="/js/support-content-defaults.js?v=2" defer></script>
     <script src="/js/admin-support-content.js?v=5" defer></script>
-    <script src="/js/admin.js?v=25" defer></script>
+    <script src="/js/invoice-generator.js?v=10" defer></script>
+    <script src="/js/admin.js?v=28" defer></script>
   </body>
 </html>

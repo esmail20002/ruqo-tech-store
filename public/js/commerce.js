@@ -3288,8 +3288,8 @@
 
               <!-- Actions -->
               <div class="receipt-buttons">
-                <a class="commerce-button receipt-account-btn" href="/account.html#orders">
-                  <span>${t.viewMyOrders || t.viewAccount || "View in Account"}</span>
+                <a class="commerce-button receipt-account-btn" href="/orders.html">
+                  <span>${t.viewMyOrders || t.viewAccount || "View My Orders"}</span>
                   <i data-lucide="arrow-up-left" class="btn-arrow" aria-hidden="true"></i>
                 </a>
                 <button class="receipt-print-btn" type="button" data-print-receipt>
@@ -3307,7 +3307,42 @@
     `;
 
     root.querySelector("[data-print-receipt]")?.addEventListener("click", () => {
-      window.print();
+      if (window.WEEXEY_INVOICE?.openOfficialInvoice) {
+        window.WEEXEY_INVOICE.openOfficialInvoice(
+          {
+            orderNumber: order.order_number,
+            createdAt: order.created_at || new Date().toISOString(),
+            formattedDate,
+            status: order.status || "confirmed",
+            subtotal: Number(order.subtotal || orderTotal.subtotal),
+            discountTotal: Number(order.discount_total || 0),
+            couponCode: order.coupon_code || "",
+            shippingTotal: Number(order.shipping_total ?? orderTotal.shipping),
+            total: Number(order.total || orderTotal.total),
+            customerName: values.name,
+            phone: values.phone,
+            email: values.email,
+            city: values.city,
+            address: values.address,
+            postal: values.postal,
+            notes: values.notes,
+            items: lines.map(({ product, quantity, option, unitPrice }) => {
+              const rawProduct = products.find((p) => p.id === product.id) || product;
+              return {
+                id: product.id,
+                brand: rawProduct.brand || product.brand || "WEEXEY",
+                name: rawProduct.name || product.name,
+                variant: option?.label || "",
+                quantity,
+                price: unitPrice,
+              };
+            }),
+          },
+          { language: "en", autoPrint: false },
+        );
+      } else {
+        window.print();
+      }
     });
 
     const copyBtn = root.querySelector("[data-copy-order]");
@@ -3333,19 +3368,910 @@
     window.lucide?.createIcons();
   }
 
+  let ordersFilterState = {
+    statusTab: "all",
+    searchQuery: "",
+    datePreset: "all",
+    dateFrom: "",
+    dateTo: "",
+    lookupOpen: false,
+    expandedOrderIds: new Set(),
+    lookupFeedback: "",
+    lookupFeedbackIsError: false,
+  };
+
+  function getOrdersCopy() {
+    const dict = {
+      ar: {
+        eyebrow: "تتبع وسجل المشتريات",
+        title: "طلباتي",
+        subtitle: "تابع الطلبات التي لا تزال في الطريق، واستعرض الطلبات التي تم إيصالها أو الملغاة مع فلترة فورية بالتاريخ واسم المنتج.",
+        tabAll: "كل الطلبات",
+        tabInTransit: "في الطريق",
+        tabDelivered: "تم التوصيل",
+        tabCancelled: "ملغاة",
+        searchLabel: "فلترة باسم المنتج أو رقم الطلب",
+        searchPlaceholder: "ابحث باسم المنتج (مثل: MacBook, آيفون, سماعة) أو رقم الطلب...",
+        clearSearch: "مسح البحث",
+        dateFilterLabel: "فلترة بالتاريخ",
+        presetAll: "كل الأوقات",
+        preset7d: "آخر 7 أيام",
+        preset30d: "آخر 30 يوماً",
+        preset6m: "آخر 6 أشهر",
+        dateFromLabel: "من تاريخ",
+        dateToLabel: "إلى تاريخ",
+        resetFilters: "مسح الفلاتر",
+        resultsCount: "عرض {shown} من أصل {total} طلب",
+        lookupToggle: "ربط أو استعلام عن طلب",
+        restoreDemo: "استعادة الطلبات التجريبية",
+        lookupTitle: "استعلام ومزامنة طلب برقم الطلب",
+        lookupDesc: "أدخل رقم الطلب الرسمي للبحث عنه أو مزامنة حالته المباشرة.",
+        lookupOrderPlaceholder: "رقم الطلب (مثال: WX-2026-8954)",
+        lookupSubmit: "بحث ومزامنة",
+        lookupFoundLocal: "تم العثور على الطلب وعرضه في القائمة.",
+        lookupNotFound: "لم يتم العثور على طلب بهذا الرقم.",
+        statusPending: "في الطريق · بانتظار التأكيد",
+        statusConfirmed: "في الطريق · تم تأكيد الطلب",
+        statusProcessing: "في الطريق · قيد التجهيز والتغليف",
+        statusShipped: "في الطريق · خرج للتوصيل",
+        statusDelivered: "تم التوصيل بنجاح",
+        statusCancelled: "تم إلغاء الطلب",
+        statusRefunded: "ملغي ومسترد",
+        step1: "تأكيد الطلب",
+        step2: "التجهيز والتغليف",
+        step3: "في الطريق إليك",
+        step4: "تم التوصيل",
+        cancelledNotice: "تم إلغاء هذا الطلب. لم يتم تحصيل أي مبالغ مالية.",
+        orderDate: "تاريخ الطلب",
+        orderTotal: "إجمالي الطلب",
+        itemsCount: "المنتجات",
+        matchedBadge: "مطابق للبحث",
+        destination: "وجهة التوصيل",
+        paymentMethod: "طريقة الدفع",
+        cod: "الدفع عند الاستلام",
+        reorderBtn: "إعادة الطلب",
+        reorderedToast: "تمت إضافة منتجات الطلب إلى سلة المشتريات",
+        cancelOrderBtn: "إلغاء الطلب",
+        cancelConfirm: "هل أنت متأكد من رغبتك في إلغاء هذا الطلب؟",
+        detailsBtn: "تفاصيل الشحنة",
+        hideDetailsBtn: "إخفاء التفاصيل",
+        printInvoiceBtn: "طباعة الفاتورة الرسمية",
+        copyBtn: "نسخ الرقم",
+        copiedBtn: "تم النسخ ✓",
+        emptyFilteredTitle: "لا توجد طلبات مطابقة للفلاتر الحالية",
+        emptyFilteredDesc: "جرّب تغيير تبويب الحالة أو تعديل نطاق التاريخ أو البحث باسم منتج آخر.",
+        emptyAllTitle: "لا توجد طلبات مسجلة بعد",
+        emptyAllDesc: "عند إتمام أي عملية شراء ستظهر طلباتك هنا لمتابعة حالتها خطوة بخطوة.",
+        openOrdersPage: "فتح صفحة طلباتي الكاملة (فلترة وتتبع)",
+      },
+      en: {
+        eyebrow: "ORDER TRACKING & HISTORY",
+        title: "My orders",
+        subtitle: "Track orders on the way, review delivered purchases, or check cancelled orders with instant date and product filtering.",
+        tabAll: "All Orders",
+        tabInTransit: "On the Way",
+        tabDelivered: "Delivered",
+        tabCancelled: "Cancelled",
+        searchLabel: "Filter by product name or order ID",
+        searchPlaceholder: "Search by product name (e.g. MacBook, iPhone, AirPods) or order #...",
+        clearSearch: "Clear search",
+        dateFilterLabel: "Filter by date",
+        presetAll: "All Time",
+        preset7d: "Last 7 Days",
+        preset30d: "Last 30 Days",
+        preset6m: "Last 6 Months",
+        dateFromLabel: "From date",
+        dateToLabel: "To date",
+        resetFilters: "Reset filters",
+        resultsCount: "Showing {shown} of {total} orders",
+        lookupToggle: "Find / Sync Order",
+        restoreDemo: "Restore sample orders",
+        lookupTitle: "Find or Sync an Order by Number",
+        lookupDesc: "Enter your official order number to locate it or sync its latest status.",
+        lookupOrderPlaceholder: "Order number (e.g. WX-2026-8954)",
+        lookupSubmit: "Search & Sync",
+        lookupFoundLocal: "Order located and highlighted below.",
+        lookupNotFound: "No order found matching that order number.",
+        statusPending: "On the Way · Pending Confirmation",
+        statusConfirmed: "On the Way · Order Confirmed",
+        statusProcessing: "On the Way · Preparing & Packing",
+        statusShipped: "On the Way · Out for Delivery",
+        statusDelivered: "Delivered Successfully",
+        statusCancelled: "Order Cancelled",
+        statusRefunded: "Cancelled & Refunded",
+        step1: "Confirmed",
+        step2: "Preparing",
+        step3: "On the Way",
+        step4: "Delivered",
+        cancelledNotice: "This order was cancelled. No payment was charged.",
+        orderDate: "Order date",
+        orderTotal: "Order total",
+        itemsCount: "Items",
+        matchedBadge: "Matched",
+        destination: "Delivery destination",
+        paymentMethod: "Payment method",
+        cod: "Cash on Delivery",
+        reorderBtn: "Buy Again",
+        reorderedToast: "Order items added to your bag",
+        cancelOrderBtn: "Cancel Order",
+        cancelConfirm: "Are you sure you want to cancel this order?",
+        detailsBtn: "Shipment Details",
+        hideDetailsBtn: "Hide Details",
+        printInvoiceBtn: "Official Tax Invoice",
+        copyBtn: "Copy #",
+        copiedBtn: "Copied ✓",
+        emptyFilteredTitle: "No orders match your current filters",
+        emptyFilteredDesc: "Try switching status tabs, adjusting the date range, or searching for another product name.",
+        emptyAllTitle: "No orders yet",
+        emptyAllDesc: "Once you place an order, you can track its delivery journey here.",
+        openOrdersPage: "Open full My Orders page (Filter & Track)",
+      },
+      fr: {
+        eyebrow: "SUIVI ET HISTORIQUE DES COMMANDES",
+        title: "Mes commandes",
+        subtitle: "Suivez vos commandes en cours de livraison, livrées ou annulées avec filtrage par date et par produit.",
+        tabAll: "Toutes",
+        tabInTransit: "En chemin",
+        tabDelivered: "Livrées",
+        tabCancelled: "Annulées",
+        searchLabel: "Filtrer par produit ou N° de commande",
+        searchPlaceholder: "Rechercher par nom de produit ou N° de commande...",
+        clearSearch: "Effacer",
+        dateFilterLabel: "Filtrer par date",
+        presetAll: "Toutes les dates",
+        preset7d: "7 derniers jours",
+        preset30d: "30 derniers jours",
+        preset6m: "6 derniers mois",
+        dateFromLabel: "Du",
+        dateToLabel: "Au",
+        resetFilters: "Réinitialiser",
+        resultsCount: "{shown} sur {total} commandes affichées",
+        lookupToggle: "Rechercher une commande",
+        restoreDemo: "Restaurer les exemples",
+        lookupTitle: "Rechercher une commande par numéro",
+        lookupDesc: "Entrez votre numéro de commande officiel pour vérifier son statut.",
+        lookupOrderPlaceholder: "N° de commande (ex: WX-2026-8954)",
+        lookupSubmit: "Rechercher",
+        lookupFoundLocal: "Commande trouvée.",
+        lookupNotFound: "Aucune commande trouvée avec ce numéro.",
+        statusPending: "En chemin · En attente",
+        statusConfirmed: "En chemin · Confirmée",
+        statusProcessing: "En chemin · En préparation",
+        statusShipped: "En chemin · En cours de livraison",
+        statusDelivered: "Livrée avec succès",
+        statusCancelled: "Commande annulée",
+        statusRefunded: "Annulée et remboursée",
+        step1: "Confirmée",
+        step2: "Préparation",
+        step3: "En chemin",
+        step4: "Livrée",
+        cancelledNotice: "Cette commande a été annulée.",
+        orderDate: "Date de commande",
+        orderTotal: "Total",
+        itemsCount: "Articles",
+        matchedBadge: "Correspondance",
+        destination: "Adresse de livraison",
+        paymentMethod: "Paiement",
+        cod: "Paiement à la livraison",
+        reorderBtn: "Commander à nouveau",
+        reorderedToast: "Articles ajoutés au panier",
+        cancelOrderBtn: "Annuler la commande",
+        cancelConfirm: "Voulez-vous vraiment annuler cette commande ?",
+        detailsBtn: "Détails de livraison",
+        hideDetailsBtn: "Masquer les détails",
+        printInvoiceBtn: "Facture Officielle",
+        copyBtn: "Copier",
+        copiedBtn: "Copié ✓",
+        emptyFilteredTitle: "Aucune commande ne correspond à ces filtres",
+        emptyFilteredDesc: "Essayez de modifier la période, le statut ou le nom du produit.",
+        emptyAllTitle: "Aucune commande pour le moment",
+        emptyAllDesc: "Vos commandes apparaîtront ici dès qu’elles seront passées.",
+        openOrdersPage: "Ouvrir la page Mes commandes (Filtres et suivi)",
+      },
+      es: {
+        eyebrow: "SEGUIMIENTO E HISTORIAL DE PEDIDOS",
+        title: "Mis pedidos",
+        subtitle: "Sigue los pedidos en camino, entregados o cancelados con filtrado por fecha y nombre de producto.",
+        tabAll: "Todos",
+        tabInTransit: "En camino",
+        tabDelivered: "Entregados",
+        tabCancelled: "Cancelados",
+        searchLabel: "Filtrar por producto o N° de pedido",
+        searchPlaceholder: "Buscar por nombre de producto o número de pedido...",
+        clearSearch: "Limpiar",
+        dateFilterLabel: "Filtrar por fecha",
+        presetAll: "Todo el tiempo",
+        preset7d: "Últimos 7 días",
+        preset30d: "Últimos 30 días",
+        preset6m: "Últimos 6 meses",
+        dateFromLabel: "Desde",
+        dateToLabel: "Hasta",
+        resetFilters: "Restablecer filtros",
+        resultsCount: "Mostrando {shown} de {total} pedidos",
+        lookupToggle: "Buscar pedido",
+        restoreDemo: "Restaurar pedidos de muestra",
+        lookupTitle: "Buscar pedido por número",
+        lookupDesc: "Ingresa el número oficial de tu pedido para consultar su estado.",
+        lookupOrderPlaceholder: "N° de pedido (ej: WX-2026-8954)",
+        lookupSubmit: "Buscar",
+        lookupFoundLocal: "Pedido encontrado.",
+        lookupNotFound: "No se encontró ningún pedido con ese número.",
+        statusPending: "En camino · Pendiente",
+        statusConfirmed: "En camino · Confirmado",
+        statusProcessing: "En camino · En preparación",
+        statusShipped: "En camino · En reparto",
+        statusDelivered: "Entregado con éxito",
+        statusCancelled: "Pedido cancelado",
+        statusRefunded: "Cancelado y reembolsado",
+        step1: "Confirmado",
+        step2: "Preparación",
+        step3: "En camino",
+        step4: "Entregado",
+        cancelledNotice: "Este pedido fue cancelado.",
+        orderDate: "Fecha del pedido",
+        orderTotal: "Total",
+        itemsCount: "Productos",
+        matchedBadge: "Coincidencia",
+        destination: "Destino de entrega",
+        paymentMethod: "Método de pago",
+        cod: "Pago contra entrega",
+        reorderBtn: "Volver a comprar",
+        reorderedToast: "Productos añadidos al carrito",
+        cancelOrderBtn: "Cancelar pedido",
+        cancelConfirm: "¿Seguro que deseas cancelar este pedido?",
+        detailsBtn: "Detalles del envío",
+        hideDetailsBtn: "Ocultar detalles",
+        printInvoiceBtn: "Factura Oficial",
+        copyBtn: "Copiar",
+        copiedBtn: "Copiado ✓",
+        emptyFilteredTitle: "Ningún pedido coincide con los filtros actuales",
+        emptyFilteredDesc: "Prueba cambiando el estado, el rango de fechas o el nombre del producto.",
+        emptyAllTitle: "Aún no tienes pedidos",
+        emptyAllDesc: "Tus compras aparecerán aquí para que puedas seguir su entrega.",
+        openOrdersPage: "Abrir página Mis pedidos (Filtros y seguimiento)",
+      },
+      zh: {
+        eyebrow: "订单追踪与历史记录",
+        title: "我的订单",
+        subtitle: "查看运输中、已送达和已取消的订单，支持按日期和商品名称筛选。",
+        tabAll: "全部订单",
+        tabInTransit: "运输中",
+        tabDelivered: "已送达",
+        tabCancelled: "已取消",
+        searchLabel: "按商品名称或订单号筛选",
+        searchPlaceholder: "搜索商品名称（如 MacBook、iPhone）或订单号...",
+        clearSearch: "清除",
+        dateFilterLabel: "按日期筛选",
+        presetAll: "全部时间",
+        preset7d: "最近 7 天",
+        preset30d: "最近 30 天",
+        preset6m: "最近 6 个月",
+        dateFromLabel: "开始日期",
+        dateToLabel: "结束日期",
+        resetFilters: "重置筛选",
+        resultsCount: "显示 {shown} / {total} 个订单",
+        lookupToggle: "查询 / 同步订单",
+        restoreDemo: "恢复示例订单",
+        lookupTitle: "按订单号查询",
+        lookupDesc: "输入您的官方订单号以查找或同步订单状态。",
+        lookupOrderPlaceholder: "订单号 (例如 WX-2026-8954)",
+        lookupSubmit: "查询",
+        lookupFoundLocal: "已找到该订单。",
+        lookupNotFound: "未找到匹配的订单号。",
+        statusPending: "运输中 · 待确认",
+        statusConfirmed: "运输中 · 已确认",
+        statusProcessing: "运输中 · 备货打包中",
+        statusShipped: "运输中 · 派送中",
+        statusDelivered: "已成功送达",
+        statusCancelled: "订单已取消",
+        statusRefunded: "已取消并退款",
+        step1: "已确认",
+        step2: "备货中",
+        step3: "运输中",
+        step4: "已送达",
+        cancelledNotice: "此订单已取消，未收取任何费用。",
+        orderDate: "下单日期",
+        orderTotal: "订单总额",
+        itemsCount: "商品",
+        matchedBadge: "匹配商品",
+        destination: "配送地址",
+        paymentMethod: "支付方式",
+        cod: "货到付款",
+        reorderBtn: "再次购买",
+        reorderedToast: "订单商品已加入购物袋",
+        cancelOrderBtn: "取消订单",
+        cancelConfirm: "确定要取消此订单吗？",
+        detailsBtn: "物流详情",
+        hideDetailsBtn: "收起详情",
+        printInvoiceBtn: "打印官方发票",
+        copyBtn: "复制单号",
+        copiedBtn: "已复制 ✓",
+        emptyFilteredTitle: "没有符合当前筛选条件的订单",
+        emptyFilteredDesc: "请尝试切换订单状态、调整日期范围或搜索其他商品名称。",
+        emptyAllTitle: "暂无订单",
+        emptyAllDesc: "下单后您可以在此查看实时配送进度。",
+        openOrdersPage: "打开我的订单页面（筛选与追踪）",
+      },
+    };
+    return dict[language] || dict.en;
+  }
+
+  function classifyOrderBucket(rawStatus) {
+    const status = String(rawStatus || "confirmed").toLowerCase();
+    if (status === "delivered") return "delivered";
+    if (status === "cancelled" || status === "refunded") return "cancelled";
+    return "in_transit";
+  }
+
+  function parseOrderTimestamp(order) {
+    if (order?.createdAt) {
+      const ts = Date.parse(order.createdAt);
+      if (Number.isFinite(ts)) return ts;
+    }
+    if (order?.date) {
+      const ts = Date.parse(order.date);
+      if (Number.isFinite(ts)) return ts;
+    }
+    return Date.now();
+  }
+
+  function formatOrderDateDisplay(order) {
+    const ts = parseOrderTimestamp(order);
+    try {
+      return new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, {
+        dateStyle: "medium",
+      }).format(new Date(ts));
+    } catch {
+      return order?.date || "";
+    }
+  }
+
+  function resolveOrderItemMeta(item) {
+    const rawCatalog = window.NoursData?.products || [];
+    const found =
+      rawCatalog.find((p) => p.id === item.id) ||
+      rawCatalog.find(
+        (p) =>
+          String(p.name || "").toLowerCase() === String(item.name || "").toLowerCase(),
+      );
+    const localized = found ? localizeProduct(found) : null;
+    return {
+      id: found?.id || item.id || "",
+      brand: found?.brand || "WEEXEY",
+      name: localized?.name || item.name || "Product",
+      rawName: found?.name || item.name || "",
+      image:
+        found?.image ||
+        item.image ||
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80",
+      quantity: Math.max(1, Number(item.quantity) || 1),
+      variant: item.variant || "",
+      price: Number(item.price) || Number(found?.price) || 0,
+    };
+  }
+
+  function orderMatchesProductQuery(order, query) {
+    if (!query) return true;
+    const normalizedQuery = store.normalizeSearchText
+      ? store.normalizeSearchText(query)
+      : String(query).toLowerCase().trim();
+    if (!normalizedQuery) return true;
+    const terms = normalizedQuery.split(/\s+/).filter(Boolean);
+    const orderIdText = String(order.id || "").toLowerCase();
+    const itemTexts = (order.items || []).map((item) => {
+      const meta = resolveOrderItemMeta(item);
+      return [meta.name, meta.rawName, meta.brand, meta.variant, item.name].join(" ");
+    });
+    const fullHaystack = store.normalizeSearchText
+      ? store.normalizeSearchText([orderIdText, ...itemTexts].join(" "))
+      : [orderIdText, ...itemTexts].join(" ").toLowerCase();
+    return terms.every((term) => fullHaystack.includes(term));
+  }
+
+  function itemMatchesProductQuery(item, query) {
+    if (!query) return false;
+    const normalizedQuery = store.normalizeSearchText
+      ? store.normalizeSearchText(query)
+      : String(query).toLowerCase().trim();
+    if (!normalizedQuery) return false;
+    const meta = resolveOrderItemMeta(item);
+    const haystack = store.normalizeSearchText
+      ? store.normalizeSearchText([meta.name, meta.rawName, meta.brand, meta.variant].join(" "))
+      : [meta.name, meta.rawName, meta.brand, meta.variant].join(" ").toLowerCase();
+    return normalizedQuery.split(/\s+/).filter(Boolean).every((term) => haystack.includes(term));
+  }
+
+  function orderMatchesDateFilter(order) {
+    const ts = parseOrderTimestamp(order);
+    const now = Date.now();
+    const dayMs = 86400000;
+    if (ordersFilterState.datePreset === "7d") {
+      if (now - ts > 7 * dayMs) return false;
+    } else if (ordersFilterState.datePreset === "30d") {
+      if (now - ts > 30 * dayMs) return false;
+    } else if (ordersFilterState.datePreset === "6m") {
+      if (now - ts > 183 * dayMs) return false;
+    }
+    if (ordersFilterState.dateFrom) {
+      const fromTs = Date.parse(`${ordersFilterState.dateFrom}T00:00:00`);
+      if (Number.isFinite(fromTs) && ts < fromTs) return false;
+    }
+    if (ordersFilterState.dateTo) {
+      const toTs = Date.parse(`${ordersFilterState.dateTo}T23:59:59.999`);
+      if (Number.isFinite(toTs) && ts > toTs) return false;
+    }
+    return true;
+  }
+
+  function getStatusBadgeInfo(rawStatus, oc) {
+    const status = String(rawStatus || "confirmed").toLowerCase();
+    const bucket = classifyOrderBucket(status);
+    if (bucket === "delivered") {
+      return {
+        bucket,
+        label: oc.statusDelivered,
+        iconName: "package-check",
+        className: "is-delivered",
+        stepIndex: 4,
+      };
+    }
+    if (bucket === "cancelled") {
+      return {
+        bucket,
+        label: status === "refunded" ? oc.statusRefunded : oc.statusCancelled,
+        iconName: "circle-x",
+        className: "is-cancelled",
+        stepIndex: 0,
+      };
+    }
+    if (status === "shipped") {
+      return {
+        bucket,
+        label: oc.statusShipped,
+        iconName: "truck",
+        className: "is-shipped",
+        stepIndex: 3,
+      };
+    }
+    if (status === "processing") {
+      return {
+        bucket,
+        label: oc.statusProcessing,
+        iconName: "package",
+        className: "is-processing",
+        stepIndex: 2,
+      };
+    }
+    if (status === "pending") {
+      return {
+        bucket,
+        label: oc.statusPending,
+        iconName: "clock-3",
+        className: "is-pending",
+        stepIndex: 1,
+      };
+    }
+    return {
+      bucket,
+      label: oc.statusConfirmed,
+      iconName: "shield-check",
+      className: "is-confirmed",
+      stepIndex: 1,
+    };
+  }
+
+  function renderOrdersListArea() {
+    const listContainer = root.querySelector("[data-orders-list-area]");
+    if (!listContainer) return;
+    const oc = getOrdersCopy();
+    const allOrders = store.getOrders();
+
+    // Calculate counts matching current date + search filters for each status tab
+    const dateAndSearchFiltered = allOrders.filter(
+      (order) =>
+        orderMatchesDateFilter(order) &&
+        orderMatchesProductQuery(order, ordersFilterState.searchQuery),
+    );
+    const counts = {
+      all: dateAndSearchFiltered.length,
+      in_transit: dateAndSearchFiltered.filter(
+        (o) => classifyOrderBucket(o.status) === "in_transit",
+      ).length,
+      delivered: dateAndSearchFiltered.filter(
+        (o) => classifyOrderBucket(o.status) === "delivered",
+      ).length,
+      cancelled: dateAndSearchFiltered.filter(
+        (o) => classifyOrderBucket(o.status) === "cancelled",
+      ).length,
+    };
+
+    root.querySelectorAll("[data-orders-tab]").forEach((btn) => {
+      const tabKey = btn.dataset.ordersTab;
+      const active = tabKey === ordersFilterState.statusTab;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-selected", String(active));
+      const badge = btn.querySelector("[data-tab-count]");
+      if (badge && tabKey in counts) {
+        badge.textContent = String(counts[tabKey]);
+      }
+    });
+
+    root.querySelectorAll("[data-orders-preset]").forEach((btn) => {
+      const active = btn.dataset.ordersPreset === ordersFilterState.datePreset;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+
+    const clearSearchBtn = root.querySelector("[data-orders-search-clear]");
+    if (clearSearchBtn) {
+      clearSearchBtn.hidden = !ordersFilterState.searchQuery.trim();
+    }
+
+    const hasActiveFilters =
+      ordersFilterState.statusTab !== "all" ||
+      Boolean(ordersFilterState.searchQuery.trim()) ||
+      ordersFilterState.datePreset !== "all" ||
+      Boolean(ordersFilterState.dateFrom) ||
+      Boolean(ordersFilterState.dateTo);
+
+    const resetBtn = root.querySelector("[data-orders-reset]");
+    if (resetBtn) resetBtn.hidden = !hasActiveFilters;
+
+    const filteredOrders = dateAndSearchFiltered.filter((order) => {
+      if (ordersFilterState.statusTab === "all") return true;
+      return classifyOrderBucket(order.status) === ordersFilterState.statusTab;
+    });
+
+    const countSummary = root.querySelector("[data-orders-results-summary]");
+    if (countSummary) {
+      countSummary.textContent = oc.resultsCount
+        .replace("{shown}", String(filteredOrders.length))
+        .replace("{total}", String(allOrders.length));
+    }
+
+    if (!filteredOrders.length) {
+      const isFiltered = allOrders.length > 0 && hasActiveFilters;
+      listContainer.innerHTML = `
+        <div class="orders-empty-state commerce-panel">
+          <div class="orders-empty-icon">${icon(isFiltered ? "search-x" : "package-open")}</div>
+          <h2>${escapeHtml(isFiltered ? oc.emptyFilteredTitle : oc.emptyAllTitle)}</h2>
+          <p>${escapeHtml(isFiltered ? oc.emptyFilteredDesc : oc.emptyAllDesc)}</p>
+          <div class="orders-empty-actions">
+            ${
+              isFiltered
+                ? `<button type="button" class="commerce-button" data-orders-reset>${icon("rotate-ccw")}<span>${escapeHtml(oc.resetFilters)}</span></button>`
+                : `<a class="commerce-button" href="/products.html">${escapeHtml(t.browse)}</a>
+                   <button type="button" class="commerce-button-secondary" data-orders-restore-demo>${icon("sparkles")}<span>${escapeHtml(oc.restoreDemo)}</span></button>`
+            }
+          </div>
+        </div>
+      `;
+      window.lucide?.createIcons();
+      return;
+    }
+
+    const cardsMarkup = filteredOrders
+      .map((order) => {
+        const statusInfo = getStatusBadgeInfo(order.status, oc);
+        const formattedDate = formatOrderDateDisplay(order);
+        const items = Array.isArray(order.items) ? order.items : [];
+        const totalQty = items.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+        const canCancel =
+          statusInfo.bucket === "in_transit" &&
+          ["pending", "confirmed", "processing"].includes(
+            String(order.status || "confirmed").toLowerCase(),
+          );
+        const isExpanded = ordersFilterState.expandedOrderIds.has(order.id);
+
+        const stepperSteps = [
+          { idx: 1, label: oc.step1, iconName: "check" },
+          { idx: 2, label: oc.step2, iconName: "package" },
+          { idx: 3, label: oc.step3, iconName: "truck" },
+          { idx: 4, label: oc.step4, iconName: "home" },
+        ];
+
+        const timelineMarkup =
+          statusInfo.bucket === "cancelled"
+            ? `<div class="order-cancelled-banner">
+                ${icon("ban")}
+                <span>${escapeHtml(oc.cancelledNotice)}</span>
+              </div>`
+            : `<div class="order-mini-stepper" aria-label="${escapeHtml(statusInfo.label)}">
+                ${stepperSteps
+                  .map((step, i) => {
+                    const isDone =
+                      statusInfo.bucket === "delivered" || step.idx < statusInfo.stepIndex;
+                    const isCurrent =
+                      statusInfo.bucket !== "delivered" && step.idx === statusInfo.stepIndex;
+                    const stateClass = isDone
+                      ? "is-done"
+                      : isCurrent
+                        ? "is-current"
+                        : "is-upcoming";
+                    const connector =
+                      i < stepperSteps.length - 1
+                        ? `<span class="order-step-line${isDone ? " is-done" : ""}"></span>`
+                        : "";
+                    return `
+                      <div class="order-step-item ${stateClass}">
+                        <span class="order-step-dot">${icon(isDone ? "check" : step.iconName)}</span>
+                        <span class="order-step-label">${escapeHtml(step.label)}</span>
+                      </div>
+                      ${connector}
+                    `;
+                  })
+                  .join("")}
+              </div>`;
+
+        const itemsMarkup = items
+          .map((rawItem) => {
+            const meta = resolveOrderItemMeta(rawItem);
+            const matched = itemMatchesProductQuery(rawItem, ordersFilterState.searchQuery);
+            const href = meta.id ? productUrl(meta.id) : "/products.html";
+            return `
+              <div class="order-product-row${matched ? " is-search-match" : ""}">
+                <a href="${href}" class="order-product-thumb">
+                  <img src="${escapeHtml(meta.image)}" alt="${escapeHtml(meta.name)}" loading="lazy" />
+                </a>
+                <div class="order-product-info">
+                  <div class="order-product-top">
+                    <span class="order-product-brand">${escapeHtml(meta.brand)}</span>
+                    ${matched ? `<span class="order-product-match-pill">${icon("check-circle-2")}<span>${escapeHtml(oc.matchedBadge)}</span></span>` : ""}
+                  </div>
+                  <a href="${href}" class="order-product-name">${escapeHtml(meta.name)}</a>
+                  <div class="order-product-tags">
+                    ${meta.variant ? `<span class="order-variant-tag">${escapeHtml(meta.variant)}</span>` : ""}
+                    <span class="order-qty-tag">×${meta.quantity}</span>
+                  </div>
+                </div>
+                <div class="order-product-price">
+                  <strong>${money(meta.price * meta.quantity)}</strong>
+                  ${meta.quantity > 1 ? `<small>${money(meta.price)} ${language === "ar" ? "للقطعة" : "each"}</small>` : ""}
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        return `
+          <article class="order-card-panel order-bucket-${statusInfo.bucket}" data-order-card="${escapeHtml(order.id)}">
+            <header class="order-card-header">
+              <div class="order-card-id-group">
+                <div class="order-number-wrap">
+                  <span class="order-id-code" dir="ltr">#${escapeHtml(order.id)}</span>
+                  <button type="button" class="order-copy-chip" data-copy-order-id="${escapeHtml(order.id)}">
+                    ${icon("copy")}
+                    <span>${escapeHtml(oc.copyBtn)}</span>
+                  </button>
+                </div>
+                <div class="order-meta-sub">
+                  <span>${icon("calendar")} ${escapeHtml(formattedDate)}</span>
+                  <span class="order-meta-dot">·</span>
+                  <span>${icon("shopping-bag")} ${totalQty} ${totalQty === 1 ? escapeHtml(t.item) : escapeHtml(t.items)}</span>
+                </div>
+              </div>
+
+              <div class="order-card-status-group">
+                <span class="order-status-pill ${statusInfo.className}">
+                  <span class="status-pill-dot"></span>
+                  ${icon(statusInfo.iconName)}
+                  <span>${escapeHtml(statusInfo.label)}</span>
+                </span>
+              </div>
+            </header>
+
+            ${timelineMarkup}
+
+            <div class="order-card-items">
+              ${itemsMarkup}
+            </div>
+
+            <div class="order-card-details-drawer" ${isExpanded ? "" : "hidden"}>
+              <div class="order-details-grid">
+                <div class="order-detail-box">
+                  <span class="detail-box-label">${icon("map-pin")} ${escapeHtml(oc.destination)}</span>
+                  <strong>${escapeHtml([order.address, order.city || t.cityDefault].filter(Boolean).join("، "))}</strong>
+                  ${order.phone ? `<small dir="ltr">${escapeHtml(order.phone)}</small>` : ""}
+                </div>
+                <div class="order-detail-box">
+                  <span class="detail-box-label">${icon("banknote")} ${escapeHtml(oc.paymentMethod)}</span>
+                  <strong>${escapeHtml(oc.cod)}</strong>
+                  <small>${escapeHtml(oc.orderDate)}: ${escapeHtml(formattedDate)}</small>
+                </div>
+              </div>
+            </div>
+
+            <footer class="order-card-footer">
+              <div class="order-total-block">
+                <span>${escapeHtml(oc.orderTotal)}</span>
+                <strong>${money(Number(order.total) || 0)}</strong>
+              </div>
+              <div class="order-actions-row">
+                <button type="button" class="order-action-btn is-secondary" data-order-toggle-details="${escapeHtml(order.id)}" aria-expanded="${isExpanded}">
+                  ${icon(isExpanded ? "chevron-up" : "chevron-down")}
+                  <span>${escapeHtml(isExpanded ? oc.hideDetailsBtn : oc.detailsBtn)}</span>
+                </button>
+                <button type="button" class="order-action-btn is-secondary" data-order-print-invoice="${escapeHtml(order.id)}">
+                  ${icon("printer")}
+                  <span>${escapeHtml(oc.printInvoiceBtn)}</span>
+                </button>
+                ${
+                  canCancel
+                    ? `<button type="button" class="order-action-btn is-danger" data-order-cancel="${escapeHtml(order.id)}">
+                        ${icon("x-circle")}
+                        <span>${escapeHtml(oc.cancelOrderBtn)}</span>
+                      </button>`
+                    : ""
+                }
+                <button type="button" class="order-action-btn is-primary" data-order-reorder="${escapeHtml(order.id)}">
+                  ${icon("repeat")}
+                  <span>${escapeHtml(oc.reorderBtn)}</span>
+                </button>
+              </div>
+            </footer>
+          </article>
+        `;
+      })
+      .join("");
+
+    listContainer.innerHTML = `<div class="orders-cards-stack">${cardsMarkup}</div>`;
+    window.lucide?.createIcons();
+  }
+
+  function renderOrders() {
+    const oc = getOrdersCopy();
+    root.innerHTML = `
+      <section class="orders-page">
+        <header class="orders-hero-header">
+          <div class="orders-hero-copy">
+            <span class="commerce-eyebrow">${escapeHtml(oc.eyebrow)}</span>
+            <h1>${escapeHtml(oc.title)}</h1>
+            <p>${escapeHtml(oc.subtitle)}</p>
+          </div>
+          <div class="orders-hero-actions">
+            <button type="button" class="order-lookup-trigger-btn" data-orders-lookup-toggle aria-expanded="${ordersFilterState.lookupOpen}">
+              ${icon("search-check")}
+              <span>${escapeHtml(oc.lookupToggle)}</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="orders-lookup-panel commerce-panel" data-orders-lookup-panel ${ordersFilterState.lookupOpen ? "" : "hidden"}>
+          <div class="orders-lookup-head">
+            <div>
+              <h2>${escapeHtml(oc.lookupTitle)}</h2>
+              <p>${escapeHtml(oc.lookupDesc)}</p>
+            </div>
+          </div>
+          <form class="orders-lookup-form" data-orders-lookup-form>
+            <input
+              type="text"
+              name="orderNumber"
+              required
+              autocomplete="off"
+              placeholder="${escapeHtml(oc.lookupOrderPlaceholder)}"
+              aria-label="${escapeHtml(oc.lookupOrderPlaceholder)}"
+            />
+            <button type="submit" class="commerce-button">
+              ${icon("refresh-cw")}
+              <span>${escapeHtml(oc.lookupSubmit)}</span>
+            </button>
+          </form>
+          <p class="orders-lookup-feedback" data-orders-lookup-feedback ${ordersFilterState.lookupFeedback ? "" : "hidden"}>${escapeHtml(ordersFilterState.lookupFeedback)}</p>
+        </section>
+
+        <!-- Status Tabs (All / On the Way / Delivered / Cancelled) -->
+        <nav class="orders-status-tabs" role="tablist" aria-label="${escapeHtml(oc.title)}">
+          <button type="button" role="tab" class="orders-status-tab is-active" data-orders-tab="all" aria-selected="true">
+            <span class="tab-icon">${icon("layers")}</span>
+            <span class="tab-label">${escapeHtml(oc.tabAll)}</span>
+            <span class="tab-count" data-tab-count>0</span>
+          </button>
+          <button type="button" role="tab" class="orders-status-tab is-transit-tab" data-orders-tab="in_transit" aria-selected="false">
+            <span class="tab-icon">${icon("truck")}</span>
+            <span class="tab-label">${escapeHtml(oc.tabInTransit)}</span>
+            <span class="tab-count" data-tab-count>0</span>
+          </button>
+          <button type="button" role="tab" class="orders-status-tab is-delivered-tab" data-orders-tab="delivered" aria-selected="false">
+            <span class="tab-icon">${icon("package-check")}</span>
+            <span class="tab-label">${escapeHtml(oc.tabDelivered)}</span>
+            <span class="tab-count" data-tab-count>0</span>
+          </button>
+          <button type="button" role="tab" class="orders-status-tab is-cancelled-tab" data-orders-tab="cancelled" aria-selected="false">
+            <span class="tab-icon">${icon("circle-x")}</span>
+            <span class="tab-label">${escapeHtml(oc.tabCancelled)}</span>
+            <span class="tab-count" data-tab-count>0</span>
+          </button>
+        </nav>
+
+        <!-- Filter Controls: Product Search + Date Presets & Custom Range -->
+        <section class="orders-filters-bar commerce-panel" aria-label="${escapeHtml(oc.searchLabel)}">
+          <div class="orders-filters-top">
+            <div class="orders-search-box">
+              <span class="orders-search-icon">${icon("search")}</span>
+              <input
+                type="search"
+                data-orders-search
+                 autocomplete="off"
+                value="${escapeHtml(ordersFilterState.searchQuery)}"
+                placeholder="${escapeHtml(oc.searchPlaceholder)}"
+                aria-label="${escapeHtml(oc.searchLabel)}"
+              />
+              <button type="button" class="orders-search-clear" data-orders-search-clear aria-label="${escapeHtml(oc.clearSearch)}" ${ordersFilterState.searchQuery ? "" : "hidden"}>
+                ${icon("x")}
+              </button>
+            </div>
+
+            <div class="orders-date-presets" role="group" aria-label="${escapeHtml(oc.dateFilterLabel)}">
+              <button type="button" class="orders-preset-pill" data-orders-preset="all">${escapeHtml(oc.presetAll)}</button>
+              <button type="button" class="orders-preset-pill" data-orders-preset="7d">${escapeHtml(oc.preset7d)}</button>
+              <button type="button" class="orders-preset-pill" data-orders-preset="30d">${escapeHtml(oc.preset30d)}</button>
+              <button type="button" class="orders-preset-pill" data-orders-preset="6m">${escapeHtml(oc.preset6m)}</button>
+            </div>
+          </div>
+
+          <div class="orders-filters-bottom">
+            <div class="orders-date-range-inputs">
+              <label class="orders-date-field">
+                <span>${icon("calendar")} ${escapeHtml(oc.dateFromLabel)}</span>
+                <input type="date" data-orders-date-from value="${escapeHtml(ordersFilterState.dateFrom)}" />
+              </label>
+              <label class="orders-date-field">
+                <span>${icon("calendar")} ${escapeHtml(oc.dateToLabel)}</span>
+                <input type="date" data-orders-date-to value="${escapeHtml(ordersFilterState.dateTo)}" />
+              </label>
+            </div>
+
+            <div class="orders-results-bar">
+              <span class="orders-results-summary" data-orders-results-summary></span>
+              <button type="button" class="orders-reset-btn" data-orders-reset hidden>
+                ${icon("rotate-ccw")}
+                <span>${escapeHtml(oc.resetFilters)}</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div data-orders-list-area></div>
+      </section>
+    `;
+
+    const searchInput = root.querySelector("[data-orders-search]");
+    searchInput?.addEventListener("input", (e) => {
+      ordersFilterState.searchQuery = e.target.value;
+      renderOrdersListArea();
+    });
+
+    const fromInput = root.querySelector("[data-orders-date-from]");
+    const toInput = root.querySelector("[data-orders-date-to]");
+    fromInput?.addEventListener("change", (e) => {
+      ordersFilterState.dateFrom = e.target.value;
+      if (ordersFilterState.dateFrom) ordersFilterState.datePreset = "all";
+      renderOrdersListArea();
+    });
+    toInput?.addEventListener("change", (e) => {
+      ordersFilterState.dateTo = e.target.value;
+      if (ordersFilterState.dateTo) ordersFilterState.datePreset = "all";
+      renderOrdersListArea();
+    });
+
+    renderOrdersListArea();
+  }
+
   function renderAccount() {
     const profile = store.getProfile();
     const settings = store.getSettings();
     const orders = store.getOrders();
+    const oc = getOrdersCopy();
     const orderMarkup = orders.length
       ? orders
-          .map(
-            (order) =>
-              `<div class="order-row"><span><strong>${escapeHtml(order.id)}</strong><small>${escapeHtml(order.date)} · ${order.items.length} ${t.items}</small></span><span><strong>${money(order.total)}</strong><small class="order-status">${t.status}</small></span></div>`,
-          )
+          .map((order) => {
+            const statusInfo = getStatusBadgeInfo(order.status, oc);
+            return `<div class="order-row"><span><strong>#${escapeHtml(order.id)}</strong><small>${escapeHtml(formatOrderDateDisplay(order))} · ${(order.items || []).length} ${t.items}</small></span><span><strong>${money(order.total)}</strong><small class="order-status ${statusInfo.className}">${escapeHtml(statusInfo.label)}</small></span></div>`;
+          })
           .join("")
       : `<div class="commerce-empty">${icon("package-open")}<h2>${t.noOrders}</h2><p>${t.noOrdersNote}</p></div>`;
-    root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.account}</h1></div></div><div class="account-layout"><nav class="account-tabs"><a href="#profile" aria-current="page">${t.profile}</a><a href="#settings">${t.settings}</a><a href="#orders">${t.orders}</a></nav><div class="account-content"><section class="commerce-panel" id="profile"><h2>${t.profile}</h2><form class="commerce-form" data-profile-form><div class="commerce-form-grid"><label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" value="${escapeHtml(profile.name)}" /></label><label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" value="${escapeHtml(profile.email)}" /></label><label class="commerce-field">${t.phone}<input name="phone" type="tel" autocomplete="tel" value="${escapeHtml(profile.phone)}" /></label><label class="commerce-field">${t.city}<input name="city" value="${escapeHtml(profile.city || t.cityDefault)}" /></label></div><div class="form-feedback" data-profile-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${t.saveProfile}</button></form></section><section class="commerce-panel" id="settings"><h2>${t.settings}</h2><form data-settings-form><label class="settings-row"><span>${t.updates}<small>${t.updatesNote}</small></span><input type="checkbox" name="orderUpdates" ${settings.orderUpdates ? "checked" : ""} /></label><label class="settings-row"><span>${t.offers}<small>${t.offersNote}</small></span><input type="checkbox" name="offers" ${settings.offers ? "checked" : ""} /></label><div class="form-feedback" data-settings-feedback aria-live="polite"></div><button class="commerce-button-secondary" type="submit">${t.saveSettings}</button></form></section><section class="commerce-panel" id="orders"><h2>${t.orders}</h2>${orderMarkup}</section></div></div>`;
+    root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.account}</h1></div></div><div class="account-layout"><nav class="account-tabs"><a href="#profile" aria-current="page">${t.profile}</a><a href="#settings">${t.settings}</a><a href="/orders.html">${oc.title}</a></nav><div class="account-content"><section class="commerce-panel" id="profile"><h2>${t.profile}</h2><form class="commerce-form" data-profile-form><div class="commerce-form-grid"><label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" value="${escapeHtml(profile.name)}" /></label><label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" value="${escapeHtml(profile.email)}" /></label><label class="commerce-field">${t.phone}<input name="phone" type="tel" autocomplete="tel" value="${escapeHtml(profile.phone)}" /></label><label class="commerce-field">${t.city}<input name="city" value="${escapeHtml(profile.city || t.cityDefault)}" /></label></div><div class="form-feedback" data-profile-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${t.saveProfile}</button></form></section><section class="commerce-panel" id="settings"><h2>${t.settings}</h2><form data-settings-form><label class="settings-row"><span>${t.updates}<small>${t.updatesNote}</small></span><input type="checkbox" name="orderUpdates" ${settings.orderUpdates ? "checked" : ""} /></label><label class="settings-row"><span>${t.offers}<small>${t.offersNote}</small></span><input type="checkbox" name="offers" ${settings.offers ? "checked" : ""} /></label><div class="form-feedback" data-settings-feedback aria-live="polite"></div><button class="commerce-button-secondary" type="submit">${t.saveSettings}</button></form></section><section class="commerce-panel" id="orders"><div class="account-orders-panel-head"><h2>${t.orders}</h2><a class="commerce-button" href="/orders.html">${icon("package")}<span>${escapeHtml(oc.openOrdersPage)}</span></a></div>${orderMarkup}</section></div></div>`;
   }
 
   function renderCategories() {
@@ -4053,6 +4979,7 @@
     else if (page === "cart") renderCart();
     else if (page === "checkout") renderCheckout();
     else if (page === "account") renderAccount();
+    else if (page === "orders") renderOrders();
     else if (page === "categories") renderCategories();
     else if (page === "about") {
       renderAbout();
@@ -4091,6 +5018,7 @@
       wishlist: { en: "Wishlist", fr: "Favoris", es: "Favoritos", zh: "心愿单", ar: "المفضلة" },
       checkout: { en: "Checkout", fr: "Commande", es: "Finalizar compra", zh: "结账", ar: "إتمام الطلب" },
       account: { en: "Account & settings", fr: "Compte et préférences", es: "Cuenta y preferencias", zh: "账户与偏好", ar: "الحساب والتفضيلات" },
+      orders: { en: "My orders", fr: "Mes commandes", es: "Mis pedidos", zh: "我的订单", ar: "طلباتي" },
       support: { en: "Help & policies", fr: "Aide et politiques", es: "Ayuda y políticas", zh: "帮助与政策", ar: "المساعدة والسياسات" },
       categories: { en: "Product catalogs", fr: "Catalogues produits", es: "Catálogos de productos", zh: "产品目录", ar: "كتالوجات المنتجات" },
       about: { en: "About WEEXEY", fr: "À propos de WEEXEY", es: "Sobre WEEXEY", zh: "关于 WEEXEY", ar: "من نحن" },
@@ -4173,6 +5101,174 @@
           Number(quantityButton.dataset.quantity),
       );
       renderCart();
+    }
+
+    const ordersTabBtn = event.target.closest("[data-orders-tab]");
+    if (ordersTabBtn) {
+      ordersFilterState.statusTab = ordersTabBtn.dataset.ordersTab || "all";
+      renderOrdersListArea();
+    }
+
+    const ordersPresetBtn = event.target.closest("[data-orders-preset]");
+    if (ordersPresetBtn) {
+      ordersFilterState.datePreset = ordersPresetBtn.dataset.ordersPreset || "all";
+      ordersFilterState.dateFrom = "";
+      ordersFilterState.dateTo = "";
+      const fromInput = root.querySelector("[data-orders-date-from]");
+      const toInput = root.querySelector("[data-orders-date-to]");
+      if (fromInput) fromInput.value = "";
+      if (toInput) toInput.value = "";
+      renderOrdersListArea();
+    }
+
+    const clearOrdersSearch = event.target.closest("[data-orders-search-clear]");
+    if (clearOrdersSearch) {
+      ordersFilterState.searchQuery = "";
+      const searchInput = root.querySelector("[data-orders-search]");
+      if (searchInput) {
+        searchInput.value = "";
+        searchInput.focus();
+      }
+      renderOrdersListArea();
+    }
+
+    const resetOrdersFilters = event.target.closest("[data-orders-reset]");
+    if (resetOrdersFilters) {
+      ordersFilterState.statusTab = "all";
+      ordersFilterState.searchQuery = "";
+      ordersFilterState.datePreset = "all";
+      ordersFilterState.dateFrom = "";
+      ordersFilterState.dateTo = "";
+      const searchInput = root.querySelector("[data-orders-search]");
+      const fromInput = root.querySelector("[data-orders-date-from]");
+      const toInput = root.querySelector("[data-orders-date-to]");
+      if (searchInput) searchInput.value = "";
+      if (fromInput) fromInput.value = "";
+      if (toInput) toInput.value = "";
+      renderOrdersListArea();
+    }
+
+    const lookupToggleBtn = event.target.closest("[data-orders-lookup-toggle]");
+    if (lookupToggleBtn) {
+      ordersFilterState.lookupOpen = !ordersFilterState.lookupOpen;
+      const panel = root.querySelector("[data-orders-lookup-panel]");
+      if (panel) panel.hidden = !ordersFilterState.lookupOpen;
+      lookupToggleBtn.setAttribute("aria-expanded", String(ordersFilterState.lookupOpen));
+      if (ordersFilterState.lookupOpen) {
+        panel?.querySelector("input")?.focus();
+      }
+    }
+
+    const restoreDemoBtn = event.target.closest("[data-orders-restore-demo]");
+    if (restoreDemoBtn) {
+      store.resetDemoOrders?.();
+      renderOrdersListArea();
+    }
+
+    const toggleDetailsBtn = event.target.closest("[data-order-toggle-details]");
+    if (toggleDetailsBtn) {
+      const orderId = toggleDetailsBtn.dataset.orderToggleDetails;
+      if (ordersFilterState.expandedOrderIds.has(orderId)) {
+        ordersFilterState.expandedOrderIds.delete(orderId);
+      } else {
+        ordersFilterState.expandedOrderIds.add(orderId);
+      }
+      renderOrdersListArea();
+    }
+
+    const copyOrderIdBtn = event.target.closest("[data-copy-order-id]");
+    if (copyOrderIdBtn) {
+      const idText = copyOrderIdBtn.dataset.copyOrderId;
+      const oc = getOrdersCopy();
+      navigator.clipboard?.writeText(idText).then(() => {
+        const span = copyOrderIdBtn.querySelector("span");
+        if (span) span.textContent = oc.copiedBtn;
+        setTimeout(() => {
+          if (span) span.textContent = oc.copyBtn;
+        }, 2000);
+      }).catch(() => {});
+    }
+
+    const cancelOrderBtn = event.target.closest("[data-order-cancel]");
+    if (cancelOrderBtn) {
+      const orderId = cancelOrderBtn.dataset.orderCancel;
+      const oc = getOrdersCopy();
+      if (window.confirm(oc.cancelConfirm)) {
+        const updated = store.getOrders().map((order) =>
+          String(order.id) === String(orderId)
+            ? { ...order, status: "cancelled" }
+            : order,
+        );
+        store.setOrders(updated);
+        renderOrdersListArea();
+      }
+    }
+
+    const printOrderInvoiceBtn = event.target.closest("[data-order-print-invoice]");
+    if (printOrderInvoiceBtn) {
+      const orderId = printOrderInvoiceBtn.dataset.orderPrintInvoice;
+      const targetOrder = store.getOrders().find((o) => String(o.id) === String(orderId));
+      if (targetOrder && window.WEEXEY_INVOICE?.openOfficialInvoice) {
+        const profile = store.getProfile();
+        const resolvedItems = (targetOrder.items || []).map((rawItem) => {
+          const meta = resolveOrderItemMeta(rawItem);
+          return {
+            id: meta.id || rawItem.id,
+            brand: meta.brand || "WEEXEY",
+            name: meta.rawName || meta.name || rawItem.name,
+            variant: meta.variant || rawItem.variant || "",
+            quantity: meta.quantity,
+            price: meta.price,
+          };
+        });
+        window.WEEXEY_INVOICE.openOfficialInvoice(
+          {
+            orderNumber: targetOrder.id,
+            createdAt: targetOrder.createdAt || targetOrder.date,
+            formattedDate: formatOrderDateDisplay(targetOrder),
+            status: targetOrder.status || "confirmed",
+            subtotal: targetOrder.subtotal,
+            discountTotal: targetOrder.discountTotal,
+            couponCode: targetOrder.couponCode,
+            shippingTotal: targetOrder.shippingTotal,
+            total: targetOrder.total,
+            customerName: targetOrder.customerName || profile.name,
+            phone: targetOrder.phone || profile.phone,
+            email: targetOrder.email || profile.email,
+            city: targetOrder.city || profile.city,
+            address: targetOrder.address || "",
+            postal: targetOrder.postal || "",
+            notes: targetOrder.notes || "",
+            items: resolvedItems,
+          },
+          { language: "en", autoPrint: false },
+        );
+      }
+    }
+
+    const reorderBtn = event.target.closest("[data-order-reorder]");
+    if (reorderBtn) {
+      const orderId = reorderBtn.dataset.orderReorder;
+      const targetOrder = store.getOrders().find((o) => String(o.id) === String(orderId));
+      if (targetOrder && Array.isArray(targetOrder.items) && targetOrder.items.length) {
+        let firstMeta = null;
+        let totalQtyAdded = 0;
+        targetOrder.items.forEach((rawItem) => {
+          const meta = resolveOrderItemMeta(rawItem);
+          if (meta.id) {
+            store.addToCart(meta.id, meta.quantity);
+            totalQtyAdded += meta.quantity;
+            if (!firstMeta) firstMeta = meta;
+          }
+        });
+        if (firstMeta) {
+          const catalogProduct = productById(firstMeta.id) || firstMeta;
+          store.showAddedToBag(catalogProduct, {
+            quantity: totalQtyAdded,
+            price: money(firstMeta.price),
+          });
+        }
+      }
     }
   });
 
@@ -4374,19 +5470,31 @@
         store.setOrders([
           {
             id: order.order_number,
+            createdAt: order.created_at || new Date().toISOString(),
             date: formattedDate,
             items: lines.map(({ product, quantity, option, unitPrice }) => ({
               id: product.id,
+              brand: product.brand || "WEEXEY",
               name: product.name,
+              image: product.image,
               quantity,
               variant: option.label,
               price: unitPrice,
             })),
+            subtotal: Number(order.subtotal || orderTotal.subtotal),
+            discountTotal: Number(order.discount_total || 0),
+            couponCode: order.coupon_code || "",
+            shippingTotal: Number(order.shipping_total ?? orderTotal.shipping),
             total: Number(order.total),
-            status: order.status,
+            status: order.status || "confirmed",
             payment: "cod",
+            customerName: values.name,
+            email: values.email,
             address: values.address,
             city: values.city,
+            postal: values.postal || "",
+            notes: values.notes || "",
+            phone: values.phone,
           },
           ...store.getOrders(),
         ]);
@@ -4395,6 +5503,82 @@
       } catch (error) {
         feedback.textContent = error.message || t.checkoutFailed;
         submitButton.disabled = false;
+      }
+    }
+    if (event.target.matches("[data-orders-lookup-form]")) {
+      event.preventDefault();
+      const form = event.target;
+      const oc = getOrdersCopy();
+      const feedback = root.querySelector("[data-orders-lookup-feedback]");
+      const rawNumber = String(form.elements.orderNumber?.value || "").trim().replace(/^#/, "");
+      if (!rawNumber) return;
+      const allOrders = store.getOrders();
+      const localMatch = allOrders.find(
+        (o) => String(o.id || "").toLowerCase() === rawNumber.toLowerCase(),
+      );
+      if (localMatch) {
+        ordersFilterState.statusTab = "all";
+        ordersFilterState.datePreset = "all";
+        ordersFilterState.dateFrom = "";
+        ordersFilterState.dateTo = "";
+        ordersFilterState.searchQuery = localMatch.id;
+        const searchInput = root.querySelector("[data-orders-search]");
+        if (searchInput) searchInput.value = localMatch.id;
+        if (feedback) {
+          feedback.hidden = false;
+          feedback.classList.remove("is-error");
+          feedback.textContent = oc.lookupFoundLocal;
+        }
+        renderOrdersListArea();
+        return;
+      }
+      // Try querying Supabase if available
+      if (window.RUQO_SUPABASE) {
+        try {
+          const { data } = await window.RUQO_SUPABASE
+            .from("orders")
+            .select("order_number, status, total, created_at, shipping_address, customer_phone, order_items(product_slug, product_name_translations, variant_label_translations, quantity, unit_price)")
+            .ilike("order_number", rawNumber)
+            .maybeSingle();
+          if (data?.order_number) {
+            const addr = data.shipping_address || {};
+            const importedOrder = {
+              id: data.order_number,
+              createdAt: data.created_at || new Date().toISOString(),
+              date: new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, { dateStyle: "medium" }).format(new Date(data.created_at || Date.now())),
+              status: data.status || "confirmed",
+              total: Number(data.total) || 0,
+              payment: "cod",
+              city: addr.city || "",
+              address: addr.address || "",
+              phone: data.customer_phone || "",
+              items: (data.order_items || []).map((oi) => ({
+                id: oi.product_slug || "",
+                name: oi.product_name_translations?.[language] || oi.product_name_translations?.en || oi.product_slug || "Product",
+                variant: oi.variant_label_translations?.[language] || oi.variant_label_translations?.en || "",
+                quantity: Number(oi.quantity) || 1,
+                price: Number(oi.unit_price) || 0,
+              })),
+            };
+            store.setOrders([importedOrder, ...allOrders]);
+            ordersFilterState.statusTab = "all";
+            ordersFilterState.searchQuery = importedOrder.id;
+            const searchInput = root.querySelector("[data-orders-search]");
+            if (searchInput) searchInput.value = importedOrder.id;
+            if (feedback) {
+              feedback.hidden = false;
+              feedback.classList.remove("is-error");
+              feedback.textContent = oc.lookupFoundLocal;
+            }
+            renderOrdersListArea();
+            return;
+          }
+        } catch (_) {}
+      }
+      if (feedback) {
+        feedback.hidden = false;
+        feedback.classList.add("is-error");
+        feedback.textContent = oc.lookupNotFound;
       }
     }
     if (event.target.matches("[data-profile-form]")) {
