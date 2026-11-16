@@ -130,5 +130,17 @@ Deno.serve(async (request) => {
     return response({ error: status === 400 ? "Some checkout details or products are invalid. Refresh your bag and try again." : "Checkout is temporarily unavailable." }, status, origin);
   }
 
-  return response({ order }, 201, origin);
+  // The order already exists: a verification failure must not invite a duplicate checkout.
+  const { data: verification, error: verificationError } = await serviceClient
+    .from("invoice_verifications")
+    .select("token")
+    .eq("order_id", order.id)
+    .single();
+  if (verificationError) {
+    console.error("Order created but invoice verification is unavailable:", verificationError.code);
+  }
+  return response({
+    order: { ...order, verification_token: verification?.token || null },
+    invoice_verification_warning: verificationError ? "Invoice verification is temporarily unavailable." : null,
+  }, 201, origin);
 });

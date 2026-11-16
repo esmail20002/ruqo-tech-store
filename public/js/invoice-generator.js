@@ -1,5 +1,7 @@
 (() => {
   const VAT_RATE = 0.15;
+  const verificationPageUrl = new URL("../invoice-verify.html",
+    window.document?.currentScript?.src || new URL("/js/invoice-generator.js", window.location.origin));
 
   const INVOICE_I18N = {
     ar: {
@@ -63,9 +65,10 @@
       sumVatTotal: "إجمالي ضريبة القيمة المضافة (15% مدمجة)",
       sumGrandTotal: "صافي القيمة الإجمالية المستحقة (شامل الضريبة)",
       sumCodNote: "المبلغ المطلوب تحصيله عند التسليم (COD):",
-      verificationBoxTitle: "التوثيق الرقمي والتحقق من الأصالة",
-      qrCaption: "امسح رمز الاستجابة السريعة (QR) للتحقق الفوري من صحة الفاتورة الضريبية وسريان الضمان.",
-      authCodeLabel: "رمز التصديق الرقمي (SHA-256):",
+      verificationBoxTitle: "التحقق من سجل الفاتورة",
+      qrCaption: "امسح الرمز أو اضغط عليه للتحقق من رقم الفاتورة وتاريخها وحالة الطلب في المتجر، دون عرض بيانات العميل.",
+      qrUnavailable: "التحقق الإلكتروني غير متاح لهذه المعاينة أو الفاتورة.",
+      authCodeLabel: "مرجع الفاتورة:",
       policiesHeaderTitle: "السياسات القانونية وشروط الضمان والاسترجاع والاستلام المعتمدة",
       policiesHeaderCode: "DOCUMENT REF: WX-LEGAL-2026-REV4",
       policy1Title: "1. سياسة الضمان الذهبي الشامل (لمدة سنتين / 24 شهراً)",
@@ -79,7 +82,7 @@
         "يلتزم مندوب التوصيل المعتمد بتسليم الشحنة مغلفة ومختومة بختم الأمان الخاص بـ WEEXEY. يحق للعميل التحقق من سلامة العبوة الخارجية ومطابقة الصنف قبل إتمام السداد. يُعد توقيع العميل على جهاز المندوب أو سداد قيمة الفاتورة بمثابة إقرار قانوني باستلام المنتجات بحالة سليمة وخالية من أي تلف ظاهري.",
       policy4Title: "4. الحجية القانونية للفاتورة الإلكترونية",
       policy4Body:
-        "صدرت هذه الفاتورة إلكترونياً وفقاً لأنظمة التجارة الإلكترونية ولوائح الفوترة الضريبية المعتمدة، وهي مستند رسمي معتمد قانونياً لا يتطلب توقيعاً خطياً حياً متى ما تضمن الختم الإلكتروني ورمز التحقق الرقمي.",
+        "هذه فاتورة مولدة إلكترونياً. رمز QR يتحقق من سجل الطلب في المتجر فقط، ولا يثبت بمفرده الامتثال الضريبي أو استحقاق الضمان أو صحة جميع محتويات نسخة الفاتورة.",
       sigSellerTitle: "الاعتماد والختم الرسمي للشركة",
       sigSellerRole: "إدارة العمليات والفوترة القانونية — WEEXEY",
       sigStampTop: "شركة ويكسي للتجارة",
@@ -154,9 +157,10 @@
       sumVatTotal: "Total Value Added Tax (15% Inclusive)",
       sumGrandTotal: "Grand Total Payable (Including VAT)",
       sumCodNote: "Net Amount Collectible Upon Delivery (COD):",
-      verificationBoxTitle: "Digital Authentication & Verification",
-      qrCaption: "Scan the official QR code to verify tax invoice authenticity and active warranty registration.",
-      authCodeLabel: "Cryptographic Verification Hash:",
+      verificationBoxTitle: "Invoice record verification",
+      qrCaption: "Scan or click to check the invoice number, date and order status in the store, without exposing customer details.",
+      qrUnavailable: "Online verification is unavailable for this preview or invoice.",
+      authCodeLabel: "Invoice reference:",
       policiesHeaderTitle: "STATUTORY TERMS, WARRANTY COVERAGE, RETURN POLICY & DELIVERY ACKNOWLEDGMENT",
       policiesHeaderCode: "DOCUMENT REF: WX-LEGAL-2026-REV4",
       policy1Title: "1. Official 2-Year (24-Month) Comprehensive Manufacturer & Store Warranty",
@@ -170,7 +174,7 @@
         "All shipments are dispatched with tamper-evident WEEXEY security seals. The recipient is entitled to verify the external integrity of the parcel and confirm the order reference number prior to completing payment to the courier. Remitting payment or signing the courier Proof of Delivery (POD) constitutes formal legal acknowledgment of receiving the goods in intact external condition.",
       policy4Title: "4. Legal Validity of Electronic Tax Invoice",
       policy4Body:
-        "This document is electronically generated in compliance with E-Commerce Law and Value Added Tax (VAT) regulations. Bearing the official digital seal and cryptographic verification code, this invoice is legally binding and valid without a physical wet-ink signature.",
+        "This invoice is electronically generated. The QR checks the store order record only; it does not independently certify tax compliance, warranty eligibility or all contents of an invoice copy.",
       sigSellerTitle: "Authorized Corporate Seal & Issuance",
       sigSellerRole: "Legal Billing & Compliance Division — WEEXEY",
       sigStampTop: "WEEXEY COMMERCE LTD",
@@ -245,9 +249,10 @@
       sumVatTotal: "Total TVA (15% incluse)",
       sumGrandTotal: "Total Général TTC à Payer",
       sumCodNote: "Montant net à encaisser à la livraison (COD) :",
-      verificationBoxTitle: "Authentification et Vérification Numérique",
-      qrCaption: "Scannez le code QR pour vérifier l’authenticité de cette facture et la garantie.",
-      authCodeLabel: "Empreinte numérique :",
+      verificationBoxTitle: "Vérification du registre de facture",
+      qrCaption: "Scannez ou cliquez pour vérifier le numéro, la date et le statut de la commande, sans afficher les données du client.",
+      qrUnavailable: "La vérification en ligne est indisponible pour cet aperçu ou cette facture.",
+      authCodeLabel: "Référence de facture :",
       policiesHeaderTitle: "CONDITIONS LÉGALES, GARANTIE DE 2 ANS, POLITIQUE DE RETOUR (7 JOURS) ET RÉCEPTION",
       policiesHeaderCode: "DOCUMENT REF: WX-LEGAL-2026-REV4",
       policy1Title: "1. Garantie Officielle Complète de 2 Ans (24 Mois)",
@@ -261,7 +266,7 @@
         "Chaque colis est expédié avec un scellé de sécurité WEEXEY. Le client peut vérifier l’état extérieur du colis avant le règlement. Le paiement au livreur vaut accusé de réception conforme.",
       policy4Title: "4. Validité Juridique de la Facture Électronique",
       policy4Body:
-        "Facture émise électroniquement conformément à la réglementation fiscale en vigueur, valable sans signature manuscrite grâce au cachet officiel et au code de vérification.",
+        "Facture générée électroniquement. Le QR vérifie uniquement le registre de commande, pas la conformité fiscale, le droit à la garantie ou l’ensemble du contenu d’une copie.",
       sigSellerTitle: "Cachet Officiel et Validation",
       sigSellerRole: "Direction de la Facturation Légale — WEEXEY",
       sigStampTop: "WEEXEY COMMERCE LTD",
@@ -336,9 +341,10 @@
       sumVatTotal: "Total Impuesto al Valor Agregado (15% incluido)",
       sumGrandTotal: "Total General a Pagar (IVA Incluido)",
       sumCodNote: "Importe neto a cobrar en la entrega (COD):",
-      verificationBoxTitle: "Autenticación y Verificación Digital",
-      qrCaption: "Escanee el código QR oficial para verificar la validez fiscal y la garantía activa.",
-      authCodeLabel: "Hash de Verificación Digital:",
+      verificationBoxTitle: "Verificación del registro de factura",
+      qrCaption: "Escanee o pulse para consultar el número, la fecha y el estado del pedido, sin mostrar datos del cliente.",
+      qrUnavailable: "La verificación en línea no está disponible para esta vista previa o factura.",
+      authCodeLabel: "Referencia de factura:",
       policiesHeaderTitle: "TÉRMINOS LEGALES, GARANTÍA DE 2 AÑOS, DEVOLUCIONES (7 DÍAS) Y PROTOCOLO DE ENTREGA",
       policiesHeaderCode: "DOCUMENT REF: WX-LEGAL-2026-REV4",
       policy1Title: "1. Garantía Oficial Integral de 2 Años (24 Meses)",
@@ -352,7 +358,7 @@
         "Todos los pedidos se envían con precintos de seguridad WEEXEY. El destinatario puede verificar la integridad exterior del paquete antes de pagar. El pago o firma al transportista confirma la recepción conforme.",
       policy4Title: "4. Validez Legal de la Factura Electrónica",
       policy4Body:
-        "Documento emitido electrónicamente conforme a la normativa fiscal y de comercio electrónico vigente, plenamente válido con sello digital y código criptográfico.",
+        "Factura generada electrónicamente. El QR solo verifica el registro del pedido; no certifica el cumplimiento fiscal, la cobertura de garantía ni todo el contenido de una copia.",
       sigSellerTitle: "Sello Oficial y Autorización",
       sigSellerRole: "División Legal y de Facturación — WEEXEY",
       sigStampTop: "WEEXEY COMMERCE LTD",
@@ -427,9 +433,10 @@
       sumVatTotal: "增值税总额 (15% 内含税)",
       sumGrandTotal: "应付含税总金额",
       sumCodNote: "货到付款应收净额 (COD)：",
-      verificationBoxTitle: "数字防伪认证与保修核验",
-      qrCaption: "扫描官方二维码即可核验本税务发票真伪及 2 年保修登记状态。",
-      authCodeLabel: "数字防伪哈希校验码：",
+      verificationBoxTitle: "发票记录核验",
+      qrCaption: "扫描或点击二维码，核对商店记录中的发票编号、日期和订单状态，不显示客户信息。",
+      qrUnavailable: "此预览或发票暂不支持在线核验。",
+      authCodeLabel: "发票编号：",
       policiesHeaderTitle: "法定销售条款、2年官方保修政策、7天退换货规定及货到付款签收须知",
       policiesHeaderCode: "DOCUMENT REF: WX-LEGAL-2026-REV4",
       policy1Title: "1. 官方 2 年（24 个月）全面质量保修政策",
@@ -443,7 +450,7 @@
         "所有包裹均附有 WEEXEY 防拆安全封条。客户在向配送员付款前有权核对包裹外包装完整性及订单编号。完成付款或签署配送单即视为法律上确认收到外观完好无损之商品。",
       policy4Title: "4. 电子税务发票之法律效力",
       policy4Body:
-        "本发票依据电子商务法及增值税法规由系统电子签发，附有官方电子印章及数字防伪校验码，无需手写签名即具完全法律效力。",
+        "本发票由系统生成。二维码仅核验商店订单记录，不单独证明税务合规、保修资格或发票副本的全部内容。",
       sigSellerTitle: "企业官方签章与核准",
       sigSellerRole: "WEEXEY 法务与税务结算中心",
       sigStampTop: "WEEXEY COMMERCE LTD",
@@ -473,74 +480,12 @@
     );
   }
 
-  function computeVerificationHash(orderNumber, createdAt, total) {
-    const raw = `WEEXEY|${orderNumber}|${createdAt}|${Number(total).toFixed(2)}|TRN310489275600003`;
-    let h1 = 0x811c9dc5;
-    let h2 = 0x01000193;
-    for (let i = 0; i < raw.length; i += 1) {
-      const code = raw.charCodeAt(i);
-      h1 ^= code;
-      h1 = Math.imul(h1, 0x01000193);
-      h2 ^= code + (i & 0xff);
-      h2 = Math.imul(h2, 0x85ebca6b);
-    }
-    const hex1 = (h1 >>> 0).toString(16).toUpperCase().padStart(8, "0");
-    const hex2 = (h2 >>> 0).toString(16).toUpperCase().padStart(8, "0");
-    return `WX-AUTH-${hex1}-${hex2}`;
-  }
-
-  function buildDeterministicQrSvg(seedString) {
-    const size = 21;
-    const grid = Array.from({ length: size }, () => Array(size).fill(false));
-    const reserved = Array.from({ length: size }, () => Array(size).fill(false));
-
-    const placeFinder = (rowOffset, colOffset) => {
-      for (let r = -1; r <= 7; r += 1) {
-        for (let c = -1; c <= 7; c += 1) {
-          const rr = rowOffset + r;
-          const cc = colOffset + c;
-          if (rr >= 0 && rr < size && cc >= 0 && cc < size) {
-            reserved[rr][cc] = true;
-            const inOuter = r >= 0 && r <= 6 && c >= 0 && c <= 6 && (r === 0 || r === 6 || c === 0 || c === 6);
-            const inInner = r >= 2 && r <= 4 && c >= 2 && c <= 4;
-            grid[rr][cc] = inOuter || inInner;
-          }
-        }
-      }
-    };
-
-    placeFinder(0, 0);
-    placeFinder(0, size - 7);
-    placeFinder(size - 7, 0);
-
-    for (let i = 8; i < size - 8; i += 1) {
-      reserved[6][i] = true;
-      reserved[i][6] = true;
-      grid[6][i] = i % 2 === 0;
-      grid[i][6] = i % 2 === 0;
-    }
-
-    let hash = 2166136261;
-    for (let r = 0; r < size; r += 1) {
-      for (let c = 0; c < size; c += 1) {
-        if (reserved[r][c]) continue;
-        const ch = seedString.charCodeAt((r * size + c) % seedString.length) || 73;
-        hash ^= ch + r * 31 + c * 17;
-        hash = Math.imul(hash, 16777619);
-        grid[r][c] = ((hash >>> 3) & 1) === 1;
-      }
-    }
-
-    let rects = "";
-    for (let r = 0; r < size; r += 1) {
-      for (let c = 0; c < size; c += 1) {
-        if (grid[r][c]) {
-          rects += `<rect x="${c + 2}" y="${r + 2}" width="1" height="1" fill="#0f172a"/>`;
-        }
-      }
-    }
-
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size + 4} ${size + 4}" width="92" height="92" shape-rendering="crispEdges" aria-label="QR Code"><rect width="${size + 4}" height="${size + 4}" rx="2" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.6"/>${rects}</svg>`;
+  function buildVerificationQrSvg(url) {
+    if (typeof window.qrcode !== "function") throw new Error("Invoice QR encoder is not loaded.");
+    const qr = window.qrcode(0, "M");
+    qr.addData(url, "Byte");
+    qr.make();
+    return qr.createSvgTag({ cellSize: 2, margin: 8, scalable: true });
   }
 
   function generateSku(item, idx) {
@@ -667,7 +612,9 @@
       totalVatAmount,
       grandTotal,
       currency: store?.getCurrency ? store.getCurrency() : "USD",
-      verificationHash: computeVerificationHash(orderNumber, createdAtIso, grandTotal),
+      verificationUrl: /^[0-9a-f]{64}$/.test(payload.verificationToken || "")
+        ? `${verificationPageUrl.href}?lang=${invoiceLanguage(payload.invoiceLanguage || store?.getLanguage?.())}#${payload.verificationToken}`
+        : "",
     };
   }
 
@@ -699,25 +646,126 @@
     return {};
   }
 
-  function resolveCopyWithCustomConfig(customOverride = null) {
-    const base = { ...INVOICE_I18N.en };
+  const invoiceLanguages = { en: "English", ar: "العربية", fr: "Français", es: "Español", zh: "中文" };
+  const sectionSelectors = {
+    header: ".inv-header-banner",
+    metadata: ".inv-meta-strip",
+    parties: ".inv-parties-grid",
+    items: ".inv-items-section",
+    totals: ".inv-Totals-qr-grid",
+    policies: ".inv-policies-panel",
+    footer: ".inv-footer",
+  };
+  const visibilitySelectors = {
+    logo: ".inv-logo-row img",
+    watermark: ".invoice-watermark",
+    status: ".inv-status-chip",
+    orderNumber: ".inv-meta-strip .meta-cell:nth-child(2)",
+    payment: ".inv-meta-strip .meta-cell:nth-child(4)",
+    supply: ".inv-meta-strip .meta-cell:nth-child(5)",
+    seller: ".party-box:not(.is-buyer)",
+    phone: "[data-invoice-field='phone']",
+    email: "[data-invoice-field='email']",
+    address: "[data-invoice-field='address']",
+    notes: "[data-invoice-field='notes']",
+    brand: ".item-brand-tag",
+    variant: ".item-variant",
+    warranty: ".warranty-chip",
+    verification: ".inv-qr-box",
+    cod: ".summary-cod-banner",
+    signatures: ".inv-signatures-grid",
+    seal: ".inv-brand-seal",
+    barcode: ".sig-barcode-wrap",
+    policies: ".inv-policies-panel",
+    footer: ".inv-bottom-bar",
+  };
+  const columnKeys = ["index", "sku", "description", "quantity", "unitPrice", "vatRate", "vatAmount", "total"];
+  const requiredColumns = ["description", "quantity", "total"];
+
+  function invoiceLanguage(value) {
+    const lang = String(value || "").toLowerCase().split("-")[0];
+    return Object.hasOwn(invoiceLanguages, lang) ? lang : "en";
+  }
+
+  function normalizeCustomConfig(value = {}) {
+    const cfg = value && typeof value === "object" ? value : {};
+    const appearance = cfg.appearance || {};
+    const bounded = (value, min, max, fallback) =>
+      Number.isFinite(Number(value)) ? Math.min(max, Math.max(min, Number(value))) : fallback;
+    const color = (value, fallback) => /^#[0-9a-f]{6}$/i.test(value || "") ? value : fallback;
+    let logoUrl = "";
+    if (cfg.logoUrl) {
+      try {
+        const url = new URL(cfg.logoUrl, window.location.origin);
+        if (url.protocol === "https:" || (url.origin === window.location.origin && url.protocol === "http:")) {
+          logoUrl = url.href;
+        }
+      } catch {
+        console.warn("Invalid invoice logo URL.");
+      }
+    }
+    const uniqueOrder = (order, keys) => [...new Set([
+      ...(Array.isArray(order) ? order.filter((key) => keys.includes(key)) : []), ...keys,
+    ])];
+    const visibility = Object.fromEntries(Object.keys(visibilitySelectors).map((key) => [key, cfg.visibility?.[key] !== false]));
+    const columns = uniqueOrder(cfg.columns, columnKeys);
+    const hiddenColumns = Array.isArray(cfg.hiddenColumns)
+      ? cfg.hiddenColumns.filter((key) => columnKeys.includes(key) && !requiredColumns.includes(key))
+      : [];
+    return {
+      ...cfg,
+      logoUrl,
+      visibility,
+      columns,
+      hiddenColumns,
+      sections: uniqueOrder(cfg.sections, Object.keys(sectionSelectors)),
+      appearance: {
+        accent: color(appearance.accent, "#4f46e5"),
+        secondary: color(appearance.secondary, "#0d9488"),
+        ink: color(appearance.ink, "#0f172a"),
+        font: ["Cairo", "Manrope", "Arial", "Georgia"].includes(appearance.font) ? appearance.font : "Cairo",
+        fontScale: bounded(appearance.fontScale, 0.8, 1.3, 1),
+        spacing: bounded(appearance.spacing, 4, 18, 9),
+        padding: bounded(appearance.padding, 4, 14, 8),
+        logoHeight: bounded(appearance.logoHeight, 20, 64, 30),
+      },
+    };
+  }
+
+  function resolveCopyWithCustomConfig(customOverride = null, language = "en") {
+    const lang = invoiceLanguage(language);
+    const base = {
+      ...INVOICE_I18N[lang],
+      watermarkText: "WEEXEY OFFICIAL",
+      previewBrandText: "WEEXEY OFFICIAL",
+      sellerTag: lang === "ar" ? "المقر الرئيسي" : "CORPORATE HQ",
+      sellerStoreName: "WEEXEY OFFICIAL STORE",
+      buyerTag: lang === "ar" ? "العميل" : "VERIFIED CLIENT",
+    };
     const cfg = customOverride || readCustomInvoiceConfig();
     if (!cfg || typeof cfg !== "object") return base;
 
     if (cfg.trn_number) base.trnNumber = String(cfg.trn_number).trim();
     if (cfg.cr_number) base.crNumber = String(cfg.cr_number).trim();
     if (cfg.billing_email) base.supportEmail = String(cfg.billing_email).trim();
-    if (cfg.company_name_en) base.companyLegalName = String(cfg.company_name_en).trim();
-    if (cfg.company_branch_en) base.companyBranch = String(cfg.company_branch_en).trim();
-    if (cfg.company_address_en) base.companyAddress = String(cfg.company_address_en).trim();
-    if (cfg.policy1_body_en) base.policy1Body = String(cfg.policy1_body_en).trim();
-    if (cfg.policy2_body_en) base.policy2Body = String(cfg.policy2_body_en).trim();
-    if (cfg.policy3_body_en) base.policy3Body = String(cfg.policy3_body_en).trim();
-    if (cfg.policy4_body_en) base.policy4Body = String(cfg.policy4_body_en).trim();
+    if (lang === "en") {
+      if (cfg.company_name_en) base.companyLegalName = String(cfg.company_name_en).trim();
+      if (cfg.company_branch_en) base.companyBranch = String(cfg.company_branch_en).trim();
+      if (cfg.company_address_en) base.companyAddress = String(cfg.company_address_en).trim();
+      if (cfg.policy1_body_en) base.policy1Body = String(cfg.policy1_body_en).trim();
+      if (cfg.policy2_body_en) base.policy2Body = String(cfg.policy2_body_en).trim();
+      if (cfg.policy3_body_en) base.policy3Body = String(cfg.policy3_body_en).trim();
+      if (cfg.policy4_body_en) base.policy4Body = String(cfg.policy4_body_en).trim();
+    }
+    for (const [key, text] of Object.entries(cfg.texts?.[lang] || {})) {
+      if (Object.hasOwn(base, key) && !["lang", "dir", "trnNumber", "crNumber", "supportEmail"].includes(key) && typeof text === "string") {
+        base[key] = text;
+      }
+    }
     return base;
   }
 
-  function buildBrandSealSvg(trnNumber = "310489275600003") {
+  function buildBrandSealSvg(copy) {
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110" width="64" height="64" aria-label="Official Corporate Seal">
       <defs>
         <linearGradient id="wxBrandSealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -729,21 +777,20 @@
       <circle cx="55" cy="55" r="49" fill="rgba(79,70,229,0.04)" stroke="url(#wxBrandSealGrad)" stroke-width="2" stroke-dasharray="4 2"/>
       <circle cx="55" cy="55" r="43" fill="none" stroke="url(#wxBrandSealGrad)" stroke-width="1.2"/>
       <circle cx="55" cy="55" r="30" fill="rgba(13,148,136,0.04)" stroke="#cbd5e1" stroke-width="0.9"/>
-      <text x="55" y="24" text-anchor="middle" fill="#4338ca" font-size="6.2" font-weight="800" letter-spacing="1.1" font-family="Manrope, sans-serif">WEEXEY COMMERCE LTD</text>
-      <text x="55" y="47" text-anchor="middle" fill="#0f172a" font-size="7.2" font-weight="900" letter-spacing="0.9" font-family="Manrope, sans-serif">★ CERTIFIED ★</text>
-      <text x="55" y="58" text-anchor="middle" fill="#4f46e5" font-size="8" font-weight="900" letter-spacing="0.7" font-family="Manrope, sans-serif">TAX INVOICE</text>
-      <text x="55" y="68" text-anchor="middle" fill="#0d9488" font-size="6" font-weight="800" letter-spacing="0.8" font-family="Manrope, sans-serif">AUTHENTICATED</text>
-      <text x="55" y="90" text-anchor="middle" fill="#475569" font-size="5.6" font-weight="800" letter-spacing="0.6" font-family="ui-monospace, monospace">TRN: ${escapeHtml(trnNumber)}</text>
+      <text x="55" y="24" text-anchor="middle" fill="#4338ca" font-size="6.2" font-weight="800" font-family="Cairo, sans-serif">${escapeHtml(copy.sigStampTop)}</text>
+      <text x="55" y="50" text-anchor="middle" fill="#0f172a" font-size="7.2" font-weight="900" font-family="Cairo, sans-serif">${escapeHtml(copy.sigStampCenter)}</text>
+      <text x="55" y="68" text-anchor="middle" fill="#0d9488" font-size="6" font-weight="800" font-family="Cairo, sans-serif">${escapeHtml(copy.sigStampBottom)}</text>
+      <text x="55" y="90" text-anchor="middle" fill="#475569" font-size="5.6" font-weight="800" font-family="ui-monospace, monospace">TRN: ${escapeHtml(copy.trnNumber)}</text>
     </svg>`;
   }
 
-  function buildInvoiceDocumentHtml(data, copy, store, language, autoPrint = false) {
+  function buildInvoiceDocumentHtml(data, copy, store, language, autoPrint = false, customConfig = {}, embedded = false) {
+    const cfg = normalizeCustomConfig(customConfig);
     const fmt = (val) => formatMoneyForInvoice(val, store, language);
-    const logoUrl = new URL("/images/new/li.png", window.location.origin).href;
-    const darkLogoUrl = new URL("/images/new/dark.png", window.location.origin).href;
-    const qrSvg = buildDeterministicQrSvg(`${data.invoiceNumber}|${data.verificationHash}|${data.grandTotal}`);
+    const logoUrl = cfg.logoUrl || new URL("/images/new/li.png", window.location.origin).href;
+    const qrSvg = data.verificationUrl ? buildVerificationQrSvg(data.verificationUrl) : "";
     const barcodeSvg = buildBarcodeSvg(`${data.invoiceNumber}-${data.orderNumber}`);
-    const brandSealSvg = buildBrandSealSvg(copy.trnNumber);
+    const brandSealSvg = buildBrandSealSvg(copy);
 
     let statusLabel = copy.statusConfirmed;
     let statusClass = "status-confirmed";
@@ -770,7 +817,7 @@
               <strong>${escapeHtml(item.name)}</strong>
             </div>
             <div class="item-sub-meta">
-              ${item.variant ? `<span>${escapeHtml(item.variant)}</span> · ` : ""}
+              ${item.variant ? `<span class="item-variant">${escapeHtml(item.variant)}</span> · ` : ""}
               <span class="warranty-chip">✓ ${escapeHtml(copy.serialWarrantyNote)}</span>
             </div>
           </td>
@@ -1026,15 +1073,15 @@
       gap: 9px;
     }
 
-    /* 1. WEEXEY Brand Dark Header Banner (Harmonious Navy, Purple & Teal) */
+    /* 1. Formal white invoice header */
     .inv-header-banner {
       display: flex;
       justify-content: space-between;
       align-items: stretch;
       gap: 18px;
       padding: 13px 16px;
-      background: linear-gradient(125deg, #0f172a 0%, #1e1b4b 58%, #134e4a 100%);
-      color: #ffffff;
+      background: #ffffff;
+      color: var(--ink);
       border-radius: 7px;
       position: relative;
       overflow: hidden;
@@ -1044,8 +1091,8 @@
       content: "";
       position: absolute;
       inset: auto 0 0 0;
-      height: 3px;
-      background: linear-gradient(90deg, #7c3aed, #4f46e5, #0d9488);
+      height: 1px;
+      background: var(--line-strong);
     }
 
     .inv-brand-col {
@@ -1072,14 +1119,14 @@
       margin: 0;
       font-size: 13.5px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--ink);
       letter-spacing: 0.01em;
     }
 
     .inv-company-sub {
       margin: 1.5px 0;
       font-size: 9px;
-      color: #cbd5e1;
+      color: var(--ink-soft);
       font-weight: 500;
     }
 
@@ -1096,14 +1143,14 @@
       gap: 5px;
       padding: 2.5px 8px;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: var(--surface-subtle);
+      border: 1px solid var(--line);
       font-size: 8.5px;
-      color: #cbd5e1;
+      color: var(--ink-soft);
     }
 
     .reg-pill strong {
-      color: #5eead4;
+      color: var(--ink);
       font-weight: 800;
     }
 
@@ -1119,9 +1166,9 @@
       display: inline-block;
       padding: 2.5px 9px;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(167, 139, 250, 0.4);
-      color: #e9d5ff;
+      background: var(--navy-deep);
+      border: 1px solid var(--navy-deep);
+      color: #ffffff;
       font-size: 8px;
       font-weight: 800;
       letter-spacing: 0.08em;
@@ -1132,7 +1179,7 @@
       margin: 4px 0 2px;
       font-size: 17.5px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--ink);
       letter-spacing: 0.01em;
       line-height: 1.15;
     }
@@ -1142,7 +1189,7 @@
       font-size: 8px;
       font-weight: 700;
       letter-spacing: 0.06em;
-      color: #99f6e4;
+      color: var(--muted);
       text-transform: uppercase;
     }
 
@@ -1166,6 +1213,14 @@
       color: #fca5a5;
       background: rgba(239, 68, 68, 0.2);
       border: 1px solid rgba(248, 113, 113, 0.4);
+    }
+
+    .inv-header-banner :is(.status-confirmed, .status-shipped, .status-delivered) {
+      color: #047857;
+    }
+
+    .inv-header-banner .status-cancelled {
+      color: #b91c1c;
     }
 
     /* 2. Spacious 3-Column (2x3) Metadata Grid - No Cramped Wrapped Numbers */
@@ -1436,6 +1491,14 @@
       display: block;
     }
 
+    .inv-qr-placeholder {
+      display: grid;
+      place-items: center;
+      width: 66px;
+      height: 66px;
+      color: var(--muted);
+    }
+
     .inv-qr-copy {
       flex: 1;
       min-width: 0;
@@ -1685,18 +1748,42 @@
       }
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+  <style>
+    :root {
+      --brand-purple: ${cfg.appearance.accent};
+      --brand-indigo: ${cfg.appearance.accent};
+      --brand-teal: ${cfg.appearance.secondary};
+      --ink: ${cfg.appearance.ink};
+    }
+    .invoice-a4-sheet { padding: ${cfg.appearance.padding}mm; }
+    .invoice-content-layer { gap: ${cfg.appearance.spacing}px; font-family: "${cfg.appearance.font}", "Cairo", sans-serif; }
+    .invoice-content-layer :is(p, strong, span, h1, h2, h3, h4) { overflow-wrap: anywhere; }
+    .meta-cell strong { white-space: normal; overflow: visible; text-overflow: clip; }
+    .inv-logo-row img { height: ${cfg.appearance.logoHeight}px; max-width: 120px; object-fit: contain; }
+    .inv-table th { background: ${cfg.appearance.accent}; }
+    .invoice-fit-warning { padding: 10px; color: #92400e; background: #fffbeb; text-align: center; }
+    [hidden] { display: none !important; }
+    ${embedded ? ".preview-toolbar { display: none; }" : ""}
+    @media print {
+      .invoice-fit-warning { display: none !important; }
+      .invoice-a4-sheet { padding: ${cfg.appearance.padding}mm !important; }
+    }
+  </style>
+  ${embedded ? "" : '<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>'}
 </head>
 <body>
   <header class="preview-toolbar">
     <div class="toolbar-info">
-      <span class="toolbar-brand-badge">WEEXEY OFFICIAL</span>
+      <span class="toolbar-brand-badge">${escapeHtml(copy.previewBrandText)}</span>
       <div>
         <strong>${escapeHtml(copy.previewBarTitle)} — #${escapeHtml(data.orderNumber)}</strong>
         <span>${escapeHtml(copy.previewBarSub)}</span>
       </div>
     </div>
     <div class="toolbar-actions">
+      <select class="toolbar-btn" aria-label="${language === "ar" ? "لغة الفاتورة" : "Invoice language"}" onchange="changeInvoiceLanguage(this.value)">
+        ${Object.entries(invoiceLanguages).map(([key, label]) => `<option value="${key}" ${key === language ? "selected" : ""} style="color:#0f172a">${escapeHtml(label)}</option>`).join("")}
+      </select>
       <button type="button" class="toolbar-btn toolbar-btn-primary" id="wx-download-pdf-btn" onclick="downloadSinglePagePdf()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
         <span id="wx-download-pdf-label">${escapeHtml(copy.downloadPdfBtn)}</span>
@@ -1705,23 +1792,24 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
         <span>${escapeHtml(copy.printNowBtn)}</span>
       </button>
-      <button type="button" class="toolbar-btn" onclick="window.close()">
+      <button type="button" class="toolbar-btn" onclick="closeInvoicePreview()">
         <span>${escapeHtml(copy.closePreviewBtn)}</span>
       </button>
     </div>
   </header>
+  <p class="invoice-fit-warning" id="wx-fit-warning" role="status" hidden>${language === "ar" ? "تم تصغير المحتوى ليلائم A4. قلل النصوص أو حجم الخط لتحسين القراءة." : "Content was scaled to fit A4. Reduce text or font size for better readability."}</p>
 
   <div class="invoice-preview-stage" id="wx-invoice-stage">
     <main class="invoice-a4-sheet" id="wx-invoice-sheet">
     <div class="invoice-single-frame">
-      <div class="invoice-watermark" aria-hidden="true">WEEXEY OFFICIAL</div>
+      <div class="invoice-watermark" aria-hidden="true">${escapeHtml(copy.watermarkText)}</div>
 
       <div class="invoice-content-layer">
         <!-- 1. WEEXEY Brand Header Banner -->
         <section class="inv-header-banner">
           <div class="inv-brand-col">
             <div class="inv-logo-row">
-              <img src="${escapeHtml(darkLogoUrl)}" onerror="this.src='${escapeHtml(logoUrl)}'" alt="WEEXEY" />
+              <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(copy.companyLegalName)}" />
               <div>
                 <h2 class="inv-company-name">${escapeHtml(copy.companyLegalName)}</h2>
                 <p class="inv-company-sub">${escapeHtml(copy.companyBranch)}</p>
@@ -1778,12 +1866,12 @@
           <div class="party-box">
             <h3 class="party-box-head">
               <span>${escapeHtml(copy.sellerBoxTitle)}</span>
-              <span class="head-tag" dir="ltr">CORPORATE HQ</span>
+              <span class="head-tag">${escapeHtml(copy.sellerTag)}</span>
             </h3>
             <div class="party-rows">
               <div class="party-row">
                 <span>${escapeHtml(copy.companyLegalName)}</span>
-                <strong>WEEXEY OFFICIAL STORE</strong>
+                <strong>${escapeHtml(copy.sellerStoreName)}</strong>
               </div>
               <div class="party-row">
                 <span>${escapeHtml(copy.trnLabel)}</span>
@@ -1803,29 +1891,29 @@
           <div class="party-box is-buyer">
             <h3 class="party-box-head">
               <span>${escapeHtml(copy.buyerBoxTitle)}</span>
-              <span class="head-tag" dir="ltr">VERIFIED CLIENT</span>
+              <span class="head-tag">${escapeHtml(copy.buyerTag)}</span>
             </h3>
             <div class="party-rows">
               <div class="party-row">
                 <span>${escapeHtml(copy.customerNameLabel)}</span>
                 <strong>${escapeHtml(data.customer.name)}</strong>
               </div>
-              <div class="party-row">
+              <div class="party-row" data-invoice-field="phone">
                 <span>${escapeHtml(copy.customerPhoneLabel)}</span>
                 <strong dir="ltr">${escapeHtml(data.customer.phone || copy.notProvided)}</strong>
               </div>
               ${
                 data.customer.email
-                  ? `<div class="party-row"><span>${escapeHtml(copy.customerEmailLabel)}</span><strong dir="ltr">${escapeHtml(data.customer.email)}</strong></div>`
+                  ? `<div class="party-row" data-invoice-field="email"><span>${escapeHtml(copy.customerEmailLabel)}</span><strong dir="ltr">${escapeHtml(data.customer.email)}</strong></div>`
                   : ""
               }
-              <div class="party-row">
+              <div class="party-row" data-invoice-field="address">
                 <span>${escapeHtml(copy.customerAddressLabel)}</span>
                 <strong>${escapeHtml(fullAddress || copy.notProvided)}</strong>
               </div>
               ${
                 data.customer.notes
-                  ? `<div class="party-row"><span>${escapeHtml(copy.customerNotesLabel)}</span><strong>${escapeHtml(data.customer.notes)}</strong></div>`
+                  ? `<div class="party-row" data-invoice-field="notes"><span>${escapeHtml(copy.customerNotesLabel)}</span><strong>${escapeHtml(data.customer.notes)}</strong></div>`
                   : ""
               }
             </div>
@@ -1833,7 +1921,7 @@
         </section>
 
         <!-- 4. Itemized Tax Schedule Table -->
-        <section>
+        <section class="inv-items-section">
           <div class="inv-section-head-row">
             <h3 class="inv-section-caption">${escapeHtml(copy.tableSectionTitle)}</h3>
           </div>
@@ -1859,13 +1947,15 @@
         <!-- 5. Financial Breakdown & QR Verification -->
         <section class="inv-Totals-qr-grid">
           <div class="inv-qr-box">
-            <div class="inv-qr-svg">${qrSvg}</div>
+            <div class="inv-qr-svg">${qrSvg
+              ? `<a href="${escapeHtml(data.verificationUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(copy.verificationBoxTitle)}">${qrSvg}</a>`
+              : '<span class="inv-qr-placeholder" aria-hidden="true">&mdash;</span>'}</div>
             <div class="inv-qr-copy">
               <h4>${escapeHtml(copy.verificationBoxTitle)}</h4>
-              <p>${escapeHtml(copy.qrCaption)}</p>
+              <p>${escapeHtml(qrSvg ? copy.qrCaption : copy.qrUnavailable)}</p>
               <div>
                 <small style="display:block;font-size:7.8px;color:#64748b;margin-bottom:2px;">${escapeHtml(copy.authCodeLabel)}</small>
-                <span class="inv-hash-code" dir="ltr">${escapeHtml(data.verificationHash)}</span>
+                <span class="inv-hash-code" dir="ltr">${escapeHtml(data.invoiceNumber)}</span>
               </div>
             </div>
           </div>
@@ -1933,7 +2023,7 @@
         </section>
 
         <!-- 7. Signatures, Circular Brand Seal & POD Footer -->
-        <footer>
+        <footer class="inv-footer">
           <div class="inv-signatures-grid">
             <div class="sig-box">
               <div class="sig-copy">
@@ -1941,7 +2031,7 @@
                 <small>${escapeHtml(copy.sigSellerRole)}</small>
                 <div class="sig-barcode-wrap" dir="ltr">${barcodeSvg}</div>
               </div>
-              <div dir="ltr">${brandSealSvg}</div>
+              <div dir="ltr" class="inv-brand-seal">${brandSealSvg}</div>
             </div>
 
             <div class="sig-box">
@@ -1951,7 +2041,7 @@
                 </div>
                 <div class="pod-line">${escapeHtml(copy.sigBuyerNameLine)} <strong>${escapeHtml(data.customer.name)}</strong></div>
                 <div class="pod-line">${escapeHtml(copy.sigBuyerSignLine)} ............................</div>
-                <div class="pod-line" style="grid-column: 1 / -1;">${escapeHtml(copy.sigBuyerDateLine)} ........ / ........ / 2026</div>
+                <div class="pod-line" style="grid-column: 1 / -1;">${escapeHtml(copy.sigBuyerDateLine)} ........ / ........ / ........</div>
               </div>
             </div>
           </div>
@@ -1966,7 +2056,52 @@
   </main>
   </div>
   <script>
+    var invoiceConfig = ${JSON.stringify(cfg).replace(/</g, "\\u003c")};
+    var visibilitySelectors = ${JSON.stringify(visibilitySelectors)};
+    var sectionSelectors = ${JSON.stringify(sectionSelectors)};
+    var columnKeys = ${JSON.stringify(columnKeys)};
+    Object.keys(visibilitySelectors).forEach(function (key) {
+      if (invoiceConfig.visibility[key] === false) {
+        document.querySelectorAll(visibilitySelectors[key]).forEach(function (node) { node.hidden = true; });
+      }
+    });
+    var layer = document.querySelector(".invoice-content-layer");
+    invoiceConfig.sections.forEach(function (key) {
+      var section = layer.querySelector(sectionSelectors[key]);
+      if (section) layer.appendChild(section);
+    });
+    document.querySelectorAll(".inv-table tr").forEach(function (row) {
+      var cells = Array.from(row.children);
+      invoiceConfig.columns.forEach(function (key) {
+        var cell = cells[columnKeys.indexOf(key)];
+        cell.hidden = invoiceConfig.hiddenColumns.includes(key);
+        row.appendChild(cell);
+      });
+    });
+    if (!invoiceConfig.visibility.seller) document.querySelector(".inv-parties-grid").style.gridTemplateColumns = "1fr";
+    if (!invoiceConfig.visibility.verification) document.querySelector(".inv-Totals-qr-grid").style.gridTemplateColumns = "1fr";
+    var fontSizes = Array.from(layer.querySelectorAll("*")).map(function (node) {
+      return [node, parseFloat(getComputedStyle(node).fontSize)];
+    });
+    fontSizes.forEach(function (entry) {
+      entry[0].style.fontSize = (entry[1] * invoiceConfig.appearance.fontScale) + "px";
+    });
+    function fitContentToA4() {
+      var frame = document.querySelector(".invoice-single-frame");
+      var sheet = document.getElementById("wx-invoice-sheet");
+      frame.style.transform = "none";
+      sheet.style.height = "auto";
+      var padding = parseFloat(getComputedStyle(sheet).paddingTop) + parseFloat(getComputedStyle(sheet).paddingBottom);
+      var available = 1120 - padding;
+      var natural = frame.scrollHeight + 2;
+      var scale = Math.min(1, available / natural);
+      frame.style.transformOrigin = ${JSON.stringify(copy.dir === "rtl" ? "top right" : "top left")};
+      frame.style.transform = "scale(" + scale + ")";
+      sheet.style.height = (Math.ceil(natural * scale) + padding) + "px";
+      document.getElementById("wx-fit-warning").hidden = scale >= 0.75;
+    }
     function fitInvoiceSheetToMobileViewport() {
+      fitContentToA4();
       var stage = document.getElementById("wx-invoice-stage");
       var sheet = document.getElementById("wx-invoice-sheet");
       if (!stage || !sheet) return;
@@ -1985,6 +2120,7 @@
 
     window.addEventListener("load", fitInvoiceSheetToMobileViewport);
     window.addEventListener("resize", fitInvoiceSheetToMobileViewport);
+    if (document.fonts) document.fonts.ready.then(fitInvoiceSheetToMobileViewport);
     fitInvoiceSheetToMobileViewport();
 
     async function downloadSinglePagePdf() {
@@ -2001,13 +2137,13 @@
       var prevTransform = sheet.style.transform;
       var prevStageHeight = stage ? stage.style.height : "";
       if (btn) btn.disabled = true;
-      if (label) label.textContent = ${JSON.stringify(copy.downloadingBtn)};
+      if (label) label.textContent = ${JSON.stringify(copy.downloadingBtn).replace(/</g, "\\u003c")};
       try {
         sheet.style.transform = "none";
         if (stage) stage.style.height = "auto";
         var opt = {
           margin: [0, 0, 0, 0],
-          filename: ${JSON.stringify(`${data.invoiceNumber}.pdf`)},
+          filename: ${JSON.stringify(`${data.invoiceNumber}.pdf`).replace(/</g, "\\u003c")},
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: {
             scale: 2,
@@ -2024,7 +2160,7 @@
             format: "a4",
             orientation: "portrait"
           },
-          pagebreak: { mode: ["avoid-all"] }
+          pagebreak: { mode: [] }
         };
         await window.html2pdf().set(opt).from(sheet).save();
       } catch (e) {
@@ -2043,41 +2179,91 @@
   }
 
   function openOfficialInvoice(payload, options = {}) {
-    const store = window.NoursStore || window.RUQO_STORE;
-    const copy = resolveCopyWithCustomConfig(options.customConfig || null);
-    const normalized = normalizeInvoiceData(payload || {}, store);
-    const autoPrint = Boolean(options.autoPrint);
-    const html = buildInvoiceDocumentHtml(normalized, copy, store, "en", autoPrint);
-
+    payload = { ...payload };
+    const initialLanguage = options.language || payload?.invoiceLanguage ||
+      (window.NoursStore || window.RUQO_STORE)?.getLanguage?.();
+    let activeLanguage = initialLanguage;
+    const renderPreview = (target, language, close) => {
+      activeLanguage = language;
+      target.document.open();
+      target.document.write(createDocumentHtml(payload, { ...options, language }));
+      target.document.close();
+      target.changeInvoiceLanguage = (next) => renderPreview(target, next, close);
+      target.closeInvoicePreview = close;
+    };
+    const refreshVerification = async (target, close, isClosed) => {
+      const client = options.verificationClient || window.RUQO_SUPABASE;
+      if (payload.verificationToken || !client) return;
+      try {
+        const { data: sessionData, error: sessionError } = await client.auth.getSession();
+        if (sessionError) throw sessionError;
+        if (!sessionData.session) return;
+        const { data: token, error } = await client.rpc("get_invoice_verification_token", {
+          p_order_number: String(payload.orderNumber || payload.order_number || payload.id || "").replace(/^#/, ""),
+        });
+        if (error) throw error;
+        if (!token) return;
+        if (!/^[0-9a-f]{64}$/.test(token)) throw new Error("Invalid invoice verification response.");
+        payload.verificationToken = token;
+        if (!isClosed()) renderPreview(target, activeLanguage, close);
+      } catch (error) {
+        console.error("Invoice verification is unavailable:", error.message);
+      }
+    };
     const popup = window.open("", "_blank");
     if (popup && popup.document) {
-      popup.document.open();
-      popup.document.write(html);
-      popup.document.close();
+      renderPreview(popup, initialLanguage, () => popup.close());
+      void refreshVerification(popup, () => popup.close(), () => popup.closed);
       return;
     }
 
-    // Fallback if popup blocker prevents window.open
+    // Keep language and download controls accessible when popups are blocked.
     let printFrame = document.getElementById("wx-official-invoice-frame");
     if (printFrame) printFrame.remove();
     printFrame = document.createElement("iframe");
     printFrame.id = "wx-official-invoice-frame";
-    printFrame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
+    printFrame.title = "Invoice preview";
+    printFrame.style.cssText = "position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000;background:white;";
     document.body.appendChild(printFrame);
-    const doc = printFrame.contentWindow?.document;
-    if (doc) {
-      doc.open();
-      doc.write(html);
-      doc.close();
-      setTimeout(() => {
-        printFrame.contentWindow?.focus();
-        printFrame.contentWindow?.print();
-      }, 350);
+    renderPreview(printFrame.contentWindow, initialLanguage, () => printFrame.remove());
+    void refreshVerification(printFrame.contentWindow, () => printFrame.remove(), () => !printFrame.isConnected);
+  }
+
+  function createDocumentHtml(payload = {}, options = {}) {
+    const store = window.NoursStore || window.RUQO_STORE;
+    const language = invoiceLanguage(options.language || payload.invoiceLanguage || store?.getLanguage?.());
+    const cfg = normalizeCustomConfig(options.customConfig ?? readCustomInvoiceConfig());
+    const copy = resolveCopyWithCustomConfig(cfg, language);
+    const localizedPayload = {
+      ...payload,
+      invoiceLanguage: language,
+      items: (payload.items || []).map((item) => ({
+        ...item,
+        name: item.nameTranslations?.[language] || item.nameTranslations?.en || item.name,
+        variant: item.variantTranslations?.[language] || item.variantTranslations?.en || item.variant,
+      })),
+    };
+    const data = normalizeInvoiceData(localizedPayload, store);
+    const issuedAt = new Date(data.createdAtIso);
+    if (!Number.isNaN(issuedAt.getTime())) {
+      data.formattedIssueDate = new Intl.DateTimeFormat(
+        { ar: "ar-SA", en: "en-US", fr: "fr-FR", es: "es-ES", zh: "zh-CN" }[language],
+        { dateStyle: "medium", timeStyle: "short" },
+      ).format(issuedAt);
     }
+    return buildInvoiceDocumentHtml(data, copy, store, language, Boolean(options.autoPrint), cfg, Boolean(options.embedded));
   }
 
   window.WEEXEY_INVOICE = {
     openOfficialInvoice,
-    getDefaultInvoiceCopy: () => ({ ...INVOICE_I18N.en }),
+    createDocumentHtml,
+    normalizeCustomConfig,
+    resolveCopyWithCustomConfig,
+    languages: invoiceLanguages,
+    sectionKeys: Object.keys(sectionSelectors),
+    visibilityKeys: Object.keys(visibilitySelectors),
+    columnKeys,
+    requiredColumns,
+    getDefaultInvoiceCopy: (language = "en") => ({ ...INVOICE_I18N[invoiceLanguage(language)] }),
   };
 })();

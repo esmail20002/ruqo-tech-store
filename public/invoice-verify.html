@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>التحقق من الفاتورة | WEEXEY</title>
+    <link rel="icon" href="/images/new/li.png" />
+    <link rel="stylesheet" href="/css/invoice-verify.css?v=1" />
+  </head>
+  <body>
+    <main class="verification-card">
+      <img class="verification-logo" src="/images/new/li.png" alt="WEEXEY" />
+      <label class="verification-language">
+        <span data-copy="language">اللغة</span>
+        <select id="verification-language">
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="zh">中文</option>
+        </select>
+      </label>
+      <h1 data-copy="title">التحقق من سجل الفاتورة</h1>
+      <p id="verification-status" role="status" aria-live="polite">جارٍ التحقق...</p>
+      <dl id="verification-record" hidden>
+        <div><dt data-copy="number">رقم الفاتورة</dt><dd id="verification-number" dir="ltr"></dd></div>
+        <div><dt data-copy="date">تاريخ الإصدار</dt><dd id="verification-date"></dd></div>
+        <div><dt data-copy="orderStatus">حالة الطلب</dt><dd id="verification-order-status"></dd></div>
+      </dl>
+      <button id="verification-retry" type="button" hidden data-copy="retry">إعادة المحاولة</button>
+      <p class="verification-note" data-copy="privacy">لا تعرض هذه الصفحة اسم العميل أو معلومات الاتصال أو العنوان أو المبالغ. الرابط لا يمنح حق الوصول إلى تفاصيل الطلب.</p>
+      <p class="verification-note" data-copy="scope">التحقق يؤكد وجود السجل في المتجر فقط، ولا يثبت صحة كل محتويات نسخة الفاتورة أو الامتثال الضريبي أو استحقاق الضمان.</p>
+      <nav>
+        <a href="/orders.html" data-copy="orders">طلباتي</a>
+        <a href="/support.html" data-copy="support">الدعم</a>
+      </nav>
+      <noscript>يرجى تفعيل JavaScript للتحقق من سجل الفاتورة.</noscript>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/invoice-verify.js?v=1"></script>
+  </body>
+</html>

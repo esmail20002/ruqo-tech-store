@@ -54,7 +54,9 @@ async function copyAndRewrite(directory) {
   }
 }
 
-fs.rm(outputDirectory, { recursive: true, force: true })
+fs.mkdir(path.join(sourceDirectory, 'js', 'vendor'), { recursive: true })
+  .then(() => fs.copyFile(require.resolve('qrcode-generator'), path.join(sourceDirectory, 'js', 'vendor', 'qrcode.js')))
+  .then(() => fs.rm(outputDirectory, { recursive: true, force: true }))
   .then(() => copyAndRewrite(sourceDirectory))
   .then(() => console.log(`Built GitHub Pages site at ${outputDirectory} with base path ${basePath}`))
   .catch((error) => {

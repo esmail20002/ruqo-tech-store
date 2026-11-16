@@ -17,6 +17,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "qrcode-generator": "^2.0.4"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.16",
+    "jsqr": "^1.4.0"
   }
 }

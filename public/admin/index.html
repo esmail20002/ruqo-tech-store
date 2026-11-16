@@ -24,6 +24,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/admin.css?v=23" />
+    <link rel="stylesheet" href="/css/admin-invoice-editor.css?v=3" />
   </head>
   <body class="admin-body">
     <main id="login-screen" class="admin-login-shell">
@@ -188,7 +189,7 @@
               </div>
               <div class="admin-heading-actions">
                 <button id="open-invoice-settings-btn" class="admin-secondary-button" type="button">
-                  <i data-lucide="file-cog" aria-hidden="true"></i> Invoice Legal Settings
+                  <i data-lucide="file-cog" aria-hidden="true"></i> Invoice Editor
                 </button>
                 <button id="refresh-orders" class="admin-secondary-button" type="button">
                   <i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh
@@ -265,6 +266,10 @@
                 </div>
               </div>
             </section>
+          </section>
+
+          <section class="admin-view" data-admin-panel="invoice-settings" hidden>
+            <div id="invoice-editor-root"></div>
           </section>
 
           <section class="admin-view" data-admin-panel="messages" hidden>
@@ -1682,43 +1687,6 @@
       </form>
     </dialog>
 
-    <dialog id="invoice-settings-dialog" class="product-dialog" aria-labelledby="invoice-settings-title">
-      <form id="invoice-settings-form" method="dialog" novalidate>
-        <header class="dialog-header">
-          <div>
-            <span class="admin-eyebrow">LEGAL TAX DOCUMENT CONFIGURATION</span>
-            <h2 id="invoice-settings-title">Official Invoice &amp; Policies Settings</h2>
-          </div>
-          <button class="admin-icon-button" type="button" data-close-invoice-settings aria-label="Close invoice settings">
-            <i data-lucide="x" aria-hidden="true"></i>
-          </button>
-        </header>
-        <div class="dialog-body">
-          <p class="admin-muted-copy">Customize the legal entity name, Tax Registration Number (VAT/TRN), Commercial Registration (CR), and the 4 statutory policy clauses printed on all customer &amp; admin invoices.</p>
-          <div class="admin-form-grid">
-            <label>Tax Reg. Number (VAT / TRN)<input name="trn_number" placeholder="310489275600003" required /></label>
-            <label>Commercial Reg. (CR)<input name="cr_number" placeholder="1010894521" required /></label>
-            <label>Company Legal Name<input name="company_name_en" placeholder="WEEXEY Commerce &amp; Technology Ltd." required /></label>
-            <label>Official Billing Email<input name="billing_email" type="email" placeholder="legal-billing@weexey.com" required /></label>
-            <label class="form-field-wide">Headquarters Address<input name="company_address_en" placeholder="King Fahd Road, King Abdullah Financial District (KAFD), Tower 4, Postal Code 13519" /></label>
-            <label class="form-field-wide">1. Official 2-Year Warranty Policy<textarea name="policy1_body_en" rows="2"></textarea></label>
-            <label class="form-field-wide">2. 7-Day Statutory Return &amp; Exchange Policy<textarea name="policy2_body_en" rows="2"></textarea></label>
-            <label class="form-field-wide">3. Cash on Delivery (COD) Inspection Protocol<textarea name="policy3_body_en" rows="2"></textarea></label>
-            <label class="form-field-wide">4. Electronic Tax Invoice Legal Validity<textarea name="policy4_body_en" rows="2"></textarea></label>
-          </div>
-          <p id="invoice-settings-feedback" class="admin-feedback" role="status" hidden></p>
-        </div>
-        <footer class="dialog-footer">
-          <button id="preview-sample-invoice-btn" class="admin-secondary-button" type="button">
-            <i data-lucide="eye" aria-hidden="true"></i> Preview Live Sample Invoice
-          </button>
-          <span></span>
-          <button class="admin-secondary-button" type="button" data-close-invoice-settings>Cancel</button>
-          <button id="save-invoice-settings-btn" class="admin-primary-button" type="submit">Save Invoice Settings</button>
-        </footer>
-      </form>
-    </dialog>
-
     <dialog id="message-detail-dialog" class="product-dialog message-detail-dialog" aria-labelledby="message-detail-title">
       <form method="dialog">
         <header class="dialog-header"><div><span class="admin-eyebrow">CUSTOMER CARE</span><h2 id="message-detail-title">Message details</h2></div><button class="admin-icon-button" type="submit" aria-label="Close message details"><i data-lucide="x" aria-hidden="true"></i></button></header>
@@ -2088,7 +2056,9 @@
     <script src="/js/admin-big-3-cards.js?v=1" defer></script>
     <script src="/js/support-content-defaults.js?v=2" defer></script>
     <script src="/js/admin-support-content.js?v=5" defer></script>
-    <script src="/js/invoice-generator.js?v=11" defer></script>
-    <script src="/js/admin.js?v=28" defer></script>
+    <script src="/js/vendor/qrcode.js?v=1" defer></script>
+    <script src="/js/invoice-generator.js?v=14" defer></script>
+    <script src="/js/admin-invoice-editor.js?v=3" defer></script>
+    <script src="/js/admin.js?v=30" defer></script>
   </body>
 </html>

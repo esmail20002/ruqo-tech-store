@@ -3311,6 +3311,8 @@
         window.WEEXEY_INVOICE.openOfficialInvoice(
           {
             orderNumber: order.order_number,
+            verificationToken: order.verification_token,
+            invoiceLanguage: language,
             createdAt: order.created_at || new Date().toISOString(),
             formattedDate,
             status: order.status || "confirmed",
@@ -3332,13 +3334,14 @@
                 id: product.id,
                 brand: rawProduct.brand || product.brand || "WEEXEY",
                 name: rawProduct.name || product.name,
+                nameTranslations: rawProduct.name_translations,
                 variant: option?.label || "",
                 quantity,
                 price: unitPrice,
               };
             }),
           },
-          { language: "en", autoPrint: false },
+          { language, autoPrint: false },
         );
       } else {
         window.print();
@@ -5216,6 +5219,8 @@
             id: meta.id || rawItem.id,
             brand: meta.brand || "WEEXEY",
             name: meta.rawName || meta.name || rawItem.name,
+            nameTranslations: rawItem.nameTranslations || products.find((product) => product.id === meta.id)?.name_translations,
+            variantTranslations: rawItem.variantTranslations,
             variant: meta.variant || rawItem.variant || "",
             quantity: meta.quantity,
             price: meta.price,
@@ -5224,6 +5229,8 @@
         window.WEEXEY_INVOICE.openOfficialInvoice(
           {
             orderNumber: targetOrder.id,
+            verificationToken: targetOrder.verificationToken,
+            invoiceLanguage: targetOrder.invoiceLanguage || language,
             createdAt: targetOrder.createdAt || targetOrder.date,
             formattedDate: formatOrderDateDisplay(targetOrder),
             status: targetOrder.status || "confirmed",
@@ -5241,7 +5248,7 @@
             notes: targetOrder.notes || "",
             items: resolvedItems,
           },
-          { language: "en", autoPrint: false },
+          { language: targetOrder.invoiceLanguage || language, autoPrint: false },
         );
       }
     }
@@ -5470,12 +5477,15 @@
         store.setOrders([
           {
             id: order.order_number,
+            verificationToken: order.verification_token,
+            invoiceLanguage: language,
             createdAt: order.created_at || new Date().toISOString(),
             date: formattedDate,
             items: lines.map(({ product, quantity, option, unitPrice }) => ({
               id: product.id,
               brand: product.brand || "WEEXEY",
               name: product.name,
+              nameTranslations: products.find((item) => item.id === product.id)?.name_translations,
               image: product.image,
               quantity,
               variant: option.label,
@@ -5544,6 +5554,7 @@
             const addr = data.shipping_address || {};
             const importedOrder = {
               id: data.order_number,
+              invoiceLanguage: addr.language || language,
               createdAt: data.created_at || new Date().toISOString(),
               date: new Intl.DateTimeFormat(localeByLanguage[language] || localeByLanguage.en, { dateStyle: "medium" }).format(new Date(data.created_at || Date.now())),
               status: data.status || "confirmed",
@@ -5555,6 +5566,8 @@
               items: (data.order_items || []).map((oi) => ({
                 id: oi.product_slug || "",
                 name: oi.product_name_translations?.[language] || oi.product_name_translations?.en || oi.product_slug || "Product",
+                nameTranslations: oi.product_name_translations,
+                variantTranslations: oi.variant_label_translations,
                 variant: oi.variant_label_translations?.[language] || oi.variant_label_translations?.en || "",
                 quantity: Number(oi.quantity) || 1,
                 price: Number(oi.unit_price) || 0,

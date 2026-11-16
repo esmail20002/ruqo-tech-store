@@ -548,7 +548,10 @@
       allowedViews.add("products");
       allowedViews.add("categories");
     }
-    if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("orders");
+    if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) {
+      allowedViews.add("orders");
+      allowedViews.add("invoice-settings");
+    }
     if (currentRoles.some((role) => ["owner", "admin", "order_manager"].includes(role))) allowedViews.add("messages");
     if (currentRoles.some((role) => ["owner", "admin", "marketing_manager"].includes(role))) {
       allowedViews.add("hello-page");
@@ -567,11 +570,15 @@
       allowedViews.add("high-refresh");
     }
     const selectedView = allowedViews.has(view) ? view : "overview";
+    if (selectedView !== "invoice-settings" &&
+        !$('[data-admin-panel="invoice-settings"]').hidden &&
+        !window.RUQO_INVOICE_EDITOR.canLeave()) return;
     $$('[data-admin-panel]').forEach((panel) => {
       panel.hidden = panel.dataset.adminPanel !== selectedView;
     });
     $$('[data-admin-view]').forEach((button) => {
-      const active = button.dataset.adminView === selectedView;
+      const active = button.dataset.adminView === selectedView ||
+        (selectedView === "invoice-settings" && button.dataset.adminView === "orders");
       button.hidden = !allowedViews.has(button.dataset.adminView);
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-current", active ? "page" : "false");
@@ -585,6 +592,7 @@
       products: "Products",
       categories: "Categories",
       orders: "Orders",
+      "invoice-settings": "Invoice Editor",
       messages: "Messages",
       "hello-page": "hello page",
       hero: "HERO",
@@ -1025,7 +1033,7 @@
     renderNewsletterSubscribers();
     renderAudienceProductReviews();
     $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
-      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"], [data-admin-panel="hello-page"], [data-admin-panel="orders"], #order-detail-dialog, #invoice-settings-dialog'))
+      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"], [data-admin-panel="hello-page"], [data-admin-panel="orders"], [data-admin-panel="invoice-settings"], #order-detail-dialog'))
       .forEach((element) => { element.disabled = true; });
     window.RUQO_INIT_HELLO_PAGE_EDITOR?.(null);
     window.RUQO_INIT_HERO_EDITOR?.(null);
@@ -1068,29 +1076,7 @@
       if ($("#orders-status-filter")) $("#orders-status-filter").value = "all";
       renderOrders();
     });
-    $("#open-invoice-settings-btn")?.addEventListener("click", openInvoiceSettingsDialog);
-    $$("[data-close-invoice-settings]").forEach((btn) =>
-      btn.addEventListener("click", () => $("#invoice-settings-dialog")?.close()),
-    );
-    $("#invoice-settings-form")?.addEventListener("submit", saveInvoiceSettings);
-    $("#preview-sample-invoice-btn")?.addEventListener("click", () => {
-      const sampleOrder = orders[0] || {
-        order_number: "RUQ-20261116-SAMPLE",
-        customer_name: "ESMAIL AL-KHADER",
-        customer_phone: "+967773879358",
-        customer_email: "esmailsaber10@gmail.com",
-        status: "confirmed",
-        total: 6399,
-        shipping_address: { city: "Riyadh", street: "King Fahd Road, KAFD" },
-        created_at: new Date().toISOString(),
-      };
-      const draftCfg = readInvoiceFormDraft();
-      window.WEEXEY_INVOICE?.openOfficialInvoice(buildAdminInvoicePayload(sampleOrder), {
-        language: "en",
-        autoPrint: false,
-        customConfig: draftCfg,
-      });
-    });
+    bindInvoiceEditor();
     $("#order-detail-print-en")?.addEventListener("click", () => {
       if (activeDetailOrder) issueOrderInvoiceFromAdmin(activeDetailOrder);
     });
@@ -2139,6 +2125,8 @@
               catalogMatch?.name_translations?.en ||
               oi.product_slug ||
               "Product",
+            nameTranslations: oi.product_name_translations,
+            variantTranslations: oi.variant_label_translations,
             variant:
               oi.variant_label_translations?.en ||
               "",
@@ -2158,6 +2146,7 @@
         ];
 
     return {
+      invoiceLanguage: addr.language || window.NoursStore?.getLanguage?.() || document.documentElement.lang,
       orderNumber: order.order_number,
       createdAt: order.created_at,
       formattedDate: formatDateTime(order.created_at),
@@ -2184,9 +2173,10 @@
     }
     const payload = buildAdminInvoicePayload(order);
     window.WEEXEY_INVOICE.openOfficialInvoice(payload, {
-      language: "en",
+      language: payload.invoiceLanguage,
       autoPrint: false,
       customConfig: brandSettings?.invoice_config || null,
+      verificationClient: localDemoMode ? null : client,
     });
   }
 
@@ -2250,80 +2240,47 @@
     window.lucide?.createIcons();
   }
 
-  function openInvoiceSettingsDialog() {
-    const dialog = $("#invoice-settings-dialog");
-    const form = $("#invoice-settings-form");
-    if (!dialog || !form) return;
-    const enDefaults = window.WEEXEY_INVOICE?.getDefaultInvoiceCopy?.("en") || {};
-    let saved = brandSettings?.invoice_config || {};
-    try {
-      const localRaw = localStorage.getItem("weexey-invoice-config-v1");
-      if (localRaw && !Object.keys(saved).length) saved = JSON.parse(localRaw);
-    } catch (_) {}
-
-    form.elements.trn_number.value = saved.trn_number || enDefaults.trnNumber || "310489275600003";
-    form.elements.cr_number.value = saved.cr_number || enDefaults.crNumber || "1010894521";
-    form.elements.billing_email.value = saved.billing_email || enDefaults.supportEmail || "legal-billing@weexey.com";
-    form.elements.company_name_en.value = saved.company_name_en || enDefaults.companyLegalName || "";
-    form.elements.company_address_en.value = saved.company_address_en || enDefaults.companyAddress || "";
-    form.elements.policy1_body_en.value = saved.policy1_body_en || enDefaults.policy1Body || "";
-    form.elements.policy2_body_en.value = saved.policy2_body_en || enDefaults.policy2Body || "";
-    form.elements.policy3_body_en.value = saved.policy3_body_en || enDefaults.policy3Body || "";
-    form.elements.policy4_body_en.value = saved.policy4_body_en || enDefaults.policy4Body || "";
-
-    const feedback = $("#invoice-settings-feedback");
-    if (feedback) feedback.hidden = true;
-    dialog.showModal();
-  }
-
-  function readInvoiceFormDraft() {
-    const form = $("#invoice-settings-form");
-    if (!form) return {};
-    const fd = new FormData(form);
-    return {
-      trn_number: String(fd.get("trn_number") || "").trim(),
-      cr_number: String(fd.get("cr_number") || "").trim(),
-      billing_email: String(fd.get("billing_email") || "").trim(),
-      company_name_en: String(fd.get("company_name_en") || "").trim(),
-      company_address_en: String(fd.get("company_address_en") || "").trim(),
-      policy1_body_en: String(fd.get("policy1_body_en") || "").trim(),
-      policy2_body_en: String(fd.get("policy2_body_en") || "").trim(),
-      policy3_body_en: String(fd.get("policy3_body_en") || "").trim(),
-      policy4_body_en: String(fd.get("policy4_body_en") || "").trim(),
-    };
-  }
-
-  async function saveInvoiceSettings(event) {
-    event.preventDefault();
-    const invoice_config = readInvoiceFormDraft();
-    try {
-      localStorage.setItem("weexey-invoice-config-v1", JSON.stringify(invoice_config));
-    } catch (_) {}
-    brandSettings = { ...brandSettings, invoice_config };
-    window.RUQO_STORE_SETTINGS = brandSettings;
-
-    if (!localDemoMode && client && currentUser) {
-      const btn = $("#save-invoice-settings-btn");
-      if (btn) btn.disabled = true;
-      try {
-        const { error } = await client.from("store_settings").upsert({
-          setting_key: "storefront",
-          setting_value: brandSettings,
-          description: "Public storefront identity, contact, delivery, appearance, footer, and legal invoice settings",
-          is_public: true,
-          updated_by: currentUser.id,
-        }, { onConflict: "setting_key" });
-        if (error) throw error;
-      } catch (err) {
-        showToast(`Saved locally, but cloud sync failed: ${err.message}`);
-        if (btn) btn.disabled = false;
-        return;
-      }
-      if (btn) btn.disabled = false;
-    }
-
-    $("#invoice-settings-dialog")?.close();
-    showToast("Official tax invoice settings saved.");
+  function bindInvoiceEditor() {
+    window.RUQO_INVOICE_EDITOR.bind({
+      getConfig: () => {
+        if (brandSettings?.invoice_config) return brandSettings.invoice_config;
+        if (localDemoMode) {
+          try {
+            return JSON.parse(localStorage.getItem("weexey-invoice-config-v1") || "{}");
+          } catch (error) {
+            console.error("Local invoice settings could not be read:", error);
+            showToast("Local invoice settings could not be loaded.");
+          }
+        }
+        return {};
+      },
+      isDemo: () => localDemoMode,
+      setView,
+      save: async (invoice_config) => {
+        const updatedSettings = { ...brandSettings, invoice_config };
+        if (!localDemoMode) {
+          if (!client || !currentUser) throw new Error("Sign in again before saving.");
+          const { error } = await client.from("store_settings").upsert({
+            setting_key: "storefront",
+            setting_value: updatedSettings,
+            description: "Public storefront identity, contact, delivery, appearance, footer, and invoice settings",
+            is_public: true,
+            updated_by: currentUser.id,
+          }, { onConflict: "setting_key" });
+          if (error) throw error;
+        }
+        try {
+          localStorage.setItem("weexey-invoice-config-v1", JSON.stringify(invoice_config));
+        } catch (error) {
+          console.error("Invoice settings cache could not be saved:", error);
+          if (localDemoMode) throw new Error("Local settings could not be saved.");
+          showToast("Settings saved online, but the local cache could not be updated.");
+        }
+        brandSettings = updatedSettings;
+        window.RUQO_STORE_SETTINGS = updatedSettings;
+      },
+    });
+    $("#open-invoice-settings-btn").addEventListener("click", () => window.RUQO_INVOICE_EDITOR.open());
   }
 
   function renderOrders() {
@@ -6001,29 +5958,7 @@
       if ($("#orders-status-filter")) $("#orders-status-filter").value = "all";
       renderOrders();
     });
-    $("#open-invoice-settings-btn")?.addEventListener("click", openInvoiceSettingsDialog);
-    $$("[data-close-invoice-settings]").forEach((btn) =>
-      btn.addEventListener("click", () => $("#invoice-settings-dialog")?.close()),
-    );
-    $("#invoice-settings-form")?.addEventListener("submit", saveInvoiceSettings);
-    $("#preview-sample-invoice-btn")?.addEventListener("click", () => {
-      const sampleOrder = orders[0] || {
-        order_number: "RUQ-20261116-SAMPLE",
-        customer_name: "ESMAIL AL-KHADER",
-        customer_phone: "+967773879358",
-        customer_email: "esmailsaber10@gmail.com",
-        status: "confirmed",
-        total: 6399,
-        shipping_address: { city: "Riyadh", street: "King Fahd Road, KAFD" },
-        created_at: new Date().toISOString(),
-      };
-      const draftCfg = readInvoiceFormDraft();
-      window.WEEXEY_INVOICE?.openOfficialInvoice(buildAdminInvoicePayload(sampleOrder), {
-        language: "en",
-        autoPrint: false,
-        customConfig: draftCfg,
-      });
-    });
+    bindInvoiceEditor();
     $("#order-detail-print-en")?.addEventListener("click", () => {
       if (activeDetailOrder) issueOrderInvoiceFromAdmin(activeDetailOrder);
     });
