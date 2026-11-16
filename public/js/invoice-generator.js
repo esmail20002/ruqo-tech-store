@@ -834,6 +834,7 @@
       font-family: "Cairo", "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 11px;
       line-height: 1.4;
+      overflow-x: hidden;
     }
 
     /* Top Interactive Preview Bar */
@@ -856,6 +857,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
     }
 
     .toolbar-brand-badge {
@@ -867,6 +869,7 @@
       font-weight: 800;
       letter-spacing: 0.07em;
       text-transform: uppercase;
+      flex-shrink: 0;
     }
 
     .toolbar-info strong {
@@ -874,9 +877,13 @@
       font-size: 13.5px;
       font-weight: 800;
       color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .toolbar-info span {
+      display: block;
       font-size: 11px;
       color: #94a3b8;
     }
@@ -885,11 +892,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     .toolbar-btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 7px;
       padding: 8px 16px;
       border-radius: 7px;
@@ -901,6 +910,7 @@
       background: rgba(255, 255, 255, 0.07);
       color: #f8fafc;
       transition: all 0.15s ease;
+      white-space: nowrap;
     }
 
     .toolbar-btn:hover {
@@ -918,16 +928,65 @@
       filter: brightness(1.08);
     }
 
+    /* Responsive Viewport Stage for Mobile & Desktop A4 Preview */
+    .invoice-preview-stage {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 12px 36px;
+      overflow: hidden;
+    }
+
     /* Single-Page A4 Sheet */
     .invoice-a4-sheet {
-      width: 210mm;
-      max-width: 210mm;
-      margin: 20px auto 36px;
+      width: 794px;
+      min-width: 794px;
+      max-width: 794px;
+      margin: 0 auto;
       padding: 7.5mm 9.5mm 6.5mm;
       background: #ffffff;
       box-shadow: 0 16px 48px rgba(15, 23, 42, 0.12);
+      transform-origin: top center;
       page-break-inside: avoid;
       break-inside: avoid;
+    }
+
+    @media (max-width: 820px) {
+      .preview-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px 14px;
+      }
+
+      .toolbar-info {
+        gap: 10px;
+      }
+
+      .toolbar-info strong {
+        font-size: 12.5px;
+      }
+
+      .toolbar-info span {
+        font-size: 10px;
+      }
+
+      .toolbar-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 6px;
+      }
+
+      .toolbar-btn {
+        padding: 9px 12px;
+        font-size: 11.5px;
+      }
+
+      .invoice-preview-stage {
+        padding: 12px 8px 24px;
+      }
     }
 
     /* Soft Single Frame around the Invoice */
@@ -1607,11 +1666,17 @@
       .preview-toolbar {
         display: none !important;
       }
+      .invoice-preview-stage {
+        padding: 0 !important;
+        height: auto !important;
+      }
       .invoice-a4-sheet {
         width: 210mm !important;
+        min-width: 210mm !important;
         max-width: 210mm !important;
         margin: 0 auto !important;
         padding: 6mm 8mm !important;
+        transform: none !important;
         box-shadow: none !important;
         page-break-after: avoid !important;
         page-break-inside: avoid !important;
@@ -1646,7 +1711,8 @@
     </div>
   </header>
 
-  <main class="invoice-a4-sheet" id="wx-invoice-sheet">
+  <div class="invoice-preview-stage" id="wx-invoice-stage">
+    <main class="invoice-a4-sheet" id="wx-invoice-sheet">
     <div class="invoice-single-frame">
       <div class="invoice-watermark" aria-hidden="true">WEEXEY OFFICIAL</div>
 
@@ -1898,10 +1964,33 @@
       </div>
     </div>
   </main>
+  </div>
   <script>
+    function fitInvoiceSheetToMobileViewport() {
+      var stage = document.getElementById("wx-invoice-stage");
+      var sheet = document.getElementById("wx-invoice-sheet");
+      if (!stage || !sheet) return;
+      var baseWidth = 794;
+      var availableWidth = Math.max(280, (window.innerWidth || document.documentElement.clientWidth || baseWidth) - 16);
+      if (availableWidth < baseWidth) {
+        var scale = availableWidth / baseWidth;
+        sheet.style.transform = "scale(" + scale.toFixed(4) + ")";
+        var naturalHeight = sheet.offsetHeight || 1080;
+        stage.style.height = Math.ceil(naturalHeight * scale + 28) + "px";
+      } else {
+        sheet.style.transform = "none";
+        stage.style.height = "auto";
+      }
+    }
+
+    window.addEventListener("load", fitInvoiceSheetToMobileViewport);
+    window.addEventListener("resize", fitInvoiceSheetToMobileViewport);
+    fitInvoiceSheetToMobileViewport();
+
     async function downloadSinglePagePdf() {
       var btn = document.getElementById("wx-download-pdf-btn");
       var label = document.getElementById("wx-download-pdf-label");
+      var stage = document.getElementById("wx-invoice-stage");
       var sheet = document.getElementById("wx-invoice-sheet");
       if (!sheet) return;
       if (typeof window.html2pdf !== "function") {
@@ -1909,17 +1998,24 @@
         return;
       }
       var originalText = label ? label.textContent : "";
+      var prevTransform = sheet.style.transform;
+      var prevStageHeight = stage ? stage.style.height : "";
       if (btn) btn.disabled = true;
       if (label) label.textContent = ${JSON.stringify(copy.downloadingBtn)};
       try {
+        sheet.style.transform = "none";
+        if (stage) stage.style.height = "auto";
         var opt = {
           margin: [0, 0, 0, 0],
           filename: ${JSON.stringify(`${data.invoiceNumber}.pdf`)},
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: {
             scale: 2,
+            width: 794,
+            windowWidth: 1024,
             useCORS: true,
             letterRendering: true,
+            scrollX: 0,
             scrollY: 0,
             backgroundColor: "#ffffff"
           },
@@ -1934,6 +2030,9 @@
       } catch (e) {
         window.print();
       } finally {
+        sheet.style.transform = prevTransform;
+        if (stage) stage.style.height = prevStageHeight;
+        fitInvoiceSheetToMobileViewport();
         if (btn) btn.disabled = false;
         if (label) label.textContent = originalText;
       }
