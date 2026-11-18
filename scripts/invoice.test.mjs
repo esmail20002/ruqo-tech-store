@@ -22,33 +22,97 @@ const order = {
   items: [{ name: "Laptop", nameTranslations: { ar: "حاسوب", fr: "Ordinateur" }, quantity: 2, price: 115 }],
 };
 
-test("invoice defaults to the chosen storefront language and supports all five explicit languages", () => {
-  const api = load();
-  assert.match(api.createDocumentHtml(order), /<html lang="ar" dir="rtl">/);
-  assert.match(api.createDocumentHtml(order), /حاسوب/);
+test("invoice always renders in English (LTR) regardless of storefront or requested language", () => {
+  const api = load("ar");
+  assert.match(api.createDocumentHtml(order), /<html lang="en" dir="ltr">/);
+  assert.match(api.createDocumentHtml(order), /Laptop/);
+  assert.doesNotMatch(api.createDocumentHtml(order), /onchange="changeInvoiceLanguage/);
   for (const lang of ["ar", "en", "fr", "es", "zh"]) {
     const html = api.createDocumentHtml(order, { language: lang });
-    assert.match(html, new RegExp(`<html lang="${api.getDefaultInvoiceCopy(lang).lang}" dir="${lang === "ar" ? "rtl" : "ltr"}">`));
+    assert.match(html, /<html lang="en" dir="ltr">/);
     assert.match(html, /INV-TEST-42/);
     assert.match(html, /230\.00/);
   }
-  assert.match(api.createDocumentHtml(order, { language: "fr" }), /Ordinateur/);
 });
 
-test("legacy settings remain English-only while new translated text and shared identity apply correctly", () => {
+test("legacy settings and English custom text apply correctly", () => {
   const api = load("en", {
     company_name_en: "Legacy Company",
     policy1_body_en: "Legacy warranty",
     trn_number: "123456",
-    texts: { ar: { companyLegalName: "شركة مثال", invoiceMainTitle: "فاتورة خاصة" } },
+    texts: { ar: { companyLegalName: "شركة مثال" } },
   });
-  assert.match(api.createDocumentHtml(order), /Legacy Company/);
-  assert.match(api.createDocumentHtml(order), /Legacy warranty/);
-  const ar = api.createDocumentHtml(order, { language: "ar" });
-  assert.match(ar, /شركة مثال/);
-  assert.match(ar, /فاتورة خاصة/);
-  assert.match(ar, /123456/);
-  assert.doesNotMatch(ar, /<p>Legacy warranty<\/p>/);
+  const html = api.createDocumentHtml(order, { language: "ar" });
+  assert.match(html, /Legacy Company/);
+  assert.match(html, /Legacy warranty/);
+  assert.match(html, /123456/);
+  assert.doesNotMatch(html, /<h2 class="inv-company-name">شركة مثال<\/h2>/);
+});
+
+test("PDF capture isolates the full sheet and restores the phone preview on success or failure", async () => {
+  for (const fail of [false, true]) {
+    const html = load("en").createDocumentHtml(order);
+    const start = html.indexOf("async function downloadSinglePagePdf()");
+    const script = html.slice(start, html.indexOf("</script>", start));
+    const sheet = { offsetHeight: 1050, style: { transform: "scale(0.47)" } };
+    const stage = { style: { height: "520px" } };
+    const button = { disabled: false };
+    const label = { textContent: "Download PDF" };
+    const nodes = {
+      "wx-invoice-sheet": sheet, "wx-invoice-stage": stage,
+      "wx-download-pdf-btn": button, "wx-download-pdf-label": label,
+    };
+    const exportSheet = { style: { margin: "auto", transform: "scale(0.47)", boxShadow: "shadow" } };
+    const container = {
+      style: { left: "115px", right: "0", margin: "auto" },
+      querySelector: () => exportSheet,
+    };
+    let fontsReady = false;
+    let fitted = false;
+    let restored = false;
+    let printed = 0;
+    const errors = [];
+    let options;
+    const worker = {
+      set(value) { options = value; return this; },
+      from(element) { assert.equal(element, sheet); return this; },
+      async save() {
+        assert.ok(fontsReady && fitted);
+        assert.equal(button.disabled, true);
+        assert.equal(sheet.style.transform, "none");
+        options.html2canvas.onclone({ querySelector: () => container });
+        assert.equal(container.style.left, "0");
+        assert.equal(container.style.right, "auto");
+        assert.equal(container.style.margin, "0");
+        assert.equal(exportSheet.style.margin, "0");
+        assert.equal(exportSheet.style.transform, "none");
+        assert.equal(exportSheet.style.boxShadow, "none");
+        assert.equal(options.html2canvas.x, 0);
+        assert.equal(options.html2canvas.y, 0);
+        assert.equal(options.html2canvas.height, sheet.offsetHeight);
+        if (fail) throw new Error("Capture failed");
+      },
+    };
+    const context = {
+      window: { html2pdf: () => worker, print: () => printed++ },
+      document: {
+        fonts: { ready: Promise.resolve().then(() => { fontsReady = true; }) },
+        getElementById: (id) => nodes[id],
+      },
+      console: { error: (...args) => errors.push(args) },
+      fitContentToA4: () => { fitted = true; },
+      fitInvoiceSheetToMobileViewport: () => { restored = true; },
+    };
+    vm.runInNewContext(script, context);
+    await context.downloadSinglePagePdf();
+    assert.equal(sheet.style.transform, "scale(0.47)");
+    assert.equal(stage.style.height, "520px");
+    assert.equal(button.disabled, false);
+    assert.equal(label.textContent, "Download PDF");
+    assert.ok(restored);
+    assert.equal(printed, fail ? 1 : 0);
+    assert.equal(errors.length, fail ? 1 : 0);
+  }
 });
 
 test("preview overrides are isolated, honor empty optional text and escape executable markup", () => {
@@ -83,7 +147,7 @@ test("layout settings cannot hide required columns, inject CSS, or duplicate/rej
   assert.equal(cfg.sections[0], "footer");
 });
 
-test("switching language in a preview keeps the invoice identity and totals unchanged", () => {
+test("preview always opens in English and keeps the invoice identity and totals intact", () => {
   let written = "";
   const preview = {
     document: { open() {}, close() {}, write(html) { written = html; } },
@@ -96,9 +160,7 @@ test("switching language in a preview keeps the invoice identity and totals unch
   };
   vm.runInNewContext(source, { window, URL, console, Intl, localStorage: { getItem: () => null } });
   window.WEEXEY_INVOICE.openOfficialInvoice(order);
-  assert.match(written, /<html lang="ar" dir="rtl">/);
-  preview.changeInvoiceLanguage("fr");
-  assert.match(written, /<html lang="fr" dir="ltr">/);
+  assert.match(written, /<html lang="en" dir="ltr">/);
   assert.match(written, /INV-TEST-42/);
   assert.match(written, /230\.00/);
 });
@@ -198,15 +260,15 @@ test("simplified editor gives every setting one home and preserves advanced sett
   assert.doesNotMatch(form, /data-invoice-save/);
   assert.doesNotMatch(root.innerHTML, /class="invoice-editor-actions"/);
   assert.match(root.innerHTML, /class="invoice-editor-preview-body"/);
+  assert.doesNotMatch(root.innerHTML, /data-invoice-language/);
   assert.equal((root.innerHTML.match(/data-invoice-preview>/g) || []).length, 1);
   assert.equal(nodes.get("[data-invoice-save]").disabled, true);
   assert.ok(Number.parseFloat(nodes.get("[data-invoice-preview-size]").style.height) <= viewport.clientHeight);
   click({ invoiceZoom: "125" });
   assert.equal(nodes.get("iframe").style.transform, "scale(1.25)");
   assert.equal(nodes.get("[data-invoice-save]").disabled, true, "Preview zoom must not edit invoice settings");
-  listeners.change({ target: { matches: () => true, value: "ar" } });
   click({ invoicePane: "details" });
-  listeners.input({ target: { dataset: { invoiceText: "companyLegalName" }, value: "شركة جديدة" } });
+  listeners.input({ target: { dataset: { invoiceText: "companyLegalName" }, value: "New English Company" } });
   click({ invoicePane: "design" });
   listeners.input({ target: { dataset: { invoiceStyle: "fontScale", invoicePercent: "" }, type: "number", value: "125" } });
   await listeners.submit({ preventDefault() {} });
@@ -215,8 +277,7 @@ test("simplified editor gives every setting one home and preserves advanced sett
   assert.equal(published.sections[0], "footer");
   assert.deepEqual([...published.hiddenColumns], ["sku"]);
   assert.equal(published.visibility.phone, false);
-  assert.equal(published.texts.en.companyLegalName, "Saved company");
-  assert.equal(published.texts.ar.companyLegalName, "شركة جديدة");
+  assert.equal(published.texts.en.companyLegalName, "New English Company");
 });
 
 test("language persistence migration leaves checkout pricing, coupons and response unchanged", () => {
@@ -247,20 +308,20 @@ test("invoice QR decodes to its own verification link and rejects missing or uns
         }
       }
     }
-    assert.equal(jsQR(pixels, size, size)?.data, `https://www.ruqo.pro/invoice-verify.html?lang=ar#${token}`);
+    assert.equal(jsQR(pixels, size, size)?.data, `https://www.ruqo.pro/invoice-verify.html?lang=en#${token}`);
     assert.match(html, /rel="noopener noreferrer"/);
   }
   for (const token of [undefined, "", "TEST-42", "https://evil.example", '"><script>alert(1)</script>']) {
     const html = api.createDocumentHtml({ ...order, verificationToken: token });
     assert.doesNotMatch(html, /<div class="inv-qr-svg"><a/);
-    assert.match(html, /التحقق الإلكتروني غير متاح/);
+    assert.match(html, /Online verification is unavailable/);
     assert.doesNotMatch(html, /WX-AUTH-|SHA-256/);
   }
   assert.match(api.createDocumentHtml({ ...order, verificationToken: "a".repeat(64) }, { language: "fr" }),
-    /invoice-verify.html\?lang=fr#/);
+    /invoice-verify.html\?lang=en#/);
 });
 
-test("authenticated invoice lookup preserves chosen language and does not invent verification on failure", async () => {
+test("authenticated invoice lookup resolves verification in English and does not invent verification on failure", async () => {
   let written = "";
   let resolveToken;
   const preview = { document: { open() {}, close() {}, write(html) { written = html; } }, close() {}, closed: false };
@@ -277,11 +338,10 @@ test("authenticated invoice lookup preserves chosen language and does not invent
   vm.runInNewContext(source, { window, URL, console: { ...console, error: (...args) => errors.push(args) }, Intl, localStorage: { getItem: () => null } });
   window.WEEXEY_INVOICE.openOfficialInvoice(order, { language: "ar", verificationClient: client });
   await new Promise((resolve) => setImmediate(resolve));
-  preview.changeInvoiceLanguage("fr");
   resolveToken({ data: "c".repeat(64) });
   await new Promise((resolve) => setImmediate(resolve));
-  assert.match(written, /<html lang="fr"/);
-  assert.match(written, /invoice-verify.html\?lang=fr#cccc/);
+  assert.match(written, /<html lang="en"/);
+  assert.match(written, /invoice-verify.html\?lang=en#cccc/);
   window.WEEXEY_INVOICE.openOfficialInvoice(order, { language: "en", verificationClient: client });
   await new Promise((resolve) => setImmediate(resolve));
   resolveToken({ error: new Error("Service unavailable") });

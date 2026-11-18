@@ -185,11 +185,11 @@
           <label>Tax registration number<input data-invoice-shared="trn_number" value="${escape(draft.trn_number ?? copy.trnNumber)}" maxlength="60" required></label>
           <label>Commercial registration number<input data-invoice-shared="cr_number" value="${escape(draft.cr_number ?? copy.crNumber)}" maxlength="60" required></label>
           <label>Billing email<input type="email" data-invoice-shared="billing_email" value="${escape(draft.billing_email ?? copy.supportEmail)}" maxlength="254" required></label>
-        `, "These values are shared across all invoice languages.", true)}
+        `, "Appears in the invoice header and seller details.", true)}
         ${group("logo", "Company logo", `
           <label>Logo image URL<input type="url" data-invoice-shared="logoUrl" value="${escape(draft.logoUrl)}" placeholder="https://..." maxlength="2048"></label>
           <label>Logo height (px)<input type="number" data-invoice-style="logoHeight" min="20" max="64" step="1" value="${draft.appearance.logoHeight}" required></label>
-        `, "Shared across all languages. Leave the URL empty to use the store's default logo.", true)}
+        `, "Leave the URL empty to use the store's default logo.", true)}
         ${group("order-description", "Payment & delivery wording", textFields(["metaPaymentVal", "metaSupplyVal"], copy),
           "Printed descriptions only. This does not change payment processing or delivery settings.", true)}
         <aside class="invoice-editor-callout"><strong>Automatic QR verification</strong><p>The QR comes from the order record when verification is available. Sample previews do not have a real QR. You do not need to enter or upload a code here.</p></aside>
@@ -235,7 +235,7 @@
           ${group("product-columns", "Product table columns", orderedControls(draft.columns, "columns", true),
             "Check optional columns to show them. Description, quantity and total are always included. Use the arrows to reorder columns.", true)}
           ${group("defaults", "Restore defaults", `<button type="button" class="admin-secondary-button" data-invoice-reset>Restore all invoice defaults</button>`,
-            "Resets every language and all design settings in your draft. Nothing is published until you save.", true)}
+            "Resets all wording and design settings in your draft. Nothing is published until you save.", true)}
         `, "Spacing, optional information, section order and table columns. Your existing settings are preserved.", true)}`;
     }
     root.querySelectorAll("[data-invoice-group]").forEach((node) => {
@@ -259,10 +259,6 @@
       <form id="invoice-settings-form">
         <div class="invoice-editor-layout">
           <section class="admin-section invoice-editor-controls">
-            <label class="invoice-editor-language">Invoice language
-              <select data-invoice-language>${Object.entries(generator.languages).map(([key, name]) => `<option value="${key}" ${language === key ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>
-            </label>
-            <p class="invoice-editor-note">This selects the wording you edit and preview. Registration, logo and design are shared across languages; text is saved separately for each language.</p>
             <nav class="invoice-editor-tabs" aria-label="Invoice editor sections">
               ${Object.entries(panes).map(([key, [title]], index) => `<button class="admin-secondary-button" type="button" data-invoice-pane="${key}" aria-pressed="${pane === key}"><span class="invoice-editor-step">${index + 1}</span>${title}</button>`).join("")}
             </nav>
@@ -325,13 +321,6 @@
       clearTimeout(previewTimer);
       previewTimer = setTimeout(updatePreview, 300);
     });
-    root.addEventListener("change", (event) => {
-      if (event.target.matches("[data-invoice-language]")) {
-        language = event.target.value;
-        renderFields();
-        updatePreview();
-      }
-    });
     root.addEventListener("click", (event) => {
       const button = event.target.closest("button");
       if (!button || saving) return;
@@ -351,7 +340,7 @@
         updateDirty();
         updatePreview();
       }
-      if (button.hasAttribute("data-invoice-reset") && window.confirm("هل تريد استعادة إعدادات الفاتورة الافتراضية لجميع اللغات؟ لن تُطبق إلا بعد الحفظ.")) {
+      if (button.hasAttribute("data-invoice-reset") && window.confirm("هل تريد استعادة إعدادات الفاتورة الافتراضية؟ لن تُطبق إلا بعد الحفظ.")) {
         draft = generator.normalizeCustomConfig({});
         renderFields();
         updateDirty();

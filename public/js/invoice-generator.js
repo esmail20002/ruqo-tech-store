@@ -646,7 +646,7 @@
     return {};
   }
 
-  const invoiceLanguages = { en: "English", ar: "العربية", fr: "Français", es: "Español", zh: "中文" };
+  const invoiceLanguages = { en: "English" };
   const sectionSelectors = {
     header: ".inv-header-banner",
     metadata: ".inv-meta-strip",
@@ -682,9 +682,8 @@
   const columnKeys = ["index", "sku", "description", "quantity", "unitPrice", "vatRate", "vatAmount", "total"];
   const requiredColumns = ["description", "quantity", "total"];
 
-  function invoiceLanguage(value) {
-    const lang = String(value || "").toLowerCase().split("-")[0];
-    return Object.hasOwn(invoiceLanguages, lang) ? lang : "en";
+  function invoiceLanguage() {
+    return "en";
   }
 
   function normalizeCustomConfig(value = {}) {
@@ -1781,9 +1780,6 @@
       </div>
     </div>
     <div class="toolbar-actions">
-      <select class="toolbar-btn" aria-label="${language === "ar" ? "لغة الفاتورة" : "Invoice language"}" onchange="changeInvoiceLanguage(this.value)">
-        ${Object.entries(invoiceLanguages).map(([key, label]) => `<option value="${key}" ${key === language ? "selected" : ""} style="color:#0f172a">${escapeHtml(label)}</option>`).join("")}
-      </select>
       <button type="button" class="toolbar-btn toolbar-btn-primary" id="wx-download-pdf-btn" onclick="downloadSinglePagePdf()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
         <span id="wx-download-pdf-label">${escapeHtml(copy.downloadPdfBtn)}</span>
@@ -2139,6 +2135,8 @@
       if (btn) btn.disabled = true;
       if (label) label.textContent = ${JSON.stringify(copy.downloadingBtn).replace(/</g, "\\u003c")};
       try {
+        if (document.fonts) await document.fonts.ready;
+        fitContentToA4();
         sheet.style.transform = "none";
         if (stage) stage.style.height = "auto";
         var opt = {
@@ -2148,12 +2146,29 @@
           html2canvas: {
             scale: 2,
             width: 794,
+            height: Math.ceil(sheet.offsetHeight),
             windowWidth: 1024,
+            x: 0,
+            y: 0,
             useCORS: true,
             letterRendering: true,
             scrollX: 0,
             scrollY: 0,
-            backgroundColor: "#ffffff"
+            backgroundColor: "#ffffff",
+            onclone: function (clonedDocument) {
+              // html2pdf centers its container again when the capture viewport changes.
+              var container = clonedDocument.querySelector(".html2pdf__container");
+              var exportSheet = container && container.querySelector("#wx-invoice-sheet");
+              if (!exportSheet) throw new Error("Invoice PDF export sheet is missing");
+              container.style.left = "0";
+              container.style.right = "auto";
+              container.style.top = "0";
+              container.style.margin = "0";
+              container.style.width = "794px";
+              exportSheet.style.margin = "0";
+              exportSheet.style.transform = "none";
+              exportSheet.style.boxShadow = "none";
+            }
           },
           jsPDF: {
             unit: "mm",
@@ -2164,6 +2179,7 @@
         };
         await window.html2pdf().set(opt).from(sheet).save();
       } catch (e) {
+        console.error("Invoice PDF export failed", e);
         window.print();
       } finally {
         sheet.style.transform = prevTransform;
@@ -2180,15 +2196,12 @@
 
   function openOfficialInvoice(payload, options = {}) {
     payload = { ...payload };
-    const initialLanguage = options.language || payload?.invoiceLanguage ||
-      (window.NoursStore || window.RUQO_STORE)?.getLanguage?.();
-    let activeLanguage = initialLanguage;
+    const activeLanguage = "en";
     const renderPreview = (target, language, close) => {
-      activeLanguage = language;
       target.document.open();
-      target.document.write(createDocumentHtml(payload, { ...options, language }));
+      target.document.write(createDocumentHtml(payload, { ...options, language: "en" }));
       target.document.close();
-      target.changeInvoiceLanguage = (next) => renderPreview(target, next, close);
+      target.changeInvoiceLanguage = () => renderPreview(target, "en", close);
       target.closeInvoicePreview = close;
     };
     const refreshVerification = async (target, close, isClosed) => {
@@ -2212,12 +2225,12 @@
     };
     const popup = window.open("", "_blank");
     if (popup && popup.document) {
-      renderPreview(popup, initialLanguage, () => popup.close());
+      renderPreview(popup, activeLanguage, () => popup.close());
       void refreshVerification(popup, () => popup.close(), () => popup.closed);
       return;
     }
 
-    // Keep language and download controls accessible when popups are blocked.
+    // Keep download controls accessible when popups are blocked.
     let printFrame = document.getElementById("wx-official-invoice-frame");
     if (printFrame) printFrame.remove();
     printFrame = document.createElement("iframe");
@@ -2225,13 +2238,13 @@
     printFrame.title = "Invoice preview";
     printFrame.style.cssText = "position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000;background:white;";
     document.body.appendChild(printFrame);
-    renderPreview(printFrame.contentWindow, initialLanguage, () => printFrame.remove());
+    renderPreview(printFrame.contentWindow, activeLanguage, () => printFrame.remove());
     void refreshVerification(printFrame.contentWindow, () => printFrame.remove(), () => !printFrame.isConnected);
   }
 
   function createDocumentHtml(payload = {}, options = {}) {
     const store = window.NoursStore || window.RUQO_STORE;
-    const language = invoiceLanguage(options.language || payload.invoiceLanguage || store?.getLanguage?.());
+    const language = "en";
     const cfg = normalizeCustomConfig(options.customConfig ?? readCustomInvoiceConfig());
     const copy = resolveCopyWithCustomConfig(cfg, language);
     const localizedPayload = {
@@ -2239,15 +2252,15 @@
       invoiceLanguage: language,
       items: (payload.items || []).map((item) => ({
         ...item,
-        name: item.nameTranslations?.[language] || item.nameTranslations?.en || item.name,
-        variant: item.variantTranslations?.[language] || item.variantTranslations?.en || item.variant,
+        name: item.nameTranslations?.en || item.name,
+        variant: item.variantTranslations?.en || item.variant,
       })),
     };
     const data = normalizeInvoiceData(localizedPayload, store);
     const issuedAt = new Date(data.createdAtIso);
     if (!Number.isNaN(issuedAt.getTime())) {
       data.formattedIssueDate = new Intl.DateTimeFormat(
-        { ar: "ar-SA", en: "en-US", fr: "fr-FR", es: "es-ES", zh: "zh-CN" }[language],
+        "en-US",
         { dateStyle: "medium", timeStyle: "short" },
       ).format(issuedAt);
     }
