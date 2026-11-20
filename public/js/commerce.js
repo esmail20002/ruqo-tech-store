@@ -4601,8 +4601,39 @@
       list.querySelector("a")?.focus();
     });
 
-    const linkedAnswer = entries.find((entry) => `#${entry.element.id}` === location.hash);
-    if (linkedAnswer?.element instanceof HTMLDetailsElement) linkedAnswer.element.open = true;
+  }
+
+  // Saved replacement cards have their own IDs; keep the public footer URLs stable.
+  const supportPolicyAliases = new Map([
+    ["delivery", "custom-policy-mw53gvyn-tp4lw"],
+    ["payment", "custom-policy-mw53gv5h-c0wxp"],
+    ["returns", "custom-policy-mwm9ahcx-0b6yp"],
+    ["terms", "custom-policy-mw53fiqz-4vfg5"],
+    ["privacy", "custom-policy-mw53d605-mp5e0"],
+  ]);
+  function scrollToSupportAnchor(moveFocus = false) {
+    if (!location.hash) return;
+    let id;
+    try {
+      id = decodeURIComponent(location.hash.slice(1));
+    } catch (error) {
+      console.warn("Invalid support link fragment:", error.message);
+      return;
+    }
+    const anchor = document.getElementById(id);
+    let target = anchor?.matches("[data-support-policy-anchor]") ? anchor.parentElement : anchor;
+    if (!target && (supportPolicyAliases.has(id) || id === "warranty")) {
+      console.warn("Support policy unavailable for link:", id);
+      target = root.querySelector(".support-policies");
+    }
+    if (!target || !root.contains(target)) return;
+    if (target instanceof HTMLDetailsElement) target.open = true;
+    if (moveFocus || document.activeElement === document.body) {
+      if (!target.hasAttribute("tabindex")) target.tabIndex = -1;
+      target.focus({ preventScroll: true });
+    }
+    target.scrollIntoView({ block: "start", behavior: "instant" });
+    window.WEEXEY_SMOOTH_SCROLL?.syncTo();
   }
 
   function renderSupport() {
@@ -4651,11 +4682,15 @@
       .filter(Boolean)
       .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`)
       .join("");
-    const activeSectionIds = new Set(supportContent.sections.map((section) => section.id));
-    const retiredSectionAnchors = (window.RUQO_SUPPORT_CONTENT_SCHEMA?.sections || [])
-      .filter((section) => !activeSectionIds.has(section.id))
-      .map((section) => `<span id="${escapeHtml(section.id)}" class="support-retired-anchor" aria-hidden="true"></span>`)
-      .join("");
+    const policyIds = new Set(supportContent.sections.map(({ id }) => id));
+    const returnPolicyId = policyIds.has("returns") ? "returns" : supportPolicyAliases.get("returns");
+    const policyAnchors = (id) => {
+      const aliases = [...supportPolicyAliases]
+        .filter(([alias, replacement]) => id === replacement && !policyIds.has(alias))
+        .map(([alias]) => alias);
+      if (id === returnPolicyId && !policyIds.has("warranty")) aliases.push("warranty");
+      return aliases.map((alias) => `<span id="${escapeHtml(alias)}" data-support-policy-anchor aria-hidden="true"></span>`).join("");
+    };
     document.querySelector('meta[name="description"]').content =
       `${storeName} — ${copy.intro}`;
     const phone = String(settings.support_phone || "").trim();
@@ -4759,10 +4794,10 @@
             if (!title || !body) return "";
             if (section.kind === "legal") {
               const eyebrow = section.eyebrowKey && t[section.eyebrowKey] ? `<span class="commerce-eyebrow">${escapeHtml(t[section.eyebrowKey])}</span>` : "";
-              return `<article class="support-legal" id="${escapeHtml(section.id)}" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="${escapeHtml(section.icon)}" aria-hidden="true"></i></span>${eyebrow}<h2>${escapeHtml(title)}</h2>${supportBodyMarkup(body)}</article>`;
+              return `<article class="support-legal" id="${escapeHtml(section.id)}" data-support-searchable="policy">${policyAnchors(section.id)}<span class="support-policy-icon"><i data-lucide="${escapeHtml(section.icon)}" aria-hidden="true"></i></span>${eyebrow}<h2>${escapeHtml(title)}</h2>${supportBodyMarkup(body)}</article>`;
             }
             const deliveryDetails = section.id === "delivery" ? `<p>${escapeHtml(shippingNote())}</p>` : "";
-            return `<article id="${escapeHtml(section.id)}" data-support-searchable="policy"><span class="support-policy-icon"><i data-lucide="${escapeHtml(section.icon)}" aria-hidden="true"></i></span><h2>${escapeHtml(title)}</h2>${deliveryDetails}${supportBodyMarkup(body)}</article>`;
+            return `<article id="${escapeHtml(section.id)}" data-support-searchable="policy">${policyAnchors(section.id)}<span class="support-policy-icon"><i data-lucide="${escapeHtml(section.icon)}" aria-hidden="true"></i></span><h2>${escapeHtml(title)}</h2>${deliveryDetails}${supportBodyMarkup(body)}</article>`;
           }).join("")}
           </div>
         </section>
@@ -4787,7 +4822,6 @@
           </aside>
         </section>
 
-        ${retiredSectionAnchors}
       </div>`;
     setupSupportSearch(copy);
     window.lucide?.createIcons();
@@ -4997,6 +5031,7 @@
     }
     else renderSupport();
     if (page === "support") {
+      window.addEventListener("load", () => scrollToSupportAnchor(), { once: true });
       const contactForm = root.querySelector("[data-contact-form]");
       contactForm.elements.name.minLength = 2;
       contactForm.elements.name.maxLength = 120;
@@ -5031,7 +5066,9 @@
       document.title = `${pageTitles[page][language].replace("WEEXEY", storeName)} | ${storeName}`;
     }
     window.lucide?.createIcons();
-    if (location.hash) {
+    if (page === "support") {
+      scrollToSupportAnchor();
+    } else if (location.hash) {
       requestAnimationFrame(() => {
         document
           .getElementById(decodeURIComponent(location.hash.slice(1)))
@@ -5645,6 +5682,16 @@
     }
   });
 
+  if (page === "support") {
+    window.addEventListener("hashchange", () => scrollToSupportAnchor(true));
+    document.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      const link = event.target.closest("a[href]");
+      if (location.hash && link?.href === location.href && (!link.target || link.target === "_self") && !link.hasAttribute("download")) {
+        scrollToSupportAnchor(true);
+      }
+    });
+  }
   render();
   window.addEventListener("ruqo:language-updated", (event) => {
     language = event.detail?.language || store.getLanguage();

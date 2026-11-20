@@ -428,8 +428,19 @@ body[data-page="support"] .support-page .support-section {
   scroll-margin-top: 100px;
 }
 
-body[data-page="support"] .support-page [data-support-searchable] {
+body[data-page="support"] .support-page :is([data-support-searchable], [data-support-policy-anchor]) {
   scroll-margin-top: 100px;
+}
+
+body[data-page="support"] .support-page [data-support-searchable="policy"] {
+  position: relative;
+}
+
+body[data-page="support"] .support-page [data-support-policy-anchor] {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 1px;
+  height: 1px;
 }
 
 body[data-page="support"] .support-page .support-section-heading {

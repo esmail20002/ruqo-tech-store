@@ -170,6 +170,10 @@
     { key: "footer.location", label: "Store location" },
     { key: "footer.rights", label: "Copyright notice", multiline: true },
   ];
+  const footerContactFields = [
+    { key: "support_phone", label: "Support phone", type: "tel", maxLength: 60 },
+    { key: "support_email", label: "Support email", type: "email", maxLength: 254 },
+  ];
   const defaultFooterTexts = {
     en: {
       "footer.copy": "A premium electronics store combining performance, design, and trust in every order.",
@@ -383,6 +387,7 @@
   let homepageSpotlights = [];
   let brandSettings = {};
   let footerDraft = {};
+  let footerContactDraft = {};
   let footerSectionsDraft = [];
   let footerLanguage = "en";
   let editingSlug = null;
@@ -1149,6 +1154,7 @@
       },
     ]));
     footerSectionsDraft = initializeFooterSections(savedFooter);
+    footerContactDraft = {};
     renderFooterSettings();
   }
 
@@ -1196,7 +1202,8 @@
 
   function renderFooterSettings() {
     const localeValues = footerDraft[footerLanguage] || {};
-    const textFields = footerTextFields.map(({ key, label, multiline }) => {
+    const contactIndex = footerSectionsDraft.findIndex((section) => section.type === "contact");
+    const createTextField = ({ key, label, multiline }) => {
       const field = document.createElement(multiline ? "textarea" : "input");
       field.dataset.footerField = key;
       field.maxLength = multiline ? 500 : 120;
@@ -1207,7 +1214,10 @@
       wrapper.textContent = label;
       wrapper.append(field);
       return wrapper;
-    });
+    };
+    const textFields = footerTextFields
+      .filter(({ key }) => key !== "footer.location" || contactIndex === -1)
+      .map(createTextField);
     footerTextFieldsContainer.replaceChildren(...textFields);
     const sectionCards = footerSectionsDraft.map((section, sectionIndex) => {
       const card = document.createElement("section");
@@ -1241,8 +1251,29 @@
       if (section.type === "contact") {
         const note = document.createElement("p");
         note.className = "footer-editor-note";
-        note.textContent = "Phone and email are managed in Store settings. The store location is edited above.";
+        note.textContent = sectionIndex === contactIndex
+          ? "Phone and email are shared across the store and all languages. Store location uses the selected editing language."
+          : "Contact details are shared with the first contact section.";
         card.append(note);
+        if (sectionIndex === contactIndex) {
+          const fields = document.createElement("div");
+          fields.className = "admin-form-grid";
+          for (const { key, label, type, maxLength } of footerContactFields) {
+            const wrapper = document.createElement("label");
+            wrapper.textContent = label;
+            const field = document.createElement("input");
+            field.type = type;
+            field.dir = "ltr";
+            field.maxLength = maxLength;
+            field.dataset.footerContactField = key;
+            field.defaultValue = brandSettings[key] ?? "";
+            field.value = footerContactDraft[key] ?? field.defaultValue;
+            wrapper.append(field);
+            fields.append(wrapper);
+          }
+          fields.append(createTextField(footerTextFields.find(({ key }) => key === "footer.location")));
+          card.append(fields);
+        }
       } else {
         const linkRows = section.links.map((link, linkIndex) => {
           const row = document.createElement("div");
@@ -1309,10 +1340,16 @@
 
   function captureFooterSettings() {
     const localeValues = footerDraft[footerLanguage] || {};
-    footerTextFieldsContainer.querySelectorAll("[data-footer-field]").forEach((field) => {
+    footerSettingsForm.querySelectorAll("[data-footer-field]").forEach((field) => {
       localeValues[field.dataset.footerField] = field.value;
     });
     footerDraft[footerLanguage] = localeValues;
+    footerSectionsContainer.querySelectorAll("[data-footer-contact-field]").forEach((field) => {
+      const key = field.dataset.footerContactField;
+      const value = field.value.trim();
+      if (value === field.defaultValue.trim()) delete footerContactDraft[key];
+      else footerContactDraft[key] = value;
+    });
     footerSectionsContainer.querySelectorAll("[data-footer-section-title]").forEach((field) => {
       const section = footerSectionsDraft[Number(field.dataset.footerSectionTitle)];
       if (section) section.titles[footerLanguage] = field.value.trim();
@@ -1345,6 +1382,12 @@
     event.preventDefault();
     footerSettingsError.hidden = true;
     captureFooterSettings();
+    const contactChanges = footerSectionsDraft.some((section) => section.type === "contact") ? { ...footerContactDraft } : {};
+    if (contactChanges.support_phone && !/^\+?[\d\s().-]*\d[\d\s().-]*$/.test(contactChanges.support_phone)) {
+      footerSettingsError.textContent = "Enter a valid support phone number, including the country code if needed.";
+      footerSettingsError.hidden = false;
+      return;
+    }
     for (const section of footerSectionsDraft) {
       if (!String(section.titles?.[footerLanguage] || section.titles?.en || section.titles?.ar || "").trim()) {
         footerSettingsError.textContent = "Enter a heading for every footer section.";
@@ -1395,7 +1438,7 @@
         links,
         sections: footerSectionsDraft,
       };
-      const settings = { ...brandSettings, footer };
+      const settings = { ...brandSettings, ...contactChanges, footer };
       const { error } = await client.from("store_settings").upsert({
         setting_key: "storefront",
         setting_value: settings,
@@ -1405,7 +1448,14 @@
       }, { onConflict: "setting_key" });
       if (error) throw error;
 
+      captureFooterSettings();
       brandSettings = settings;
+      for (const { key } of footerContactFields) {
+        if (!Object.hasOwn(contactChanges, key)) continue;
+        if (footerContactDraft[key] === contactChanges[key]) delete footerContactDraft[key];
+        brandSettingsForm.elements[key].value = settings[key];
+      }
+      renderFooterSettings();
       window.RUQO_STORE_SETTINGS = settings;
       window.dispatchEvent(new CustomEvent("ruqo:store-settings-updated", { detail: settings }));
       showToast("Footer content saved.");
@@ -1543,7 +1593,9 @@
       }, { onConflict: "setting_key" });
       if (error) throw error;
 
+      captureFooterSettings();
       brandSettings = settings;
+      renderFooterSettings();
       const logoUrl = getBrandLogoUrl(settings.logo_path);
       const adminLogoUrl = getAdminBrandLogoUrl(settings.logo_path);
       window.RUQO_STORE_SETTINGS = settings;

@@ -55,6 +55,12 @@ The SQL tests roll back all changes, including test publications and translation
 - Keep each asset's `?v=` cache version identical on every page and bump it whenever the file changes; mismatched versions let browsers serve stale code on some pages.
 - `scripts/build-pages.js` excludes the experiments pages and their assets and the Git-ignored `admin-local-dev.js` from the production build.
 
+### Footer links and contact details
+
+Use `/support.html#returns`, `/support.html#delivery`, `/support.html#payment`, `/support.html#terms`, `/support.html#privacy`, or `/support.html#contact` to link directly to the matching support content. Existing `#warranty` links also land on the returns and warranty policy card. The standard policy fragments resolve to the store's saved replacement cards when the built-in cards are absent. When linking to a new custom card, use its own ID as the fragment.
+
+In **Footer content → Footer sections and links → Contact**, edit the section heading and store location for the selected language. Support phone and email are shared with Store settings and other storefront contact surfaces, not translated. Use **Save footer content** to publish them; switching editing languages does not discard unsaved contact changes.
+
 ### Invoice editor
 
 Open **Orders → Invoice Editor** for the full-page editor (no additional sidebar section). The English interface has three sections: **Invoice details**, **Policies & footer**, and **Design**. Each setting has one home: company details and logo are not repeated in a separate text editor. Registration/contact, logo and payment wording expand on demand; less-used printed labels live under Advanced wording. Design keeps colors and typography visible, with visibility, spacing, section/column ordering and restore defaults under Advanced settings. All existing configuration values and legacy English company/policy settings remain compatible; no settings are migrated or removed.
