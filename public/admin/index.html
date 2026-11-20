@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin.css?v=23" />
+    <link rel="stylesheet" href="/css/admin.css?v=26" />
     <link rel="stylesheet" href="/css/admin-invoice-editor.css?v=3" />
   </head>
   <body class="admin-body">
@@ -102,6 +102,7 @@
           <div class="admin-nav-group" role="group" aria-labelledby="admin-management-label">
           <span id="admin-management-label" class="admin-nav-group-label">MANAGEMENT</span>
           <button class="admin-nav-item is-active" type="button" data-admin-view="overview"><i data-lucide="layout-dashboard" aria-hidden="true"></i><span>Overview</span></button>
+          <button class="admin-nav-item" type="button" data-admin-view="analytics"><i data-lucide="bar-chart-3" aria-hidden="true"></i><span>Analytics</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="products"><i data-lucide="package-2" aria-hidden="true"></i><span>Products</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="categories"><i data-lucide="layers-3" aria-hidden="true"></i><span>Categories</span></button>
           <button class="admin-nav-item" type="button" data-admin-view="orders"><i data-lucide="clipboard-list" aria-hidden="true"></i><span>Orders</span></button>
@@ -161,6 +162,157 @@
             <section class="admin-section">
               <div class="admin-section-heading"><div><h2>Recently updated</h2><p>Latest catalog changes</p></div><button class="admin-text-button" type="button" data-admin-view="products">View catalog <i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
               <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Status</th><th>Stock</th></tr></thead><tbody id="recent-products-body"></tbody></table></div>
+            </section>
+          </section>
+
+          <section class="admin-view" data-admin-panel="analytics" hidden>
+            <div class="admin-page-heading analytics-page-heading">
+              <div>
+                <span class="admin-eyebrow">STORE INSIGHTS</span>
+                <h1>Analytics</h1>
+                <p>Track site visits, product views, shares, customer interest, and top ordered products.</p>
+              </div>
+              <div class="analytics-toolbar-actions">
+                <div class="analytics-range-group" role="group" aria-label="Analytics date range">
+                  <button class="analytics-range-button" type="button" data-analytics-range="1" aria-pressed="false">Today</button>
+                  <button class="analytics-range-button" type="button" data-analytics-range="7" aria-pressed="false">7 days</button>
+                  <button class="analytics-range-button is-active" type="button" data-analytics-range="30" aria-pressed="true">30 days</button>
+                  <button class="analytics-range-button" type="button" data-analytics-range="0" aria-pressed="false">All time</button>
+                </div>
+                <label class="analytics-day-picker" id="analytics-day-picker" title="Filter by a specific day">
+                  <i data-lucide="calendar" aria-hidden="true"></i>
+                  <span>By day</span>
+                  <input id="analytics-day-input" type="date" aria-label="Filter analytics by specific day" />
+                </label>
+                <button id="refresh-analytics" class="admin-secondary-button" type="button"><i data-lucide="refresh-cw" aria-hidden="true"></i> Refresh</button>
+              </div>
+            </div>
+
+            <p id="analytics-status" class="analytics-status-banner" role="status" aria-live="polite" hidden></p>
+
+            <div class="analytics-kpi-grid">
+              <article class="admin-stat analytics-kpi-card">
+                <span><i data-lucide="globe" aria-hidden="true"></i> Site visits</span>
+                <strong id="analytics-kpi-visits">—</strong>
+                <small id="analytics-kpi-visits-sub">Unique sessions</small>
+              </article>
+              <article class="admin-stat analytics-kpi-card">
+                <span><i data-lucide="eye" aria-hidden="true"></i> Product views</span>
+                <strong id="analytics-kpi-product-views">—</strong>
+                <small id="analytics-kpi-product-views-sub">Unique viewers</small>
+              </article>
+              <article class="admin-stat analytics-kpi-card">
+                <span><i data-lucide="heart" aria-hidden="true"></i> Cart &amp; wishlist</span>
+                <strong id="analytics-kpi-interest">—</strong>
+                <small id="analytics-kpi-interest-sub">Purchase intent</small>
+              </article>
+              <article class="admin-stat analytics-kpi-card">
+                <span><i data-lucide="share-2" aria-hidden="true"></i> Product shares</span>
+                <strong id="analytics-kpi-shares">—</strong>
+                <small id="analytics-kpi-shares-sub">Shared product links</small>
+              </article>
+              <article class="admin-stat analytics-kpi-card">
+                <span><i data-lucide="shopping-bag" aria-hidden="true"></i> Total orders</span>
+                <strong id="analytics-kpi-orders">—</strong>
+                <small id="analytics-kpi-orders-sub">All orders included</small>
+              </article>
+            </div>
+
+            <div class="analytics-highlight-grid">
+              <section class="admin-section analytics-panel-card">
+                <div class="admin-section-heading">
+                  <div>
+                    <h2>Most ordered products</h2>
+                    <p>Ranked by total units ordered (all orders included)</p>
+                  </div>
+                  <span class="analytics-section-tag"><i data-lucide="trophy" aria-hidden="true"></i> Top Ordered</span>
+                </div>
+                <div id="analytics-top-ordered" class="analytics-rank-list"></div>
+              </section>
+
+              <section class="admin-section analytics-panel-card">
+                <div class="admin-section-heading">
+                  <div>
+                    <h2>Highest customer demand</h2>
+                    <p>Combined demand from orders, cart adds, shares, wishlist &amp; views</p>
+                  </div>
+                  <span class="analytics-section-tag is-demand"><i data-lucide="flame" aria-hidden="true"></i> High Demand</span>
+                </div>
+                <div id="analytics-high-demand" class="analytics-rank-list"></div>
+              </section>
+            </div>
+
+            <div class="analytics-traffic-grid">
+              <section class="admin-section analytics-panel-card">
+                <div class="admin-section-heading analytics-chart-heading">
+                  <div>
+                    <h2>Activity over time</h2>
+                    <p>Daily site visits, product views, and orders</p>
+                  </div>
+                  <div class="analytics-chart-legend" aria-label="Chart legend">
+                    <span><i class="is-visits"></i> Site visits</span>
+                    <span><i class="is-views"></i> Product views</span>
+                    <span><i class="is-orders"></i> Orders</span>
+                  </div>
+                </div>
+                <div id="analytics-daily-chart" class="analytics-chart-wrap"></div>
+              </section>
+
+              <section class="admin-section analytics-panel-card">
+                <div class="admin-section-heading">
+                  <div>
+                    <h2>Most visited pages</h2>
+                    <p>Where shoppers spend time</p>
+                  </div>
+                </div>
+                <div id="analytics-top-pages" class="analytics-pages-list"></div>
+              </section>
+            </div>
+
+            <section class="admin-section analytics-table-section">
+              <div class="admin-section-heading">
+                <div>
+                  <h2>Product performance</h2>
+                  <p>Compare views, cart &amp; wishlist interest, shares, and orders for every product.</p>
+                </div>
+              </div>
+              <div class="admin-table-toolbar analytics-table-toolbar">
+                <label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><input id="analytics-product-search" type="search" placeholder="Search by product name, brand, or slug" /></label>
+                <label class="analytics-sort-field">
+                  <span>Sort by</span>
+                  <select id="analytics-product-sort">
+                    <option value="demand_score">Highest demand score</option>
+                    <option value="units_ordered">Most ordered (units)</option>
+                    <option value="product_views">Most viewed</option>
+                    <option value="cart_adds">Most added to cart</option>
+                    <option value="wishlist_adds">Most wishlisted</option>
+                    <option value="product_shares">Most shared</option>
+                    <option value="conversion_rate">Highest conversion</option>
+                  </select>
+                </label>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table analytics-table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Product views</th>
+                      <th>Cart</th>
+                      <th>Wishlist</th>
+                      <th>Shares</th>
+                      <th>Orders</th>
+                      <th>Conversion</th>
+                      <th>Demand</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analytics-products-body"></tbody>
+                </table>
+                <div id="analytics-products-empty" class="admin-empty" hidden>
+                  <i data-lucide="bar-chart-3" aria-hidden="true"></i>
+                  <strong>No product analytics yet</strong>
+                  <span>Try another date range or wait for shoppers to browse and order products.</span>
+                </div>
+              </div>
             </section>
           </section>
 
@@ -2059,6 +2211,7 @@
     <script src="/js/vendor/qrcode.js?v=1" defer></script>
     <script src="/js/invoice-generator.js?v=16" defer></script>
     <script src="/js/admin-invoice-editor.js?v=4" defer></script>
-    <script src="/js/admin.js?v=31" defer></script>
+    <script src="/js/admin-analytics.js?v=3" defer></script>
+    <script src="/js/admin.js?v=32" defer></script>
   </body>
 </html>

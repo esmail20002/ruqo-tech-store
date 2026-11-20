@@ -79,6 +79,7 @@
     next[lineKey] = Math.min(99, (Number(next[lineKey]) || 0) + quantity);
     write(keys.cart, next);
     syncCartCount();
+    if (id && quantity > 0) trackEvent("add_to_cart", { productSlug: id });
     return next;
   };
   const removeFromCart = (id) => setQuantity(id, 0);
@@ -224,8 +225,10 @@
   const wishlist = () => read(keys.wishlist, []);
   const toggleWishlist = (id) => {
     const next = new Set(wishlist());
-    next.has(id) ? next.delete(id) : next.add(id);
+    const wasSaved = next.has(id);
+    wasSaved ? next.delete(id) : next.add(id);
     write(keys.wishlist, [...next]);
+    if (id && !wasSaved) trackEvent("add_to_wishlist", { productSlug: id });
     return [...next];
   };
   const setWishlist = (ids) => write(keys.wishlist, [...new Set(ids)]);
@@ -303,7 +306,7 @@
     return next;
   };
   const getProfile = () =>
-    read(keys.profile, { name: "", email: "", phone: "", city: "Riyadh" });
+    read(keys.profile, { name: "", email: "", phone: "", city: "" });
   const setProfile = (profile) => write(keys.profile, profile);
   const buildDefaultDemoOrders = () => {
     const now = Date.now();
@@ -2316,19 +2319,27 @@
             <small>${mt.supportNote}</small>
           </div>
         </div>
-        <div class="product-side-support-links">
-          <a href="/support.html" class="support-mini-link">
-            ${icon("help-circle")}<span>${mt.help}</span>
-          </a>
-          <a href="/support.html#delivery" class="support-mini-link">
-            ${icon("truck")}<span>${mt.shipping}</span>
-          </a>
-          <a href="/support.html#warranty" class="support-mini-link">
-            ${icon("shield-check")}<span>${mt.warranty}</span>
-          </a>
-          <a href="/support.html#contact" class="support-mini-link">
-            ${icon("phone-call")}<span>${mt.contact}</span>
-          </a>
+        <div class="product-side-support-strip">
+          <button type="button" class="support-strip-arrow is-prev" data-support-scroll="prev" aria-label="${language === "ar" ? "السابق" : "Scroll previous"}">
+            ${icon(language === "ar" ? "chevron-right" : "chevron-left")}
+          </button>
+          <div class="product-side-support-links">
+            <a href="/support.html" class="support-mini-link">
+              ${icon("help-circle")}<span>${mt.help}</span>
+            </a>
+            <a href="/support.html#delivery" class="support-mini-link">
+              ${icon("truck")}<span>${mt.shipping}</span>
+            </a>
+            <a href="/support.html#warranty" class="support-mini-link">
+              ${icon("shield-check")}<span>${mt.warranty}</span>
+            </a>
+            <a href="/support.html#contact" class="support-mini-link">
+              ${icon("phone-call")}<span>${mt.contact}</span>
+            </a>
+          </div>
+          <button type="button" class="support-strip-arrow is-next" data-support-scroll="next" aria-label="${language === "ar" ? "التالي" : "Scroll next"}">
+            ${icon(language === "ar" ? "chevron-left" : "chevron-right")}
+          </button>
         </div>
         <div class="product-side-support-contact">
           <a href="tel:+966500000000" class="support-contact-chip">
@@ -2381,6 +2392,7 @@
       }
     }
     const currencyPlaceholder = currencyDropdown && currencyDropdownPositions.get(currencyDropdown);
+    headerActions.querySelector(".mobile-header-account-link")?.remove();
     const searchButton = headerActions.querySelector("[data-site-search]");
     const cartLink = headerActions.querySelector('.cart-button, a[href*="cart.html"]');
     const wishlistLink = headerActions.querySelector('a[href*="wishlist.html"]');
@@ -2419,6 +2431,15 @@
       drawerSearch.removeAttribute("data-site-search");
       drawerSearch.innerHTML = icon("search");
     }
+    const drawerAccount = document.createElement("a");
+    drawerAccount.className = "icon-button commerce-icon-button drawer-account-tool";
+    drawerAccount.href = "/account.html";
+    drawerAccount.setAttribute("aria-label", mt.account);
+    drawerAccount.title = mt.account;
+    drawerAccount.innerHTML = icon("user");
+    if (location.pathname === "/account.html") {
+      drawerAccount.setAttribute("aria-current", "page");
+    }
     drawer.querySelector(".product-side-drawer-body").prepend(drawerTools);
     drawerTools.append(...[
       drawerThemeButton,
@@ -2428,6 +2449,7 @@
       drawerCart,
       drawerAssistant,
       drawerSearch,
+      drawerAccount,
     ].filter(Boolean));
     store.syncDropdowns();
     setupShopAssistant(assistantTrigger, language, listen, store);
@@ -2522,10 +2544,135 @@
       zh: { home: "首页", shop: "商城", ai: "AI", cart: "购物袋", account: "账户", navLabel: "底部导航" },
     }[language] || { home: "Home", shop: "Shop", ai: "AI", cart: "Cart", account: "Account", navLabel: "Mobile navigation" };
 
-    const isHomeActive = currentPath === "/" || currentPath === "";
+    const isHomeActive = currentPath === "/" || currentPath === "" || currentPath === "/index.html";
     const isShopActive = ["/products.html", "/categories.html", "/product.html"].includes(currentPath);
     const isCartActive = ["/cart.html", "/checkout.html"].includes(currentPath);
     const isAccountActive = ["/account.html", "/wishlist.html", "/orders.html"].includes(currentPath);
+
+    const mobileTabRoots = {
+      home: "/",
+      shop: "/products.html",
+      cart: "/cart.html",
+      account: "/account.html",
+    };
+    const mobileTabStateKey = "wx-mobile-tab-state";
+    const mobileTabRestoreKey = "wx-mobile-tab-restore";
+
+    const getCurrentMobileTab = () => {
+      if (isHomeActive) return "home";
+      if (isShopActive) return "shop";
+      if (isCartActive) return "cart";
+      if (isAccountActive) return "account";
+      return null;
+    };
+
+    const normalizeMobileTabUrl = (rawUrl, fallback) => {
+      const candidate = String(rawUrl || "").trim();
+      if (!candidate || !candidate.startsWith("/") || candidate.startsWith("//")) return fallback;
+      return candidate === "/index.html" ? "/" : candidate;
+    };
+
+    const getCurrentMobileUrl = () => {
+      const normalizedPath = currentPath === "/index.html" || currentPath === "" ? "/" : currentPath;
+      return `${normalizedPath}${location.search}${location.hash}`;
+    };
+
+    const readMobileTabState = () => {
+      try {
+        const parsed = JSON.parse(sessionStorage.getItem(mobileTabStateKey) || "{}");
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch {
+        return {};
+      }
+    };
+
+    const writeMobileTabState = (nextState) => {
+      try {
+        sessionStorage.setItem(mobileTabStateKey, JSON.stringify(nextState));
+      } catch {
+        // Ignore storage restrictions
+      }
+    };
+
+    const saveActiveMobileTabState = (overrideScrollY = null) => {
+      const activeTab = getCurrentMobileTab();
+      if (!activeTab) return;
+      const state = readMobileTabState();
+      const scrollY = overrideScrollY === null
+        ? Math.max(0, Math.round(window.scrollY || document.documentElement.scrollTop || 0))
+        : Math.max(0, Math.round(overrideScrollY));
+      state[activeTab] = {
+        url: getCurrentMobileUrl(),
+        scrollY,
+        updatedAt: Date.now(),
+      };
+      writeMobileTabState(state);
+    };
+
+    const activeMobileTab = getCurrentMobileTab();
+    const savedTabState = readMobileTabState();
+
+    // Restore scroll position once when returning to a tab via bottom navigation
+    if (activeMobileTab && !window.__wxMobileTabRestored) {
+      window.__wxMobileTabRestored = true;
+      try {
+        const rawRestore = sessionStorage.getItem(mobileTabRestoreKey);
+        if (rawRestore) {
+          sessionStorage.removeItem(mobileTabRestoreKey);
+          const pending = JSON.parse(rawRestore);
+          const fresh = pending && Date.now() - Number(pending.ts || 0) < 15000;
+          const targetY = Math.max(0, Math.round(Number(pending?.scrollY) || 0));
+          if (fresh && pending.tab === activeMobileTab && pending.url === getCurrentMobileUrl() && targetY > 0) {
+            let userInteracted = false;
+            const cancelRestore = () => { userInteracted = true; };
+            ["touchstart", "wheel", "pointerdown", "keydown"].forEach((evt) => {
+              window.addEventListener(evt, cancelRestore, { once: true, passive: true });
+            });
+            const applyScroll = () => {
+              if (userInteracted) return true;
+              const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+              const clampedY = Math.min(targetY, maxScroll);
+              window.scrollTo({ top: clampedY, behavior: "auto" });
+              window.WEEXEY_SMOOTH_SCROLL?.syncTo?.(window.scrollY);
+              return maxScroll >= targetY && Math.abs(window.scrollY - targetY) <= 4;
+            };
+            applyScroll();
+            window.addEventListener("load", () => applyScroll(), { once: true });
+            window.addEventListener("ruqo:catalog-ready", () => applyScroll(), { once: true });
+            let attempts = 0;
+            const restoreTimer = window.setInterval(() => {
+              attempts += 1;
+              if (applyScroll() || userInteracted || attempts >= 18) {
+                window.clearInterval(restoreTimer);
+              }
+            }, 90);
+          }
+        }
+      } catch {
+        // Ignore storage errors
+      }
+    }
+
+    saveActiveMobileTabState();
+
+    let mobileScrollSaveTimer = null;
+    listen(window, "scroll", () => {
+      if (mobileScrollSaveTimer) return;
+      mobileScrollSaveTimer = window.setTimeout(() => {
+        mobileScrollSaveTimer = null;
+        saveActiveMobileTabState();
+      }, 180);
+    }, { passive: true });
+    listen(window, "pagehide", () => saveActiveMobileTabState());
+    listen(document, "visibilitychange", () => {
+      if (document.visibilityState === "hidden") saveActiveMobileTabState();
+    });
+
+    const resolveMobileTabHref = (tabName) => {
+      const rootHref = mobileTabRoots[tabName] || "/";
+      if (tabName === activeMobileTab) return rootHref;
+      return normalizeMobileTabUrl(savedTabState[tabName]?.url, rootHref);
+    };
 
     const mobileBottomNav = document.createElement("nav");
     mobileBottomNav.className = "wx-mobile-bottom-nav";
@@ -2533,7 +2680,7 @@
     mobileBottomNav.dir = language === "ar" ? "rtl" : "ltr";
     mobileBottomNav.innerHTML = `
       <div class="wx-mobile-bottom-nav__inner">
-        <a href="/" class="wx-mobile-bottom-nav__item${isHomeActive ? " is-active" : ""}"${isHomeActive ? ' aria-current="page"' : ""}>
+        <a href="${escapeHtml(resolveMobileTabHref("home"))}" data-mobile-tab="home" class="wx-mobile-bottom-nav__item${isHomeActive ? " is-active" : ""}"${isHomeActive ? ' aria-current="page"' : ""}>
           <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M11.03 2.59a1.5 1.5 0 0 1 1.94 0l7.5 6.36A1.5 1.5 0 0 1 21 10.1v9.4A2.5 2.5 0 0 1 18.5 22h-4a1 1 0 0 1-1-1v-4.5a1.5 1.5 0 0 0-3 0V21a1 1 0 0 1-1 1h-4A2.5 2.5 0 0 1 3 19.5v-9.4a1.5 1.5 0 0 1 .53-1.15l7.5-6.36Z"/>
@@ -2542,7 +2689,7 @@
           <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.home)}</span>
         </a>
 
-        <a href="/products.html" class="wx-mobile-bottom-nav__item${isShopActive ? " is-active" : ""}"${isShopActive ? ' aria-current="page"' : ""}>
+        <a href="${escapeHtml(resolveMobileTabHref("shop"))}" data-mobile-tab="shop" class="wx-mobile-bottom-nav__item${isShopActive ? " is-active" : ""}"${isShopActive ? ' aria-current="page"' : ""}>
           <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <rect x="3" y="3" width="8" height="8" rx="2.6"/>
@@ -2564,7 +2711,7 @@
           <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.ai)}</span>
         </button>
 
-        <a href="/cart.html" class="wx-mobile-bottom-nav__item wx-mobile-bottom-nav__item--cart commerce-cart-link${isCartActive ? " is-active" : ""}"${isCartActive ? ' aria-current="page"' : ""}>
+        <a href="${escapeHtml(resolveMobileTabHref("cart"))}" data-mobile-tab="cart" class="wx-mobile-bottom-nav__item wx-mobile-bottom-nav__item--cart commerce-cart-link${isCartActive ? " is-active" : ""}"${isCartActive ? ' aria-current="page"' : ""}>
           <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M8 6.5a4 4 0 0 1 8 0V7h1.6a2.5 2.5 0 0 1 2.48 2.2l1.12 9A2.5 2.5 0 0 1 18.72 21H5.28a2.5 2.5 0 0 1-2.48-2.8l1.12-9A2.5 2.5 0 0 1 6.4 7H8v-.5Zm2 0V7h4v-.5a2 2 0 1 0-4 0Zm-1.25 4.25a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5Zm8 0a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5Z"/>
@@ -2574,7 +2721,7 @@
           <span class="wx-mobile-bottom-nav__label">${escapeHtml(bottomNavCopy.cart)}</span>
         </a>
 
-        <a href="/account.html" class="wx-mobile-bottom-nav__item${isAccountActive ? " is-active" : ""}"${isAccountActive ? ' aria-current="page"' : ""}>
+        <a href="${escapeHtml(resolveMobileTabHref("account"))}" data-mobile-tab="account" class="wx-mobile-bottom-nav__item${isAccountActive ? " is-active" : ""}"${isAccountActive ? ' aria-current="page"' : ""}>
           <span class="wx-mobile-bottom-nav__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <circle cx="12" cy="8" r="4.2"/>
@@ -2586,6 +2733,48 @@
       </div>
     `;
     document.body.append(mobileBottomNav);
+    mobileBottomNav.querySelectorAll("a[data-mobile-tab]").forEach((tabLink) => {
+      listen(tabLink, "click", (event) => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+          return;
+        }
+        const targetTab = tabLink.dataset.mobileTab;
+        const rootHref = mobileTabRoots[targetTab] || "/";
+        if (targetTab === activeMobileTab) {
+          event.preventDefault();
+          const currentUrl = getCurrentMobileUrl();
+          if (currentUrl === rootHref) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            window.WEEXEY_SMOOTH_SCROLL?.syncTo?.(0);
+            saveActiveMobileTabState(0);
+          } else {
+            const state = readMobileTabState();
+            state[targetTab] = { url: rootHref, scrollY: 0, updatedAt: Date.now() };
+            writeMobileTabState(state);
+            location.assign(rootHref);
+          }
+          return;
+        }
+
+        event.preventDefault();
+        saveActiveMobileTabState();
+        const latestState = readMobileTabState();
+        const entry = latestState[targetTab];
+        const targetUrl = normalizeMobileTabUrl(entry?.url, rootHref);
+        const targetScrollY = Math.max(0, Math.round(Number(entry?.scrollY) || 0));
+        if (targetScrollY > 0 && entry?.url === targetUrl) {
+          try {
+            sessionStorage.setItem(
+              mobileTabRestoreKey,
+              JSON.stringify({ tab: targetTab, url: targetUrl, scrollY: targetScrollY, ts: Date.now() }),
+            );
+          } catch {
+            // Ignore storage errors
+          }
+        }
+        location.assign(targetUrl);
+      });
+    });
     const mobileAiButton = mobileBottomNav.querySelector("[data-mobile-ai-trigger]");
     listen(mobileAiButton, "click", (event) => {
       event.preventDefault();
@@ -2613,6 +2802,38 @@
     listen(drawer, "click", (event) => {
       if (event.target.closest("a")) closeDrawer();
     });
+
+    const supportLinksTrack = drawer.querySelector(".product-side-support-links");
+    const supportPrevBtn = drawer.querySelector('[data-support-scroll="prev"]');
+    const supportNextBtn = drawer.querySelector('[data-support-scroll="next"]');
+    if (supportLinksTrack && supportPrevBtn && supportNextBtn) {
+      const syncSupportArrows = () => {
+        const maxScroll = Math.max(0, supportLinksTrack.scrollWidth - supportLinksTrack.clientWidth);
+        const offset = Math.abs(supportLinksTrack.scrollLeft);
+        supportPrevBtn.disabled = offset <= 2;
+        supportNextBtn.disabled = maxScroll <= 2 || offset >= maxScroll - 2;
+      };
+      const scrollSupportStrip = (direction) => {
+        const isRtl = getComputedStyle(supportLinksTrack).direction === "rtl";
+        const step = Math.max(140, Math.round(supportLinksTrack.clientWidth * 0.65));
+        const delta = (direction === "next" ? 1 : -1) * (isRtl ? -step : step);
+        supportLinksTrack.scrollBy({ left: delta, behavior: "smooth" });
+      };
+      listen(supportPrevBtn, "click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        scrollSupportStrip("prev");
+      });
+      listen(supportNextBtn, "click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        scrollSupportStrip("next");
+      });
+      listen(supportLinksTrack, "scroll", syncSupportArrows, { passive: true });
+      listen(window, "resize", syncSupportArrows);
+      requestAnimationFrame(syncSupportArrows);
+      window.setTimeout(syncSupportArrows, 250);
+    }
     listen(document, "keydown", (event) => {
       if (!drawer.classList.contains("is-open")) return;
       if (event.key === "Escape") {
@@ -2639,6 +2860,83 @@
     if (wasOpen) openDrawer();
   }
 
+  const analyticsSessionKey = "weexey-analytics-session";
+  const getAnalyticsSessionId = () => {
+    try {
+      let existing = sessionStorage.getItem(analyticsSessionKey);
+      if (!existing) {
+        existing = typeof crypto?.randomUUID === "function"
+          ? crypto.randomUUID()
+          : `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+        sessionStorage.setItem(analyticsSessionKey, existing);
+      }
+      return existing;
+    } catch {
+      return `s-${Date.now().toString(36)}`;
+    }
+  };
+  const normalizeAnalyticsPath = (pathname) => {
+    let path = String(pathname || location.pathname || "/").split("?")[0].split("#")[0].trim();
+    if (!path || path === "/index.html") return "/";
+    path = path.replace(/\/{2,}/g, "/");
+    return path.startsWith("/") ? path : `/${path}`;
+  };
+  const pendingAnalyticsEvents = [];
+  const flushAnalyticsEvent = (payload) => {
+    const config = window.RUQO_SUPABASE_CONFIG;
+    if (!config?.url || !config?.publishableKey) return false;
+    try {
+      fetch(`${config.url.replace(/\/+$/, "")}/rest/v1/rpc/record_store_event`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: config.publishableKey,
+          Authorization: `Bearer ${config.publishableKey}`,
+        },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }).catch(() => {});
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const trackEvent = (eventType, details = {}) => {
+    if (location.pathname.startsWith("/admin")) return;
+    const type = String(eventType || "").trim().toLowerCase();
+    if (!type) return;
+    const productSlug = details.productSlug ? String(details.productSlug).trim() : null;
+    if (type !== "page_view" && !productSlug) return;
+    const payload = {
+      p_event_type: type,
+      p_product_slug: productSlug,
+      p_page_path: normalizeAnalyticsPath(details.pagePath || location.pathname),
+      p_session_id: getAnalyticsSessionId(),
+      p_referrer: document.referrer ? document.referrer.slice(0, 300) : null,
+    };
+    if (!flushAnalyticsEvent(payload) && pendingAnalyticsEvents.length < 20) {
+      pendingAnalyticsEvents.push(payload);
+    }
+  };
+  const flushPendingAnalytics = () => {
+    while (pendingAnalyticsEvents.length) {
+      const next = pendingAnalyticsEvents[0];
+      if (!flushAnalyticsEvent(next)) break;
+      pendingAnalyticsEvents.shift();
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      flushPendingAnalytics();
+      trackEvent("page_view");
+    }, { once: true });
+  } else {
+    queueMicrotask(() => {
+      flushPendingAnalytics();
+      trackEvent("page_view");
+    });
+  }
+
   window.NoursStore = {
     setupProductSideMenu,
     isLocalDevelopment,
@@ -2659,6 +2957,7 @@
     wishlist,
     toggleWishlist,
     setWishlist,
+    trackEvent,
     getLanguage,
     setLanguage,
     getTheme,

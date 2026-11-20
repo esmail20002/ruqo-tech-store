@@ -548,7 +548,7 @@
   }
 
   function setView(view) {
-    const allowedViews = new Set(["overview"]);
+    const allowedViews = new Set(["overview", "analytics"]);
     if (currentRoles.some((role) => ["owner", "admin", "catalog_manager"].includes(role))) {
       allowedViews.add("products");
       allowedViews.add("categories");
@@ -594,6 +594,7 @@
     revealActiveNavigation();
     $("#breadcrumb-current").textContent = {
       overview: "Overview",
+      analytics: "Analytics",
       products: "Products",
       categories: "Categories",
       orders: "Orders",
@@ -828,6 +829,7 @@
     renderCategories();
     renderHomepageSpotlights();
     renderAudienceProductReviews();
+    window.RUQO_ADMIN_ANALYTICS?.rerender();
   }
 
   function canManage(roles) {
@@ -847,6 +849,15 @@
       const supportContentLoad = window.RUQO_INIT_SUPPORT_CONTENT_EDITOR?.(client);
       if (supportContentLoad) tasks.push(supportContentLoad);
     }
+    const analyticsLoad = window.RUQO_ADMIN_ANALYTICS?.init({
+      client,
+      getProducts: () => products,
+      getOrders: () => orders,
+      getProductImage: (product) => product?.external_image_url || defaultLightLogoUrl,
+      getProductName: (product) => product?.name_translations?.en || product?.name_translations?.ar || product?.slug || "",
+      localDemo: false,
+    });
+    if (analyticsLoad) tasks.push(analyticsLoad);
     const results = await Promise.allSettled(tasks);
     results.filter((result) => result.status === "rejected").forEach((result) => {
       showToast(`Could not load a section: ${result.reason?.message || "Unknown error"}`);
@@ -1038,8 +1049,16 @@
     renderNewsletterSubscribers();
     renderAudienceProductReviews();
     $$("#admin-app button, #admin-app input, #admin-app select, #admin-app textarea, dialog button, dialog input, dialog select, dialog textarea")
-      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="hero"], [data-admin-panel="hello-page"], [data-admin-panel="orders"], [data-admin-panel="invoice-settings"], #order-detail-dialog'))
+      .filter((element) => !element.matches("[data-admin-view], #admin-theme-toggle, #sign-out, #admin-menu-toggle, #admin-menu-close") && !element.closest('[data-admin-panel="analytics"], [data-admin-panel="hero"], [data-admin-panel="hello-page"], [data-admin-panel="orders"], [data-admin-panel="invoice-settings"], #order-detail-dialog'))
       .forEach((element) => { element.disabled = true; });
+    window.RUQO_ADMIN_ANALYTICS?.init({
+      client: null,
+      getProducts: () => products,
+      getOrders: () => orders,
+      getProductImage: (product) => product?.external_image_url || defaultLightLogoUrl,
+      getProductName: (product) => product?.name_translations?.en || product?.name_translations?.ar || product?.slug || "",
+      localDemo: true,
+    });
     window.RUQO_INIT_HELLO_PAGE_EDITOR?.(null);
     window.RUQO_INIT_HERO_EDITOR?.(null);
     window.lucide?.createIcons();

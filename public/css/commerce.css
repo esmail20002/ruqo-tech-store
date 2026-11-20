@@ -841,6 +841,333 @@ body[data-page="support"] .commerce-footer-links a:focus-visible {
   box-shadow: 0 0 0 3px rgba(120, 56, 211, 0.18);
 }
 
+.commerce-phone-group {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
+  direction: ltr;
+}
+
+.commerce-phone-code {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.commerce-phone-plus {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.commerce-phone-code input {
+  padding-left: 24px;
+  padding-right: 8px;
+  text-align: left;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 480px) {
+  .commerce-phone-group {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+/* Account Auth Panel (Create account / Sign in / Social OAuth) */
+.account-auth-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.account-auth-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.account-auth-head h2 {
+  margin: 4px 0 4px;
+}
+
+.account-auth-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.account-auth-tabs {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2, rgba(91, 61, 133, 0.05));
+  gap: 4px;
+}
+
+.account-auth-tab {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.account-auth-tab.is-active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.account-password-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.account-link-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--primary);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.account-link-btn:hover {
+  text-decoration: underline;
+}
+
+.account-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.account-password-wrap input {
+  padding-inline-end: 44px;
+}
+
+.account-password-toggle {
+  position: absolute;
+  inset-inline-end: 6px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.account-password-toggle:hover {
+  color: var(--primary);
+}
+
+.account-password-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+
+.account-auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.account-auth-feedback.is-error {
+  color: #c23b4e;
+}
+
+.account-auth-feedback.is-success {
+  color: #16865f;
+}
+
+.account-oauth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.account-oauth-divider::before,
+.account-oauth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.account-oauth-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.account-oauth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong, #fff);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.account-oauth-btn svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.account-oauth-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(61, 27, 98, 0.08);
+}
+
+.account-oauth-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.account-signed-in-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.account-signed-in-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.account-avatar-circle {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  flex: 0 0 46px;
+}
+
+.account-signed-in-user strong {
+  display: block;
+  font-size: 0.94rem;
+}
+
+.account-signed-in-user small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.account-signed-in-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.account-status-pill,
+.account-provider-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.account-status-pill {
+  background: rgba(22, 134, 95, 0.12);
+  color: #16865f;
+}
+
+.account-status-pill svg {
+  width: 13px;
+  height: 13px;
+}
+
+.account-provider-pill {
+  border: 1px solid var(--line);
+  background: var(--surface-2, rgba(91, 61, 133, 0.05));
+  color: var(--muted);
+}
+
+.account-auth-synced-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.account-signout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.account-signout-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 600px) {
+  .account-auth-tabs {
+    width: 100%;
+  }
+  .account-auth-tab {
+    flex: 1;
+  }
+  .account-oauth-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .payment-option-card {
   display: flex;
   flex-direction: column;

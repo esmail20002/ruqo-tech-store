@@ -13,6 +13,11 @@
   let checkoutCouponMessageIsError = false;
   let selectedReviewPhotos = [];
   let reviewVoteAuthClient = null;
+  let accountAuthUser = null;
+  let accountAuthMode = "signup";
+  let accountAuthMessage = "";
+  let accountAuthError = false;
+  let accountAuthInitialized = false;
   let aboutRevealObserver = null;
   function getReviewVoteAuthClient() {
     const config = window.RUQO_SUPABASE_CONFIG;
@@ -1071,6 +1076,8 @@
     };
   }
 
+  let trackedProductViewSlug = null;
+
   function renderProduct() {
     relatedProductsObserver?.disconnect();
     cleanupProductShare?.();
@@ -1081,6 +1088,10 @@
     if (!product) {
       root.innerHTML = `<section class="commerce-empty">${icon("package-x")}<h1>${t.notFound}</h1><a class="commerce-button" href="/products.html">${t.backShop}</a></section>`;
       return;
+    }
+    if (trackedProductViewSlug !== product.id) {
+      trackedProductViewSlug = product.id;
+      store.trackEvent?.("product_view", { productSlug: product.id });
     }
     document.title = `${product.name} | ${window.RUQO_STORE_SETTINGS?.store_name || "WEEXEY"}`;
     const isSaved = store.wishlist().includes(product.id);
@@ -2351,11 +2362,14 @@
         try {
           if (typeof navigator.share === "function") {
             await navigator.share({ title: product.name, url: url.href });
+            store.trackEvent?.("product_share", { productSlug: product.id });
           } else if (navigator.clipboard?.writeText) {
             await navigator.clipboard.writeText(url.href);
+            store.trackEvent?.("product_share", { productSlug: product.id });
             toast(shareCopy.copied);
           } else {
             window.prompt(shareCopy.manual, url.href);
+            store.trackEvent?.("product_share", { productSlug: product.id });
           }
         } catch (error) {
           if (error.name !== "AbortError") {
@@ -2759,6 +2773,28 @@
     root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.bag}</h1><p>${t.bagIntro}</p></div><a class="commerce-button-secondary" href="/products.html">${t.continue}</a></div><div class="cart-layout"><section class="cart-lines">${lineMarkup}</section>${summaryMarkup(lines)}</div>`;
   }
 
+  const splitPhoneParts = (rawPhone, defaultCode = "01") => {
+    const raw = String(rawPhone || "").trim();
+    if (!raw) return { code: defaultCode, number: "" };
+    const match = raw.match(/^\+\s*(\d{1,4})\s*(.*)$/);
+    if (match) return { code: match[1], number: match[2].trim() };
+    return { code: defaultCode, number: raw };
+  };
+
+  const combinePhoneParts = (rawCode, rawNumber) => {
+    const code = String(rawCode || "").replace(/\D/g, "").slice(0, 4);
+    const number = String(rawNumber || "").trim();
+    if (!number) return "";
+    if (number.startsWith("+")) return number;
+    return code ? `+${code} ${number}` : number;
+  };
+
+  const renderPhoneInputGroup = ({ rawPhone = "", required = false, placeholder = "5xxxxxxxx" } = {}) => {
+    const parts = splitPhoneParts(rawPhone, "01");
+    const codeLabel = language === "ar" ? "مفتاح الدولة" : "Country code";
+    return `<div class="commerce-phone-group" dir="ltr"><span class="commerce-phone-code"><span class="commerce-phone-plus" aria-hidden="true">+</span><input name="phone_code" type="tel" inputmode="numeric" autocomplete="tel-country-code" maxlength="4" pattern="[0-9]{1,4}" aria-label="${codeLabel}" placeholder="01" value="${escapeHtml(parts.code)}" ${required ? "required" : ""} /></span><input name="phone" type="tel" autocomplete="tel-national" inputmode="tel" ${required ? "required" : ""} placeholder="${escapeHtml(placeholder)}" value="${escapeHtml(parts.number)}" /></div>`;
+  };
+
   function renderCheckout() {
     const lines = lineItems();
     if (!lines.length) {
@@ -2850,7 +2886,7 @@
                   <i data-lucide="phone" aria-hidden="true"></i>
                   <span>${t.phone}</span>
                 </span>
-                <input name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="05xxxxxxxx" value="${escapeHtml(profile.phone)}" />
+                ${renderPhoneInputGroup({ rawPhone: profile.phone, required: true, placeholder: "5xxxxxxxx" })}
               </label>
 
               <label class="commerce-field">
@@ -2858,7 +2894,7 @@
                   <i data-lucide="map-pin" aria-hidden="true"></i>
                   <span>${t.city}</span>
                 </span>
-                <input name="city" autocomplete="address-level2" required value="${escapeHtml(profile.city || t.cityDefault)}" />
+                <input name="city" autocomplete="address-level2" required placeholder="${language === "ar" ? "أدخل مدينتك" : "Enter your city"}" value="${escapeHtml(profile.city || "")}" />
               </label>
 
               <label class="commerce-field is-wide">
@@ -4261,7 +4297,450 @@
     renderOrdersListArea();
   }
 
+  function getAccountAuthCopy() {
+    return (
+      {
+        en: {
+          eyebrow: "STORE ACCOUNT",
+          createTitle: "Create your WEEXEY account",
+          createSubtitle: "Save your details once and access your profile across devices.",
+          signInTitle: "Welcome back",
+          signInSubtitle: "Sign in to sync your profile and reviews.",
+          resetTitle: "Reset your password",
+          resetSubtitle: "Enter your email and we will send a password reset link.",
+          tabSignup: "Create account",
+          tabSignin: "Sign in",
+          fullName: "Full name",
+          email: "Email address",
+          password: "New password",
+          passwordSignin: "Password",
+          confirmPassword: "Confirm password",
+          passwordHint: "At least 6 characters",
+          createButton: "Create account",
+          signInButton: "Sign in",
+          resetButton: "Send reset link",
+          forgotPassword: "Forgot password?",
+          backToSignin: "Back to sign in",
+          orContinue: "Or continue with",
+          google: "Google",
+          apple: "Apple",
+          facebook: "Facebook",
+          showPassword: "Show password",
+          hidePassword: "Hide password",
+          passwordMismatch: "Passwords do not match.",
+          passwordTooShort: "Password must be at least 6 characters.",
+          signupVerify: "Account created! Check your email inbox to confirm your address before signing in.",
+          signupDone: "Your account is ready and signed in.",
+          signinDone: "Signed in successfully.",
+          resetSent: "If an account exists for that email, a reset link has been sent.",
+          signOut: "Sign out",
+          signedOut: "Signed out.",
+          signedInBadge: "Signed in",
+          syncedNote: "Your profile details sync automatically with your store account.",
+          unavailable: "Account service is currently unavailable. Please try again later.",
+          providerNotEnabled: "Sign-in with {provider} is not activated on this store yet. You can create an account with email and password right now.",
+          genericError: "Could not complete the request. Please check your details and try again.",
+        },
+        ar: {
+          eyebrow: "حساب المتجر",
+          createTitle: "أنشئ حسابك في المتجر",
+          createSubtitle: "احفظ بياناتك مرة واحدة وادخل إلى حسابك من أي جهاز بسهولة.",
+          signInTitle: "مرحباً بعودتك",
+          signInSubtitle: "سجّل دخولك لمزامنة بيانات ملفك الشخصي ومراجعاتك.",
+          resetTitle: "استعادة كلمة المرور",
+          resetSubtitle: "أدخل بريدك الإلكتروني وسنرسل لك رابطاً لتعيين كلمة مرور جديدة.",
+          tabSignup: "إنشاء حساب",
+          tabSignin: "تسجيل الدخول",
+          fullName: "الاسم الكامل",
+          email: "البريد الإلكتروني",
+          password: "كلمة مرور جديدة للمتجر",
+          passwordSignin: "كلمة المرور",
+          confirmPassword: "تأكيد كلمة المرور",
+          passwordHint: "6 أحرف على الأقل",
+          createButton: "إنشاء حساب جديد",
+          signInButton: "تسجيل الدخول",
+          resetButton: "إرسال رابط الاستعادة",
+          forgotPassword: "نسيت كلمة المرور؟",
+          backToSignin: "العودة لتسجيل الدخول",
+          orContinue: "أو المتابعة عبر",
+          google: "Google",
+          apple: "Apple",
+          facebook: "Facebook",
+          showPassword: "إظهار كلمة المرور",
+          hidePassword: "إخفاء كلمة المرور",
+          passwordMismatch: "كلمتا المرور غير متطابقتين.",
+          passwordTooShort: "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
+          signupVerify: "تم إنشاء الحساب! تحقّق من بريدك الإلكتروني لتأكيد حسابك ثم سجّل الدخول.",
+          signupDone: "تم إنشاء حسابك وتسجيل دخولك بنجاح.",
+          signinDone: "تم تسجيل الدخول بنجاح.",
+          resetSent: "إذا كان البريد مسجلاً لدينا، فقد أرسلنا رابط استعادة كلمة المرور.",
+          signOut: "تسجيل الخروج",
+          signedOut: "تم تسجيل الخروج.",
+          signedInBadge: "متصل بحسابك",
+          syncedNote: "تتزامن بيانات ملفك الشخصي تلقائياً مع حسابك في المتجر.",
+          unavailable: "خدمة الحسابات غير متاحة حالياً. حاول مرة أخرى لاحقاً.",
+          providerNotEnabled: "التسجيل عبر {provider} غير مفعّل في إعدادات المتجر بعد. يمكنك إنشاء حساب بالبريد الإلكتروني وكلمة المرور الآن.",
+          genericError: "تعذّر إتمام العملية. تحقّق من البيانات وحاول مرة أخرى.",
+        },
+        fr: {
+          eyebrow: "COMPTE BOUTIQUE",
+          createTitle: "Créez votre compte",
+          createSubtitle: "Enregistrez vos informations et accédez à votre profil sur tous vos appareils.",
+          signInTitle: "Bon retour",
+          signInSubtitle: "Connectez-vous pour synchroniser votre profil.",
+          resetTitle: "Réinitialiser le mot de passe",
+          resetSubtitle: "Entrez votre e-mail pour recevoir un lien de réinitialisation.",
+          tabSignup: "Créer un compte",
+          tabSignin: "Se connecter",
+          fullName: "Nom complet",
+          email: "Adresse e-mail",
+          password: "Nouveau mot de passe",
+          passwordSignin: "Mot de passe",
+          confirmPassword: "Confirmer le mot de passe",
+          passwordHint: "Au moins 6 caractères",
+          createButton: "Créer un compte",
+          signInButton: "Se connecter",
+          resetButton: "Envoyer le lien",
+          forgotPassword: "Mot de passe oublié ?",
+          backToSignin: "Retour à la connexion",
+          orContinue: "Ou continuer avec",
+          google: "Google",
+          apple: "Apple",
+          facebook: "Facebook",
+          showPassword: "Afficher",
+          hidePassword: "Masquer",
+          passwordMismatch: "Les mots de passe ne correspondent pas.",
+          passwordTooShort: "Le mot de passe doit contenir au moins 6 caractères.",
+          signupVerify: "Compte créé ! Vérifiez votre boîte e-mail pour confirmer votre adresse.",
+          signupDone: "Votre compte est prêt et connecté.",
+          signinDone: "Connexion réussie.",
+          resetSent: "Un lien de réinitialisation a été envoyé si ce compte existe.",
+          signOut: "Se déconnecter",
+          signedOut: "Déconnecté.",
+          signedInBadge: "Connecté",
+          syncedNote: "Vos informations sont synchronisées avec votre compte.",
+          unavailable: "Service de compte indisponible pour le moment.",
+          providerNotEnabled: "La connexion via {provider} n'est pas encore activée. Utilisez votre e-mail et mot de passe.",
+          genericError: "Impossible de terminer la demande. Veuillez réessayer.",
+        },
+        es: {
+          eyebrow: "CUENTA DE LA TIENDA",
+          createTitle: "Crea tu cuenta",
+          createSubtitle: "Guarda tus datos una vez y accede a tu perfil desde cualquier dispositivo.",
+          signInTitle: "Bienvenido de nuevo",
+          signInSubtitle: "Inicia sesión para sincronizar tu perfil.",
+          resetTitle: "Restablecer contraseña",
+          resetSubtitle: "Introduce tu correo para recibir un enlace de restablecimiento.",
+          tabSignup: "Crear cuenta",
+          tabSignin: "Iniciar sesión",
+          fullName: "Nombre completo",
+          email: "Correo electrónico",
+          password: "Nueva contraseña",
+          passwordSignin: "Contraseña",
+          confirmPassword: "Confirmar contraseña",
+          passwordHint: "Mínimo 6 caracteres",
+          createButton: "Crear cuenta",
+          signInButton: "Iniciar sesión",
+          resetButton: "Enviar enlace",
+          forgotPassword: "¿Olvidaste tu contraseña?",
+          backToSignin: "Volver a iniciar sesión",
+          orContinue: "O continuar con",
+          google: "Google",
+          apple: "Apple",
+          facebook: "Facebook",
+          showPassword: "Mostrar",
+          hidePassword: "Ocultar",
+          passwordMismatch: "Las contraseñas no coinciden.",
+          passwordTooShort: "La contraseña debe tener al menos 6 caracteres.",
+          signupVerify: "¡Cuenta creada! Revisa tu correo para confirmar tu cuenta.",
+          signupDone: "Tu cuenta está lista y conectada.",
+          signinDone: "Sesión iniciada correctamente.",
+          resetSent: "Si existe una cuenta con ese correo, enviamos el enlace.",
+          signOut: "Cerrar sesión",
+          signedOut: "Sesión cerrada.",
+          signedInBadge: "Conectado",
+          syncedNote: "Tu perfil se sincroniza automáticamente con tu cuenta.",
+          unavailable: "El servicio de cuentas no está disponible ahora.",
+          providerNotEnabled: "El acceso con {provider} aún no está activado. Puedes crear una cuenta con correo y contraseña.",
+          genericError: "No se pudo completar la solicitud. Inténtalo de nuevo.",
+        },
+        zh: {
+          eyebrow: "商店账户",
+          createTitle: "创建您的商店账户",
+          createSubtitle: "保存一次资料，随时在不同设备访问您的账户。",
+          signInTitle: "欢迎回来",
+          signInSubtitle: "登录以同步您的个人资料。",
+          resetTitle: "重置密码",
+          resetSubtitle: "输入您的邮箱，我们将发送重置链接。",
+          tabSignup: "创建账户",
+          tabSignin: "登录",
+          fullName: "姓名",
+          email: "电子邮箱",
+          password: "新密码",
+          passwordSignin: "密码",
+          confirmPassword: "确认密码",
+          passwordHint: "至少 6 个字符",
+          createButton: "创建账户",
+          signInButton: "登录",
+          resetButton: "发送重置链接",
+          forgotPassword: "忘记密码？",
+          backToSignin: "返回登录",
+          orContinue: "或使用以下方式继续",
+          google: "Google",
+          apple: "Apple",
+          facebook: "Facebook",
+          showPassword: "显示密码",
+          hidePassword: "隐藏密码",
+          passwordMismatch: "两次输入的密码不一致。",
+          passwordTooShort: "密码至少需要 6 个字符。",
+          signupVerify: "账户已创建！请查收邮件确认您的邮箱。",
+          signupDone: "账户已创建并登录。",
+          signinDone: "登录成功。",
+          resetSent: "如果该邮箱已注册，重置链接已发送。",
+          signOut: "退出登录",
+          signedOut: "已退出登录。",
+          signedInBadge: "已登录",
+          syncedNote: "您的个人资料会自动同步到商店账户。",
+          unavailable: "账户服务暂时不可用，请稍后再试。",
+          providerNotEnabled: "暂未启用 {provider} 登录，您现在可以使用邮箱和密码注册。",
+          genericError: "无法完成请求，请检查信息后重试。",
+        },
+      }[language] || {
+        eyebrow: "STORE ACCOUNT",
+        createTitle: "Create your WEEXEY account",
+        createSubtitle: "Save your details once and access your profile across devices.",
+        signInTitle: "Welcome back",
+        signInSubtitle: "Sign in to sync your profile and reviews.",
+        resetTitle: "Reset your password",
+        resetSubtitle: "Enter your email and we will send a password reset link.",
+        tabSignup: "Create account",
+        tabSignin: "Sign in",
+        fullName: "Full name",
+        email: "Email address",
+        password: "New password",
+        passwordSignin: "Password",
+        confirmPassword: "Confirm password",
+        passwordHint: "At least 6 characters",
+        createButton: "Create account",
+        signInButton: "Sign in",
+        resetButton: "Send reset link",
+        forgotPassword: "Forgot password?",
+        backToSignin: "Back to sign in",
+        orContinue: "Or continue with",
+        google: "Google",
+        apple: "Apple",
+        facebook: "Facebook",
+        showPassword: "Show password",
+        hidePassword: "Hide password",
+        passwordMismatch: "Passwords do not match.",
+        passwordTooShort: "Password must be at least 6 characters.",
+        signupVerify: "Account created! Check your email inbox to confirm your address before signing in.",
+        signupDone: "Your account is ready and signed in.",
+        signinDone: "Signed in successfully.",
+        resetSent: "If an account exists for that email, a reset link has been sent.",
+        signOut: "Sign out",
+        signedOut: "Signed out.",
+        signedInBadge: "Signed in",
+        syncedNote: "Your profile details sync automatically with your store account.",
+        unavailable: "Account service is currently unavailable. Please try again later.",
+        providerNotEnabled: "Sign-in with {provider} is not activated on this store yet. You can create an account with email and password right now.",
+        genericError: "Could not complete the request. Please check your details and try again.",
+      }
+    );
+  }
+
+  async function syncAccountProfileFromSupabase(user) {
+    const authClient = getReviewVoteAuthClient();
+    if (!authClient || !user?.id) return;
+    try {
+      const { data } = await authClient
+        .from("profiles")
+        .select("full_name, phone, preferred_language")
+        .eq("id", user.id)
+        .maybeSingle();
+      const current = store.getProfile();
+      const metaName = user.user_metadata?.full_name || user.user_metadata?.name || "";
+      const metaPhone = user.user_metadata?.phone || "";
+      const metaCity = user.user_metadata?.city || "";
+      store.setProfile({
+        ...current,
+        name: data?.full_name || current.name || metaName,
+        email: user.email || current.email || "",
+        phone: data?.phone || current.phone || metaPhone,
+        city: current.city || metaCity,
+      });
+    } catch {
+      // Ignore profile read errors
+    }
+  }
+
+  async function initAccountAuth() {
+    if (accountAuthInitialized) return;
+    accountAuthInitialized = true;
+    const authClient = getReviewVoteAuthClient();
+    if (!authClient) return;
+    try {
+      const { data } = await authClient.auth.getSession();
+      const sessionUser = data?.session?.user || null;
+      if (sessionUser) {
+        accountAuthUser = sessionUser;
+        await syncAccountProfileFromSupabase(sessionUser);
+        if (page === "account") renderAccount();
+      }
+      authClient.auth.onAuthStateChange(async (_event, session) => {
+        const nextUser = session?.user || null;
+        const changed = nextUser?.id !== accountAuthUser?.id;
+        accountAuthUser = nextUser;
+        if (nextUser) await syncAccountProfileFromSupabase(nextUser);
+        if (changed && page === "account") renderAccount();
+      });
+    } catch {
+      // Ignore auth initialization errors
+    }
+  }
+
+  function renderAccountAuthSection(profile) {
+    const ac = getAccountAuthCopy();
+    const feedbackHtml = accountAuthMessage
+      ? `<div class="form-feedback account-auth-feedback${accountAuthError ? " is-error" : " is-success"}" data-account-auth-feedback aria-live="polite">${escapeHtml(accountAuthMessage)}</div>`
+      : `<div class="form-feedback account-auth-feedback" data-account-auth-feedback aria-live="polite"></div>`;
+
+    if (accountAuthUser) {
+      const displayName =
+        accountAuthUser.user_metadata?.full_name ||
+        accountAuthUser.user_metadata?.name ||
+        profile.name ||
+        accountAuthUser.email ||
+        "WEEXEY";
+      const initial = String(displayName).trim().charAt(0).toUpperCase() || "W";
+      const provider = String(accountAuthUser.app_metadata?.provider || "email");
+      const providerLabel =
+        provider === "google" ? "Google" : provider === "apple" ? "Apple" : provider === "facebook" ? "Facebook" : ac.email;
+      return `
+        <section class="commerce-panel account-auth-panel is-signed-in" id="account-auth">
+          <div class="account-signed-in-bar">
+            <div class="account-signed-in-user">
+              <span class="account-avatar-circle" aria-hidden="true">${escapeHtml(initial)}</span>
+              <div>
+                <div class="account-signed-in-badges">
+                  <span class="account-status-pill">${icon("check-circle-2")}<span>${escapeHtml(ac.signedInBadge)}</span></span>
+                  <span class="account-provider-pill">${escapeHtml(providerLabel)}</span>
+                </div>
+                <strong>${escapeHtml(displayName)}</strong>
+                <small>${escapeHtml(accountAuthUser.email || "")}</small>
+              </div>
+            </div>
+            <button class="commerce-button-secondary account-signout-btn" type="button" data-account-signout>${icon("log-out")}<span>${escapeHtml(ac.signOut)}</span></button>
+          </div>
+          <p class="account-auth-synced-note">${escapeHtml(ac.syncedNote)}</p>
+          ${feedbackHtml}
+          <form class="commerce-form account-signed-in-form" data-profile-form>
+            <div class="commerce-form-grid">
+              <label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" value="${escapeHtml(profile.name || displayName)}" /></label>
+              <label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" value="${escapeHtml(profile.email || accountAuthUser.email || "")}" /></label>
+              <label class="commerce-field">${t.phone}${renderPhoneInputGroup({ rawPhone: profile.phone, required: false, placeholder: "5xxxxxxxx" })}</label>
+              <label class="commerce-field">${t.city}<input name="city" autocomplete="address-level2" placeholder="${language === "ar" ? "أدخل مدينتك" : "Enter your city"}" value="${escapeHtml(profile.city || "")}" /></label>
+            </div>
+            <div class="form-feedback" data-profile-feedback aria-live="polite"></div>
+            <button class="commerce-button" type="submit">${t.saveProfile}</button>
+          </form>
+        </section>
+      `;
+    }
+
+    const googleIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.25-.96 2.31-2.04 3.02l3.3 2.56c1.92-1.77 3.04-4.38 3.04-7.48 0-.72-.06-1.42-.19-2.08H12z"/><path fill="#4285F4" d="M12 22c2.75 0 5.06-.91 6.75-2.46l-3.3-2.56c-.91.61-2.08.98-3.45.98-2.65 0-4.9-1.79-5.7-4.2H2.89v2.64A10.19 10.19 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.3 13.76A6.14 6.14 0 0 1 5.98 12c0-.61.11-1.2.32-1.76V7.6H2.89A10.19 10.19 0 0 0 1.8 12c0 1.64.39 3.19 1.09 4.4l3.41-2.64z"/><path fill="#34A853" d="M12 6.04c1.5 0 2.84.52 3.9 1.53l2.92-2.92C17.05 2.99 14.74 2 12 2A10.19 10.19 0 0 0 2.89 7.6l3.41 2.64C7.1 7.83 9.35 6.04 12 6.04z"/></svg>`;
+    const appleIcon = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.64c-.02-2.16 1.77-3.2 1.85-3.25-1.01-1.48-2.58-1.68-3.13-1.7-1.32-.14-2.6.78-3.28.78-.68 0-1.72-.76-2.83-.74-1.45.02-2.8.85-3.54 2.15-1.52 2.63-.39 6.53 1.08 8.66.72 1.04 1.58 2.21 2.71 2.17 1.09-.04 1.5-.7 2.82-.7 1.31 0 1.68.7 2.83.68 1.17-.02 1.91-1.06 2.62-2.11.83-1.21 1.17-2.38 1.19-2.44-.03-.01-2.29-.88-2.32-3.5zM14.2 6.27c.6-.73 1-1.73.89-2.74-.86.04-1.91.57-2.53 1.3-.55.64-1.03 1.66-.9 2.64.96.07 1.94-.49 2.54-1.2z"/></svg>`;
+    const facebookIcon = `<svg viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.84c0-2.52 1.5-3.91 3.78-3.91 1.1 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.43-4.92 8.43-9.94z"/></svg>`;
+
+    const isSignup = accountAuthMode === "signup";
+    const isReset = accountAuthMode === "reset";
+    const heading = isReset ? ac.resetTitle : isSignup ? ac.createTitle : ac.signInTitle;
+    const subtitle = isReset ? ac.resetSubtitle : isSignup ? ac.createSubtitle : ac.signInSubtitle;
+
+    const formMarkup = isReset
+      ? `
+        <form class="commerce-form account-auth-form" data-account-reset-form>
+          <label class="commerce-field">${escapeHtml(ac.email)}<input name="email" type="email" autocomplete="email" required value="${escapeHtml(profile.email || "")}" /></label>
+          ${feedbackHtml}
+          <div class="account-auth-actions">
+            <button class="commerce-button" type="submit">${escapeHtml(ac.resetButton)}</button>
+            <button class="account-link-btn" type="button" data-account-auth-mode="signin">${escapeHtml(ac.backToSignin)}</button>
+          </div>
+        </form>
+      `
+      : isSignup
+        ? `
+          <form class="commerce-form account-auth-form" data-account-signup-form>
+            <div class="commerce-form-grid">
+              <label class="commerce-field">${escapeHtml(ac.fullName)}<input name="full_name" autocomplete="name" required value="${escapeHtml(profile.name || "")}" /></label>
+              <label class="commerce-field">${escapeHtml(ac.email)}<input name="email" type="email" autocomplete="email" required value="${escapeHtml(profile.email || "")}" /></label>
+              <label class="commerce-field">${t.phone}${renderPhoneInputGroup({ rawPhone: profile.phone, required: false, placeholder: "5xxxxxxxx" })}</label>
+              <label class="commerce-field">${t.city}<input name="city" autocomplete="address-level2" placeholder="${language === "ar" ? "أدخل مدينتك" : "Enter your city"}" value="${escapeHtml(profile.city || "")}" /></label>
+              <label class="commerce-field">
+                <span>${escapeHtml(ac.password)}</span>
+                <div class="account-password-wrap">
+                  <input name="password" type="password" autocomplete="new-password" minlength="6" required placeholder="${escapeHtml(ac.passwordHint)}" />
+                  <button class="account-password-toggle" type="button" data-toggle-password aria-label="${escapeHtml(ac.showPassword)}">${icon("eye")}</button>
+                </div>
+              </label>
+              <label class="commerce-field">
+                <span>${escapeHtml(ac.confirmPassword)}</span>
+                <div class="account-password-wrap">
+                  <input name="confirm_password" type="password" autocomplete="new-password" minlength="6" required placeholder="${escapeHtml(ac.passwordHint)}" />
+                  <button class="account-password-toggle" type="button" data-toggle-password aria-label="${escapeHtml(ac.showPassword)}">${icon("eye")}</button>
+                </div>
+              </label>
+            </div>
+            ${feedbackHtml}
+            <button class="commerce-button" type="submit">${escapeHtml(ac.createButton)}</button>
+          </form>
+        `
+        : `
+          <form class="commerce-form account-auth-form" data-account-signin-form>
+            <div class="commerce-form-grid">
+              <label class="commerce-field">${escapeHtml(ac.email)}<input name="email" type="email" autocomplete="email" required value="${escapeHtml(profile.email || "")}" /></label>
+              <label class="commerce-field">
+                <span class="account-password-label-row">
+                  <span>${escapeHtml(ac.passwordSignin)}</span>
+                  <button class="account-link-btn" type="button" data-account-auth-mode="reset">${escapeHtml(ac.forgotPassword)}</button>
+                </span>
+                <div class="account-password-wrap">
+                  <input name="password" type="password" autocomplete="current-password" required />
+                  <button class="account-password-toggle" type="button" data-toggle-password aria-label="${escapeHtml(ac.showPassword)}">${icon("eye")}</button>
+                </div>
+              </label>
+            </div>
+            ${feedbackHtml}
+            <button class="commerce-button" type="submit">${escapeHtml(ac.signInButton)}</button>
+          </form>
+        `;
+
+    return `
+      <section class="commerce-panel account-auth-panel" id="account-auth">
+        <div class="account-auth-head">
+          <div>
+            <span class="commerce-eyebrow">${escapeHtml(ac.eyebrow)}</span>
+            <h2>${escapeHtml(heading)}</h2>
+            <p>${escapeHtml(subtitle)}</p>
+          </div>
+          <div class="account-auth-tabs" role="tablist" aria-label="${escapeHtml(ac.eyebrow)}">
+            <button type="button" class="account-auth-tab${isSignup ? " is-active" : ""}" data-account-auth-mode="signup" role="tab" aria-selected="${isSignup}">${escapeHtml(ac.tabSignup)}</button>
+            <button type="button" class="account-auth-tab${!isSignup ? " is-active" : ""}" data-account-auth-mode="signin" role="tab" aria-selected="${!isSignup}">${escapeHtml(ac.tabSignin)}</button>
+          </div>
+        </div>
+        ${formMarkup}
+        <div class="account-oauth-divider"><span>${escapeHtml(ac.orContinue)}</span></div>
+        <div class="account-oauth-grid">
+          <button class="account-oauth-btn is-google" type="button" data-oauth-provider="google">${googleIcon}<span>${escapeHtml(ac.google)}</span></button>
+          <button class="account-oauth-btn is-apple" type="button" data-oauth-provider="apple">${appleIcon}<span>${escapeHtml(ac.apple)}</span></button>
+          <button class="account-oauth-btn is-facebook" type="button" data-oauth-provider="facebook">${facebookIcon}<span>${escapeHtml(ac.facebook)}</span></button>
+        </div>
+      </section>
+    `;
+  }
+
   function renderAccount() {
+    initAccountAuth();
     const profile = store.getProfile();
     const settings = store.getSettings();
     const orders = store.getOrders();
@@ -4274,7 +4753,8 @@
           })
           .join("")
       : `<div class="commerce-empty">${icon("package-open")}<h2>${t.noOrders}</h2><p>${t.noOrdersNote}</p></div>`;
-    root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.account}</h1></div></div><div class="account-layout"><nav class="account-tabs"><a href="#profile" aria-current="page">${t.profile}</a><a href="#settings">${t.settings}</a><a href="/orders.html">${oc.title}</a></nav><div class="account-content"><section class="commerce-panel" id="profile"><h2>${t.profile}</h2><form class="commerce-form" data-profile-form><div class="commerce-form-grid"><label class="commerce-field">${t.fullName}<input name="name" autocomplete="name" value="${escapeHtml(profile.name)}" /></label><label class="commerce-field">${t.email}<input name="email" type="email" autocomplete="email" value="${escapeHtml(profile.email)}" /></label><label class="commerce-field">${t.phone}<input name="phone" type="tel" autocomplete="tel" value="${escapeHtml(profile.phone)}" /></label><label class="commerce-field">${t.city}<input name="city" value="${escapeHtml(profile.city || t.cityDefault)}" /></label></div><div class="form-feedback" data-profile-feedback aria-live="polite"></div><button class="commerce-button" type="submit">${t.saveProfile}</button></form></section><section class="commerce-panel" id="settings"><h2>${t.settings}</h2><form data-settings-form><label class="settings-row"><span>${t.updates}<small>${t.updatesNote}</small></span><input type="checkbox" name="orderUpdates" ${settings.orderUpdates ? "checked" : ""} /></label><label class="settings-row"><span>${t.offers}<small>${t.offersNote}</small></span><input type="checkbox" name="offers" ${settings.offers ? "checked" : ""} /></label><div class="form-feedback" data-settings-feedback aria-live="polite"></div><button class="commerce-button-secondary" type="submit">${t.saveSettings}</button></form></section><section class="commerce-panel" id="orders"><div class="account-orders-panel-head"><h2>${t.orders}</h2><a class="commerce-button" href="/orders.html">${icon("package")}<span>${escapeHtml(oc.openOrdersPage)}</span></a></div>${orderMarkup}</section></div></div>`;
+    root.innerHTML = `<div class="commerce-heading"><div><span class="commerce-eyebrow">${t.eyebrow}</span><h1>${t.account}</h1></div></div><div class="account-layout"><nav class="account-tabs"><a href="#account-auth" aria-current="page">${t.account}</a><a href="#settings">${t.settings}</a><a href="/orders.html">${oc.title}</a></nav><div class="account-content">${renderAccountAuthSection(profile)}<section class="commerce-panel" id="settings"><h2>${t.settings}</h2><form data-settings-form><label class="settings-row"><span>${t.updates}<small>${t.updatesNote}</small></span><input type="checkbox" name="orderUpdates" ${settings.orderUpdates ? "checked" : ""} /></label><label class="settings-row"><span>${t.offers}<small>${t.offersNote}</small></span><input type="checkbox" name="offers" ${settings.offers ? "checked" : ""} /></label><div class="form-feedback" data-settings-feedback aria-live="polite"></div><button class="commerce-button-secondary" type="submit">${t.saveSettings}</button></form></section><section class="commerce-panel" id="orders"><div class="account-orders-panel-head"><h2>${t.orders}</h2><a class="commerce-button" href="/orders.html">${icon("package")}<span>${escapeHtml(oc.openOrdersPage)}</span></a></div>${orderMarkup}</section></div></div>`;
+    window.lucide?.createIcons({ attrs: { "aria-hidden": "true" } });
   }
 
   function renderCategories() {
@@ -5041,7 +5521,7 @@
     }
     if (page === "checkout" || page === "account") {
       const cityInput = root.querySelector('input[name="city"]');
-      if (cityInput?.value === "Riyadh") cityInput.value = t.cityDefault;
+      // Keep user-entered city as-is without forcing a default city
     }
     if (page === "cart") {
       root.querySelectorAll('[data-quantity="-1"]').forEach((button) =>
@@ -5431,6 +5911,8 @@
       const form = event.target;
       if (!form.reportValidity()) return;
       const values = Object.fromEntries(new FormData(form));
+      values.phone = combinePhoneParts(values.phone_code, values.phone);
+      delete values.phone_code;
       const feedback = root.querySelector("[data-checkout-feedback]");
       const submitButton = form.querySelector('[type="submit"]');
       const config = window.RUQO_SUPABASE_CONFIG;
@@ -5634,9 +6116,151 @@
     if (event.target.matches("[data-profile-form]")) {
       event.preventDefault();
       const values = Object.fromEntries(new FormData(event.target));
+      values.phone = combinePhoneParts(values.phone_code, values.phone);
+      delete values.phone_code;
       store.setProfile({ ...store.getProfile(), ...values });
+      if (accountAuthUser?.id) {
+        const authClient = getReviewVoteAuthClient();
+        authClient?.from("profiles").upsert({
+          id: accountAuthUser.id,
+          full_name: String(values.name || "").trim() || null,
+          phone: String(values.phone || "").trim() || null,
+          preferred_language: language,
+        }).then(() => {}, () => {});
+      }
       root.querySelector("[data-profile-feedback]").textContent =
         t.profileSaved;
+    }
+    if (event.target.matches("[data-account-signup-form]")) {
+      event.preventDefault();
+      const form = event.target;
+      if (!form.reportValidity()) return;
+      const ac = getAccountAuthCopy();
+      const authClient = getReviewVoteAuthClient();
+      if (!authClient) {
+        accountAuthMessage = ac.unavailable;
+        accountAuthError = true;
+        renderAccount();
+        return;
+      }
+      const values = Object.fromEntries(new FormData(form));
+      const fullName = String(values.full_name || "").trim();
+      const email = String(values.email || "").trim().toLowerCase();
+      const phone = combinePhoneParts(values.phone_code, values.phone);
+      const city = String(values.city || "").trim();
+      const password = String(values.password || "");
+      const confirmPassword = String(values.confirm_password || "");
+      if (password.length < 6) {
+        accountAuthMessage = ac.passwordTooShort;
+        accountAuthError = true;
+        renderAccount();
+        return;
+      }
+      if (password !== confirmPassword) {
+        accountAuthMessage = ac.passwordMismatch;
+        accountAuthError = true;
+        renderAccount();
+        return;
+      }
+      const submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const { data, error } = await authClient.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullName, phone, city },
+            emailRedirectTo: `${location.origin}/account.html`,
+          },
+        });
+        if (error) throw error;
+        store.setProfile({
+          ...store.getProfile(),
+          name: fullName || store.getProfile().name,
+          email,
+          phone: phone || store.getProfile().phone,
+          city: city || store.getProfile().city,
+        });
+        if (data?.session?.user) {
+          accountAuthUser = data.session.user;
+          await authClient.from("profiles").upsert({
+            id: data.session.user.id,
+            full_name: fullName || null,
+            phone: phone || store.getProfile().phone || null,
+            preferred_language: language,
+          });
+          accountAuthMessage = ac.signupDone;
+          accountAuthError = false;
+        } else {
+          accountAuthMessage = ac.signupVerify;
+          accountAuthError = false;
+        }
+        renderAccount();
+      } catch (error) {
+        accountAuthMessage = error?.message || ac.genericError;
+        accountAuthError = true;
+        renderAccount();
+      }
+    }
+    if (event.target.matches("[data-account-signin-form]")) {
+      event.preventDefault();
+      const form = event.target;
+      if (!form.reportValidity()) return;
+      const ac = getAccountAuthCopy();
+      const authClient = getReviewVoteAuthClient();
+      if (!authClient) {
+        accountAuthMessage = ac.unavailable;
+        accountAuthError = true;
+        renderAccount();
+        return;
+      }
+      const values = Object.fromEntries(new FormData(form));
+      const email = String(values.email || "").trim().toLowerCase();
+      const password = String(values.password || "");
+      const submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const { data, error } = await authClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        accountAuthUser = data?.user || null;
+        if (accountAuthUser) await syncAccountProfileFromSupabase(accountAuthUser);
+        accountAuthMessage = ac.signinDone;
+        accountAuthError = false;
+        renderAccount();
+      } catch (error) {
+        accountAuthMessage = error?.message || ac.genericError;
+        accountAuthError = true;
+        renderAccount();
+      }
+    }
+    if (event.target.matches("[data-account-reset-form]")) {
+      event.preventDefault();
+      const form = event.target;
+      if (!form.reportValidity()) return;
+      const ac = getAccountAuthCopy();
+      const authClient = getReviewVoteAuthClient();
+      if (!authClient) {
+        accountAuthMessage = ac.unavailable;
+        accountAuthError = true;
+        renderAccount();
+        return;
+      }
+      const email = String(new FormData(form).get("email") || "").trim().toLowerCase();
+      const submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const { error } = await authClient.auth.resetPasswordForEmail(email, {
+          redirectTo: `${location.origin}/account.html`,
+        });
+        if (error) throw error;
+        accountAuthMessage = ac.resetSent;
+        accountAuthError = false;
+        renderAccount();
+      } catch (error) {
+        accountAuthMessage = error?.message || ac.genericError;
+        accountAuthError = true;
+        renderAccount();
+      }
     }
     if (event.target.matches("[data-settings-form]")) {
       event.preventDefault();
@@ -5679,6 +6303,85 @@
       } finally {
         submit.disabled = false;
       }
+    }
+  });
+
+  root.addEventListener("input", (event) => {
+    const codeInput = event.target.closest('input[name="phone_code"]');
+    if (!codeInput) return;
+    const cleaned = codeInput.value.replace(/\D/g, "").slice(0, 4);
+    if (codeInput.value !== cleaned) codeInput.value = cleaned;
+  });
+
+  root.addEventListener("click", async (event) => {
+    const modeBtn = event.target.closest("[data-account-auth-mode]");
+    if (modeBtn) {
+      accountAuthMode = modeBtn.dataset.accountAuthMode || "signup";
+      accountAuthMessage = "";
+      accountAuthError = false;
+      renderAccount();
+      return;
+    }
+
+    const pwdToggle = event.target.closest("[data-toggle-password]");
+    if (pwdToggle) {
+      const wrap = pwdToggle.closest(".account-password-wrap");
+      const input = wrap?.querySelector("input");
+      if (!input) return;
+      const ac = getAccountAuthCopy();
+      const revealing = input.type === "password";
+      input.type = revealing ? "text" : "password";
+      pwdToggle.setAttribute("aria-label", revealing ? ac.hidePassword : ac.showPassword);
+      pwdToggle.innerHTML = icon(revealing ? "eye-off" : "eye");
+      window.lucide?.createIcons({ attrs: { "aria-hidden": "true" } });
+      return;
+    }
+
+    const oauthBtn = event.target.closest("[data-oauth-provider]");
+    if (oauthBtn) {
+      const provider = oauthBtn.dataset.oauthProvider;
+      const ac = getAccountAuthCopy();
+      const authClient = getReviewVoteAuthClient();
+      if (!authClient) {
+        accountAuthMessage = ac.unavailable;
+        accountAuthError = true;
+        renderAccount();
+        return;
+      }
+      oauthBtn.disabled = true;
+      try {
+        const { error } = await authClient.auth.signInWithOAuth({
+          provider,
+          options: { redirectTo: `${location.origin}/account.html` },
+        });
+        if (error) throw error;
+      } catch (error) {
+        const providerName = provider === "google" ? "Google" : provider === "apple" ? "Apple" : "Facebook";
+        const msg = String(error?.message || "");
+        accountAuthMessage = /unsupported|not enabled|provider/i.test(msg)
+          ? ac.providerNotEnabled.replace("{provider}", providerName)
+          : msg || ac.genericError;
+        accountAuthError = true;
+        renderAccount();
+      }
+      return;
+    }
+
+    const signOutBtn = event.target.closest("[data-account-signout]");
+    if (signOutBtn) {
+      const ac = getAccountAuthCopy();
+      const authClient = getReviewVoteAuthClient();
+      signOutBtn.disabled = true;
+      try {
+        await authClient?.auth.signOut();
+      } catch {
+        // Ignore sign-out errors
+      }
+      accountAuthUser = null;
+      accountAuthMode = "signin";
+      accountAuthMessage = ac.signedOut;
+      accountAuthError = false;
+      renderAccount();
     }
   });
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "weexey-instant-v3";
+const CACHE_NAME = "weexey-instant-v11";
 
 const CORE_ASSETS = [
   "/",
